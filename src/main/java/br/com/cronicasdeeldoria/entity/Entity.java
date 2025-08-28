@@ -5,7 +5,7 @@ import java.util.UUID;
 
 public class Entity {
   private final UUID id;
-  private int x, y;
+  private int worldX, worldY;
   private int speed;
   private String direction;
   private String name;
@@ -13,8 +13,8 @@ public class Entity {
 
   public Entity(int x, int y, int speed, String direction, String name) {
     this.id = UUID.randomUUID();
-    this.x = x;
-    this.y = y;
+    this.worldX = x;
+    this.worldY = y;
     this.speed = speed;
     this.direction = direction;
     this.name = name;
@@ -24,20 +24,20 @@ public class Entity {
     return id;
   }
 
-  public int getX() {
-    return x;
+  public int getWorldX() {
+    return worldX;
   }
 
-  public void setX(int x) {
-    this.x = x;
+  public void setWorldX(int x) {
+    this.worldX = x;
   }
 
-  public int getY() {
-    return y;
+  public int getWorldY() {
+    return worldY;
   }
 
-  public void setY(int y) {
-    this.y = y;
+  public void setWorldY(int y) {
+    this.worldY = y;
   }
 
   public int getSpeed() {

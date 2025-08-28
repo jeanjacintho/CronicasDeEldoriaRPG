@@ -15,6 +15,11 @@ import br.com.cronicasdeeldoria.config.CharacterConfigLoader;
 public class GamePanel extends JPanel implements Runnable{
   private static final int FPS = 60;
 
+  public final int  maxWorldCol = 50;
+  public final int  maxWorldRow = 50;
+  public final int worldWidth = getTileSize() * maxWorldCol;
+  public final int worldHeight = getTileSize() * maxWorldRow;
+
   KeyHandler keyHandler = new KeyHandler();
   Thread gameThread;
   Player player;
@@ -35,8 +40,9 @@ public class GamePanel extends JPanel implements Runnable{
 
     CharacterConfigLoader configLoader = CharacterConfigLoader.getInstance();
     String raceName = race.getRaceName().toLowerCase();
-    int x = configLoader.getIntAttribute(raceName, "x", screenWidth / 2 - getPlayerSize() / 2);
-    int y = configLoader.getIntAttribute(raceName, "y", screenHeight / 2 - getPlayerSize() / 2);
+    int playerSize = getPlayerSize();
+    int x = (maxWorldCol * tileSize) / 2 - (playerSize / 2);
+    int y = (maxWorldRow * tileSize) / 2 - (playerSize / 2);
     int speed = configLoader.getIntAttribute(raceName, "speed", 4);
     String direction = configLoader.getStringAttribute(raceName, "direction", "down");
     int health = configLoader.getIntAttribute(raceName, "health", 100);
@@ -142,10 +148,22 @@ public class GamePanel extends JPanel implements Runnable{
       return tileSize * 2;
     }
 
+    public int getScreenWidth() {
+        return tileSize * maxScreenCol;
+    }
+
+    public int getScreenHeight() {
+        return tileSize * maxScreenRow;
+    }
+
     public int getMaxScreenCol() {
         return this.maxScreenCol;
     }
     public int getMaxScreenRow() {
         return this.maxScreenRow;
+    }
+
+    public Player getPlayer() {
+      return player;
     }
 }

@@ -18,12 +18,19 @@ public class Player extends Character {
   private int spriteNum = 1;
   private boolean isMoving = false;
 
+  private final int screenX;
+  private final int screenY;
+
   public Player(GamePanel gamePanel, KeyHandler keyHandler, Race race, int x, int y, int speed, String direction, String name, int health, int mana, int strength, int agility, int luck) {
     super(x, y, speed, direction, name, race, health, mana, strength, agility);
     this.luck = luck;
     this.gamePanel = gamePanel;
     this.keyHandler = keyHandler;
     this.getPlayerImage();
+
+    screenX = (gamePanel.getScreenWidth() - gamePanel.getPlayerSize()) / 2;
+    screenY = (gamePanel.getScreenHeight() - gamePanel.getPlayerSize()) / 2;
+    
   }
 
   public void getPlayerImage() {
@@ -51,16 +58,16 @@ public class Player extends Character {
       isMoving = true;
       if(keyHandler.upPressed) {
         setDirection("up");
-        setY(getY() - getSpeed());
+        setWorldY(getWorldY() - getSpeed());
       } else if(keyHandler.downPressed) {
         setDirection("down");
-        setY(getY() + getSpeed());
+        setWorldY(getWorldY() + getSpeed());
       } else if(keyHandler.leftPressed) {
         setDirection("left");
-        setX(getX() - getSpeed());
+        setWorldX(getWorldX() - getSpeed());
       } else if(keyHandler.rightPressed) {
         setDirection("right");
-        setX(getX() + getSpeed());
+        setWorldX(getWorldX() + getSpeed());
       }
 
       spriteCounter++;
@@ -110,7 +117,7 @@ public class Player extends Character {
         break;
     }
 
-    graphics2d.drawImage(image, getX(), getY(), gamePanel.getPlayerSize(), gamePanel.getPlayerSize(), null);
+    graphics2d.drawImage(image, screenX, screenY, gamePanel.getPlayerSize(), gamePanel.getPlayerSize(), null);
   }
  
   public int getLuck() {
@@ -119,5 +126,13 @@ public class Player extends Character {
 
   public void setLuck(int luck) {
     this.luck = luck;
+  }
+
+  public int getScreenX() {
+    return screenX;
+  }
+
+  public int getScreenY() {
+    return screenY;
   }
 }

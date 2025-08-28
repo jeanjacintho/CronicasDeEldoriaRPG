@@ -6,6 +6,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import javax.imageio.ImageIO;
 import br.com.cronicasdeeldoria.game.GamePanel;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.List;
 
 public class TileManager {
     private GamePanel gamePanel;
@@ -15,15 +18,15 @@ public class TileManager {
     public TileManager(GamePanel gamePanel) {
         this.gamePanel = gamePanel;
         loadMap("/maps/map01.txt");
-        initTiles();
+        initTilesFromJson();
     }
 
     private void loadMap(String path) {
         try {
             InputStream is = getClass().getResourceAsStream(path);
             BufferedReader br = new BufferedReader(new InputStreamReader(is));
-            int rows = gamePanel.getMaxScreenRow();
-            int cols = gamePanel.getMaxScreenCol();
+            int rows = gamePanel.maxWorldRow;
+            int cols = gamePanel.maxWorldCol;
             mapTileNumbers = new int[rows][cols];
             for (int row = 0; row < rows; row++) {
                 String line = br.readLine();
@@ -38,31 +41,25 @@ public class TileManager {
         }
     }
 
-    private void initTiles() {
-        // Descubra o maior índice usado no mapa
-        int maxTileIndex = 0;
-        for (int[] row : mapTileNumbers) {
-            for (int n : row) {
-                if (n > maxTileIndex) maxTileIndex = n;
-            }
-        }
-        tiles = new Tile[maxTileIndex + 1];
+    private void initTilesFromJson() {
         try {
-            // Inicialize cada tile explicitamente conforme seu índice
-            tiles[0] = new Tile();
-            tiles[0].image = ImageIO.read(getClass().getResourceAsStream("/sprites/world/grass-0001.png"));
-
-            tiles[1] = new Tile();
-            tiles[1].image = ImageIO.read(getClass().getResourceAsStream("/sprites/world/wall-0001.png"));
-
-            tiles[2] = new Tile();
-            tiles[2].image = ImageIO.read(getClass().getResourceAsStream("/sprites/world/water-0001.png"));
-
-            // Inicialize tiles não definidos com o tile 0 (grama)
+            InputStream is = getClass().getResourceAsStream("/tiles.json");
+            if (is == null) {
+                throw new RuntimeException("tiles.json não encontrado no classpath!");
+            }
+            ObjectMapper mapper = new ObjectMapper();
+            List<TileDefinition> tileDefs = mapper.readValue(is, new TypeReference<List<TileDefinition>>() {});
+            int maxId = tileDefs.stream().mapToInt(td -> td.id).max().orElse(0);
+            tiles = new Tile[maxId + 1];
+            for (TileDefinition def : tileDefs) {
+                Tile t = new Tile();
+                t.image = ImageIO.read(getClass().getResourceAsStream(def.image));
+                t.collision = def.collision;
+                tiles[def.id] = t;
+            }
             for (int i = 0; i < tiles.length; i++) {
                 if (tiles[i] == null) {
-                    tiles[i] = new Tile();
-                    tiles[i].image = tiles[0].image;
+                    tiles[i] = tiles[0];
                 }
             }
         } catch (Exception e) {
@@ -70,12 +67,38 @@ public class TileManager {
         }
     }
 
+    public static class TileDefinition {
+        public int id;
+        public String name;
+        public String image;
+        public boolean collision;
+    }
+
     public void draw(Graphics2D g2) {
         int tileSize = gamePanel.getTileSize();
-        for (int row = 0; row < gamePanel.getMaxScreenRow(); row++) {
-            for (int col = 0; col < gamePanel.getMaxScreenCol(); col++) {
+        int worldRows = mapTileNumbers.length;
+        int worldCols = mapTileNumbers[0].length;
+
+        int playerWorldX = gamePanel.getPlayer().getWorldX();
+        int playerWorldY = gamePanel.getPlayer().getWorldY();
+        int screenX = gamePanel.getPlayer().getScreenX();
+        int screenY = gamePanel.getPlayer().getScreenY();
+        int playerSize = gamePanel.getPlayerSize();
+
+        int firstCol = Math.max((playerWorldX - screenX) / tileSize, 0);
+        int lastCol  = Math.min((playerWorldX + screenX + playerSize) / tileSize, worldCols - 1);
+        int firstRow = Math.max((playerWorldY - screenY) / tileSize, 0);
+        int lastRow  = Math.min((playerWorldY + screenY + playerSize) / tileSize, worldRows - 1);
+
+        for (int row = firstRow; row <= lastRow; row++) {
+            for (int col = firstCol; col <= lastCol; col++) {
+                int worldX = col * tileSize;
+                int worldY = row * tileSize;
+                int screenTileX = worldX - playerWorldX + screenX;
+                int screenTileY = worldY - playerWorldY + screenY;
+
                 int tileNum = mapTileNumbers[row][col];
-                g2.drawImage(tiles[tileNum].image, col * tileSize, row * tileSize, tileSize, tileSize, null);
+                g2.drawImage(tiles[tileNum].image, screenTileX, screenTileY, tileSize, tileSize, null);
             }
         }
     }

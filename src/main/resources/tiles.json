@@ -1,0 +1,5 @@
+[
+  { "id": 0, "name": "grass", "image": "/sprites/world/grass-0001.png" },
+  { "id": 1, "name": "wall",  "image": "/sprites/world/wall-0001.png" },
+  { "id": 2, "name": "water", "image": "/sprites/world/water-0001.png" }
+]
