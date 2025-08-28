@@ -1,0 +1,46 @@
+{
+  "elf": {
+    "x": 100,
+    "y": 100,
+    "speed": 6,
+    "direction": "down",
+    "health": 80,
+    "mana": 120,
+    "strength": 7,
+    "agility": 12,
+    "intelligence": 10
+  },
+  "dwarf": {
+    "x": 100,
+    "y": 100,
+    "speed": 3,
+    "direction": "down",
+    "health": 150,
+    "mana": 50,
+    "strength": 15,
+    "agility": 6,
+    "intelligence": 8
+  },
+  "mage": {
+    "x": 100,
+    "y": 100,
+    "speed": 4,
+    "direction": "down",
+    "health": 60,
+    "mana": 200,
+    "strength": 5,
+    "agility": 8,
+    "intelligence": 18
+  },
+  "default": {
+    "x": 100,
+    "y": 100,
+    "speed": 4,
+    "direction": "down",
+    "health": 100,
+    "mana": 100,
+    "strength": 10,
+    "agility": 10,
+    "intelligence": 10
+  }
+}
