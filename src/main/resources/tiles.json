@@ -1,5 +1,6 @@
 [
-  { "id": 0, "name": "grass", "image": "/sprites/world/grass-0001.png", "collision": false },
-  { "id": 1, "name": "wall",  "image": "/sprites/world/wall-0001.png", "collision": true },
-  { "id": 2, "name": "water", "image": "/sprites/world/water-0001.png", "collision": true }
+  { "id": 0, "name": "grass", "image": "/sprites/world/empty.png", "collision": false },
+  { "id": 1, "name": "grass", "image": "/sprites/world/grass-0001.png", "collision": false },
+  { "id": 2, "name": "water", "image": "/sprites/world/water-0001.png", "collision": true },
+  { "id": 3, "name": "wall",  "image": "/sprites/world/wall-0001.png", "collision": true }
 ]

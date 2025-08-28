@@ -1,9 +1,7 @@
 package br.com.cronicasdeeldoria.tile;
 
 import java.awt.Graphics2D;
-import java.io.BufferedReader;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import javax.imageio.ImageIO;
 import br.com.cronicasdeeldoria.game.GamePanel;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -13,29 +11,33 @@ import java.util.List;
 public class TileManager {
     private GamePanel gamePanel;
     private Tile[] tiles;
-    private int[][] mapTileNumbers;
+    private int[][][] mapLayers;
 
     public TileManager(GamePanel gamePanel) {
         this.gamePanel = gamePanel;
-        loadMap("/maps/map01.txt");
+        loadMapJson("/maps/map01.json");
         initTilesFromJson();
     }
 
-    private void loadMap(String path) {
+    private void loadMapJson(String path) {
         try {
             InputStream is = getClass().getResourceAsStream(path);
-            BufferedReader br = new BufferedReader(new InputStreamReader(is));
-            int rows = gamePanel.maxWorldRow;
-            int cols = gamePanel.maxWorldCol;
-            mapTileNumbers = new int[rows][cols];
-            for (int row = 0; row < rows; row++) {
-                String line = br.readLine();
-                String[] numbers = line.split(" ");
-                for (int col = 0; col < cols; col++) {
-                    mapTileNumbers[row][col] = Integer.parseInt(numbers[col]);
+            if (is == null) {
+                throw new RuntimeException("Mapa JSON não encontrado: " + path);
+            }
+            ObjectMapper mapper = new ObjectMapper();
+            MapJson mapJson = mapper.readValue(is, MapJson.class);
+            int layersCount = mapJson.layers.size();
+            int rows = mapJson.height;
+            int cols = mapJson.width;
+            mapLayers = new int[layersCount][rows][cols];
+            for (int l = 0; l < layersCount; l++) {
+                for (int r = 0; r < rows; r++) {
+                    for (int c = 0; c < cols; c++) {
+                        mapLayers[l][r][c] = mapJson.layers.get(l).get(r).get(c);
+                    }
                 }
             }
-            br.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -74,10 +76,17 @@ public class TileManager {
         public boolean collision;
     }
 
+    public static class MapJson {
+        public int width;
+        public int height;
+        public List<List<List<Integer>>> layers;
+    }
+
     public void draw(Graphics2D g2) {
         int tileSize = gamePanel.getTileSize();
-        int worldRows = mapTileNumbers.length;
-        int worldCols = mapTileNumbers[0].length;
+        int worldRows = mapLayers[0].length;
+        int worldCols = mapLayers[0][0].length;
+        int layersCount = mapLayers.length;
 
         int playerWorldX = gamePanel.getPlayer().getWorldX();
         int playerWorldY = gamePanel.getPlayer().getWorldY();
@@ -92,22 +101,31 @@ public class TileManager {
 
         for (int row = firstRow; row <= lastRow; row++) {
             for (int col = firstCol; col <= lastCol; col++) {
-                int worldX = col * tileSize;
-                int worldY = row * tileSize;
-                int screenTileX = worldX - playerWorldX + screenX;
-                int screenTileY = worldY - playerWorldY + screenY;
-
-                int tileNum = mapTileNumbers[row][col];
-                g2.drawImage(tiles[tileNum].image, screenTileX, screenTileY, tileSize, tileSize, null);
+                for (int l = 0; l < layersCount; l++) {
+                    int tileNum = mapLayers[l][row][col];
+                    if (tileNum != 0) {
+                        g2.drawImage(tiles[tileNum].image, 
+                            col * tileSize - playerWorldX + screenX, 
+                            row * tileSize - playerWorldY + screenY, 
+                            tileSize, tileSize, null);
+                    }
+                }
             }
         }
     }
 
-    public int[][] getMapTileNumbers() {
-        return mapTileNumbers;
+    public int[][][] getMapLayers() {
+        return mapLayers;
     }
 
     public Tile[] getTiles() {
         return tiles;
+    }
+
+    public int getMapWidth() {
+        return mapLayers[0][0].length;
+    }
+    public int getMapHeight() {
+        return mapLayers[0].length;
     }
 }

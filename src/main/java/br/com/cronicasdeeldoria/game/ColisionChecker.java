@@ -20,9 +20,12 @@ public class ColisionChecker {
     int entityTopRow = entityTopWorldY / gamePanel.getTileSize();
     int entityBottomRow = entityBottomWorldY / gamePanel.getTileSize();
 
-    int mapRows = gamePanel.getTileManager().getMapTileNumbers().length;
-    int mapCols = gamePanel.getTileManager().getMapTileNumbers()[0].length;
+    int[][][] mapLayers = gamePanel.getTileManager().getMapLayers();
+    int mapRows = mapLayers[0].length;
+    int mapCols = mapLayers[0][0].length;
+    int layersCount = mapLayers.length;
     int tileSize = gamePanel.getTileSize();
+
     switch (entity.getDirection()) {
       case "up": {
         entityTopRow = (entityTopWorldY - entity.getSpeed()) / tileSize;
@@ -30,10 +33,12 @@ public class ColisionChecker {
         int lastCol = entityRightWorldX / tileSize;
         for (int col = firstCol; col <= lastCol; col++) {
           if (entityTopRow >= 0 && entityTopRow < mapRows && col >= 0 && col < mapCols) {
-            int tileNum = gamePanel.getTileManager().getMapTileNumbers()[entityTopRow][col];
-            if (gamePanel.getTileManager().getTiles()[tileNum].collision) {
-              entity.setCollisionOn(true);
-              break;
+            for (int l = 0; l < layersCount; l++) {
+              int tileNum = mapLayers[l][entityTopRow][col];
+              if (tileNum != 0 && gamePanel.getTileManager().getTiles()[tileNum].collision) {
+                entity.setCollisionOn(true);
+                return;
+              }
             }
           }
         }
@@ -45,10 +50,12 @@ public class ColisionChecker {
         int lastCol = entityRightWorldX / tileSize;
         for (int col = firstCol; col <= lastCol; col++) {
           if (entityBottomRow >= 0 && entityBottomRow < mapRows && col >= 0 && col < mapCols) {
-            int tileNum = gamePanel.getTileManager().getMapTileNumbers()[entityBottomRow][col];
-            if (gamePanel.getTileManager().getTiles()[tileNum].collision) {
-              entity.setCollisionOn(true);
-              break;
+            for (int l = 0; l < layersCount; l++) {
+              int tileNum = mapLayers[l][entityBottomRow][col];
+              if (tileNum != 0 && gamePanel.getTileManager().getTiles()[tileNum].collision) {
+                entity.setCollisionOn(true);
+                return;
+              }
             }
           }
         }
@@ -60,10 +67,12 @@ public class ColisionChecker {
         int lastRow = entityBottomWorldY / tileSize;
         for (int row = firstRow; row <= lastRow; row++) {
           if (row >= 0 && row < mapRows && entityLeftCol >= 0 && entityLeftCol < mapCols) {
-            int tileNum = gamePanel.getTileManager().getMapTileNumbers()[row][entityLeftCol];
-            if (gamePanel.getTileManager().getTiles()[tileNum].collision) {
-              entity.setCollisionOn(true);
-              break;
+            for (int l = 0; l < layersCount; l++) {
+              int tileNum = mapLayers[l][row][entityLeftCol];
+              if (tileNum != 0 && gamePanel.getTileManager().getTiles()[tileNum].collision) {
+                entity.setCollisionOn(true);
+                return;
+              }
             }
           }
         }
@@ -75,10 +84,12 @@ public class ColisionChecker {
         int lastRow = entityBottomWorldY / tileSize;
         for (int row = firstRow; row <= lastRow; row++) {
           if (row >= 0 && row < mapRows && entityRightCol >= 0 && entityRightCol < mapCols) {
-            int tileNum = gamePanel.getTileManager().getMapTileNumbers()[row][entityRightCol];
-            if (gamePanel.getTileManager().getTiles()[tileNum].collision) {
-              entity.setCollisionOn(true);
-              break;
+            for (int l = 0; l < layersCount; l++) {
+              int tileNum = mapLayers[l][row][entityRightCol];
+              if (tileNum != 0 && gamePanel.getTileManager().getTiles()[tileNum].collision) {
+                entity.setCollisionOn(true);
+                return;
+              }
             }
           }
         }

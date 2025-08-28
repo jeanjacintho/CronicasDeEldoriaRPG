@@ -15,8 +15,8 @@ import br.com.cronicasdeeldoria.config.CharacterConfigLoader;
 public class GamePanel extends JPanel implements Runnable{
   private static final int FPS = 60;
 
-  public final int  maxWorldCol = 50;
-  public final int  maxWorldRow = 50;
+  public int maxWorldCol;
+  public int maxWorldRow;
   public final int worldWidth = getTileSize() * maxWorldCol;
   public final int worldHeight = getTileSize() * maxWorldRow;
 
@@ -42,6 +42,10 @@ public class GamePanel extends JPanel implements Runnable{
     CharacterConfigLoader configLoader = CharacterConfigLoader.getInstance();
     String raceName = race.getRaceName().toLowerCase();
     int playerSize = getPlayerSize();
+    // Inicializa tileManager primeiro para pegar tamanho do mapa
+    this.tileManager = new TileManager(this);
+    this.maxWorldCol = tileManager.getMapWidth();
+    this.maxWorldRow = tileManager.getMapHeight();
     int x = (maxWorldCol * tileSize) / 2 - (playerSize / 2);
     int y = (maxWorldRow * tileSize) / 2 - (playerSize / 2);
     int speed = configLoader.getIntAttribute(raceName, "speed", 4);
