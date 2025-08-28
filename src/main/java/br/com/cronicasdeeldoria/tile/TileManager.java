@@ -7,16 +7,22 @@ import br.com.cronicasdeeldoria.game.GamePanel;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
+import java.util.Map;
+import java.awt.image.BufferedImage;
 
 public class TileManager {
     private GamePanel gamePanel;
     private Tile[] tiles;
     private int[][][] mapLayers;
+    private List<MapObjectInstance> mapObjects;
+    private Map<String, MapObjectDefinition> objectDefinitions;
 
     public TileManager(GamePanel gamePanel) {
         this.gamePanel = gamePanel;
         loadMapJson("/maps/map01.json");
         initTilesFromJson();
+        initObjectsFromJson();
+        loadMapObjects();
     }
 
     private void loadMapJson(String path) {
@@ -69,6 +75,43 @@ public class TileManager {
         }
     }
 
+    private void initObjectsFromJson() {
+        try {
+            InputStream is = getClass().getResourceAsStream("/objects.json");
+            if (is == null) {
+                throw new RuntimeException("objects.json não encontrado no classpath!");
+            }
+            ObjectMapper mapper = new ObjectMapper();
+            List<MapObjectDefinition> defs = mapper.readValue(is, new TypeReference<List<MapObjectDefinition>>() {});
+            objectDefinitions = new java.util.HashMap<>();
+            for (MapObjectDefinition def : defs) {
+                def.loadImages();
+                objectDefinitions.put(def.id, def);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void loadMapObjects() {
+        try {
+            InputStream is = getClass().getResourceAsStream("/maps/map01.json");
+            if (is == null) {
+                throw new RuntimeException("map01.json não encontrado no classpath!");
+            }
+            ObjectMapper mapper = new ObjectMapper();
+            MapJson mapJson = mapper.readValue(is, MapJson.class);
+            mapObjects = new java.util.ArrayList<>();
+            if (mapJson.objetos != null) {
+                for (MapObjectInstance obj : mapJson.objetos) {
+                    mapObjects.add(obj);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public static class TileDefinition {
         public int id;
         public String name;
@@ -76,10 +119,34 @@ public class TileManager {
         public boolean collision;
     }
 
+    public static class MapObjectDefinition {
+        public String id;
+        public String name;
+        public String[][] spritePaths;
+        public int[] size;
+        public boolean collision;
+        public transient BufferedImage[][] sprites;
+        public void loadImages() throws Exception {
+            int rows = this.spritePaths.length;
+            int cols = this.spritePaths[0].length;
+            sprites = new BufferedImage[rows][cols];
+            for (int r = 0; r < rows; r++) {
+                for (int c = 0; c < cols; c++) {
+                    sprites[r][c] = ImageIO.read(getClass().getResourceAsStream(this.spritePaths[r][c]));
+                }
+            }
+        }
+    }
+    public static class MapObjectInstance {
+        public String id;
+        public int[] posicao;
+    }
+
     public static class MapJson {
         public int width;
         public int height;
         public List<List<List<Integer>>> layers;
+        public List<MapObjectInstance> objetos;
     }
 
     public void draw(Graphics2D g2) {
@@ -112,6 +179,51 @@ public class TileManager {
                 }
             }
         }
+    }
+
+    public void drawObjects(Graphics2D g2) {
+        int tileSize = gamePanel.getTileSize();
+        int playerWorldX = gamePanel.getPlayer().getWorldX();
+        int playerWorldY = gamePanel.getPlayer().getWorldY();
+        int screenX = gamePanel.getPlayer().getScreenX();
+        int screenY = gamePanel.getPlayer().getScreenY();
+        for (MapObjectInstance obj : mapObjects) {
+            MapObjectDefinition def = objectDefinitions.get(obj.id);
+            if (def == null) continue;
+            for (int row = 0; row < def.size[1]; row++) {
+                for (int col = 0; col < def.size[0]; col++) {
+                    BufferedImage img = def.sprites[row][col];
+                    int worldX = (obj.posicao[0] + col) * tileSize;
+                    int worldY = (obj.posicao[1] + row) * tileSize;
+                    int drawX = worldX - playerWorldX + screenX;
+                    int drawY = worldY - playerWorldY + screenY;
+                    g2.drawImage(img, drawX, drawY, tileSize, tileSize, null);
+                }
+            }
+        }
+    }
+
+    /**
+     * Verifica se há colisão de objeto em um tile específico.
+     */
+    public boolean isObjectCollisionTile(int row, int col) {
+        if (mapObjects == null || objectDefinitions == null) return false;
+        for (MapObjectInstance obj : mapObjects) {
+            MapObjectDefinition def = objectDefinitions.get(obj.id);
+            if (def == null) continue;
+            int objRow = obj.posicao[1];
+            int objCol = obj.posicao[0];
+            for (int r = 0; r < def.size[1]; r++) {
+                for (int c = 0; c < def.size[0]; c++) {
+                    if (def.collision) {
+                        if ((objRow + r) == row && (objCol + c) == col) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     public int[][][] getMapLayers() {

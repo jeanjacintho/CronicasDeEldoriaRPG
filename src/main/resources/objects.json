@@ -1,0 +1,21 @@
+[
+  {
+    "id": "chest",
+    "name": "Baú",
+    "spritePaths": [
+      ["/sprites/objects/chest-0001.png", "/sprites/objects/chest-0002.png"],
+      ["/sprites/objects/chest-0003.png", "/sprites/objects/chest-0004.png"]
+    ],
+    "size": [2, 2],
+    "collision": true
+  },
+  {
+    "id": "boots",
+    "name": "Botas",
+    "spritePaths": [
+      ["/sprites/objects/boots-0001.png"]
+    ],
+    "size": [1, 1],
+    "collision": false
+  }
+]

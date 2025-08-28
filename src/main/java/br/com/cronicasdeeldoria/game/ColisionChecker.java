@@ -39,6 +39,11 @@ public class ColisionChecker {
                 entity.setCollisionOn(true);
                 return;
               }
+              // Checa colisão com objetos
+              if (gamePanel.getTileManager().isObjectCollisionTile(entityTopRow, col)) {
+                entity.setCollisionOn(true);
+                return;
+              }
             }
           }
         }
@@ -53,6 +58,11 @@ public class ColisionChecker {
             for (int l = 0; l < layersCount; l++) {
               int tileNum = mapLayers[l][entityBottomRow][col];
               if (tileNum != 0 && gamePanel.getTileManager().getTiles()[tileNum].collision) {
+                entity.setCollisionOn(true);
+                return;
+              }
+              // Checa colisão com objetos
+              if (gamePanel.getTileManager().isObjectCollisionTile(entityBottomRow, col)) {
                 entity.setCollisionOn(true);
                 return;
               }
@@ -73,6 +83,11 @@ public class ColisionChecker {
                 entity.setCollisionOn(true);
                 return;
               }
+              // Checa colisão com objetos
+              if (gamePanel.getTileManager().isObjectCollisionTile(row, entityLeftCol)) {
+                entity.setCollisionOn(true);
+                return;
+              }
             }
           }
         }
@@ -87,6 +102,11 @@ public class ColisionChecker {
             for (int l = 0; l < layersCount; l++) {
               int tileNum = mapLayers[l][row][entityRightCol];
               if (tileNum != 0 && gamePanel.getTileManager().getTiles()[tileNum].collision) {
+                entity.setCollisionOn(true);
+                return;
+              }
+              // Checa colisão com objetos
+              if (gamePanel.getTileManager().isObjectCollisionTile(row, entityRightCol)) {
                 entity.setCollisionOn(true);
                 return;
               }
