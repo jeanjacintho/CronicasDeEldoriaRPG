@@ -1,10 +1,10 @@
 package br.com.cronicasdeeldoria.entity.character.races;
 
 public class Breton implements Race {
-  private int strength;
+  private int willpower;
 
-  public Breton(int strength) {
-    this.strength = strength;
+  public Breton(int willpower) {
+    this.willpower = willpower;
   }
 
   @Override
@@ -12,11 +12,18 @@ public class Breton implements Race {
     return "Breton";
   }
 
-  public int getStrength() {
-    return strength;
+  @Override
+  public String getSpecialAttributeName() {
+    return "willpower";
   }
-
-  public void setStrength(int strength) {
-    this.strength = strength;
+  @Override
+  public int getSpecialAttributeValue() {
+    return willpower;
+  }
+  public int getWillpower() {
+    return willpower;
+  }
+  public void setWillpower(int willpower) {
+    this.willpower = willpower;
   }
 }

@@ -19,4 +19,13 @@ public class Mage implements Race {
   public void setMagicPower(int magicPower) {
     this.magicPower = magicPower;
   }
+
+  @Override
+  public String getSpecialAttributeName() {
+    return "magicPower";
+  }
+  @Override
+  public int getSpecialAttributeValue() {
+    return magicPower;
+  }
 }

@@ -12,6 +12,15 @@ public class Archer implements Race {
     return "Archer";
   }
 
+  @Override
+  public String getSpecialAttributeName() {
+    return "dexterity";
+  }
+  @Override
+  public int getSpecialAttributeValue() {
+    return dexterity;
+  }
+
   public int getDexterity() {
     return dexterity;
   }

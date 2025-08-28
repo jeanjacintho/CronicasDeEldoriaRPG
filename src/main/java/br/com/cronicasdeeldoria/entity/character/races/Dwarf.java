@@ -12,6 +12,15 @@ public class Dwarf implements Race {
     return "Dwarf";
   }
 
+  @Override
+  public String getSpecialAttributeName() {
+    return "endurance";
+  }
+  @Override
+  public int getSpecialAttributeValue() {
+    return endurance;
+  }
+
   public int getEndurance() {
     return endurance;
   }

@@ -1,6 +1,5 @@
 package br.com.cronicasdeeldoria.entity.character.player;
 
-import br.com.cronicasdeeldoria.config.CharacterConfigLoader;
 import br.com.cronicasdeeldoria.entity.character.Character;
 import br.com.cronicasdeeldoria.game.GamePanel;
 import br.com.cronicasdeeldoria.game.KeyHandler;
@@ -19,25 +18,12 @@ public class Player extends Character {
   private int spriteNum = 1;
   private boolean isMoving = false;
 
-  public Player(GamePanel gamePanel, KeyHandler keyHandler, Race race, int luck, int x, int y, int speed, String direction, String name, int attributeHealth, int attributeForce, int attributeDefence, int attributeStamina) {
-    super(x, y, speed, direction, name, race, attributeHealth, attributeForce, attributeDefence, attributeStamina);
+  public Player(GamePanel gamePanel, KeyHandler keyHandler, Race race, int x, int y, int speed, String direction, String name, int health, int mana, int strength, int agility, int luck) {
+    super(x, y, speed, direction, name, race, health, mana, strength, agility);
     this.luck = luck;
     this.gamePanel = gamePanel;
     this.keyHandler = keyHandler;
     this.getPlayerImage();
-  }
-
-  public void setDefaultValues() {
-    CharacterConfigLoader configLoader = CharacterConfigLoader.getInstance();
-    String raceName = getRace().getRaceName();
-    this.setX(configLoader.getIntAttribute(raceName, "x", 100));
-    this.setY(configLoader.getIntAttribute(raceName, "y", 100));
-    this.setSpeed(configLoader.getIntAttribute(raceName, "speed", 4));
-    this.setDirection(configLoader.getStringAttribute(raceName, "direction", "down"));
-    this.setAttributeHealth(configLoader.getIntAttribute(raceName, "health", 100));
-    this.setAttribueForce(configLoader.getIntAttribute(raceName, "force", 100));
-    this.setAttributeDefence(configLoader.getIntAttribute(raceName, "defence", 100));
-    this.setAttributeStamina(configLoader.getIntAttribute(raceName, "stamina", 100));
   }
 
   public void getPlayerImage() {
@@ -61,7 +47,6 @@ public class Player extends Character {
   }
 
   public void update() {
-    boolean wasMoving = isMoving;
     if(keyHandler.upPressed || keyHandler.downPressed || keyHandler.leftPressed || keyHandler.rightPressed) {
       isMoving = true;
       if(keyHandler.upPressed) {

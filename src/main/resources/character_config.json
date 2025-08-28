@@ -1,25 +1,15 @@
 {
-  "elf": {
-    "x": 100,
-    "y": 100,
-    "speed": 6,
-    "direction": "down",
-    "health": 80,
-    "mana": 120,
-    "strength": 7,
-    "agility": 12,
-    "intelligence": 10
-  },
   "dwarf": {
     "x": 100,
     "y": 100,
     "speed": 3,
     "direction": "down",
-    "health": 150,
-    "mana": 50,
-    "strength": 15,
-    "agility": 6,
-    "intelligence": 8
+    "health": 160,
+    "mana": 40,
+    "strength": 14,
+    "agility": 5,
+    "luck": 0,
+    "endurance": 18
   },
   "mage": {
     "x": 100,
@@ -30,17 +20,43 @@
     "mana": 200,
     "strength": 5,
     "agility": 8,
-    "intelligence": 18
+    "luck": 0,
+    "magicPower": 20
   },
-  "default": {
+  "orc": {
+    "x": 100,
+    "y": 100,
+    "speed": 5,
+    "direction": "down",
+    "health": 140,
+    "mana": 30,
+    "strength": 18,
+    "agility": 7,
+    "luck": 0,
+    "rage": 20
+  },
+  "breton": {
     "x": 100,
     "y": 100,
     "speed": 4,
     "direction": "down",
     "health": 100,
-    "mana": 100,
-    "strength": 10,
-    "agility": 10,
-    "intelligence": 10
+    "mana": 110,
+    "strength": 12,
+    "agility": 9,
+    "luck": 0,
+    "willpower": 10
+  },
+  "archer": {
+    "x": 100,
+    "y": 100,
+    "speed": 7,
+    "direction": "down",
+    "health": 90,
+    "mana": 60,
+    "strength": 8,
+    "agility": 15,
+    "luck": 0,
+    "dexterity": 18
   }
 }

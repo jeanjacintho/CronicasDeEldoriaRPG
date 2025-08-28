@@ -19,4 +19,13 @@ public class Orc implements Race {
   public void setRage(int rage) {
     this.rage = rage;
   }
+
+  @Override
+  public String getSpecialAttributeName() {
+    return "rage";
+  }
+  @Override
+  public int getSpecialAttributeValue() {
+    return rage;
+  }
 }
