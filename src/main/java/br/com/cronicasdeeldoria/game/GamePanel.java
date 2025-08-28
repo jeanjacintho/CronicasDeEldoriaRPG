@@ -22,6 +22,7 @@ public class GamePanel extends JPanel implements Runnable{
 
   KeyHandler keyHandler = new KeyHandler();
   Thread gameThread;
+  private ColisionChecker colisionChecker = new ColisionChecker(this);
   Player player;
   private int tileSize;
   private int maxScreenRow;
@@ -165,5 +166,13 @@ public class GamePanel extends JPanel implements Runnable{
 
     public Player getPlayer() {
       return player;
+    }
+
+    public ColisionChecker getColisionChecker() {
+      return colisionChecker;
+    }
+
+    public TileManager getTileManager() {
+      return tileManager;
     }
 }

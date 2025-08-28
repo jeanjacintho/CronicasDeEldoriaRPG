@@ -6,6 +6,7 @@ import br.com.cronicasdeeldoria.game.KeyHandler;
 import br.com.cronicasdeeldoria.entity.character.races.Race;
 
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 
 import javax.imageio.ImageIO;
@@ -30,7 +31,13 @@ public class Player extends Character {
 
     screenX = (gamePanel.getScreenWidth() - gamePanel.getPlayerSize()) / 2;
     screenY = (gamePanel.getScreenHeight() - gamePanel.getPlayerSize()) / 2;
-    
+
+    int playerSize = gamePanel.getPlayerSize();
+    int hitboxWidth = 32;
+    int hitboxHeight = 36;
+    int hitboxX = (playerSize - hitboxWidth) / 2;
+    int hitboxY = playerSize / 2;
+    setHitbox(new Rectangle(hitboxX, hitboxY, hitboxWidth, hitboxHeight));
   }
 
   public void getPlayerImage() {
@@ -58,16 +65,32 @@ public class Player extends Character {
       isMoving = true;
       if(keyHandler.upPressed) {
         setDirection("up");
-        setWorldY(getWorldY() - getSpeed());
       } else if(keyHandler.downPressed) {
         setDirection("down");
-        setWorldY(getWorldY() + getSpeed());
       } else if(keyHandler.leftPressed) {
         setDirection("left");
-        setWorldX(getWorldX() - getSpeed());
       } else if(keyHandler.rightPressed) {
         setDirection("right");
-        setWorldX(getWorldX() + getSpeed());
+      }
+
+      setCollisionOn(false);
+      gamePanel.getColisionChecker().checkTile(this);
+
+      if(isCollisionOn() == false) {
+        switch (getDirection()) {
+          case "up":
+            setWorldY(getWorldY() - getSpeed());
+            break;
+            case "down":
+            setWorldY(getWorldY() + getSpeed());
+            break;
+          case "left":
+            setWorldX(getWorldX() - getSpeed());
+            break;
+          case "right":
+            setWorldX(getWorldX() + getSpeed());
+            break;
+        }
       }
 
       spriteCounter++;

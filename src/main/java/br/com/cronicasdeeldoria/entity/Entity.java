@@ -1,5 +1,6 @@
 package br.com.cronicasdeeldoria.entity;
 
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.util.UUID;
 
@@ -10,6 +11,8 @@ public class Entity {
   private String direction;
   private String name;
   protected BufferedImage up, down, left, right, up1, up2, down1, down2, left1, left2, right1, right2;
+  private Rectangle hitbox;
+  private boolean collisionOn = false;
 
   public Entity(int x, int y, int speed, String direction, String name) {
     this.id = UUID.randomUUID();
@@ -62,5 +65,21 @@ public class Entity {
 
   public void setName(String name) {
     this.name = name;
+  }
+
+  public Rectangle getHitbox() {
+    return hitbox;
+  }
+
+  public void setHitbox(Rectangle hitbox) {
+    this.hitbox = hitbox;
+  }
+  
+  public boolean isCollisionOn() {
+    return collisionOn;
+  }
+
+  public void setCollisionOn(boolean collisionOn) {
+    this.collisionOn = collisionOn;
   }
 }
