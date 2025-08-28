@@ -110,7 +110,7 @@ public class Player extends Character {
         break;
     }
 
-    graphics2d.drawImage(image, getX(), getY(), gamePanel.getTileSize(), gamePanel.getTileSize(), null);
+    graphics2d.drawImage(image, getX(), getY(), gamePanel.getPlayerSize(), gamePanel.getPlayerSize(), null);
   }
  
   public int getLuck() {

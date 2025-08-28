@@ -4,6 +4,7 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.InputStream;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -16,13 +17,19 @@ public class MainMenuPanel extends JPanel implements ActionListener {
   private JButton exitGame;
   final int screenWidth;
   final int screenHeight;
+  final int maxScreenRow;
+  final int maxScreenCol;
   final int tileSize;
   private JFrame window;
 
-  public MainMenuPanel(JFrame window, int tileSize, int screenWidth, int screenHeight) {
+  public MainMenuPanel(JFrame window, int tileSize, int screenWidth, int screenHeight, int maxScreenRow, int maxScreenCol) {
       this.setPreferredSize(new Dimension(screenWidth, screenHeight));
       this.screenWidth = screenWidth;
       this.screenHeight = screenHeight;
+
+      this.maxScreenRow = maxScreenRow;
+      this.maxScreenCol = maxScreenCol;
+
       this.window = window;
       this.tileSize = tileSize;
 
@@ -45,7 +52,7 @@ public class MainMenuPanel extends JPanel implements ActionListener {
   public void actionPerformed(ActionEvent e) {
       if (e.getSource() == newGame) {
           window.remove(this);
-          CreatePlayerPanel createPlayerPanel = new CreatePlayerPanel(window, screenWidth, screenHeight, tileSize);
+          CreatePlayerPanel createPlayerPanel = new CreatePlayerPanel(window, screenWidth, screenHeight, tileSize, maxScreenRow, maxScreenCol);
           window.add(createPlayerPanel);
           window.revalidate();
           window.repaint();

@@ -13,8 +13,8 @@ public class Main {
         window.setResizable(false);
         window.setTitle("Crônicas de Eldoria");
 
-        final int originalTileSize = 32;
-        final int scale = 2;
+        final int originalTileSize = 16;
+        final int scale = 3;
 
         final int tileSize = originalTileSize * scale;
         final int maxScreenCol = 16;
@@ -22,7 +22,7 @@ public class Main {
         final int screenWidth = tileSize * maxScreenCol;
         final int screenHeight = tileSize * maxScreenRow;
 
-        MainMenuPanel mainMenuPanel = new MainMenuPanel(window, tileSize, screenWidth, screenHeight);
+        MainMenuPanel mainMenuPanel = new MainMenuPanel(window, tileSize, screenWidth, screenHeight, maxScreenRow, maxScreenCol);
         window.add(mainMenuPanel, BorderLayout.CENTER);
         window.pack();
         window.setLocationRelativeTo(null);

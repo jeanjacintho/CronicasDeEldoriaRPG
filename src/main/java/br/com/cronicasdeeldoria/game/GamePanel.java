@@ -9,6 +9,7 @@ import javax.swing.JPanel;
 
 import br.com.cronicasdeeldoria.entity.character.player.Player;
 import br.com.cronicasdeeldoria.entity.character.races.Race;
+import br.com.cronicasdeeldoria.tile.TileManager;
 import br.com.cronicasdeeldoria.config.CharacterConfigLoader;
 
 public class GamePanel extends JPanel implements Runnable{
@@ -18,9 +19,14 @@ public class GamePanel extends JPanel implements Runnable{
   Thread gameThread;
   Player player;
   private int tileSize;
+  private int maxScreenRow;
+  private int maxScreenCol;
+  private TileManager tileManager;
 
-  public GamePanel(int screenWidth, int screenHeight, String playerName, Race race, int tileSize) {
+  public GamePanel(int screenWidth, int screenHeight, String playerName, Race race, int tileSize, int maxScreenRow, int maxScreenCol) {
     this.setPreferredSize(new Dimension(screenWidth, screenHeight));
+    this.maxScreenRow = maxScreenRow;
+    this.maxScreenCol = maxScreenCol;
     this.setBackground(Color.BLACK);
     this.tileSize = tileSize;
     this.setDoubleBuffered(true);
@@ -29,8 +35,8 @@ public class GamePanel extends JPanel implements Runnable{
 
     CharacterConfigLoader configLoader = CharacterConfigLoader.getInstance();
     String raceName = race.getRaceName().toLowerCase();
-    int x = configLoader.getIntAttribute(raceName, "x", screenWidth / 2 - tileSize / 2);
-    int y = configLoader.getIntAttribute(raceName, "y", screenHeight / 2 - tileSize / 2);
+    int x = configLoader.getIntAttribute(raceName, "x", screenWidth / 2 - getPlayerSize() / 2);
+    int y = configLoader.getIntAttribute(raceName, "y", screenHeight / 2 - getPlayerSize() / 2);
     int speed = configLoader.getIntAttribute(raceName, "speed", 4);
     String direction = configLoader.getStringAttribute(raceName, "direction", "down");
     int health = configLoader.getIntAttribute(raceName, "health", 100);
@@ -80,6 +86,8 @@ public class GamePanel extends JPanel implements Runnable{
         raceInstance = race;
     }
     player = new Player(this, keyHandler, raceInstance, x, y, speed, direction, playerName, health, mana, strength, agility, luck);
+ 
+    this.tileManager = new TileManager(this);
   }
 
   public void startGameThread() {
@@ -122,11 +130,22 @@ public class GamePanel extends JPanel implements Runnable{
     public void paintComponent(Graphics graphics) {
         super.paintComponent(graphics);
         Graphics2D graphics2D = (Graphics2D) graphics;
+        tileManager.draw(graphics2D);
         player.draw(graphics2D);
         graphics2D.dispose();
     }
 
     public int getTileSize() {
       return tileSize;
+    }
+    public int getPlayerSize() {
+      return tileSize * 2;
+    }
+
+    public int getMaxScreenCol() {
+        return this.maxScreenCol;
+    }
+    public int getMaxScreenRow() {
+        return this.maxScreenRow;
     }
 }

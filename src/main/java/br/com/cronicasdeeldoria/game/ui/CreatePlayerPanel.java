@@ -38,7 +38,8 @@ public class CreatePlayerPanel extends JPanel implements ActionListener {
   private final int screenWidth;
   private final int screenHeight;
   private final int tileSize;
-
+  private final int maxScreenRow;
+  private final int maxScreenCol;
   private JTextField nameField;
   private JToggleButton archerButton, bretonButton, dwarfButton, mageButton, orcButton;
   private ButtonGroup classGroup;
@@ -47,11 +48,14 @@ public class CreatePlayerPanel extends JPanel implements ActionListener {
 
   private String selectedClass = "Breton";
 
-  public CreatePlayerPanel(JFrame window, int screenWidth, int screenHeight, int tileSize) {
+  public CreatePlayerPanel(JFrame window, int screenWidth, int screenHeight, int tileSize, int maxScreenRow, int maxScreenCol) {
       this.window = window;
       this.screenWidth = screenWidth;
       this.screenHeight = screenHeight;
       this.tileSize = tileSize;
+      this.maxScreenRow = maxScreenRow;
+      this.maxScreenCol = maxScreenCol;
+
       this.setPreferredSize(new Dimension(screenWidth, screenHeight));
       this.setLayout(new BorderLayout(20, 20));
       this.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
@@ -152,7 +156,6 @@ public class CreatePlayerPanel extends JPanel implements ActionListener {
               break;
           default:
               selectedClass = command;
-              System.out.println("Selected class: " + selectedClass);
               break;
       }
   }
@@ -175,7 +178,7 @@ public class CreatePlayerPanel extends JPanel implements ActionListener {
           default -> new Breton(5);
       };
 
-      GamePanel gamePanel = new GamePanel(screenWidth, screenHeight, playerName, race, tileSize);
+      GamePanel gamePanel = new GamePanel(screenWidth, screenHeight, playerName, race, tileSize, maxScreenRow, maxScreenCol);
       window.add(gamePanel);
       gamePanel.startGameThread();
       window.revalidate();
@@ -185,7 +188,7 @@ public class CreatePlayerPanel extends JPanel implements ActionListener {
 
   private void goBackToMenu() {
       window.remove(this);
-      MainMenuPanel mainMenuPanel = new MainMenuPanel(window, tileSize, screenWidth, screenHeight);
+      MainMenuPanel mainMenuPanel = new MainMenuPanel(window, tileSize, screenWidth, screenHeight, maxScreenRow, maxScreenCol);
       window.add(mainMenuPanel);
       window.revalidate();
       window.repaint();
