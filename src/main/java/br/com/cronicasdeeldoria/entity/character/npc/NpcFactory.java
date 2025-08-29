@@ -18,8 +18,10 @@ public class NpcFactory {
             String dialog = (String) npcData.get("dialog");
             int tileX = (Integer) npcData.get("tileX");
             int tileY = (Integer) npcData.get("tileY");
-            int x = tileX * tileSize;
-            int y = tileY * tileSize;
+            
+            int x = tileX * tileSize + (tileSize / 2) - (playerSize / 2);
+            int y = tileY * tileSize + (tileSize / 2) - (playerSize / 2);
+            
             String skin = (String) npcData.get("skin");
             if ("warrior".equals(type)) {
                 npcs.add(new WarriorNpc(name, isStatic, dialog, x, y, skin, playerSize));
