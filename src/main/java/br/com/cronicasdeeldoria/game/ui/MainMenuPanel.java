@@ -4,6 +4,10 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import javax.swing.InputMap;
+import javax.swing.ActionMap;
+import javax.swing.KeyStroke;
+import javax.swing.AbstractAction;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -17,6 +21,8 @@ public class MainMenuPanel extends JPanel implements ActionListener {
   private JButton newGame;
   private JButton loadGame;
   private JButton exitGame;
+  private JButton[] buttons;
+  private int selectedIndex = 0;
   final int screenWidth;
   final int screenHeight;
   final int maxScreenRow;
@@ -57,6 +63,51 @@ public class MainMenuPanel extends JPanel implements ActionListener {
       this.add(newGame);
       this.add(loadGame);
       this.add(exitGame);
+
+      buttons = new JButton[] { newGame, loadGame, exitGame };
+      setButtonFocus(0);
+
+      setupKeyBindings();
+  }
+
+  private void setupKeyBindings() {
+      InputMap im = this.getInputMap(WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+      ActionMap am = this.getActionMap();
+
+      im.put(KeyStroke.getKeyStroke("UP"), "moveUp");
+      im.put(KeyStroke.getKeyStroke("DOWN"), "moveDown");
+      im.put(KeyStroke.getKeyStroke("ENTER"), "select");
+
+      am.put("moveUp", new AbstractAction() {
+          @Override
+          public void actionPerformed(java.awt.event.ActionEvent e) {
+              changeSelection(-1);
+          }
+      });
+      am.put("moveDown", new AbstractAction() {
+          @Override
+          public void actionPerformed(java.awt.event.ActionEvent e) {
+              changeSelection(1);
+          }
+      });
+      am.put("select", new AbstractAction() {
+          @Override
+          public void actionPerformed(java.awt.event.ActionEvent e) {
+              buttons[selectedIndex].doClick();
+          }
+      });
+  }
+
+  private void changeSelection(int delta) {
+      selectedIndex = (selectedIndex + delta + buttons.length) % buttons.length;
+      setButtonFocus(selectedIndex);
+  }
+
+  private void setButtonFocus(int index) {
+      for (int i = 0; i < buttons.length; i++) {
+          buttons[i].setFocusable(i == index);
+      }
+      buttons[index].requestFocusInWindow();
   }
 
   /**

@@ -22,6 +22,10 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 import javax.swing.SwingConstants;
+import javax.swing.InputMap;
+import javax.swing.ActionMap;
+import javax.swing.KeyStroke;
+import javax.swing.AbstractAction;
 
 import br.com.cronicasdeeldoria.game.GamePanel;
 import br.com.cronicasdeeldoria.game.font.FontManager;
@@ -47,6 +51,11 @@ public class CreatePlayerPanel extends JPanel implements ActionListener {
   private JButton backButton;
 
   private String selectedClass = "Breton";
+  private JToggleButton[] classButtons;
+  private int selectedClassIndex = 1; // Breton é o padrão
+  private JButton[] actionButtons;
+  private int selectedActionIndex = 0;
+  private boolean onClassSelection = true;
 
   public CreatePlayerPanel(JFrame window, int screenWidth, int screenHeight, int tileSize, int maxScreenRow, int maxScreenCol) {
       this.window = window;
@@ -69,6 +78,24 @@ public class CreatePlayerPanel extends JPanel implements ActionListener {
       JPanel namePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
       namePanel.add(new JLabel("Nome do personagem:"));
       nameField = new JTextField(20);
+      nameField.setFocusTraversalKeysEnabled(false); // Desabilita Tab padrão
+      nameField.addKeyListener(new java.awt.event.KeyAdapter() {
+          @Override
+          public void keyPressed(java.awt.event.KeyEvent e) {
+              if (e.getKeyCode() == java.awt.event.KeyEvent.VK_TAB && !e.isShiftDown()) {
+                  e.consume();
+                  onClassSelection = true;
+                  nameField.transferFocus();
+                  setClassFocus(selectedClassIndex);
+                  CreatePlayerPanel.this.requestFocusInWindow();
+              } else if (e.getKeyCode() == java.awt.event.KeyEvent.VK_TAB && e.isShiftDown()) {
+                  e.consume();
+                  onClassSelection = false;
+                  setActionFocus(selectedActionIndex);
+                  CreatePlayerPanel.this.requestFocusInWindow();
+              }
+          }
+      });
       namePanel.add(nameField);
       centerPanel.add(namePanel, BorderLayout.NORTH);
 
@@ -90,6 +117,9 @@ public class CreatePlayerPanel extends JPanel implements ActionListener {
 
       bretonButton.setSelected(true);
 
+      classButtons = new JToggleButton[] { archerButton, bretonButton, dwarfButton, mageButton, orcButton };
+      setClassFocus(selectedClassIndex);
+
       classSelectionPanel.add(archerPanel);
       classSelectionPanel.add(bretanPanel);
       classSelectionPanel.add(dwarfPanel);
@@ -109,6 +139,99 @@ public class CreatePlayerPanel extends JPanel implements ActionListener {
       buttonPanel.add(startGameButton);
       buttonPanel.add(backButton);
       this.add(buttonPanel, BorderLayout.SOUTH);
+
+      actionButtons = new JButton[] { startGameButton, backButton };
+      setActionFocus(selectedActionIndex);
+
+      setupKeyBindings();
+  }
+
+  private void setupKeyBindings() {
+      InputMap im = this.getInputMap(WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+      ActionMap am = this.getActionMap();
+
+      im.put(KeyStroke.getKeyStroke("LEFT"), "moveLeft");
+      im.put(KeyStroke.getKeyStroke("RIGHT"), "moveRight");
+      im.put(KeyStroke.getKeyStroke("TAB"), "tab");
+      im.put(KeyStroke.getKeyStroke("shift TAB"), "shiftTab");
+      im.put(KeyStroke.getKeyStroke("UP"), "moveUp");
+      im.put(KeyStroke.getKeyStroke("DOWN"), "moveDown");
+      im.put(KeyStroke.getKeyStroke("ENTER"), "select");
+
+      am.put("moveLeft", new AbstractAction() {
+          @Override
+          public void actionPerformed(java.awt.event.ActionEvent e) {
+              if (onClassSelection) changeClassSelection(-1);
+              else if (!onClassSelection) changeActionSelection(-1);
+          }
+      });
+      am.put("moveRight", new AbstractAction() {
+          @Override
+          public void actionPerformed(java.awt.event.ActionEvent e) {
+              if (onClassSelection) changeClassSelection(1);
+              else if (!onClassSelection) changeActionSelection(1);
+          }
+      });
+      am.put("tab", new AbstractAction() {
+          @Override
+          public void actionPerformed(java.awt.event.ActionEvent e) {
+              if (nameField.isFocusOwner()) {
+                  onClassSelection = true;
+                  setClassFocus(selectedClassIndex);
+                  CreatePlayerPanel.this.requestFocusInWindow();
+              } else if (onClassSelection) {
+                  onClassSelection = false;
+                  setActionFocus(selectedActionIndex);
+              } else {
+                  nameField.requestFocusInWindow();
+              }
+          }
+      });
+      am.put("shiftTab", new AbstractAction() {
+          @Override
+          public void actionPerformed(java.awt.event.ActionEvent e) {
+              if (nameField.isFocusOwner()) {
+                  onClassSelection = false;
+                  setActionFocus(selectedActionIndex);
+                  CreatePlayerPanel.this.requestFocusInWindow();
+              } else if (!onClassSelection) {
+                  onClassSelection = true;
+                  setClassFocus(selectedClassIndex);
+              } else {
+                  nameField.requestFocusInWindow();
+              }
+          }
+      });
+      am.put("moveUp", new AbstractAction() {
+          @Override
+          public void actionPerformed(java.awt.event.ActionEvent e) {
+              if (!onClassSelection && !nameField.isFocusOwner()) {
+                  onClassSelection = true;
+                  setClassFocus(selectedClassIndex);
+              }
+          }
+      });
+      am.put("moveDown", new AbstractAction() {
+          @Override
+          public void actionPerformed(java.awt.event.ActionEvent e) {
+              if (onClassSelection) {
+                  onClassSelection = false;
+                  setActionFocus(selectedActionIndex);
+              } else if (!onClassSelection && !nameField.isFocusOwner()) {
+                  nameField.requestFocusInWindow();
+              }
+          }
+      });
+      am.put("select", new AbstractAction() {
+          @Override
+          public void actionPerformed(java.awt.event.ActionEvent e) {
+              if (onClassSelection) {
+                  classButtons[selectedClassIndex].doClick();
+              } else if (!onClassSelection && !nameField.isFocusOwner()) {
+                  actionButtons[selectedActionIndex].doClick();
+              }
+          }
+      });
   }
 
   private JPanel createClassPanel(String className) {
@@ -141,6 +264,30 @@ public class CreatePlayerPanel extends JPanel implements ActionListener {
       panel.add(label, BorderLayout.SOUTH);
 
       return panel;
+  }
+
+  private void changeClassSelection(int delta) {
+      selectedClassIndex = (selectedClassIndex + delta + classButtons.length) % classButtons.length;
+      setClassFocus(selectedClassIndex);
+  }
+
+  private void setClassFocus(int index) {
+      for (int i = 0; i < classButtons.length; i++) {
+          classButtons[i].setFocusable(i == index);
+          classButtons[i].setSelected(i == index);
+      }
+      selectedClass = classButtons[index].getActionCommand();
+  }
+
+  private void changeActionSelection(int delta) {
+      selectedActionIndex = (selectedActionIndex + delta + actionButtons.length) % actionButtons.length;
+      setActionFocus(selectedActionIndex);
+  }
+
+  private void setActionFocus(int index) {
+      for (int i = 0; i < actionButtons.length; i++) {
+          actionButtons[i].setFocusable(i == index);
+      }
   }
 
   @Override
