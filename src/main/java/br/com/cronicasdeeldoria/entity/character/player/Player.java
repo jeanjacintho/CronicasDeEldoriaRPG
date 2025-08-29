@@ -162,4 +162,8 @@ public class Player extends Character {
   public int getPlayerSize() {
     return gamePanel.getPlayerSize();
   }
+
+  public GamePanel getGamePanel() {
+    return gamePanel;
+  }
 }

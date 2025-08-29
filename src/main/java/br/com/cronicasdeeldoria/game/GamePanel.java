@@ -12,6 +12,7 @@ import br.com.cronicasdeeldoria.entity.character.races.Race;
 import br.com.cronicasdeeldoria.tile.TileManager;
 import br.com.cronicasdeeldoria.config.CharacterConfigLoader;
 import br.com.cronicasdeeldoria.entity.object.ObjectManager;
+import br.com.cronicasdeeldoria.game.ui.GameUI;
 
 public class GamePanel extends JPanel implements Runnable{
   private static final int FPS = 60;
@@ -24,12 +25,14 @@ public class GamePanel extends JPanel implements Runnable{
   KeyHandler keyHandler = new KeyHandler();
   Thread gameThread;
   private ColisionChecker colisionChecker = new ColisionChecker(this);
+
   Player player;
   private int tileSize;
   private int maxScreenRow;
   private int maxScreenCol;
   private TileManager tileManager;
   private ObjectManager objectManager;
+  public GameUI ui = new GameUI(this);
 
   public GamePanel(int screenWidth, int screenHeight, String playerName, Race race, int tileSize, int maxScreenRow, int maxScreenCol) {
     this.setPreferredSize(new Dimension(screenWidth, screenHeight));
@@ -170,6 +173,7 @@ public class GamePanel extends JPanel implements Runnable{
         tileManager.draw(graphics2D);
         objectManager.drawObjects(graphics2D);
         player.draw(graphics2D);
+        ui.draw(graphics2D);
         graphics2D.dispose();
     }
 

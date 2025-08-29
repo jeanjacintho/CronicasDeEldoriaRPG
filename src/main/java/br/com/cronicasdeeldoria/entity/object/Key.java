@@ -10,7 +10,15 @@ public class Key extends GameObject {
 
     @Override
     public void interact(Entity interactor) {
-        System.out.println("Pegou a chave");
         setActive(false);
+        if (interactor instanceof br.com.cronicasdeeldoria.entity.character.player.Player) {
+            br.com.cronicasdeeldoria.entity.character.player.Player player =
+                (br.com.cronicasdeeldoria.entity.character.player.Player) interactor;
+            player.getGamePanel().ui.addMessage(
+                "Você pegou uma chave!",
+                sprites[0][0],
+                3000
+            );
+        }
     }
 }
