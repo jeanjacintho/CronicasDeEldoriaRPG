@@ -4,10 +4,13 @@ import java.awt.BorderLayout;
 
 import javax.swing.JFrame;
 
+import br.com.cronicasdeeldoria.game.font.FontManager;
 import br.com.cronicasdeeldoria.game.ui.MainMenuPanel;
 
 public class Main {
     public static void main(String[] args) {
+        FontManager.getDefaultFont();
+        FontManager.setUIFont(FontManager.getDefaultFont());
         JFrame window = new JFrame();
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         window.setResizable(false);

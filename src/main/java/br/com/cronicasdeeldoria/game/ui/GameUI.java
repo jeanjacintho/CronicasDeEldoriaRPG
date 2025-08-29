@@ -8,13 +8,14 @@ import java.util.ArrayList;
 import java.awt.Image;
 
 import br.com.cronicasdeeldoria.game.GamePanel;
+import br.com.cronicasdeeldoria.game.font.FontManager;
 
 /**
  * Gerencia a interface gráfica do jogo, exibindo mensagens e elementos de UI.
  */
 public class GameUI {
   GamePanel gamePanel;
-  Font arial_40;
+  Font dogicaFont_40;
 
   private final List<Message> messages = new ArrayList<>();
 
@@ -24,7 +25,7 @@ public class GameUI {
    */
   public GameUI(GamePanel gamePanel) {
     this.gamePanel = gamePanel;
-    arial_40 = new Font("Arial", Font.PLAIN, 40);
+    dogicaFont_40 = FontManager.getFont(40f);
   }
 
   /**
@@ -42,7 +43,7 @@ public class GameUI {
    * @param graphics2D Contexto gráfico.
    */
   public void draw(Graphics2D graphics2D) {
-    graphics2D.setFont(arial_40);
+    graphics2D.setFont(dogicaFont_40);
     graphics2D.setColor(Color.WHITE);
 
     int y = 50;
