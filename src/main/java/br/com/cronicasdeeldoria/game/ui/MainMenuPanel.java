@@ -46,9 +46,9 @@ public class MainMenuPanel extends JPanel implements ActionListener {
 
       this.setLayout(new GridLayout(3, 1, 10, 10));
 
-      newGame = new JButton("Start Game");
-      loadGame = new JButton("Load Game");
-      exitGame = new JButton("Exit");
+      newGame = new JButton("NOVO JOGO");
+      loadGame = new JButton("CARREGAR JOGO");
+      exitGame = new JButton("SAIR");
 
       newGame.addActionListener(this);
       loadGame.addActionListener(this);
@@ -73,7 +73,7 @@ public class MainMenuPanel extends JPanel implements ActionListener {
           window.repaint();
           createPlayerPanel.requestFocusInWindow();
       } else if (e.getSource() == loadGame) {
-          JOptionPane.showMessageDialog(this, "Loading game...");
+          JOptionPane.showMessageDialog(this, "Carregando jogo...");
           // Add logic to load a game
       } else if (e.getSource() == exitGame) {
           System.exit(0);

@@ -3,7 +3,6 @@ package br.com.cronicasdeeldoria.game.ui;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.Insets;
@@ -25,6 +24,7 @@ import javax.swing.JToggleButton;
 import javax.swing.SwingConstants;
 
 import br.com.cronicasdeeldoria.game.GamePanel;
+import br.com.cronicasdeeldoria.game.font.FontManager;
 import br.com.cronicasdeeldoria.entity.character.races.Race;
 import br.com.cronicasdeeldoria.entity.character.races.Archer;
 import br.com.cronicasdeeldoria.entity.character.races.Breton;
@@ -60,20 +60,20 @@ public class CreatePlayerPanel extends JPanel implements ActionListener {
       this.setLayout(new BorderLayout(20, 20));
       this.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
-      JLabel titleLabel = new JLabel("Create Your Character", SwingConstants.CENTER);
-      titleLabel.setFont(new Font("Arial", Font.BOLD, 32));
+      JLabel titleLabel = new JLabel("Crie seu personagem", SwingConstants.CENTER);
+      titleLabel.setFont(FontManager.getFont(24f));
       this.add(titleLabel, BorderLayout.NORTH);
 
       JPanel centerPanel = new JPanel(new BorderLayout(10, 10));
 
       JPanel namePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-      namePanel.add(new JLabel("Character Name:"));
+      namePanel.add(new JLabel("Nome do personagem:"));
       nameField = new JTextField(20);
       namePanel.add(nameField);
       centerPanel.add(namePanel, BorderLayout.NORTH);
 
       JPanel classSelectionPanel = new JPanel(new GridLayout(1, 5, 15, 15));
-      classSelectionPanel.setBorder(BorderFactory.createTitledBorder("Choose a Class"));
+      classSelectionPanel.setBorder(BorderFactory.createTitledBorder("Escolha uma classe"));
 
       classGroup = new ButtonGroup();
 
@@ -100,8 +100,8 @@ public class CreatePlayerPanel extends JPanel implements ActionListener {
       this.add(centerPanel, BorderLayout.CENTER);
 
       JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 0));
-      startGameButton = new JButton("Start Game");
-      backButton = new JButton("Back");
+      startGameButton = new JButton("INICIAR JOGO");
+      backButton = new JButton("VOLTAR");
 
       startGameButton.addActionListener(this);
       backButton.addActionListener(this);
@@ -148,10 +148,10 @@ public class CreatePlayerPanel extends JPanel implements ActionListener {
       String command = e.getActionCommand();
 
       switch (command) {
-          case "Start Game":
+          case "INICIAR JOGO":
               startGame();
               break;
-          case "Back":
+          case "VOLTAR":
               goBackToMenu();
               break;
           default:
@@ -163,7 +163,7 @@ public class CreatePlayerPanel extends JPanel implements ActionListener {
   private void startGame() {
       String playerName = nameField.getText();
       if (playerName == null || playerName.trim().isEmpty()) {
-          JOptionPane.showMessageDialog(this, "Please enter a character name.", "Name Required", JOptionPane.WARNING_MESSAGE);
+          JOptionPane.showMessageDialog(this, "Escolha um nome para o personagem.", "Nome obrigatório", JOptionPane.WARNING_MESSAGE);
           return;
       }
 
