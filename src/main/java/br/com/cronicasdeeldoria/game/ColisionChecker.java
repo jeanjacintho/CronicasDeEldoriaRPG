@@ -1,12 +1,60 @@
 package br.com.cronicasdeeldoria.game;
 
 import br.com.cronicasdeeldoria.entity.Entity;
+import br.com.cronicasdeeldoria.entity.character.npc.Npc;
+import java.awt.Rectangle;
+import java.util.List;
 
 public class ColisionChecker {
   GamePanel gamePanel;
 
   public ColisionChecker(GamePanel gamePanel) {
     this.gamePanel = gamePanel;
+  }
+
+  public void checkEntity(Entity entity, List<Npc> npcs) {
+    if (npcs == null || npcs.isEmpty()) return;
+    
+    int newX = entity.getWorldX();
+    int newY = entity.getWorldY();
+    
+    switch (entity.getDirection()) {
+      case "up":
+        newY -= entity.getSpeed();
+        break;
+      case "down":
+        newY += entity.getSpeed();
+        break;
+      case "left":
+        newX -= entity.getSpeed();
+        break;
+      case "right":
+        newX += entity.getSpeed();
+        break;
+    }
+    
+    Rectangle entityNextBox = new Rectangle(
+      newX + entity.getHitbox().x,
+      newY + entity.getHitbox().y,
+      entity.getHitbox().width,
+      entity.getHitbox().height
+    );
+    
+    for (Npc npc : npcs) {
+      if (npc.getHitbox() != null) {
+        Rectangle npcBox = new Rectangle(
+          npc.getWorldX() + npc.getHitbox().x,
+          npc.getWorldY() + npc.getHitbox().y,
+          npc.getHitbox().width,
+          npc.getHitbox().height
+        );
+        
+        if (entityNextBox.intersects(npcBox)) {
+          entity.setCollisionOn(true);
+          return;
+        }
+      }
+    }
   }
 
   public void checkTile(Entity entity) {
@@ -39,7 +87,6 @@ public class ColisionChecker {
                 entity.setCollisionOn(true);
                 return;
               }
-              // Checa colisão com objetos
               if (gamePanel.getTileManager().isObjectCollisionTile(entityTopRow, col)) {
                 entity.setCollisionOn(true);
                 return;
@@ -61,7 +108,6 @@ public class ColisionChecker {
                 entity.setCollisionOn(true);
                 return;
               }
-              // Checa colisão com objetos
               if (gamePanel.getTileManager().isObjectCollisionTile(entityBottomRow, col)) {
                 entity.setCollisionOn(true);
                 return;
@@ -83,7 +129,6 @@ public class ColisionChecker {
                 entity.setCollisionOn(true);
                 return;
               }
-              // Checa colisão com objetos
               if (gamePanel.getTileManager().isObjectCollisionTile(row, entityLeftCol)) {
                 entity.setCollisionOn(true);
                 return;
@@ -105,7 +150,6 @@ public class ColisionChecker {
                 entity.setCollisionOn(true);
                 return;
               }
-              // Checa colisão com objetos
               if (gamePanel.getTileManager().isObjectCollisionTile(row, entityRightCol)) {
                 entity.setCollisionOn(true);
                 return;

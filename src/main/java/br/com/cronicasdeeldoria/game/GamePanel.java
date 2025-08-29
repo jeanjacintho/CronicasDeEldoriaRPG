@@ -13,6 +13,12 @@ import br.com.cronicasdeeldoria.tile.TileManager;
 import br.com.cronicasdeeldoria.config.CharacterConfigLoader;
 import br.com.cronicasdeeldoria.entity.object.ObjectManager;
 import br.com.cronicasdeeldoria.game.ui.GameUI;
+import br.com.cronicasdeeldoria.entity.character.npc.Npc;
+import br.com.cronicasdeeldoria.entity.character.npc.NpcFactory;
+import java.util.List;
+import java.util.ArrayList;
+import java.io.IOException;
+import br.com.cronicasdeeldoria.entity.character.npc.NpcSpriteLoader;
 
 public class GamePanel extends JPanel implements Runnable{
   private static final int FPS = 60;
@@ -33,6 +39,8 @@ public class GamePanel extends JPanel implements Runnable{
   private TileManager tileManager;
   private ObjectManager objectManager;
   public GameUI ui = new GameUI(this);
+  private List<Npc> npcs = new ArrayList<>();
+  private NpcSpriteLoader npcSpriteLoader;
 
   public GamePanel(int screenWidth, int screenHeight, String playerName, Race race, int tileSize, int maxScreenRow, int maxScreenCol) {
     this.setPreferredSize(new Dimension(screenWidth, screenHeight));
@@ -103,6 +111,14 @@ public class GamePanel extends JPanel implements Runnable{
     }
     player = new Player(this, keyHandler, raceInstance, x, y, speed, direction, playerName, health, mana, strength, agility, luck);
     objectManager = new ObjectManager(this, tileManager.getObjectDefinitions(), tileManager.getRawObjects());
+    try {
+        npcs = NpcFactory.loadNpcs("src/main/resources/npcs.json", tileSize, getPlayerSize());
+        npcSpriteLoader = new NpcSpriteLoader("src/main/resources/npc_sprites.json");
+    } catch (IOException | RuntimeException e) {
+        e.printStackTrace();
+    } catch (Exception e) {
+        throw new RuntimeException(e);
+    }
   }
 
   public void startGameThread() {
@@ -137,11 +153,15 @@ public class GamePanel extends JPanel implements Runnable{
 
     public void update() {
         player.update();
+        for (Npc npc : npcs) {
+            npc.update(this, player);
+        }
         int playerTileX = player.getWorldX() / getTileSize();
         int playerTileY = player.getWorldY() / getTileSize();
         objectManager.updateActiveObjects(playerTileX, playerTileY);
 
         if (keyHandler.actionPressed) {
+            tryInteractWithNpc();
             for (var obj : new java.util.ArrayList<>(objectManager.getActiveObjects())) {
                 if (obj.isActive() && isPlayerNearObject(player, obj, getTileSize())) {
                     obj.interact(player);
@@ -172,9 +192,41 @@ public class GamePanel extends JPanel implements Runnable{
         Graphics2D graphics2D = (Graphics2D) graphics;
         tileManager.draw(graphics2D);
         objectManager.drawObjects(graphics2D);
+        int playerScreenX = getWidth() / 2 - player.getPlayerSize() / 2;
+        int playerScreenY = getHeight() / 2 - player.getPlayerSize() / 2;
+        for (Npc npc : npcs) {
+            npc.draw(graphics2D, npcSpriteLoader, tileSize, player, playerScreenX, playerScreenY);
+        }
         player.draw(graphics2D);
         ui.draw(graphics2D);
         graphics2D.dispose();
+    }
+
+    public void tryInteractWithNpc() {
+        for (Npc npc : npcs) {
+            if (isPlayerNearNpc(player, npc)) {
+                npc.interact();
+                break;
+            }
+        }
+    }
+
+    private boolean isPlayerNearNpc(Player player, Npc npc) {
+        java.awt.Rectangle playerBox = new java.awt.Rectangle(
+            player.getWorldX() + player.getHitbox().x - 16,
+            player.getWorldY() + player.getHitbox().y - 16,
+            player.getHitbox().width + 32,
+            player.getHitbox().height + 32
+        );
+        java.awt.Rectangle npcBox = new java.awt.Rectangle(
+            npc.getWorldX() + npc.getHitbox().x,
+            npc.getWorldY() + npc.getHitbox().y,
+            npc.getHitbox().width,
+            npc.getHitbox().height
+        );
+        boolean intersects = playerBox.intersects(npcBox);
+        
+        return intersects;
     }
 
     public int getTileSize() {
@@ -209,5 +261,9 @@ public class GamePanel extends JPanel implements Runnable{
 
     public TileManager getTileManager() {
       return tileManager;
+    }
+
+    public List<Npc> getNpcs() {
+      return npcs;
     }
 }

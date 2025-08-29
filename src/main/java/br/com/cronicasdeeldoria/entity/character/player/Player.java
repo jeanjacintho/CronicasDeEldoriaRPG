@@ -75,6 +75,7 @@ public class Player extends Character {
 
       setCollisionOn(false);
       gamePanel.getColisionChecker().checkTile(this);
+      gamePanel.getColisionChecker().checkEntity(this, gamePanel.getNpcs());
 
       if(isCollisionOn() == false) {
         switch (getDirection()) {
