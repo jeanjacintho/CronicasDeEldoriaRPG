@@ -11,6 +11,9 @@ import java.util.Map;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
+/**
+ * Gerencia os tiles do mapa, carregando definições e desenhando o cenário.
+ */
 public class TileManager {
     private GamePanel gamePanel;
     private Tile[] tiles;
@@ -19,6 +22,10 @@ public class TileManager {
     private Map<String, MapObjectDefinition> objectDefinitions;
     private java.util.List<MapObjectInstance> rawObjects;
 
+    /**
+     * Cria um novo gerenciador de tiles.
+     * @param gamePanel Painel do jogo.
+     */
     public TileManager(GamePanel gamePanel) {
         this.gamePanel = gamePanel;
         loadMapJson("/maps/map01.json");
@@ -151,6 +158,10 @@ public class TileManager {
         public List<MapObjectInstance> objetos;
     }
 
+    /**
+     * Desenha os tiles e objetos do mapa.
+     * @param g2 Contexto gráfico.
+     */
     public void draw(Graphics2D g2) {
         int tileSize = gamePanel.getTileSize();
         int worldRows = mapLayers[0].length;
@@ -199,6 +210,12 @@ public class TileManager {
         }
     }
 
+    /**
+     * Verifica se há colisão de objeto em um tile.
+     * @param row Linha do tile.
+     * @param col Coluna do tile.
+     * @return true se houver colisão, false caso contrário.
+     */
     public boolean isObjectCollisionTile(int row, int col) {
         if (rawObjects == null || objectDefinitions == null) return false;
         for (MapObjectInstance obj : rawObjects) {
@@ -219,24 +236,48 @@ public class TileManager {
         return false;
     }
 
+    /**
+     * Retorna as camadas do mapa.
+     * @return Matriz tridimensional de camadas.
+     */
     public int[][][] getMapLayers() {
         return mapLayers;
     }
 
+    /**
+     * Retorna o array de tiles.
+     * @return Array de tiles.
+     */
     public Tile[] getTiles() {
         return tiles;
     }
 
+    /**
+     * Retorna a largura do mapa em tiles.
+     * @return Largura do mapa.
+     */
     public int getMapWidth() {
         return mapLayers[0][0].length;
     }
+    /**
+     * Retorna a altura do mapa em tiles.
+     * @return Altura do mapa.
+     */
     public int getMapHeight() {
         return mapLayers[0].length;
     }
 
+    /**
+     * Retorna as definições de objetos do mapa.
+     * @return Mapa de definições de objetos.
+     */
     public java.util.Map<String, MapObjectDefinition> getObjectDefinitions() {
         return objectDefinitions;
     }
+    /**
+     * Retorna a lista de instâncias de objetos do mapa.
+     * @return Lista de instâncias de objetos.
+     */
     public java.util.List<MapObjectInstance> getRawObjects() {
         return rawObjects;
     }

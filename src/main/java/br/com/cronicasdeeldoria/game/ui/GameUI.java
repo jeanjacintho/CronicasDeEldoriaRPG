@@ -9,21 +9,38 @@ import java.awt.Image;
 
 import br.com.cronicasdeeldoria.game.GamePanel;
 
+/**
+ * Gerencia a interface gráfica do jogo, exibindo mensagens e elementos de UI.
+ */
 public class GameUI {
   GamePanel gamePanel;
   Font arial_40;
 
   private final List<Message> messages = new ArrayList<>();
 
+  /**
+   * Cria uma nova interface de jogo.
+   * @param gamePanel Painel principal do jogo.
+   */
   public GameUI(GamePanel gamePanel) {
     this.gamePanel = gamePanel;
     arial_40 = new Font("Arial", Font.PLAIN, 40);
   }
 
+  /**
+   * Adiciona uma mensagem à interface.
+   * @param text Texto da mensagem.
+   * @param image Imagem opcional.
+   * @param durationMillis Duração em milissegundos.
+   */
   public void addMessage(String text, Image image, long durationMillis) {
     messages.add(new Message(text, image, durationMillis));
   }
 
+  /**
+   * Desenha a interface gráfica e as mensagens na tela.
+   * @param graphics2D Contexto gráfico.
+   */
   public void draw(Graphics2D graphics2D) {
     graphics2D.setFont(arial_40);
     graphics2D.setColor(Color.WHITE);

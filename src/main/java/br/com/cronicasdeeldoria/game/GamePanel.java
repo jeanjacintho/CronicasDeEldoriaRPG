@@ -20,6 +20,9 @@ import java.util.ArrayList;
 import java.io.IOException;
 import br.com.cronicasdeeldoria.entity.character.npc.NpcSpriteLoader;
 
+/**
+ * Painel principal do jogo, responsável pelo loop de atualização, renderização e gerenciamento dos elementos do jogo.
+ */
 public class GamePanel extends JPanel implements Runnable{
   private static final int FPS = 60;
 
@@ -42,6 +45,16 @@ public class GamePanel extends JPanel implements Runnable{
   private List<Npc> npcs = new ArrayList<>();
   private NpcSpriteLoader npcSpriteLoader;
 
+  /**
+   * Inicializa o painel do jogo com as configurações fornecidas.
+   * @param screenWidth Largura da tela.
+   * @param screenHeight Altura da tela.
+   * @param playerName Nome do jogador.
+   * @param race Raça do jogador.
+   * @param tileSize Tamanho do tile.
+   * @param maxScreenRow Máximo de linhas na tela.
+   * @param maxScreenCol Máximo de colunas na tela.
+   */
   public GamePanel(int screenWidth, int screenHeight, String playerName, Race race, int tileSize, int maxScreenRow, int maxScreenCol) {
     this.setPreferredSize(new Dimension(screenWidth, screenHeight));
     this.maxScreenRow = maxScreenRow;
@@ -121,6 +134,9 @@ public class GamePanel extends JPanel implements Runnable{
     }
   }
 
+  /**
+   * Inicia a thread principal do jogo.
+   */
   public void startGameThread() {
     gameThread = new Thread(this);
     gameThread.start();
@@ -151,6 +167,9 @@ public class GamePanel extends JPanel implements Runnable{
         }
     }
 
+    /**
+     * Atualiza o estado do jogo.
+     */
     public void update() {
         player.update();
         for (Npc npc : npcs) {
@@ -187,6 +206,10 @@ public class GamePanel extends JPanel implements Runnable{
                 py + player.getPlayerSize() > oy && py < oy + oh);
     }
 
+    /**
+     * Renderiza os elementos do jogo.
+     * @param graphics Contexto gráfico.
+     */
     public void paintComponent(Graphics graphics) {
         super.paintComponent(graphics);
         Graphics2D graphics2D = (Graphics2D) graphics;
@@ -202,6 +225,9 @@ public class GamePanel extends JPanel implements Runnable{
         graphics2D.dispose();
     }
 
+    /**
+     * Tenta interagir com um NPC próximo ao jogador.
+     */
     public void tryInteractWithNpc() {
         for (Npc npc : npcs) {
             if (isPlayerNearNpc(player, npc)) {
@@ -235,34 +261,27 @@ public class GamePanel extends JPanel implements Runnable{
     public int getPlayerSize() {
       return tileSize * 2;
     }
-
     public int getScreenWidth() {
         return tileSize * maxScreenCol;
     }
-
     public int getScreenHeight() {
         return tileSize * maxScreenRow;
     }
-
     public int getMaxScreenCol() {
         return this.maxScreenCol;
     }
     public int getMaxScreenRow() {
         return this.maxScreenRow;
     }
-
     public Player getPlayer() {
       return player;
     }
-
     public ColisionChecker getColisionChecker() {
       return colisionChecker;
     }
-
     public TileManager getTileManager() {
       return tileManager;
     }
-
     public List<Npc> getNpcs() {
       return npcs;
     }

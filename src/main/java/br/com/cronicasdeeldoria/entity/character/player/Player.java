@@ -11,6 +11,9 @@ import java.awt.image.BufferedImage;
 
 import javax.imageio.ImageIO;
 
+/**
+ * Representa o jogador controlado pelo usuário no jogo.
+ */
 public class Player extends Character {
   private int luck;
   GamePanel gamePanel;
@@ -22,6 +25,22 @@ public class Player extends Character {
   private final int screenX;
   private final int screenY;
 
+  /**
+   * Cria um novo jogador.
+   * @param gamePanel Painel do jogo.
+   * @param keyHandler Handler de teclas.
+   * @param race Raça do jogador.
+   * @param x Posição X.
+   * @param y Posição Y.
+   * @param speed Velocidade do jogador.
+   * @param direction Direção inicial.
+   * @param name Nome do jogador.
+   * @param health Vida inicial.
+   * @param mana Mana inicial.
+   * @param strength Força inicial.
+   * @param agility Agilidade inicial.
+   * @param luck Sorte inicial.
+   */
   public Player(GamePanel gamePanel, KeyHandler keyHandler, Race race, int x, int y, int speed, String direction, String name, int health, int mana, int strength, int agility, int luck) {
     super(x, y, speed, direction, name, race, health, mana, strength, agility);
     this.luck = luck;
@@ -40,6 +59,9 @@ public class Player extends Character {
     setHitbox(new Rectangle(hitboxX, hitboxY, hitboxWidth, hitboxHeight));
   }
 
+  /**
+   * Carrega as imagens do jogador de acordo com a raça.
+   */
   public void getPlayerImage() {
     try {
       String classFolder = getRace().getRaceName().toLowerCase();
@@ -60,6 +82,9 @@ public class Player extends Character {
     }
   }
 
+  /**
+   * Atualiza o estado do jogador (movimentação, colisão, animação).
+   */
   public void update() {
     if(keyHandler.upPressed || keyHandler.downPressed || keyHandler.leftPressed || keyHandler.rightPressed) {
       isMoving = true;
@@ -107,6 +132,10 @@ public class Player extends Character {
     }
   }
 
+  /**
+   * Desenha o jogador na tela.
+   * @param graphics2d Contexto gráfico.
+   */
   public void draw(Graphics2D graphics2d) {
     BufferedImage image = null;
 

@@ -3,6 +3,9 @@ package br.com.cronicasdeeldoria.entity.character;
 import br.com.cronicasdeeldoria.entity.Entity;
 import br.com.cronicasdeeldoria.entity.character.races.Race;
 
+/**
+ * Classe base para personagens jogáveis e NPCs, contendo atributos de raça e status.
+ */
 public class Character extends Entity {
   private Race race;
   private int attributeHealth;
@@ -13,6 +16,19 @@ public class Character extends Entity {
   private int attributeStrength;
   private int attributeAgility;
 
+  /**
+   * Cria um novo personagem.
+   * @param x Posição X no mundo.
+   * @param y Posição Y no mundo.
+   * @param speed Velocidade do personagem.
+   * @param direction Direção inicial.
+   * @param name Nome do personagem.
+   * @param race Raça do personagem.
+   * @param attributeHealth Vida.
+   * @param attributeMana Mana.
+   * @param attributeStrength Força.
+   * @param attributeAgility Agilidade.
+   */
   public Character(int x, int y, int speed, String direction, String name, Race race, int attributeHealth, int attributeMana, int attributeStrength, int attributeAgility) {
     super(x, y, speed, direction, name);
     this.race = race;

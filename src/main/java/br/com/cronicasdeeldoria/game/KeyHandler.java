@@ -3,15 +3,26 @@ package br.com.cronicasdeeldoria.game;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
+/**
+ * Gerencia os eventos de teclado do jogador.
+ */
 public class KeyHandler implements KeyListener {
     public boolean upPressed, downPressed, leftPressed, rightPressed;
     public boolean actionPressed;
 
+    /**
+     * Evento chamado quando uma tecla é digitada.
+     * @param e Evento de tecla.
+     */
     @Override
     public void keyTyped(KeyEvent e) {
 
     }
 
+    /**
+     * Evento chamado quando uma tecla é pressionada.
+     * @param e Evento de tecla.
+     */
     @Override
     public void keyPressed(KeyEvent e) {
         int code = e.getKeyCode();
@@ -34,6 +45,10 @@ public class KeyHandler implements KeyListener {
         }
     }
 
+    /**
+     * Evento chamado quando uma tecla é liberada.
+     * @param e Evento de tecla.
+     */
     @Override
     public void keyReleased(KeyEvent e) {
         int code = e.getKeyCode();

@@ -10,6 +10,9 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+/**
+ * Painel do menu principal do jogo, com opções para iniciar, carregar ou sair.
+ */
 public class MainMenuPanel extends JPanel implements ActionListener {
   private JButton newGame;
   private JButton loadGame;
@@ -21,6 +24,15 @@ public class MainMenuPanel extends JPanel implements ActionListener {
   final int tileSize;
   private JFrame window;
 
+  /**
+   * Cria o painel do menu principal.
+   * @param window Janela principal.
+   * @param tileSize Tamanho do tile.
+   * @param screenWidth Largura da tela.
+   * @param screenHeight Altura da tela.
+   * @param maxScreenRow Máximo de linhas na tela.
+   * @param maxScreenCol Máximo de colunas na tela.
+   */
   public MainMenuPanel(JFrame window, int tileSize, int screenWidth, int screenHeight, int maxScreenRow, int maxScreenCol) {
       this.setPreferredSize(new Dimension(screenWidth, screenHeight));
       this.screenWidth = screenWidth;
@@ -47,6 +59,10 @@ public class MainMenuPanel extends JPanel implements ActionListener {
       this.add(exitGame);
   }
 
+  /**
+   * Trata eventos dos botões do menu.
+   * @param e Evento de ação.
+   */
   @Override
   public void actionPerformed(ActionEvent e) {
       if (e.getSource() == newGame) {

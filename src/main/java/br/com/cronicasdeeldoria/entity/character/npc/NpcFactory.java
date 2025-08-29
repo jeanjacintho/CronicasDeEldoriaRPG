@@ -6,7 +6,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Fábrica de NPCs responsável por carregar instâncias de NPCs a partir de um arquivo JSON.
+ */
 public class NpcFactory {
+    /**
+     * Carrega uma lista de NPCs a partir de um arquivo JSON.
+     *
+     * @param jsonPath   Caminho para o arquivo JSON com os dados dos NPCs.
+     * @param tileSize   Tamanho do tile para posicionamento dos NPCs.
+     * @param playerSize Tamanho do jogador, usado para centralizar o NPC no tile.
+     * @return Lista de NPCs instanciados.
+     * @throws Exception Se ocorrer erro na leitura ou parsing do arquivo.
+     */
     public static List<Npc> loadNpcs(String jsonPath, int tileSize, int playerSize) throws Exception {
         ObjectMapper mapper = new ObjectMapper();
         List<Map<String, Object>> npcList = mapper.readValue(new File(jsonPath), List.class);

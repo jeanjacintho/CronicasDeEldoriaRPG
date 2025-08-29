@@ -8,6 +8,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Gerencia os objetos do mapa, ativando/desativando conforme a proximidade do jogador.
+ */
 public class ObjectManager {
     private final GamePanel gamePanel;
     private final Map<String, MapObjectDefinition> objectDefinitions;
@@ -15,12 +18,23 @@ public class ObjectManager {
     private final List<GameObject> activeObjects = new ArrayList<>();
     private final int buffer = 2;
 
+    /**
+     * Cria um novo gerenciador de objetos.
+     * @param gamePanel Painel do jogo.
+     * @param objectDefinitions Definições dos objetos do mapa.
+     * @param rawObjects Instâncias brutas dos objetos do mapa.
+     */
     public ObjectManager(GamePanel gamePanel, Map<String, MapObjectDefinition> objectDefinitions, List<MapObjectInstance> rawObjects) {
         this.gamePanel = gamePanel;
         this.objectDefinitions = objectDefinitions;
         this.rawObjects = rawObjects;
     }
 
+    /**
+     * Atualiza a lista de objetos ativos conforme a posição do jogador.
+     * @param playerTileX Tile X do jogador.
+     * @param playerTileY Tile Y do jogador.
+     */
     public void updateActiveObjects(int playerTileX, int playerTileY) {
         int tileSize = gamePanel.getTileSize();
         int playerWorldX = gamePanel.getPlayer().getWorldX();
@@ -75,6 +89,10 @@ public class ObjectManager {
         return rawObjects;
     }
 
+    /**
+     * Remove um objeto da lista de objetos brutos.
+     * @param obj Objeto a ser removido.
+     */
     public void removeRawObject(GameObject obj) {
         int tileSize = gamePanel.getTileSize();
         rawObjects.removeIf(raw ->
@@ -84,6 +102,10 @@ public class ObjectManager {
         );
     }
 
+    /**
+     * Desenha os objetos ativos na tela.
+     * @param g2 Contexto gráfico.
+     */
     public void drawObjects(Graphics2D g2) {
         int tileSize = gamePanel.getTileSize();
         int playerWorldX = gamePanel.getPlayer().getWorldX();

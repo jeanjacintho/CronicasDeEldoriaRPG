@@ -5,13 +5,25 @@ import br.com.cronicasdeeldoria.entity.character.npc.Npc;
 import java.awt.Rectangle;
 import java.util.List;
 
+/**
+ * Responsável por verificar colisões entre entidades e tiles no jogo.
+ */
 public class ColisionChecker {
   GamePanel gamePanel;
 
+  /**
+   * Cria um verificador de colisão para o painel do jogo.
+   * @param gamePanel Painel principal do jogo.
+   */
   public ColisionChecker(GamePanel gamePanel) {
     this.gamePanel = gamePanel;
   }
 
+  /**
+   * Verifica colisão entre uma entidade e uma lista de NPCs.
+   * @param entity Entidade a ser verificada.
+   * @param npcs Lista de NPCs.
+   */
   public void checkEntity(Entity entity, List<Npc> npcs) {
     if (npcs == null || npcs.isEmpty()) return;
     
@@ -57,6 +69,10 @@ public class ColisionChecker {
     }
   }
 
+  /**
+   * Verifica colisão entre uma entidade e os tiles do mapa.
+   * @param entity Entidade a ser verificada.
+   */
   public void checkTile(Entity entity) {
     int entityLeftWorldX = entity.getWorldX() + entity.getHitbox().x;
     int entityRightWorldX = entity.getWorldX() + entity.getHitbox().x + entity.getHitbox().width - 1;

@@ -5,6 +5,9 @@ import java.awt.Graphics2D;
 import br.com.cronicasdeeldoria.entity.character.player.Player;
 import br.com.cronicasdeeldoria.game.GamePanel;
 
+/**
+ * Representa um NPC (personagem não jogável) no jogo.
+ */
 public class Npc extends Character {
     protected boolean isStatic;
     protected String dialog;
@@ -15,6 +18,16 @@ public class Npc extends Character {
     private int spriteNum = 1;
     private boolean isMoving = false;
 
+    /**
+     * Cria um novo NPC.
+     * @param name Nome do NPC.
+     * @param isStatic Indica se o NPC é estático.
+     * @param dialog Diálogo do NPC.
+     * @param x Posição X.
+     * @param y Posição Y.
+     * @param skin Skin do NPC.
+     * @param playerSize Tamanho do jogador (para hitbox).
+     */
     public Npc(String name, boolean isStatic, String dialog, int x, int y, String skin, int playerSize) {
         super(x, y, 1, "down", name, null, 0, 0, 0, 0);
         this.isStatic = isStatic;
@@ -27,6 +40,9 @@ public class Npc extends Character {
         this.setHitbox(new java.awt.Rectangle(hitboxX, hitboxY, hitboxWidth, hitboxHeight));
     }
 
+    /**
+     * Faz o NPC andar aleatoriamente, se não for estático.
+     */
     public void walk() {
         if (!isStatic) {
             isMoving = false;
@@ -87,16 +103,29 @@ public class Npc extends Character {
         }
     }
 
+    /**
+     * Interage com o NPC, exibindo seu diálogo.
+     */
     public void interact() {
         System.out.println("Interagindo com NPC: " + getName() + " - " + getDialog());
     }
 
+    /**
+     * Atualiza o estado do NPC.
+     * @param gamePanel Painel do jogo.
+     * @param player Jogador.
+     */
     public void update(GamePanel gamePanel, Player player) {
         if (!isStatic) {
             walk(gamePanel, player);
         }
     }
 
+    /**
+     * Faz o NPC andar, considerando colisões e o jogador.
+     * @param gamePanel Painel do jogo.
+     * @param player Jogador.
+     */
     public void walk(GamePanel gamePanel, Player player) {
         if (!isStatic) {
             actionCounter++;
@@ -205,6 +234,15 @@ public class Npc extends Character {
         return true;
     }
 
+    /**
+     * Desenha o NPC na tela.
+     * @param g Contexto gráfico.
+     * @param spriteLoader Loader de sprites.
+     * @param tileSize Tamanho do tile.
+     * @param player Jogador.
+     * @param playerScreenX Posição X do jogador na tela.
+     * @param playerScreenY Posição Y do jogador na tela.
+     */
     public void draw(Graphics2D g, NpcSpriteLoader spriteLoader, int tileSize, Player player, int playerScreenX, int playerScreenY) {
         String direction = getDirection();
         java.util.List<String> sprites = spriteLoader.getSprites(skin, direction);
