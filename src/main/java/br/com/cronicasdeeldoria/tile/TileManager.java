@@ -9,13 +9,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
 import java.util.Map;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 
 public class TileManager {
     private GamePanel gamePanel;
     private Tile[] tiles;
     private int[][][] mapLayers;
-    private List<MapObjectInstance> mapObjects;
+
     private Map<String, MapObjectDefinition> objectDefinitions;
+    private java.util.List<MapObjectInstance> rawObjects;
 
     public TileManager(GamePanel gamePanel) {
         this.gamePanel = gamePanel;
@@ -101,10 +103,10 @@ public class TileManager {
             }
             ObjectMapper mapper = new ObjectMapper();
             MapJson mapJson = mapper.readValue(is, MapJson.class);
-            mapObjects = new java.util.ArrayList<>();
+            rawObjects = new ArrayList<>();
             if (mapJson.objetos != null) {
                 for (MapObjectInstance obj : mapJson.objetos) {
-                    mapObjects.add(obj);
+                    rawObjects.add(obj);
                 }
             }
         } catch (Exception e) {
@@ -197,31 +199,9 @@ public class TileManager {
         }
     }
 
-    public void drawObjects(Graphics2D g2) {
-        int tileSize = gamePanel.getTileSize();
-        int playerWorldX = gamePanel.getPlayer().getWorldX();
-        int playerWorldY = gamePanel.getPlayer().getWorldY();
-        int screenX = gamePanel.getPlayer().getScreenX();
-        int screenY = gamePanel.getPlayer().getScreenY();
-        for (MapObjectInstance obj : mapObjects) {
-            MapObjectDefinition def = objectDefinitions.get(obj.id);
-            if (def == null) continue;
-            for (int row = 0; row < def.size[1]; row++) {
-                for (int col = 0; col < def.size[0]; col++) {
-                    BufferedImage img = def.sprites[row][col];
-                    int worldX = (obj.posicao[0] + col) * tileSize;
-                    int worldY = (obj.posicao[1] + row) * tileSize;
-                    int drawX = worldX - playerWorldX + screenX;
-                    int drawY = worldY - playerWorldY + screenY;
-                    g2.drawImage(img, drawX, drawY, tileSize, tileSize, null);
-                }
-            }
-        }
-    }
-
     public boolean isObjectCollisionTile(int row, int col) {
-        if (mapObjects == null || objectDefinitions == null) return false;
-        for (MapObjectInstance obj : mapObjects) {
+        if (rawObjects == null || objectDefinitions == null) return false;
+        for (MapObjectInstance obj : rawObjects) {
             MapObjectDefinition def = objectDefinitions.get(obj.id);
             if (def == null) continue;
             int objRow = obj.posicao[1];
@@ -252,5 +232,12 @@ public class TileManager {
     }
     public int getMapHeight() {
         return mapLayers[0].length;
+    }
+
+    public java.util.Map<String, MapObjectDefinition> getObjectDefinitions() {
+        return objectDefinitions;
+    }
+    public java.util.List<MapObjectInstance> getRawObjects() {
+        return rawObjects;
     }
 }

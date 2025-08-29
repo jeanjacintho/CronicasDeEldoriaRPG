@@ -158,4 +158,8 @@ public class Player extends Character {
   public int getScreenY() {
     return screenY;
   }
+
+  public int getPlayerSize() {
+    return gamePanel.getPlayerSize();
+  }
 }

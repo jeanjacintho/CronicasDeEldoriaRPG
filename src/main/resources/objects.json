@@ -17,5 +17,14 @@
     ],
     "size": [1, 1],
     "collision": false
+  },
+  {
+    "id": "key",
+    "name": "Chave",
+    "spritePaths": [
+      ["/sprites/objects/key-0001.png"]
+    ],
+    "size": [1, 1],
+    "collision": false
   }
 ]

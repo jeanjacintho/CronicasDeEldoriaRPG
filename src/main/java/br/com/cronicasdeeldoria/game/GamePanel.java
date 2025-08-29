@@ -11,6 +11,7 @@ import br.com.cronicasdeeldoria.entity.character.player.Player;
 import br.com.cronicasdeeldoria.entity.character.races.Race;
 import br.com.cronicasdeeldoria.tile.TileManager;
 import br.com.cronicasdeeldoria.config.CharacterConfigLoader;
+import br.com.cronicasdeeldoria.entity.object.ObjectManager;
 
 public class GamePanel extends JPanel implements Runnable{
   private static final int FPS = 60;
@@ -28,6 +29,7 @@ public class GamePanel extends JPanel implements Runnable{
   private int maxScreenRow;
   private int maxScreenCol;
   private TileManager tileManager;
+  private ObjectManager objectManager;
 
   public GamePanel(int screenWidth, int screenHeight, String playerName, Race race, int tileSize, int maxScreenRow, int maxScreenCol) {
     this.setPreferredSize(new Dimension(screenWidth, screenHeight));
@@ -42,7 +44,7 @@ public class GamePanel extends JPanel implements Runnable{
     CharacterConfigLoader configLoader = CharacterConfigLoader.getInstance();
     String raceName = race.getRaceName().toLowerCase();
     int playerSize = getPlayerSize();
-    // Inicializa tileManager primeiro para pegar tamanho do mapa
+
     this.tileManager = new TileManager(this);
     this.maxWorldCol = tileManager.getMapWidth();
     this.maxWorldRow = tileManager.getMapHeight();
@@ -97,8 +99,7 @@ public class GamePanel extends JPanel implements Runnable{
         raceInstance = race;
     }
     player = new Player(this, keyHandler, raceInstance, x, y, speed, direction, playerName, health, mana, strength, agility, luck);
- 
-    this.tileManager = new TileManager(this);
+    objectManager = new ObjectManager(this, tileManager.getObjectDefinitions(), tileManager.getRawObjects());
   }
 
   public void startGameThread() {
@@ -113,7 +114,6 @@ public class GamePanel extends JPanel implements Runnable{
         long lastTime = System.nanoTime();
         long currentTime;
         long timer = 0;
-        int drawCount = 0;
 
         while(gameThread != null) {
             currentTime = System.nanoTime();
@@ -125,10 +125,8 @@ public class GamePanel extends JPanel implements Runnable{
                 update();
                 repaint();
                 delta--;
-                drawCount++;
             }
             if(timer >= 1000000000) {
-                drawCount = 0;
                 timer = 0;
             }
         }
@@ -136,13 +134,42 @@ public class GamePanel extends JPanel implements Runnable{
 
     public void update() {
         player.update();
+        int playerTileX = player.getWorldX() / getTileSize();
+        int playerTileY = player.getWorldY() / getTileSize();
+        objectManager.updateActiveObjects(playerTileX, playerTileY);
+
+        if (keyHandler.actionPressed) {
+            for (var obj : new java.util.ArrayList<>(objectManager.getActiveObjects())) {
+                if (obj.isActive() && isPlayerNearObject(player, obj, getTileSize())) {
+                    obj.interact(player);
+                    if (!obj.isActive()) {
+                        objectManager.removeRawObject(obj);
+                    }
+                    break;
+                }
+            }
+            keyHandler.actionPressed = false;
+        }
+    }
+
+    private boolean isPlayerNearObject(Player player, br.com.cronicasdeeldoria.entity.object.GameObject obj, int tileSize) {
+        int px = player.getWorldX();
+        int py = player.getWorldY();
+        int ox = obj.getWorldX();
+        int oy = obj.getWorldY();
+        int ow = obj.getWidth() * tileSize;
+        int oh = obj.getHeight() * tileSize;
+
+        return (px + player.getPlayerSize() > ox && px < ox + ow &&
+                py + player.getPlayerSize() > oy && py < oy + oh);
     }
 
     public void paintComponent(Graphics graphics) {
         super.paintComponent(graphics);
         Graphics2D graphics2D = (Graphics2D) graphics;
         tileManager.draw(graphics2D);
-        tileManager.drawObjects(graphics2D);
+        objectManager.drawObjects(graphics2D);
+        player.draw(graphics2D);
         graphics2D.dispose();
     }
 
