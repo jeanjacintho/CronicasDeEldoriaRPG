@@ -168,12 +168,28 @@ public class TileManager {
 
         for (int row = firstRow; row <= lastRow; row++) {
             for (int col = firstCol; col <= lastCol; col++) {
-                for (int l = 0; l < layersCount; l++) {
+                for (int l = 0; l < Math.min(2, layersCount); l++) {
                     int tileNum = mapLayers[l][row][col];
                     if (tileNum != 0) {
-                        g2.drawImage(tiles[tileNum].image, 
-                            col * tileSize - playerWorldX + screenX, 
-                            row * tileSize - playerWorldY + screenY, 
+                        g2.drawImage(tiles[tileNum].image,
+                            col * tileSize - playerWorldX + screenX,
+                            row * tileSize - playerWorldY + screenY,
+                            tileSize, tileSize, null);
+                    }
+                }
+            }
+        }
+
+        gamePanel.getPlayer().draw(g2);
+
+        if (layersCount > 2) {
+            for (int row = firstRow; row <= lastRow; row++) {
+                for (int col = firstCol; col <= lastCol; col++) {
+                    int tileNum = mapLayers[2][row][col];
+                    if (tileNum != 0) {
+                        g2.drawImage(tiles[tileNum].image,
+                            col * tileSize - playerWorldX + screenX,
+                            row * tileSize - playerWorldY + screenY,
                             tileSize, tileSize, null);
                     }
                 }
@@ -203,9 +219,6 @@ public class TileManager {
         }
     }
 
-    /**
-     * Verifica se há colisão de objeto em um tile específico.
-     */
     public boolean isObjectCollisionTile(int row, int col) {
         if (mapObjects == null || objectDefinitions == null) return false;
         for (MapObjectInstance obj : mapObjects) {
