@@ -9,6 +9,7 @@ import java.awt.event.KeyListener;
 public class KeyHandler implements KeyListener {
     public boolean upPressed, downPressed, leftPressed, rightPressed;
     public boolean actionPressed;
+    public boolean xPressed, zPressed;
 
     /**
      * Evento chamado quando uma tecla é digitada.
@@ -42,6 +43,12 @@ public class KeyHandler implements KeyListener {
             case KeyEvent.VK_E:
                 actionPressed = true;
                 break;
+            case KeyEvent.VK_X:
+                xPressed = true;
+                break;
+            case KeyEvent.VK_Z:
+                zPressed = true;
+                break;
         }
     }
 
@@ -67,6 +74,12 @@ public class KeyHandler implements KeyListener {
                 break;
             case KeyEvent.VK_E:
                 actionPressed = false;
+                break;
+            case KeyEvent.VK_X:
+                xPressed = false;
+                break;
+            case KeyEvent.VK_Z:
+                zPressed = false;
                 break;
         }
     }
