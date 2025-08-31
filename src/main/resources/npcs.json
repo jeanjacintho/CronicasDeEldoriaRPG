@@ -1,20 +1,18 @@
 [
   {
+    "id": "guardiao",
     "name": "Guardião",
     "isStatic": false,
     "dialog": "Bem-vindo à vila!",
     "type": "npc",
-    "tileX": 5,
-    "tileY": 5,
     "skin": "guardiao"
   },
   {
+    "id": "guerreiro",
     "name": "Guerreiro Contratável",
     "isStatic": true,
     "dialog": "Posso lutar ao seu lado por algumas moedas.",
     "type": "warrior",
-    "tileX": 6,
-    "tileY": 4,
     "skin": "guerreiro"
   }
 ]

@@ -1,7 +1,216 @@
-[
-  { "id": 0, "name": "empty", "image": "/sprites/world/empty.png", "collision": false },
-  { "id": 1, "name": "grass", "image": "/sprites/world/grass-0001.png", "collision": false },
-  { "id": 2, "name": "water", "image": "/sprites/world/water-0001.png", "collision": true },
-  { "id": 3, "name": "wall",  "image": "/sprites/world/wall-0001.png", "collision": true },
-  { "id": 4, "name": "tree_top", "image": "/sprites/world/water-0001.png", "collision": false }
-]
+{
+  "tileSize": 16,
+  "spritesheet": "/sprites/world/tileset.png",
+  "tiles": [
+    {
+      "id": "0_0",
+      "x": 0,
+      "y": 0,
+      "collision": false
+    },
+    {
+      "id": "0_9",
+      "x": 0,
+      "y": 9,
+      "collision": false
+    },
+    {
+      "id": "1_1",
+      "x": 1,
+      "y": 1,
+      "collision": false
+    },
+    {
+      "id": "1_9",
+      "x": 1,
+      "y": 9,
+      "collision": false
+    },
+    {
+      "id": "10_13",
+      "x": 10,
+      "y": 13,
+      "collision": false
+    },
+    {
+      "id": "10_14",
+      "x": 10,
+      "y": 14,
+      "collision": false
+    },
+    {
+      "id": "10_15",
+      "x": 10,
+      "y": 15,
+      "collision": false
+    },
+    {
+      "id": "10_2",
+      "x": 10,
+      "y": 2,
+      "collision": false
+    },
+    {
+      "id": "11_13",
+      "x": 11,
+      "y": 13,
+      "collision": false
+    },
+    {
+      "id": "11_14",
+      "x": 11,
+      "y": 14,
+      "collision": false
+    },
+    {
+      "id": "11_15",
+      "x": 11,
+      "y": 15,
+      "collision": false
+    },
+    {
+      "id": "12_13",
+      "x": 12,
+      "y": 13,
+      "collision": false
+    },
+    {
+      "id": "12_14",
+      "x": 12,
+      "y": 14,
+      "collision": false
+    },
+    {
+      "id": "12_15",
+      "x": 12,
+      "y": 15,
+      "collision": false
+    },
+    {
+      "id": "2_0",
+      "x": 2,
+      "y": 0,
+      "collision": false
+    },
+    {
+      "id": "2_4",
+      "x": 2,
+      "y": 4,
+      "collision": false
+    },
+    {
+      "id": "2_8",
+      "x": 2,
+      "y": 8,
+      "collision": false
+    },
+    {
+      "id": "3_0",
+      "x": 3,
+      "y": 0,
+      "collision": false
+    },
+    {
+      "id": "4_1",
+      "x": 4,
+      "y": 1,
+      "collision": false
+    },
+    {
+      "id": "4_12",
+      "x": 4,
+      "y": 12,
+      "collision": false
+    },
+    {
+      "id": "4_8",
+      "x": 4,
+      "y": 8,
+      "collision": false
+    },
+    {
+      "id": "5_0",
+      "x": 5,
+      "y": 0,
+      "collision": false
+    },
+    {
+      "id": "6_1",
+      "x": 6,
+      "y": 1,
+      "collision": false
+    },
+    {
+      "id": "7_0",
+      "x": 7,
+      "y": 0,
+      "collision": false
+    },
+    {
+      "id": "7_13",
+      "x": 7,
+      "y": 13,
+      "collision": false
+    },
+    {
+      "id": "7_14",
+      "x": 7,
+      "y": 14,
+      "collision": false
+    },
+    {
+      "id": "8_1",
+      "x": 8,
+      "y": 1,
+      "collision": false
+    },
+    {
+      "id": "8_13",
+      "x": 8,
+      "y": 13,
+      "collision": false
+    },
+    {
+      "id": "8_14",
+      "x": 8,
+      "y": 14,
+      "collision": false
+    },
+    {
+      "id": "8_15",
+      "x": 8,
+      "y": 15,
+      "collision": false
+    },
+    {
+      "id": "9_0",
+      "x": 9,
+      "y": 0,
+      "collision": false
+    },
+    {
+      "id": "9_1",
+      "x": 9,
+      "y": 1,
+      "collision": false
+    },
+    {
+      "id": "9_13",
+      "x": 9,
+      "y": 13,
+      "collision": false
+    },
+    {
+      "id": "9_14",
+      "x": 9,
+      "y": 14,
+      "collision": false
+    },
+    {
+      "id": "9_15",
+      "x": 9,
+      "y": 15,
+      "collision": false
+    }
+  ]
+}
