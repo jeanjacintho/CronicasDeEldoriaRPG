@@ -1,33 +1,31 @@
 package br.com.cronicasdeeldoria.entity.object;
 
-import br.com.cronicasdeeldoria.tile.TileManager.MapObjectDefinition;
-import br.com.cronicasdeeldoria.tile.TileManager.MapObjectInstance;
+import br.com.cronicasdeeldoria.tile.TileManager.MapTile;
 import br.com.cronicasdeeldoria.game.GamePanel;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Gerencia os objetos do mapa, ativando/desativando conforme a proximidade do jogador.
  */
 public class ObjectManager {
     private final GamePanel gamePanel;
-    private final Map<String, MapObjectDefinition> objectDefinitions;
-    private final List<MapObjectInstance> rawObjects;
-    private final List<GameObject> activeObjects = new ArrayList<>();
+    private final ObjectSpriteLoader objectSpriteLoader;
+    private final List<MapTile> rawObjectTiles;
+    private final List<MapObject> activeObjects = new ArrayList<>();
     private final int buffer = 2;
 
     /**
      * Cria um novo gerenciador de objetos.
      * @param gamePanel Painel do jogo.
-     * @param objectDefinitions Definições dos objetos do mapa.
-     * @param rawObjects Instâncias brutas dos objetos do mapa.
+     * @param objectSpriteLoader Loader de sprites de objetos.
+     * @param rawObjectTiles Tiles brutos dos objetos do mapa.
      */
-    public ObjectManager(GamePanel gamePanel, Map<String, MapObjectDefinition> objectDefinitions, List<MapObjectInstance> rawObjects) {
+    public ObjectManager(GamePanel gamePanel, ObjectSpriteLoader objectSpriteLoader, List<MapTile> rawObjectTiles) {
         this.gamePanel = gamePanel;
-        this.objectDefinitions = objectDefinitions;
-        this.rawObjects = rawObjects;
+        this.objectSpriteLoader = objectSpriteLoader;
+        this.rawObjectTiles = rawObjectTiles;
     }
 
     /**
@@ -55,50 +53,63 @@ public class ObjectManager {
             return objTileX < firstCol || objTileX > lastCol || objTileY < firstRow || objTileY > lastRow;
         });
 
-        for (MapObjectInstance raw : rawObjects) {
-            int objX = raw.posicao[0];
-            int objY = raw.posicao[1];
+        for (MapTile raw : rawObjectTiles) {
+            int objX = raw.x;
+            int objY = raw.y;
             if (objX >= firstCol && objX <= lastCol && objY >= firstRow && objY <= lastRow) {
-                boolean alreadyActive = activeObjects.stream().anyMatch(obj -> obj.getWorldX() / tileSize == objX && obj.getWorldY() / tileSize == objY && obj.getName().equals(raw.id));
+                boolean alreadyActive = activeObjects.stream().anyMatch(obj -> obj.getWorldX() / tileSize == objX && obj.getWorldY() / tileSize == objY && obj.getObjectId().equals(raw.id));
                 if (!alreadyActive) {
-                    GameObject obj = instantiateGameObject(raw);
-                    if (obj != null) activeObjects.add(obj);
+                    MapObject obj = instantiateMapObject(raw);
+                    if (obj != null) {
+                        activeObjects.add(obj);
+                    }
                 }
+                
+
             }
         }
     }
 
-    private GameObject instantiateGameObject(MapObjectInstance raw) {
-        MapObjectDefinition def = objectDefinitions.get(raw.id);
-        if (def == null) return null;
-        if (raw.id.equals("chest")) {
-            return new Chest(raw.posicao[0] * gamePanel.getTileSize(), raw.posicao[1] * gamePanel.getTileSize(), def.sprites);
+    private MapObject instantiateMapObject(MapTile raw) {
+        ObjectSpriteLoader.ObjectDefinition objDef = objectSpriteLoader.getObjectDefinition(raw.id);
+        if (objDef == null) {
+            System.err.println("DEBUG: Definição não encontrada para objeto: " + raw.id);
+            return null;
         }
-        if (raw.id.equals("key")) {
-            return new Key(raw.posicao[0] * gamePanel.getTileSize(), raw.posicao[1] * gamePanel.getTileSize(), def.sprites);
-        }
-        // Adicione outros tipos aqui
-        return null;
+        
+        int x = raw.x * gamePanel.getTileSize();
+        int y = raw.y * gamePanel.getTileSize();
+        
+        return new MapObject(
+            objDef.id,
+            objDef.name,
+            x,
+            y,
+            objDef.size[0], // width
+            objDef.size[1], // height
+            objDef.collision,
+            objDef
+        );
     }
 
-    public List<GameObject> getActiveObjects() {
+    public List<MapObject> getActiveObjects() {
         return activeObjects;
     }
 
-    public List<MapObjectInstance> getRawObjects() {
-        return rawObjects;
+    public List<MapTile> getRawObjectTiles() {
+        return rawObjectTiles;
     }
 
     /**
      * Remove um objeto da lista de objetos brutos.
      * @param obj Objeto a ser removido.
      */
-    public void removeRawObject(GameObject obj) {
+    public void removeRawObject(MapObject obj) {
         int tileSize = gamePanel.getTileSize();
-        rawObjects.removeIf(raw ->
-            raw.id.equals(obj.getName()) &&
-            raw.posicao[0] == obj.getWorldX() / tileSize &&
-            raw.posicao[1] == obj.getWorldY() / tileSize
+        rawObjectTiles.removeIf(raw ->
+            raw.id.equals(obj.getObjectId()) &&
+            raw.x == obj.getWorldX() / tileSize &&
+            raw.y == obj.getWorldY() / tileSize
         );
     }
 
@@ -108,13 +119,11 @@ public class ObjectManager {
      */
     public void drawObjects(Graphics2D g2) {
         int tileSize = gamePanel.getTileSize();
-        int playerWorldX = gamePanel.getPlayer().getWorldX();
-        int playerWorldY = gamePanel.getPlayer().getWorldY();
         int screenX = gamePanel.getPlayer().getScreenX();
         int screenY = gamePanel.getPlayer().getScreenY();
-        for (GameObject obj : new ArrayList<>(activeObjects)) {
+        for (MapObject obj : new ArrayList<>(activeObjects)) {
             if (obj.isActive()) {
-                obj.draw(g2, playerWorldX - screenX, playerWorldY - screenY, tileSize);
+                obj.draw(g2, objectSpriteLoader, tileSize, gamePanel.getPlayer(), screenX, screenY);
             }
         }
     }

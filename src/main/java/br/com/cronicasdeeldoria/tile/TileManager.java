@@ -4,34 +4,67 @@ import java.awt.Graphics2D;
 import java.io.InputStream;
 import javax.imageio.ImageIO;
 import br.com.cronicasdeeldoria.game.GamePanel;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
+// Jackson imports removidos para versão simplificada
 import java.util.List;
 import java.util.Map;
 import java.awt.image.BufferedImage;
+import java.util.HashMap;
 import java.util.ArrayList;
 
-/**
- * Gerencia os tiles do mapa, carregando definições e desenhando o cenário.
- */
 public class TileManager {
     private GamePanel gamePanel;
-    private Tile[] tiles;
-    private int[][][] mapLayers;
+    private Map<String, Tile> tiles;
+    private List<MapLayer> mapLayers;
+    private BufferedImage spritesheet;
+    private int tileSize;
+    private int mapWidth;
+    private int mapHeight;
 
-    private Map<String, MapObjectDefinition> objectDefinitions;
-    private java.util.List<MapObjectInstance> rawObjects;
-
-    /**
-     * Cria um novo gerenciador de tiles.
-     * @param gamePanel Painel do jogo.
-     */
     public TileManager(GamePanel gamePanel) {
         this.gamePanel = gamePanel;
+        loadTilesFromJson();
         loadMapJson("/maps/map01.json");
-        initTilesFromJson();
-        initObjectsFromJson();
-        loadMapObjects();
+    }
+
+    private void loadTilesFromJson() {
+        try {
+            InputStream is = getClass().getResourceAsStream("/tiles.json");
+            if (is == null) {
+                throw new RuntimeException("tiles.json não encontrado no classpath!");
+            }
+            
+            // Usar Gson como alternativa ao Jackson
+            com.google.gson.Gson gson = new com.google.gson.Gson();
+            TilesJson tilesJson = gson.fromJson(new java.io.InputStreamReader(is), TilesJson.class);
+            
+            // IMPORTANTE: Usar o tileSize do GamePanel (com escala) em vez do tiles.json
+            this.tileSize = gamePanel.getTileSize();
+            int originalTileSize = tilesJson.tileSize; // Tamanho original da spritesheet
+            
+            InputStream spritesheetStream = getClass().getResourceAsStream(tilesJson.spritesheet);
+            if (spritesheetStream == null) {
+                throw new RuntimeException("Spritesheet não encontrada: " + tilesJson.spritesheet);
+            }
+            
+            this.spritesheet = ImageIO.read(spritesheetStream);
+            
+            tiles = new HashMap<>();
+            for (TileDefinition def : tilesJson.tiles) {
+                Tile tile = new Tile();
+                // Extrair subimagem usando tamanho original da spritesheet
+                tile.image = spritesheet.getSubimage(
+                    def.x * originalTileSize, 
+                    def.y * originalTileSize, 
+                    originalTileSize, 
+                    originalTileSize
+                );
+                tile.collision = def.collision;
+                tiles.put(def.id, tile);
+            }
+        } catch (Exception e) {
+            System.err.println("ERRO ao carregar tiles: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     private void loadMapJson(String path) {
@@ -40,195 +73,139 @@ public class TileManager {
             if (is == null) {
                 throw new RuntimeException("Mapa JSON não encontrado: " + path);
             }
-            ObjectMapper mapper = new ObjectMapper();
-            MapJson mapJson = mapper.readValue(is, MapJson.class);
-            int layersCount = mapJson.layers.size();
-            int rows = mapJson.height;
-            int cols = mapJson.width;
-            mapLayers = new int[layersCount][rows][cols];
-            for (int l = 0; l < layersCount; l++) {
-                for (int r = 0; r < rows; r++) {
-                    for (int c = 0; c < cols; c++) {
-                        mapLayers[l][r][c] = mapJson.layers.get(l).get(r).get(c);
-                    }
-                }
-            }
+            
+            // Usar Gson como alternativa ao Jackson
+            com.google.gson.Gson gson = new com.google.gson.Gson();
+            MapJson mapJson = gson.fromJson(new java.io.InputStreamReader(is), MapJson.class);
+            
+            this.mapWidth = mapJson.mapWidth;
+            this.mapHeight = mapJson.mapHeight;
+            this.mapLayers = mapJson.layers;
+            
         } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void initTilesFromJson() {
-        try {
-            InputStream is = getClass().getResourceAsStream("/tiles.json");
-            if (is == null) {
-                throw new RuntimeException("tiles.json não encontrado no classpath!");
-            }
-            ObjectMapper mapper = new ObjectMapper();
-            List<TileDefinition> tileDefs = mapper.readValue(is, new TypeReference<List<TileDefinition>>() {});
-            int maxId = tileDefs.stream().mapToInt(td -> td.id).max().orElse(0);
-            tiles = new Tile[maxId + 1];
-            for (TileDefinition def : tileDefs) {
-                Tile t = new Tile();
-                t.image = ImageIO.read(getClass().getResourceAsStream(def.image));
-                t.collision = def.collision;
-                tiles[def.id] = t;
-            }
-            for (int i = 0; i < tiles.length; i++) {
-                if (tiles[i] == null) {
-                    tiles[i] = tiles[0];
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void initObjectsFromJson() {
-        try {
-            InputStream is = getClass().getResourceAsStream("/objects.json");
-            if (is == null) {
-                throw new RuntimeException("objects.json não encontrado no classpath!");
-            }
-            ObjectMapper mapper = new ObjectMapper();
-            List<MapObjectDefinition> defs = mapper.readValue(is, new TypeReference<List<MapObjectDefinition>>() {});
-            objectDefinitions = new java.util.HashMap<>();
-            for (MapObjectDefinition def : defs) {
-                def.loadImages();
-                objectDefinitions.put(def.id, def);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void loadMapObjects() {
-        try {
-            InputStream is = getClass().getResourceAsStream("/maps/map01.json");
-            if (is == null) {
-                throw new RuntimeException("map01.json não encontrado no classpath!");
-            }
-            ObjectMapper mapper = new ObjectMapper();
-            MapJson mapJson = mapper.readValue(is, MapJson.class);
-            rawObjects = new ArrayList<>();
-            if (mapJson.objetos != null) {
-                for (MapObjectInstance obj : mapJson.objetos) {
-                    rawObjects.add(obj);
-                }
-            }
-        } catch (Exception e) {
+            System.err.println("ERRO ao carregar mapa: " + e.getMessage());
             e.printStackTrace();
         }
     }
 
     public static class TileDefinition {
-        public int id;
-        public String name;
-        public String image;
+        public String id;
+        public int x;
+        public int y;
         public boolean collision;
     }
 
-    public static class MapObjectDefinition {
-        public String id;
-        public String name;
-        public String[][] spritePaths;
-        public int[] size;
-        public boolean collision;
-        public transient BufferedImage[][] sprites;
-        public void loadImages() throws Exception {
-            int rows = this.spritePaths.length;
-            int cols = this.spritePaths[0].length;
-            sprites = new BufferedImage[rows][cols];
-            for (int r = 0; r < rows; r++) {
-                for (int c = 0; c < cols; c++) {
-                    sprites[r][c] = ImageIO.read(getClass().getResourceAsStream(this.spritePaths[r][c]));
-                }
-            }
-        }
+    public static class TilesJson {
+        public int tileSize;
+        public String spritesheet;
+        public List<TileDefinition> tiles;
     }
-    public static class MapObjectInstance {
+
+    public static class MapTile {
         public String id;
-        public int[] posicao;
+        public int x;
+        public int y;
+    }
+
+    public static class MapLayer {
+        public String name;
+        public List<MapTile> tiles;
+        public boolean collider;
     }
 
     public static class MapJson {
-        public int width;
-        public int height;
-        public List<List<List<Integer>>> layers;
-        public List<MapObjectInstance> objetos;
+        public int tileSize;
+        public int mapWidth;
+        public int mapHeight;
+        public List<MapLayer> layers;
     }
 
-    /**
-     * Desenha os tiles e objetos do mapa.
-     * @param g2 Contexto gráfico.
-     */
     public void draw(Graphics2D g2) {
-        int tileSize = gamePanel.getTileSize();
-        int worldRows = mapLayers[0].length;
-        int worldCols = mapLayers[0][0].length;
-        int layersCount = mapLayers.length;
-
         int playerWorldX = gamePanel.getPlayer().getWorldX();
         int playerWorldY = gamePanel.getPlayer().getWorldY();
         int screenX = gamePanel.getPlayer().getScreenX();
         int screenY = gamePanel.getPlayer().getScreenY();
         int playerSize = gamePanel.getPlayerSize();
 
+        // Calcular área visível
         int firstCol = Math.max((playerWorldX - screenX) / tileSize, 0);
-        int lastCol  = Math.min((playerWorldX + screenX + playerSize) / tileSize, worldCols - 1);
+        int lastCol = Math.min((playerWorldX + screenX + playerSize) / tileSize, mapWidth - 1);
         int firstRow = Math.max((playerWorldY - screenY) / tileSize, 0);
-        int lastRow  = Math.min((playerWorldY + screenY + playerSize) / tileSize, worldRows - 1);
+        int lastRow = Math.min((playerWorldY + screenY + playerSize) / tileSize, mapHeight - 1);
 
-        for (int row = firstRow; row <= lastRow; row++) {
-            for (int col = firstCol; col <= lastCol; col++) {
-                for (int l = 0; l < Math.min(2, layersCount); l++) {
-                    int tileNum = mapLayers[l][row][col];
-                    if (tileNum != 0) {
-                        g2.drawImage(tiles[tileNum].image,
-                            col * tileSize - playerWorldX + screenX,
-                            row * tileSize - playerWorldY + screenY,
-                            tileSize, tileSize, null);
-                    }
-                }
+        // Separar layers por tipo
+        List<MapLayer> normalLayers = new ArrayList<>();
+        List<MapLayer> overlayLayers = new ArrayList<>();
+        List<MapLayer> objectLayers = new ArrayList<>();
+        List<MapLayer> npcLayers = new ArrayList<>();
+
+        for (MapLayer layer : mapLayers) {
+            String layerName = layer.name.toLowerCase();
+            if (layerName.contains("overlay")) {
+                overlayLayers.add(layer);
+            } else if (layerName.contains("objetos") || layerName.contains("objects") || layerName.contains("items")) {
+                objectLayers.add(layer);
+            } else if (layerName.contains("npcs") || layerName.contains("npc")) {
+                npcLayers.add(layer);
+            } else {
+                normalLayers.add(layer);
             }
         }
 
+        // 1. Renderizar layers normais (fundo)
+        for (MapLayer layer : normalLayers) {
+            renderLayer(g2, layer, firstCol, lastCol, firstRow, lastRow, playerWorldX, playerWorldY, screenX, screenY);
+        }
+
+        // 2. Renderizar objetos
+        for (MapLayer layer : objectLayers) {
+            renderLayer(g2, layer, firstCol, lastCol, firstRow, lastRow, playerWorldX, playerWorldY, screenX, screenY);
+        }
+
+        // 3. Renderizar NPCs
+        for (MapLayer layer : npcLayers) {
+            renderLayer(g2, layer, firstCol, lastCol, firstRow, lastRow, playerWorldX, playerWorldY, screenX, screenY);
+        }
+
+        // 4. Renderizar o player
         gamePanel.getPlayer().draw(g2);
 
-        if (layersCount > 2) {
-            for (int row = firstRow; row <= lastRow; row++) {
-                for (int col = firstCol; col <= lastCol; col++) {
-                    int tileNum = mapLayers[2][row][col];
-                    if (tileNum != 0) {
-                        g2.drawImage(tiles[tileNum].image,
-                            col * tileSize - playerWorldX + screenX,
-                            row * tileSize - playerWorldY + screenY,
-                            tileSize, tileSize, null);
-                    }
+        // 5. Renderizar layers overlay (acima do player)
+        for (MapLayer layer : overlayLayers) {
+            renderLayer(g2, layer, firstCol, lastCol, firstRow, lastRow, playerWorldX, playerWorldY, screenX, screenY);
+        }
+    }
+
+    private void renderLayer(Graphics2D g2, MapLayer layer, int firstCol, int lastCol, int firstRow, int lastRow, 
+                           int playerWorldX, int playerWorldY, int screenX, int screenY) {
+        int tilesRendered = 0;
+        for (MapTile tile : layer.tiles) {
+            // Verificar se o tile está na área visível
+            if (tile.x >= firstCol && tile.x <= lastCol && 
+                tile.y >= firstRow && tile.y <= lastRow) {
+                
+                Tile tileDef = tiles.get(tile.id);
+                if (tileDef != null && tileDef.image != null) {
+                    int drawX = tile.x * tileSize - playerWorldX + screenX;
+                    int drawY = tile.y * tileSize - playerWorldY + screenY;
+                    // IMPORTANTE: Renderizar com o tileSize escalado
+                    g2.drawImage(tileDef.image, drawX, drawY, tileSize, tileSize, null);
+                    tilesRendered++;
                 }
             }
         }
     }
 
     /**
-     * Verifica se há colisão de objeto em um tile.
-     * @param row Linha do tile.
-     * @param col Coluna do tile.
-     * @return true se houver colisão, false caso contrário.
+     * Verifica se há colisão em uma posição específica do mapa.
+     * A colisão é determinada pela propriedade collider da layer.
      */
-    public boolean isObjectCollisionTile(int row, int col) {
-        if (rawObjects == null || objectDefinitions == null) return false;
-        for (MapObjectInstance obj : rawObjects) {
-            MapObjectDefinition def = objectDefinitions.get(obj.id);
-            if (def == null) continue;
-            int objRow = obj.posicao[1];
-            int objCol = obj.posicao[0];
-            for (int r = 0; r < def.size[1]; r++) {
-                for (int c = 0; c < def.size[0]; c++) {
-                    if (def.collision) {
-                        if ((objRow + r) == row && (objCol + c) == col) {
-                            return true;
-                        }
+    public boolean isCollisionAt(int x, int y) {
+        for (MapLayer layer : mapLayers) {
+            if (layer.collider) {
+                for (MapTile tile : layer.tiles) {
+                    if (tile.x == x && tile.y == y) {
+                        return true;
                     }
                 }
             }
@@ -236,49 +213,47 @@ public class TileManager {
         return false;
     }
 
-    /**
-     * Retorna as camadas do mapa.
-     * @return Matriz tridimensional de camadas.
-     */
-    public int[][][] getMapLayers() {
-        return mapLayers;
-    }
-
-    /**
-     * Retorna o array de tiles.
-     * @return Array de tiles.
-     */
-    public Tile[] getTiles() {
-        return tiles;
-    }
-
-    /**
-     * Retorna a largura do mapa em tiles.
-     * @return Largura do mapa.
-     */
     public int getMapWidth() {
-        return mapLayers[0][0].length;
+        return mapWidth;
     }
-    /**
-     * Retorna a altura do mapa em tiles.
-     * @return Altura do mapa.
-     */
+
     public int getMapHeight() {
-        return mapLayers[0].length;
+        return mapHeight;
+    }
+
+    public int getTileSize() {
+        return tileSize;
     }
 
     /**
-     * Retorna as definições de objetos do mapa.
-     * @return Mapa de definições de objetos.
+     * Retorna os tiles de NPCs das layers do mapa.
      */
-    public java.util.Map<String, MapObjectDefinition> getObjectDefinitions() {
-        return objectDefinitions;
+    public List<MapTile> getNpcTiles() {
+        List<MapTile> npcTiles = new ArrayList<>();
+        
+        for (MapLayer layer : mapLayers) {
+            String layerName = layer.name.toLowerCase();
+            if (layerName.contains("npcs") || layerName.contains("npc")) {
+                npcTiles.addAll(layer.tiles);
+            }
+        }
+        
+        return npcTiles;
     }
+
     /**
-     * Retorna a lista de instâncias de objetos do mapa.
-     * @return Lista de instâncias de objetos.
+     * Retorna os tiles de objetos das layers do mapa.
      */
-    public java.util.List<MapObjectInstance> getRawObjects() {
-        return rawObjects;
+    public List<MapTile> getObjectTiles() {
+        List<MapTile> objectTiles = new ArrayList<>();
+        
+        for (MapLayer layer : mapLayers) {
+            String layerName = layer.name.toLowerCase();
+            if (layerName.contains("objetos") || layerName.contains("objects") || layerName.contains("items")) {
+                objectTiles.addAll(layer.tiles);
+            }
+        }
+        
+        return objectTiles;
     }
 }

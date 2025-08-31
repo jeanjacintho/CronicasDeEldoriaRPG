@@ -9,16 +9,12 @@ import javax.swing.JPanel;
 
 import br.com.cronicasdeeldoria.entity.character.player.Player;
 import br.com.cronicasdeeldoria.entity.character.races.Race;
+import br.com.cronicasdeeldoria.entity.character.npc.Npc;
 import br.com.cronicasdeeldoria.tile.TileManager;
 import br.com.cronicasdeeldoria.config.CharacterConfigLoader;
-import br.com.cronicasdeeldoria.entity.object.ObjectManager;
-import br.com.cronicasdeeldoria.game.ui.GameUI;
-import br.com.cronicasdeeldoria.entity.character.npc.Npc;
-import br.com.cronicasdeeldoria.entity.character.npc.NpcFactory;
 import java.util.List;
 import java.util.ArrayList;
-import java.io.IOException;
-import br.com.cronicasdeeldoria.entity.character.npc.NpcSpriteLoader;
+
 
 /**
  * Painel principal do jogo, responsável pelo loop de atualização, renderização e gerenciamento dos elementos do jogo.
@@ -40,10 +36,9 @@ public class GamePanel extends JPanel implements Runnable{
   private int maxScreenRow;
   private int maxScreenCol;
   private TileManager tileManager;
-  private ObjectManager objectManager;
-  public GameUI ui = new GameUI(this);
   private List<Npc> npcs = new ArrayList<>();
-  private NpcSpriteLoader npcSpriteLoader;
+  private br.com.cronicasdeeldoria.entity.character.npc.NpcSpriteLoader npcSpriteLoader;
+  private br.com.cronicasdeeldoria.entity.object.ObjectManager objectManager;
 
   /**
    * Inicializa o painel do jogo com as configurações fornecidas.
@@ -72,6 +67,10 @@ public class GamePanel extends JPanel implements Runnable{
     this.tileManager = new TileManager(this);
     this.maxWorldCol = tileManager.getMapWidth();
     this.maxWorldRow = tileManager.getMapHeight();
+    
+    // Inicializar componentes do jogo
+    initializeGameComponents();
+
     int x = (maxWorldCol * tileSize) / 2 - (playerSize / 2);
     int y = (maxWorldRow * tileSize) / 2 - (playerSize / 2);
     int speed = configLoader.getIntAttribute(raceName, "speed", 4);
@@ -122,16 +121,7 @@ public class GamePanel extends JPanel implements Runnable{
       default:
         raceInstance = race;
     }
-    player = new Player(this, keyHandler, raceInstance, x, y, speed, direction, playerName, health, mana, strength, agility, luck);
-    objectManager = new ObjectManager(this, tileManager.getObjectDefinitions(), tileManager.getRawObjects());
-    try {
-        npcs = NpcFactory.loadNpcs("src/main/resources/npcs.json", tileSize, getPlayerSize());
-        npcSpriteLoader = new NpcSpriteLoader("src/main/resources/npc_sprites.json");
-    } catch (IOException | RuntimeException e) {
-        e.printStackTrace();
-    } catch (Exception e) {
-        throw new RuntimeException(e);
-    }
+            player = new Player(this, keyHandler, raceInstance, x, y, speed, direction, playerName, health, mana, strength, agility, luck);
   }
 
   /**
@@ -140,6 +130,7 @@ public class GamePanel extends JPanel implements Runnable{
   public void startGameThread() {
     gameThread = new Thread(this);
     gameThread.start();
+    this.requestFocusInWindow(); // Garantir que o GamePanel tenha foco
   }
 
   @Override
@@ -171,39 +162,63 @@ public class GamePanel extends JPanel implements Runnable{
      * Atualiza o estado do jogo.
      */
     public void update() {
+        
         player.update();
+        
+        // Atualizar NPCs
         for (Npc npc : npcs) {
             npc.update(this, player);
         }
-        int playerTileX = player.getWorldX() / getTileSize();
-        int playerTileY = player.getWorldY() / getTileSize();
-        objectManager.updateActiveObjects(playerTileX, playerTileY);
-
-        if (keyHandler.actionPressed) {
-            tryInteractWithNpc();
-            for (var obj : new java.util.ArrayList<>(objectManager.getActiveObjects())) {
-                if (obj.isActive() && isPlayerNearObject(player, obj, getTileSize())) {
-                    obj.interact(player);
-                    if (!obj.isActive()) {
-                        objectManager.removeRawObject(obj);
-                    }
-                    break;
-                }
-            }
-            keyHandler.actionPressed = false;
+        
+        // Atualizar objetos
+        if (objectManager != null) {
+            objectManager.updateActiveObjects(player.getWorldX() / tileSize, player.getWorldY() / tileSize);
+        }
+        
+        // Verificar se o GamePanel perdeu o foco e restaurá-lo
+        if (!this.hasFocus()) {
+            this.requestFocusInWindow();
         }
     }
 
-    private boolean isPlayerNearObject(Player player, br.com.cronicasdeeldoria.entity.object.GameObject obj, int tileSize) {
-        int px = player.getWorldX();
-        int py = player.getWorldY();
-        int ox = obj.getWorldX();
-        int oy = obj.getWorldY();
-        int ow = obj.getWidth() * tileSize;
-        int oh = obj.getHeight() * tileSize;
-
-        return (px + player.getPlayerSize() > ox && px < ox + ow &&
-                py + player.getPlayerSize() > oy && py < oy + oh);
+    /**
+     * Verifica se o jogador está próximo de uma entidade (NPC ou objeto).
+     */
+    private boolean isPlayerNearEntity(Player player, int entityX, int entityY) {
+        int playerTileX = player.getWorldX() / tileSize;
+        int playerTileY = player.getWorldY() / tileSize;
+        int entityTileX = entityX / tileSize;
+        int entityTileY = entityY / tileSize;
+        
+        int distanceX = Math.abs(playerTileX - entityTileX);
+        int distanceY = Math.abs(playerTileY - entityTileY);
+        
+        return distanceX <= 2 && distanceY <= 2;
+    }
+    
+    /**
+     * Verifica e processa interações do jogador com NPCs e objetos.
+     */
+    public void checkInteraction() {
+        // Verificar interação com NPCs primeiro
+        for (Npc npc : npcs) {
+            if (isPlayerNearEntity(player, npc.getWorldX(), npc.getWorldY())) {
+                System.out.println("INTERAÇÃO COM NPC: " + npc.getName());
+                npc.interact();
+                return;
+            }
+        }
+        
+        // Verificar interação com objetos
+        if (objectManager != null) {
+            for (br.com.cronicasdeeldoria.entity.object.MapObject obj : objectManager.getActiveObjects()) {
+                if (isPlayerNearEntity(player, obj.getWorldX(), obj.getWorldY())) {
+                    System.out.println("INTERAÇÃO COM OBJETO: " + obj.getName() + " (" + obj.getObjectId() + ")");
+                    obj.interact(player);
+                    return;
+                }
+            }
+        }
     }
 
     /**
@@ -213,46 +228,21 @@ public class GamePanel extends JPanel implements Runnable{
     public void paintComponent(Graphics graphics) {
         super.paintComponent(graphics);
         Graphics2D graphics2D = (Graphics2D) graphics;
-        tileManager.draw(graphics2D);
-        objectManager.drawObjects(graphics2D);
-        int playerScreenX = getWidth() / 2 - player.getPlayerSize() / 2;
-        int playerScreenY = getHeight() / 2 - player.getPlayerSize() / 2;
-        for (Npc npc : npcs) {
-            npc.draw(graphics2D, npcSpriteLoader, tileSize, player, playerScreenX, playerScreenY);
-        }
-        player.draw(graphics2D);
-        ui.draw(graphics2D);
-        graphics2D.dispose();
-    }
-
-    /**
-     * Tenta interagir com um NPC próximo ao jogador.
-     */
-    public void tryInteractWithNpc() {
-        for (Npc npc : npcs) {
-            if (isPlayerNearNpc(player, npc)) {
-                npc.interact();
-                break;
-            }
-        }
-    }
-
-    private boolean isPlayerNearNpc(Player player, Npc npc) {
-        java.awt.Rectangle playerBox = new java.awt.Rectangle(
-            player.getWorldX() + player.getHitbox().x - 16,
-            player.getWorldY() + player.getHitbox().y - 16,
-            player.getHitbox().width + 32,
-            player.getHitbox().height + 32
-        );
-        java.awt.Rectangle npcBox = new java.awt.Rectangle(
-            npc.getWorldX() + npc.getHitbox().x,
-            npc.getWorldY() + npc.getHitbox().y,
-            npc.getHitbox().width,
-            npc.getHitbox().height
-        );
-        boolean intersects = playerBox.intersects(npcBox);
         
-        return intersects;
+        // Renderizar o mapa (layers de fundo, player e overlay)
+        tileManager.draw(graphics2D);
+        
+        // Renderizar objetos
+        if (objectManager != null) {
+            objectManager.drawObjects(graphics2D);
+        }
+        
+        // Renderizar NPCs
+        for (Npc npc : npcs) {
+            npc.draw(graphics2D, npcSpriteLoader, tileSize, player, player.getScreenX(), player.getScreenY());
+        }
+        
+        graphics2D.dispose();
     }
 
     public int getTileSize() {
@@ -282,7 +272,55 @@ public class GamePanel extends JPanel implements Runnable{
     public TileManager getTileManager() {
       return tileManager;
     }
-    public List<Npc> getNpcs() {
+
+    public java.util.List<br.com.cronicasdeeldoria.entity.character.npc.Npc> getNpcs() {
       return npcs;
     }
+
+    public br.com.cronicasdeeldoria.entity.object.ObjectManager getObjectManager() {
+      return objectManager;
+    }
+
+      /**
+   * Inicializa componentes do jogo (NPCs e objetos).
+   */
+  private void initializeGameComponents() {
+    // Inicializar NpcSpriteLoader
+    try {
+      this.npcSpriteLoader = new br.com.cronicasdeeldoria.entity.character.npc.NpcSpriteLoader("/npc_sprites.json");
+    } catch (Exception e) {
+      System.err.println("Erro ao inicializar NpcSpriteLoader: " + e.getMessage());
+      this.npcSpriteLoader = null;
+    }
+    
+    // Carregar NPCs do mapa
+    loadNpcsFromMap();
+    
+    // Inicializar ObjectManager
+    try {
+      br.com.cronicasdeeldoria.entity.object.ObjectSpriteLoader objectSpriteLoader = 
+          new br.com.cronicasdeeldoria.entity.object.ObjectSpriteLoader("/objects.json");
+      List<br.com.cronicasdeeldoria.tile.TileManager.MapTile> objectTiles = tileManager.getObjectTiles();
+      this.objectManager = new br.com.cronicasdeeldoria.entity.object.ObjectManager(this, objectSpriteLoader, objectTiles);
+    } catch (Exception e) {
+      System.err.println("Erro ao inicializar ObjectManager: " + e.getMessage());
+      e.printStackTrace();
+      this.objectManager = null;
+    }
+  }
+
+  /**
+   * Carrega NPCs das layers do mapa.
+   */
+  private void loadNpcsFromMap() {
+    try {
+      List<br.com.cronicasdeeldoria.tile.TileManager.MapTile> npcTiles = tileManager.getNpcTiles();
+      if (npcTiles != null && !npcTiles.isEmpty()) {
+        this.npcs = br.com.cronicasdeeldoria.entity.character.npc.NpcFactory.loadNpcsFromTiles(npcTiles, tileSize, getPlayerSize());
+      }
+    } catch (Exception e) {
+      System.err.println("Erro ao carregar NPCs: " + e.getMessage());
+      e.printStackTrace();
+    }
+  }
 }

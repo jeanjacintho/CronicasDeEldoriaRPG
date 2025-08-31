@@ -29,7 +29,7 @@ public class Npc extends Character {
      * @param playerSize Tamanho do jogador (para hitbox).
      */
     public Npc(String name, boolean isStatic, String dialog, int x, int y, String skin, int playerSize) {
-        super(x, y, 1, "down", name, null, 0, 0, 0, 0);
+        super(x, y, 1, "down", name, null, 0, 0, 0, 0); // Velocidade aumentada para 2
         this.isStatic = isStatic;
         this.dialog = dialog;
         this.skin = skin;
@@ -38,69 +38,6 @@ public class Npc extends Character {
         int hitboxX = (playerSize - hitboxWidth) / 2;
         int hitboxY = playerSize / 2;
         this.setHitbox(new java.awt.Rectangle(hitboxX, hitboxY, hitboxWidth, hitboxHeight));
-    }
-
-    /**
-     * Faz o NPC andar aleatoriamente, se não for estático.
-     */
-    public void walk() {
-        if (!isStatic) {
-            isMoving = false;
-            actionCounter++;
-            java.util.Random random = new java.util.Random();
-            if (actionCounter >= actionInterval) {
-                actionCounter = 0;
-                if (random.nextInt(100) < 80) {
-                    String[] directions = {"up", "down", "left", "right"};
-                    java.util.List<String> dirList = java.util.Arrays.asList(directions);
-                    java.util.Collections.shuffle(dirList, random);
-                    boolean moved = false;
-                    for (String dir : dirList) {
-                        setDirection(dir);
-                        setCollisionOn(false);
-                        if (!isCollisionOn()) {
-                            isMoving = true;
-                            switch (getDirection()) {
-                                case "up":
-                                    setWorldY(getWorldY() - getSpeed());
-                                    break;
-                                case "down":
-                                    setWorldY(getWorldY() + getSpeed());
-                                    break;
-                                case "left":
-                                    setWorldX(getWorldX() - getSpeed());
-                                    break;
-                                case "right":
-                                    setWorldX(getWorldX() + getSpeed());
-                                    break;
-                            }
-                            moved = true;
-                            break;
-                        }
-                    }
-                    if (!moved) {
-                        isMoving = false;
-                        spriteNum = 1;
-                        spriteCounter = 0;
-                        return;
-                    }
-                } else {
-                    actionInterval = 60;
-                    return;
-                }
-                actionInterval = 120 + random.nextInt(120);
-            }
-            if (isMoving) {
-                spriteCounter++;
-                if (spriteCounter > 15 - getSpeed()) {
-                    spriteNum = (spriteNum == 1) ? 2 : 1;
-                    spriteCounter = 0;
-                }
-            } else {
-                spriteNum = 1;
-                spriteCounter = 0;
-            }
-        }
     }
 
     /**
@@ -255,13 +192,22 @@ public class Npc extends Character {
         }
         if (sprites != null && !sprites.isEmpty()) {
             try {
-                java.awt.image.BufferedImage img = javax.imageio.ImageIO.read(new java.io.File("src/main/resources/sprites/" + sprites.get(spriteIdx)));
-                g.drawImage(img, screenX, screenY, npcSize, npcSize, null);
+                java.io.InputStream is = getClass().getResourceAsStream("/sprites/" + sprites.get(spriteIdx));
+                if (is != null) {
+                    java.awt.image.BufferedImage img = javax.imageio.ImageIO.read(is);
+                    g.drawImage(img, screenX, screenY, npcSize, npcSize, null);
+                } else {
+                    System.err.println("Sprite não encontrado: /sprites/" + sprites.get(spriteIdx));
+                    g.setColor(java.awt.Color.RED);
+                    g.fillRect(screenX, screenY, npcSize, npcSize);
+                }
             } catch (java.io.IOException e) {
+                System.err.println("Erro ao carregar sprite: " + e.getMessage());
                 g.setColor(java.awt.Color.RED);
                 g.fillRect(screenX, screenY, npcSize, npcSize);
             }
         } else {
+            System.err.println("Nenhum sprite encontrado para skin: " + skin + ", direção: " + direction);
             g.setColor(java.awt.Color.RED);
             g.fillRect(screenX, screenY, npcSize, npcSize);
         }

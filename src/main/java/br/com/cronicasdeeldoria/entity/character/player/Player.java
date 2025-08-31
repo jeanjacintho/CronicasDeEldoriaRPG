@@ -69,6 +69,7 @@ public class Player extends Character {
       this.down = ImageIO.read(getClass().getResourceAsStream("/sprites/player/" + classFolder + "/" + classFolder + "_front.png"));
       this.left = ImageIO.read(getClass().getResourceAsStream("/sprites/player/" + classFolder + "/" + classFolder + "_left.png"));
       this.right = ImageIO.read(getClass().getResourceAsStream("/sprites/player/" + classFolder + "/" + classFolder + "_right.png"));
+      
       this.up1 = ImageIO.read(getClass().getResourceAsStream("/sprites/player/" + classFolder + "/" + classFolder + "_back_walk1.png"));
       this.up2 = ImageIO.read(getClass().getResourceAsStream("/sprites/player/" + classFolder + "/" + classFolder + "_back_walk2.png"));
       this.down1 = ImageIO.read(getClass().getResourceAsStream("/sprites/player/" + classFolder + "/" + classFolder + "_front_walk1.png"));
@@ -101,6 +102,7 @@ public class Player extends Character {
       setCollisionOn(false);
       gamePanel.getColisionChecker().checkTile(this);
       gamePanel.getColisionChecker().checkEntity(this, gamePanel.getNpcs());
+      gamePanel.getColisionChecker().checkObject(this);
 
       if(isCollisionOn() == false) {
         switch (getDirection()) {
@@ -129,6 +131,12 @@ public class Player extends Character {
       isMoving = false;
       spriteNum = 1;
       spriteCounter = 0;
+    }
+    
+    // Verificar interação com tecla E
+    if (keyHandler.actionPressed) {
+      gamePanel.checkInteraction();
+      keyHandler.actionPressed = false;
     }
   }
 
