@@ -1,0 +1,92 @@
+[
+  {
+    "level": 1,
+    "xpRequired": 0,
+    "healthBonus": 0,
+    "manaBonus": 0,
+    "strengthBonus": 0,
+    "agilityBonus": 0,
+    "luckBonus": 0
+  },
+  {
+    "level": 2,
+    "xpRequired": 100,
+    "healthBonus": 10,
+    "manaBonus": 5,
+    "strengthBonus": 2,
+    "agilityBonus": 2,
+    "luckBonus": 1
+  },
+  {
+    "level": 3,
+    "xpRequired": 250,
+    "healthBonus": 20,
+    "manaBonus": 10,
+    "strengthBonus": 4,
+    "agilityBonus": 4,
+    "luckBonus": 2
+  },
+  {
+    "level": 4,
+    "xpRequired": 450,
+    "healthBonus": 30,
+    "manaBonus": 15,
+    "strengthBonus": 6,
+    "agilityBonus": 6,
+    "luckBonus": 3
+  },
+  {
+    "level": 5,
+    "xpRequired": 700,
+    "healthBonus": 40,
+    "manaBonus": 20,
+    "strengthBonus": 8,
+    "agilityBonus": 8,
+    "luckBonus": 4
+  },
+  {
+    "level": 6,
+    "xpRequired": 1000,
+    "healthBonus": 50,
+    "manaBonus": 25,
+    "strengthBonus": 10,
+    "agilityBonus": 10,
+    "luckBonus": 5
+  },
+  {
+    "level": 7,
+    "xpRequired": 1350,
+    "healthBonus": 60,
+    "manaBonus": 30,
+    "strengthBonus": 12,
+    "agilityBonus": 12,
+    "luckBonus": 6
+  },
+  {
+    "level": 8,
+    "xpRequired": 1750,
+    "healthBonus": 70,
+    "manaBonus": 35,
+    "strengthBonus": 14,
+    "agilityBonus": 14,
+    "luckBonus": 7
+  },
+  {
+    "level": 9,
+    "xpRequired": 2200,
+    "healthBonus": 80,
+    "manaBonus": 40,
+    "strengthBonus": 16,
+    "agilityBonus": 16,
+    "luckBonus": 8
+  },
+  {
+    "level": 10,
+    "xpRequired": 2700,
+    "healthBonus": 90,
+    "manaBonus": 45,
+    "strengthBonus": 18,
+    "agilityBonus": 18,
+    "luckBonus": 9
+  }
+]

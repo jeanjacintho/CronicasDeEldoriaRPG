@@ -16,6 +16,9 @@ import javax.imageio.ImageIO;
  */
 public class Player extends Character {
   private int luck;
+  private int totalXp = 0;
+  private int currentLevel = 1;
+  private LevelManager levelManager;
   GamePanel gamePanel;
   KeyHandler keyHandler;
   private int spriteCounter = 0;
@@ -46,6 +49,7 @@ public class Player extends Character {
     this.luck = luck;
     this.gamePanel = gamePanel;
     this.keyHandler = keyHandler;
+    this.levelManager = LevelManager.getInstance();
     this.getPlayerImage();
 
     screenX = (gamePanel.getScreenWidth() - gamePanel.getPlayerSize()) / 2;
@@ -138,6 +142,18 @@ public class Player extends Character {
       gamePanel.checkInteraction();
       keyHandler.actionPressed = false;
     }
+    
+    // Teste do sistema de XP (tecla X)
+    if (keyHandler.xPressed) {
+      gainXp(50);
+      keyHandler.xPressed = false;
+    }
+    
+    // Teste do sistema de XP (tecla Z)
+    if (keyHandler.zPressed) {
+      gainXp(100);
+      keyHandler.zPressed = false;
+    }
   }
 
   /**
@@ -203,5 +219,101 @@ public class Player extends Character {
 
   public GamePanel getGamePanel() {
     return gamePanel;
+  }
+
+  /**
+   * Adiciona XP ao jogador e verifica se subiu de nível.
+   * @param xp Quantidade de XP a ser adicionada.
+   */
+  public void gainXp(int xp) {
+    if (xp <= 0) return;
+    
+    int oldLevel = currentLevel;
+    totalXp += xp;
+    
+    // Recalcular nível baseado no XP total
+    currentLevel = levelManager.calculateLevel(totalXp);
+    
+    // Se subiu de nível, aplicar bônus
+    if (currentLevel > oldLevel) {
+      levelUp(oldLevel, currentLevel);
+    }
+    
+    System.out.println("XP ganho: " + xp + " | Total: " + totalXp + " | Nível: " + currentLevel);
+  }
+
+  /**
+   * Aplica os bônus de atributos ao subir de nível.
+   * @param oldLevel Nível anterior.
+   * @param newLevel Novo nível.
+   */
+  private void levelUp(int oldLevel, int newLevel) {
+    System.out.println("🎉 NÍVEL UP! " + oldLevel + " → " + newLevel);
+    
+    // Aplicar bônus de todos os níveis entre oldLevel e newLevel
+    for (int level = oldLevel + 1; level <= newLevel; level++) {
+      LevelManager.LevelDefinition levelDef = levelManager.getLevelDefinition(level);
+      if (levelDef != null) {
+        setAttributeHealth(getAttributeLife() + levelDef.healthBonus);
+        setAttributeMana(getAttributeMana() + levelDef.manaBonus);
+        setAttributeStrength(getAttributeStrength() + levelDef.strengthBonus);
+        setAttributeAgility(getAttributeAgility() + levelDef.agilityBonus);
+        setLuck(getLuck() + levelDef.luckBonus);
+        
+        System.out.println("Bônus do nível " + level + ": HP+" + levelDef.healthBonus + 
+                          " MP+" + levelDef.manaBonus + " STR+" + levelDef.strengthBonus + 
+                          " AGI+" + levelDef.agilityBonus + " LUCK+" + levelDef.luckBonus);
+      }
+    }
+  }
+
+  /**
+   * Retorna o XP total do jogador.
+   */
+  public int getTotalXp() {
+    return totalXp;
+  }
+
+  /**
+   * Retorna o nível atual do jogador.
+   */
+  public int getCurrentLevel() {
+    return currentLevel;
+  }
+
+  /**
+   * Retorna o XP necessário para o próximo nível.
+   */
+  public int getXpForNextLevel() {
+    return levelManager.getXpForNextLevel(currentLevel);
+  }
+
+  /**
+   * Retorna o progresso do XP para o próximo nível (0.0 a 1.0).
+   */
+  public double getXpProgress() {
+    return levelManager.getXpProgress(totalXp, currentLevel);
+  }
+
+  /**
+   * Retorna o XP atual no nível atual.
+   */
+  public int getCurrentXpInLevel() {
+    int xpForCurrent = levelManager.getXpForCurrentLevel(currentLevel);
+    return totalXp - xpForCurrent;
+  }
+
+  /**
+   * Retorna o XP necessário para completar o nível atual.
+   */
+  public int getXpNeededForLevel() {
+    int xpForCurrent = levelManager.getXpForCurrentLevel(currentLevel);
+    int xpForNext = levelManager.getXpForNextLevel(currentLevel);
+    
+    if (xpForNext == -1) {
+      return 0; // Nível máximo
+    }
+    
+    return xpForNext - xpForCurrent;
   }
 }
