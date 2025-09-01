@@ -1,8 +1,9 @@
 package br.com.cronicasdeeldoria.game;
 
 import br.com.cronicasdeeldoria.entity.Entity;
-import br.com.cronicasdeeldoria.entity.character.monster.OrcMonster;
-import br.com.cronicasdeeldoria.entity.character.npc.Npc;
+import br.com.cronicasdeeldoria.entity.character.npc.WarriorNpc;
+import br.com.cronicasdeeldoria.entity.character.npc.WolfMonster;
+import br.com.cronicasdeeldoria.entity.character.player.Player;
 
 public class ColisionChecker {
   GamePanel gamePanel;
@@ -109,9 +110,9 @@ public class ColisionChecker {
               default: break;
             }
             if (futureEntityBox.intersects(targetBox)) {
-              Entity npc;
-              System.out.println(targetEntity);
-              //System.out.println("estou colidindo com uma entidade");
+              if (targetEntity.getClass().getSimpleName().contains("Monster")) {
+                System.out.println("Colisão com um monstro");
+              }
               entity.setCollisionOn(true);
               break;
             }

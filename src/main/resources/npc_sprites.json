@@ -10,5 +10,11 @@
     "up": ["player/breton/breton_back.png", "player/breton/breton_back_walk1.png", "player/breton/breton_back_walk2.png"],
     "left": ["player/breton/breton_left.png", "player/breton/breton_left_walk1.png", "player/breton/breton_left_walk2.png"],
     "right": ["player/breton/breton_right.png", "player/breton/breton_right_walk1.png", "player/breton/breton_right_walk2.png"]
+  },
+  "wolfMonster": {
+    "down": ["monster/wolf/wolf_front.png", "monster/wolf/wolf_front_walk1.png", "monster/wolf/wolf_front_walk2.png"],
+    "up": ["monster/wolf/wolf_back.png", "monster/wolf/wolf_back_walk1.png", "monster/wolf/wolf_back_walk2.png"],
+    "left": ["monster/wolf/wolf_left.png", "monster/wolf/wolf_left_walk1.png", "monster/wolf/wolf_left_walk2.png"],
+    "right": ["monster/wolf/wolf_right.png", "monster/wolf/wolf_right_walk1.png", "monster/wolf/wolf_right_walk2.png"]
   }
 }

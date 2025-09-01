@@ -85,7 +85,7 @@ public class Entity {
   public void setHitbox(Rectangle hitbox) {
     this.hitbox = hitbox;
   }
-  
+
   public boolean isCollisionOn() {
     return collisionOn;
   }

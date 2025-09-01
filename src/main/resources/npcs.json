@@ -14,5 +14,13 @@
     "dialog": "Posso lutar ao seu lado por algumas moedas.",
     "type": "warrior",
     "skin": "guerreiro"
+  },
+  {
+    "id": "wolf",
+    "name": "White Wolf",
+    "isStatic": false,
+    "dialog": "Lute comigo, verme!",
+    "type": "enemy",
+    "skin": "wolfMonster"
   }
 ]
