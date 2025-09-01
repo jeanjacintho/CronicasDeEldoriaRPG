@@ -7,8 +7,8 @@ import java.awt.event.KeyListener;
  * Gerencia os eventos de teclado do jogador.
  */
 public class KeyHandler implements KeyListener {
-    public boolean upPressed, downPressed, leftPressed, rightPressed;
-    public boolean actionPressed;
+    public boolean actionPressed, upPressed, downPressed, leftPressed, rightPressed, xPressed, zPressed, qPressed;
+    public boolean rPressed, fPressed, gPressed, hPressed, tPressed;
 
     /**
      * Evento chamado quando uma tecla é digitada.
@@ -42,6 +42,30 @@ public class KeyHandler implements KeyListener {
             case KeyEvent.VK_E:
                 actionPressed = true;
                 break;
+            case KeyEvent.VK_X:
+                xPressed = true;
+                break;
+            case KeyEvent.VK_Z:
+                zPressed = true;
+                break;
+            case KeyEvent.VK_Q:
+                qPressed = true;
+                break;
+            case KeyEvent.VK_R:
+                rPressed = true;
+                break;
+            case KeyEvent.VK_F:
+                fPressed = true;
+                break;
+            case KeyEvent.VK_G:
+                gPressed = true;
+                break;
+            case KeyEvent.VK_H:
+                hPressed = true;
+                break;
+            case KeyEvent.VK_T:
+                tPressed = true;
+                break;
         }
     }
 
@@ -67,6 +91,30 @@ public class KeyHandler implements KeyListener {
                 break;
             case KeyEvent.VK_E:
                 actionPressed = false;
+                break;
+            case KeyEvent.VK_X:
+                xPressed = false;
+                break;
+            case KeyEvent.VK_Z:
+                zPressed = false;
+                break;
+            case KeyEvent.VK_Q:
+                qPressed = false;
+                break;
+            case KeyEvent.VK_R:
+                rPressed = false;
+                break;
+            case KeyEvent.VK_F:
+                fPressed = false;
+                break;
+            case KeyEvent.VK_G:
+                gPressed = false;
+                break;
+            case KeyEvent.VK_H:
+                hPressed = false;
+                break;
+            case KeyEvent.VK_T:
+                tPressed = false;
                 break;
         }
     }
