@@ -2033,6 +2033,17 @@
         }
       ],
       "collider": false
+    },
+    {
+      "name": "Monsters",
+      "tiles": [
+        {
+          "id": "guardiao",
+          "x": 11,
+          "y": 2
+        }
+      ],
+      "collider": true
     }
   ]
 }

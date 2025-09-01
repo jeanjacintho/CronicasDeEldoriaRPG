@@ -29,7 +29,7 @@ public class Npc extends Character {
      * @param playerSize Tamanho do jogador (para hitbox).
      */
     public Npc(String name, boolean isStatic, String dialog, int x, int y, String skin, int playerSize) {
-        super(x, y, 1, "down", name, null, 0, 0, 0, 0); // Velocidade aumentada para 2
+        super(x, y, 1, "down", name, null, 0, 0, 0, 0, 0, 0); // Velocidade aumentada para 2
         this.isStatic = isStatic;
         this.dialog = dialog;
         this.skin = skin;
@@ -67,16 +67,16 @@ public class Npc extends Character {
         if (!isStatic) {
             actionCounter++;
             java.util.Random random = new java.util.Random();
-            
+
             if (actionCounter >= actionInterval) {
                 actionCounter = 0;
                 isMoving = false;
-                
+
                 if (random.nextInt(100) < 80) {
                     String[] directions = {"up", "down", "left", "right"};
                     java.util.List<String> dirList = java.util.Arrays.asList(directions);
                     java.util.Collections.shuffle(dirList, random);
-                    
+
                     for (String dir : dirList) {
                         if (canMove(dir, gamePanel, player)) {
                             setDirection(dir);
@@ -84,30 +84,22 @@ public class Npc extends Character {
                         }
                     }
                 }
-                
+
                 actionInterval = 120 + random.nextInt(120);
             }
-            
+
             if (canMove(getDirection(), gamePanel, player)) {
                 isMoving = true;
                 switch (getDirection()) {
-                    case "up":
-                        setWorldY(getWorldY() - getSpeed());
-                        break;
-                    case "down":
-                        setWorldY(getWorldY() + getSpeed());
-                        break;
-                    case "left":
-                        setWorldX(getWorldX() - getSpeed());
-                        break;
-                    case "right":
-                        setWorldX(getWorldX() + getSpeed());
-                        break;
+                    case "up": setWorldY(getWorldY() - getSpeed()); break;
+                    case "down": setWorldY(getWorldY() + getSpeed()); break;
+                    case "left": setWorldX(getWorldX() - getSpeed()); break;
+                    case "right": setWorldX(getWorldX() + getSpeed()); break;
                 }
             } else {
                 isMoving = false;
             }
-            
+
             if (isMoving) {
                 spriteCounter++;
                 if (spriteCounter > 15 - getSpeed()) {
@@ -120,54 +112,46 @@ public class Npc extends Character {
             }
         }
     }
-    
+
     private boolean canMove(String direction, GamePanel gamePanel, Player player) {
         int newX = getWorldX();
         int newY = getWorldY();
         switch (direction) {
-            case "up":
-                newY -= getSpeed();
-                break;
-            case "down":
-                newY += getSpeed();
-                break;
-            case "left":
-                newX -= getSpeed();
-                break;
-            case "right":
-                newX += getSpeed();
-                break;
+            case "up": newY -= getSpeed(); break;
+            case "down": newY += getSpeed(); break;
+            case "left": newX -= getSpeed(); break;
+            case "right": newX += getSpeed(); break;
         }
-        
+
         String originalDirection = getDirection();
         setDirection(direction);
         setCollisionOn(false);
         gamePanel.getColisionChecker().checkTile(this);
         boolean tileCollision = isCollisionOn();
         setDirection(originalDirection);
-        
+
         if (tileCollision) {
             return false;
         }
-        
+
         if (this.getHitbox() != null && player.getHitbox() != null) {
             java.awt.Rectangle npcFutureBox = new java.awt.Rectangle(
-                newX + getHitbox().x, 
-                newY + getHitbox().y, 
-                getHitbox().width, 
+                newX + getHitbox().x,
+                newY + getHitbox().y,
+                getHitbox().width,
                 getHitbox().height
             );
             java.awt.Rectangle playerBox = new java.awt.Rectangle(
-                player.getWorldX() + player.getHitbox().x, 
-                player.getWorldY() + player.getHitbox().y, 
-                player.getHitbox().width, 
+                player.getWorldX() + player.getHitbox().x,
+                player.getWorldY() + player.getHitbox().y,
+                player.getHitbox().width,
                 player.getHitbox().height
             );
             if (npcFutureBox.intersects(playerBox)) {
                 return false;
             }
         }
-        
+
         return true;
     }
 

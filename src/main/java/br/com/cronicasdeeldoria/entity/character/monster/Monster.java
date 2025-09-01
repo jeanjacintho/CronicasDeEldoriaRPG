@@ -1,0 +1,200 @@
+package br.com.cronicasdeeldoria.entity.character.monster;
+
+import br.com.cronicasdeeldoria.entity.character.Character;
+import br.com.cronicasdeeldoria.entity.character.races.Race;
+import br.com.cronicasdeeldoria.entity.character.player.Player;
+import br.com.cronicasdeeldoria.game.GamePanel;
+
+import java.awt.*;
+
+public class Monster extends Character {
+  protected boolean isStatic;
+  protected String dialog;
+  protected String skin;
+  private int actionCounter = 0;
+  private int actionInterval = 120;
+  private int spriteCounter = 0;
+  private int spriteNum = 1;
+  private boolean isMoving = false;
+
+  /**
+   * Cria um novo personagem.
+   *
+   * @param x                  Posição X no mundo.
+   * @param y                  Posição Y no mundo.
+   * @param speed              Velocidade do personagem.
+   * @param direction          Direção inicial.
+   * @param name               Nome do personagem.
+   * @param race               Raça do personagem.
+   * @param attributeHealth    Vida.
+   * @param attributeMaxHealth Vida máxima.
+   * @param attributeMaxMana   Mana máxima.
+   * @param attributeStrength  Força.
+   * @param attributeAgility   Agilidade.
+   */
+  public Monster(int x, int y, int speed, String direction, String name, Race race,
+                 int attributeHealth, int attributeMaxHealth, int attributeMana,
+                 int attributeMaxMana, int attributeStrength, int attributeAgility,
+                 int playerSize, String dialog, String skin) {
+    super(x, y, speed, direction, name, race, attributeHealth, attributeMaxHealth, attributeMana, attributeMaxMana, attributeStrength, attributeAgility);
+    this.dialog = dialog;
+    this.skin = skin;
+    int hitboxWidth = 32;
+    int hitboxHeight = 36;
+    int hitboxX = (playerSize - hitboxWidth) / 2;
+    int hitboxY = playerSize / 2;
+    this.setHitbox(new java.awt.Rectangle(hitboxX, hitboxY, hitboxWidth, hitboxHeight));
+  }
+
+  /**
+   * Atualiza o estado do Monster.
+   * @param gamePanel Painel do jogo.
+   * @param player Jogador.
+   */
+  public void update(GamePanel gamePanel, Player player) {
+    if (!isStatic) {
+      walk(gamePanel, player);
+    }
+  }
+
+  /**
+   * Faz o Monster andar, considerando colisões e o jogador.
+   * @param gamePanel Painel do jogo.
+   * @param player Jogador.
+   */
+  public void walk(GamePanel gamePanel, Player player) {
+    if (!isStatic) {
+      actionCounter++;
+      java.util.Random random = new java.util.Random();
+
+      if (actionCounter >= actionInterval) {
+        actionCounter = 0;
+        isMoving = false;
+
+        if (random.nextInt(100) < 80) {
+          String[] directions = {"up", "down", "left", "right"};
+          java.util.List<String> dirList = java.util.Arrays.asList(directions);
+          java.util.Collections.shuffle(dirList, random);
+
+          for (String dir : dirList) {
+            if (canMove(dir, gamePanel, player)) {
+              setDirection(dir);
+              break;
+            }
+          }
+        }
+
+        actionInterval = 120 + random.nextInt(120);
+      }
+
+      if (canMove(getDirection(), gamePanel, player)) {
+        isMoving = true;
+        switch (getDirection()) {
+          case "up": setWorldY(getWorldY() - getSpeed()); break;
+          case "down": setWorldY(getWorldY() + getSpeed()); break;
+          case "left": setWorldX(getWorldX() - getSpeed()); break;
+          case "right": setWorldX(getWorldX() + getSpeed()); break;
+        }
+      } else {
+        isMoving = false;
+      }
+
+      if (isMoving) {
+        spriteCounter++;
+        if (spriteCounter > 15 - getSpeed()) {
+          spriteNum = (spriteNum == 1) ? 2 : 1;
+          spriteCounter = 0;
+        }
+      } else {
+        spriteNum = 1;
+        spriteCounter = 0;
+      }
+    }
+  }
+
+  private boolean canMove(String direction, GamePanel gamePanel, Player player) {
+    int newX = getWorldX();
+    int newY = getWorldY();
+    switch (direction) {
+      case "up": newY -= getSpeed(); break;
+      case "down": newY += getSpeed(); break;
+      case "left": newX -= getSpeed(); break;
+      case "right": newX += getSpeed(); break;
+    }
+
+    String originalDirection = getDirection();
+    setDirection(direction);
+    setCollisionOn(false);
+    gamePanel.getColisionChecker().checkTile(this);
+    boolean tileCollision = isCollisionOn();
+    setDirection(originalDirection);
+
+    if (tileCollision) {
+      return false;
+    }
+
+    if (this.getHitbox() != null && player.getHitbox() != null) {
+      java.awt.Rectangle npcFutureBox = new java.awt.Rectangle(
+        newX + getHitbox().x,
+        newY + getHitbox().y,
+        getHitbox().width,
+        getHitbox().height
+      );
+      java.awt.Rectangle playerBox = new java.awt.Rectangle(
+        player.getWorldX() + player.getHitbox().x,
+        player.getWorldY() + player.getHitbox().y,
+        player.getHitbox().width,
+        player.getHitbox().height
+      );
+      if (npcFutureBox.intersects(playerBox)) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  /**
+   * Desenha o Monster na tela.
+   * @param g Contexto gráfico.
+   * @param spriteLoader Loader de sprites.
+   * @param tileSize Tamanho do tile.
+   * @param player Jogador.
+   * @param playerScreenX Posição X do jogador na tela.
+   * @param playerScreenY Posição Y do jogador na tela.
+   */
+
+  public void draw(Graphics2D g, MonsterSpriteLoader spriteLoader, int tileSize, Player player, int playerScreenX, int playerScreenY) {
+    String direction = getDirection();
+    java.util.List<String> sprites = spriteLoader.getSprites(skin, direction);
+    int screenX = getWorldX() - player.getWorldX() + playerScreenX;
+    int screenY = getWorldY() - player.getWorldY() + playerScreenY;
+    int monsterSize = player.getPlayerSize();
+    int spriteIdx = 0;
+    if (isMoving && sprites != null && sprites.size() > 2) {
+      spriteIdx = (spriteNum == 1) ? 1 : 2;
+    }
+    if (sprites != null && !sprites.isEmpty()) {
+      try {
+        java.io.InputStream is = getClass().getResourceAsStream("/sprites/" + sprites.get(spriteIdx));
+        if (is != null) {
+          java.awt.image.BufferedImage img = javax.imageio.ImageIO.read(is);
+          g.drawImage(img, screenX, screenY, monsterSize, monsterSize, null);
+        } else {
+          System.err.println("Sprite não encontrado: /sprites/" + sprites.get(spriteIdx));
+          g.setColor(java.awt.Color.RED);
+          g.fillRect(screenX, screenY, monsterSize, monsterSize);
+        }
+      } catch (java.io.IOException e) {
+        System.err.println("Erro ao carregar sprite: " + e.getMessage());
+        g.setColor(java.awt.Color.RED);
+        g.fillRect(screenX, screenY, monsterSize, monsterSize);
+      }
+    } else {
+      System.err.println("Nenhum sprite encontrado para skin: " + skin + ", direção: " + direction);
+      g.setColor(java.awt.Color.RED);
+      g.fillRect(screenX, screenY, monsterSize, monsterSize);
+    }
+  }
+}
+

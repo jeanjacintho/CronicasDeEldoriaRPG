@@ -16,6 +16,8 @@ import javax.imageio.ImageIO;
  */
 public class Player extends Character {
   private int luck;
+  private int totalXp = 0;
+  private int currentLevel = 1;
   GamePanel gamePanel;
   KeyHandler keyHandler;
   private int spriteCounter = 0;
@@ -41,8 +43,8 @@ public class Player extends Character {
    * @param agility Agilidade inicial.
    * @param luck Sorte inicial.
    */
-  public Player(GamePanel gamePanel, KeyHandler keyHandler, Race race, int x, int y, int speed, String direction, String name, int health, int mana, int strength, int agility, int luck) {
-    super(x, y, speed, direction, name, race, health, mana, strength, agility);
+  public Player(GamePanel gamePanel, KeyHandler keyHandler, Race race, int x, int y, int speed, String direction, String name, int health, int maxHealth, int mana, int maxMana, int strength, int agility, int luck) {
+    super(x, y, speed, direction, name, race, health, maxHealth, mana, maxMana, strength, agility);
     this.luck = luck;
     this.gamePanel = gamePanel;
     this.keyHandler = keyHandler;
@@ -69,7 +71,7 @@ public class Player extends Character {
       this.down = ImageIO.read(getClass().getResourceAsStream("/sprites/player/" + classFolder + "/" + classFolder + "_front.png"));
       this.left = ImageIO.read(getClass().getResourceAsStream("/sprites/player/" + classFolder + "/" + classFolder + "_left.png"));
       this.right = ImageIO.read(getClass().getResourceAsStream("/sprites/player/" + classFolder + "/" + classFolder + "_right.png"));
-      
+
       this.up1 = ImageIO.read(getClass().getResourceAsStream("/sprites/player/" + classFolder + "/" + classFolder + "_back_walk1.png"));
       this.up2 = ImageIO.read(getClass().getResourceAsStream("/sprites/player/" + classFolder + "/" + classFolder + "_back_walk2.png"));
       this.down1 = ImageIO.read(getClass().getResourceAsStream("/sprites/player/" + classFolder + "/" + classFolder + "_front_walk1.png"));
@@ -106,18 +108,10 @@ public class Player extends Character {
 
       if(isCollisionOn() == false) {
         switch (getDirection()) {
-          case "up":
-            setWorldY(getWorldY() - getSpeed());
-            break;
-            case "down":
-            setWorldY(getWorldY() + getSpeed());
-            break;
-          case "left":
-            setWorldX(getWorldX() - getSpeed());
-            break;
-          case "right":
-            setWorldX(getWorldX() + getSpeed());
-            break;
+          case "up": setWorldY(getWorldY() - getSpeed()); break;
+          case "down": setWorldY(getWorldY() + getSpeed()); break;
+          case "left": setWorldX(getWorldX() - getSpeed()); break;
+          case "right": setWorldX(getWorldX() + getSpeed()); break;
         }
       }
 
@@ -132,7 +126,7 @@ public class Player extends Character {
       spriteNum = 1;
       spriteCounter = 0;
     }
-    
+
     // Verificar interação com tecla E
     if (keyHandler.actionPressed) {
       gamePanel.checkInteraction();
@@ -150,37 +144,37 @@ public class Player extends Character {
     switch(getDirection()) {
       case "up":
         if (isMoving) {
-            image = (spriteNum == 1) ? up1 : up2;
+          image = (spriteNum == 1) ? up1 : up2;
         } else {
-            image = up;
+          image = up;
         }
         break;
       case "down":
         if (isMoving) {
-            image = (spriteNum == 1) ? down1 : down2;
+          image = (spriteNum == 1) ? down1 : down2;
         } else {
-            image = down;
+          image = down;
         }
         break;
       case "left":
         if (isMoving) {
-            image = (spriteNum == 1) ? left1 : left2;
+          image = (spriteNum == 1) ? left1 : left2;
         } else {
-            image = left;
+          image = left;
         }
         break;
       case "right":
         if (isMoving) {
-            image = (spriteNum == 1) ? right1 : right2;
+          image = (spriteNum == 1) ? right1 : right2;
         } else {
-            image = right;
+          image = right;
         }
         break;
     }
 
     graphics2d.drawImage(image, screenX, screenY, gamePanel.getPlayerSize(), gamePanel.getPlayerSize(), null);
   }
- 
+
   public int getLuck() {
     return luck;
   }
@@ -204,4 +198,5 @@ public class Player extends Character {
   public GamePanel getGamePanel() {
     return gamePanel;
   }
+
 }

@@ -10,6 +10,7 @@ import javax.swing.JPanel;
 import br.com.cronicasdeeldoria.entity.character.player.Player;
 import br.com.cronicasdeeldoria.entity.character.races.Race;
 import br.com.cronicasdeeldoria.entity.character.npc.Npc;
+import br.com.cronicasdeeldoria.entity.character.monster.Monster;
 import br.com.cronicasdeeldoria.tile.TileManager;
 import br.com.cronicasdeeldoria.config.CharacterConfigLoader;
 import java.util.List;
@@ -37,7 +38,9 @@ public class GamePanel extends JPanel implements Runnable{
   private int maxScreenCol;
   private TileManager tileManager;
   private List<Npc> npcs = new ArrayList<>();
+  private List<Monster> monsters = new ArrayList<>();
   private br.com.cronicasdeeldoria.entity.character.npc.NpcSpriteLoader npcSpriteLoader;
+  private br.com.cronicasdeeldoria.entity.character.monster.MonsterSpriteLoader monsterSpriteLoader;
   private br.com.cronicasdeeldoria.entity.object.ObjectManager objectManager;
 
   /**
@@ -67,7 +70,7 @@ public class GamePanel extends JPanel implements Runnable{
     this.tileManager = new TileManager(this);
     this.maxWorldCol = tileManager.getMapWidth();
     this.maxWorldRow = tileManager.getMapHeight();
-    
+
     // Inicializar componentes do jogo
     initializeGameComponents();
 
@@ -76,7 +79,9 @@ public class GamePanel extends JPanel implements Runnable{
     int speed = configLoader.getIntAttribute(raceName, "speed", 4);
     String direction = configLoader.getStringAttribute(raceName, "direction", "down");
     int health = configLoader.getIntAttribute(raceName, "health", 100);
+    int maxHealth = configLoader.getIntAttribute(raceName, "maxHealth", 100);
     int mana = configLoader.getIntAttribute(raceName, "mana", 100);
+    int maxMana = configLoader.getIntAttribute(raceName, "maxMana", 100);
     int strength = configLoader.getIntAttribute(raceName, "strength", 10);
     int agility = configLoader.getIntAttribute(raceName, "agility", 10);
     int luck = configLoader.getIntAttribute(raceName, "luck", 0);
@@ -121,7 +126,7 @@ public class GamePanel extends JPanel implements Runnable{
       default:
         raceInstance = race;
     }
-            player = new Player(this, keyHandler, raceInstance, x, y, speed, direction, playerName, health, mana, strength, agility, luck);
+            player = new Player(this, keyHandler, raceInstance, x, y, speed, direction, playerName, health, maxHealth, mana, maxMana, strength, agility, luck);
   }
 
   /**
@@ -162,19 +167,24 @@ public class GamePanel extends JPanel implements Runnable{
      * Atualiza o estado do jogo.
      */
     public void update() {
-        
+
         player.update();
-        
+
         // Atualizar NPCs
         for (Npc npc : npcs) {
             npc.update(this, player);
         }
-        
+
+      // Atualizar NPCs
+      for (Monster monster : monsters) {
+        monster.update(this, player);
+      }
+
         // Atualizar objetos
         if (objectManager != null) {
             objectManager.updateActiveObjects(player.getWorldX() / tileSize, player.getWorldY() / tileSize);
         }
-        
+
         // Verificar se o GamePanel perdeu o foco e restaurá-lo
         if (!this.hasFocus()) {
             this.requestFocusInWindow();
@@ -189,13 +199,13 @@ public class GamePanel extends JPanel implements Runnable{
         int playerTileY = player.getWorldY() / tileSize;
         int entityTileX = entityX / tileSize;
         int entityTileY = entityY / tileSize;
-        
+
         int distanceX = Math.abs(playerTileX - entityTileX);
         int distanceY = Math.abs(playerTileY - entityTileY);
-        
+
         return distanceX <= 2 && distanceY <= 2;
     }
-    
+
     /**
      * Verifica e processa interações do jogador com NPCs e objetos.
      */
@@ -208,7 +218,7 @@ public class GamePanel extends JPanel implements Runnable{
                 return;
             }
         }
-        
+
         // Verificar interação com objetos
         if (objectManager != null) {
             for (br.com.cronicasdeeldoria.entity.object.MapObject obj : objectManager.getActiveObjects()) {
@@ -226,22 +236,27 @@ public class GamePanel extends JPanel implements Runnable{
      * @param graphics Contexto gráfico.
      */
     public void paintComponent(Graphics graphics) {
-        super.paintComponent(graphics);
-        Graphics2D graphics2D = (Graphics2D) graphics;
-        
-        // Renderizar o mapa (layers de fundo, player e overlay)
-        tileManager.draw(graphics2D);
-        
-        // Renderizar objetos
-        if (objectManager != null) {
-            objectManager.drawObjects(graphics2D);
-        }
-        
-        // Renderizar NPCs
-        for (Npc npc : npcs) {
-            npc.draw(graphics2D, npcSpriteLoader, tileSize, player, player.getScreenX(), player.getScreenY());
-        }
-        
+      super.paintComponent(graphics);
+      Graphics2D graphics2D = (Graphics2D) graphics;
+
+      // Renderizar o mapa (layers de fundo, player e overlay)
+      tileManager.draw(graphics2D);
+
+      // Renderizar objetos
+      if (objectManager != null) {
+          objectManager.drawObjects(graphics2D);
+      }
+
+      // Renderizar NPCs
+      for (Npc npc : npcs) {
+          npc.draw(graphics2D, npcSpriteLoader, tileSize, player, player.getScreenX(), player.getScreenY());
+      }
+
+//      // Renderizar Monsters
+      for (Monster monster : monsters) {
+        monster.draw(graphics2D, monsterSpriteLoader, tileSize, player, player.getScreenX(), player.getScreenY());
+      }
+
         graphics2D.dispose();
     }
 
@@ -277,11 +292,15 @@ public class GamePanel extends JPanel implements Runnable{
       return npcs;
     }
 
+    public java.util.List<br.com.cronicasdeeldoria.entity.character.monster.Monster> getMonsters() {
+      return monsters;
+   }
     public br.com.cronicasdeeldoria.entity.object.ObjectManager getObjectManager() {
       return objectManager;
     }
 
-      /**
+
+  /**
    * Inicializa componentes do jogo (NPCs e objetos).
    */
   private void initializeGameComponents() {
@@ -292,13 +311,24 @@ public class GamePanel extends JPanel implements Runnable{
       System.err.println("Erro ao inicializar NpcSpriteLoader: " + e.getMessage());
       this.npcSpriteLoader = null;
     }
-    
+
     // Carregar NPCs do mapa
     loadNpcsFromMap();
-    
+
+    // Inicializar MonsterSpriteLoader
+    try {
+      this.monsterSpriteLoader = new br.com.cronicasdeeldoria.entity.character.monster.MonsterSpriteLoader("/monster_sprites.json");
+    } catch (Exception e) {
+      System.err.println("Erro ao inicializar MonsterSpriteLoader: " + e.getMessage());
+      this.npcSpriteLoader = null;
+    }
+
+    // Carregar Monsters do mapa
+    loadMonstersFromMap();
+
     // Inicializar ObjectManager
     try {
-      br.com.cronicasdeeldoria.entity.object.ObjectSpriteLoader objectSpriteLoader = 
+      br.com.cronicasdeeldoria.entity.object.ObjectSpriteLoader objectSpriteLoader =
           new br.com.cronicasdeeldoria.entity.object.ObjectSpriteLoader("/objects.json");
       List<br.com.cronicasdeeldoria.tile.TileManager.MapTile> objectTiles = tileManager.getObjectTiles();
       this.objectManager = new br.com.cronicasdeeldoria.entity.object.ObjectManager(this, objectSpriteLoader, objectTiles);
@@ -320,6 +350,21 @@ public class GamePanel extends JPanel implements Runnable{
       }
     } catch (Exception e) {
       System.err.println("Erro ao carregar NPCs: " + e.getMessage());
+      e.printStackTrace();
+    }
+  }
+
+  /**
+   * Carrega NPCs das layers do mapa.
+   */
+  private void loadMonstersFromMap() {
+    try {
+      List<br.com.cronicasdeeldoria.tile.TileManager.MapTile> monsterTiles = tileManager.getMonsterTiles();
+      if (monsterTiles != null && !monsterTiles.isEmpty()) {
+        this.monsters = br.com.cronicasdeeldoria.entity.character.monster.MonsterFactory.loadMonstersFromTiles(monsterTiles, tileSize, getPlayerSize());
+      }
+    } catch (Exception e) {
+      System.err.println("Erro ao carregar Monsters: " + e.getMessage());
       e.printStackTrace();
     }
   }
