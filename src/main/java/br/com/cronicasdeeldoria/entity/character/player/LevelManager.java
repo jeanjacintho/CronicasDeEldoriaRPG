@@ -44,6 +44,11 @@ public class LevelManager {
                     level.strengthBonus = levelJson.get("strengthBonus").getAsInt();
                     level.agilityBonus = levelJson.get("agilityBonus").getAsInt();
                     level.luckBonus = levelJson.get("luckBonus").getAsInt();
+                    level.rageBonus = levelJson.get("rageBonus").getAsInt();
+                    level.dexterityBonus = levelJson.get("dexterityBonus").getAsInt();
+                    level.willpowerBonus = levelJson.get("willpowerBonus").getAsInt();
+                    level.enduranceBonus = levelJson.get("enduranceBonus").getAsInt();
+                    level.magicPowerBonus = levelJson.get("magicPowerBonus").getAsInt();
                     
                     levels.add(level);
                 }
@@ -124,13 +129,18 @@ public class LevelManager {
         return (double) xpInLevel / xpNeeded;
     }
     
-    public static class LevelDefinition {
-        public int level;
-        public int xpRequired;
-        public int healthBonus;
-        public int manaBonus;
-        public int strengthBonus;
-        public int agilityBonus;
-        public int luckBonus;
-    }
+      public static class LevelDefinition {
+    public int level;
+    public int xpRequired;
+    public int healthBonus;
+    public int manaBonus;
+    public int strengthBonus;
+    public int agilityBonus;
+    public int luckBonus;
+    public int rageBonus;
+    public int dexterityBonus;
+    public int willpowerBonus;
+    public int enduranceBonus;
+    public int magicPowerBonus;
+  }
 }
