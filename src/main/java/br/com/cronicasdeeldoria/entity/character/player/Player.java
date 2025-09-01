@@ -3,6 +3,11 @@ package br.com.cronicasdeeldoria.entity.character.player;
 import br.com.cronicasdeeldoria.entity.character.Character;
 import br.com.cronicasdeeldoria.game.GamePanel;
 import br.com.cronicasdeeldoria.game.KeyHandler;
+import br.com.cronicasdeeldoria.entity.character.races.Archer;
+import br.com.cronicasdeeldoria.entity.character.races.Breton;
+import br.com.cronicasdeeldoria.entity.character.races.Dwarf;
+import br.com.cronicasdeeldoria.entity.character.races.Mage;
+import br.com.cronicasdeeldoria.entity.character.races.Orc;
 import br.com.cronicasdeeldoria.entity.character.races.Race;
 
 import java.awt.Graphics2D;
@@ -154,6 +159,35 @@ public class Player extends Character {
       gainXp(100);
       keyHandler.zPressed = false;
     }
+    
+    if (keyHandler.qPressed) {
+      gamePanel.getGameUI().toggleStatsWindow();
+      keyHandler.qPressed = false;
+    }
+    
+    // Teste de dano (tecla R)
+    if (keyHandler.rPressed) {
+      takeDamage(20);
+      keyHandler.rPressed = false;
+    }
+    
+    // Teste de gasto de mana (tecla F)
+    if (keyHandler.fPressed) {
+      spendMana(15);
+      keyHandler.fPressed = false;
+    }
+    
+    // Teste de cura (tecla G)
+    if (keyHandler.gPressed) {
+      heal(30);
+      keyHandler.gPressed = false;
+    }
+    
+    // Teste de restauração de mana (tecla H)
+    if (keyHandler.hPressed) {
+      restoreMana(25);
+      keyHandler.hPressed = false;
+    }
   }
 
   /**
@@ -248,21 +282,47 @@ public class Player extends Character {
    * @param newLevel Novo nível.
    */
   private void levelUp(int oldLevel, int newLevel) {
-    System.out.println("🎉 NÍVEL UP! " + oldLevel + " → " + newLevel);
+    gamePanel.getGameUI().showCenterMessage("NÍVEL UP!", 3500);
     
-    // Aplicar bônus de todos os níveis entre oldLevel e newLevel
     for (int level = oldLevel + 1; level <= newLevel; level++) {
       LevelManager.LevelDefinition levelDef = levelManager.getLevelDefinition(level);
       if (levelDef != null) {
-        setAttributeHealth(getAttributeLife() + levelDef.healthBonus);
-        setAttributeMana(getAttributeMana() + levelDef.manaBonus);
+
+        setMaxHealth(getMaxHealth() + levelDef.healthBonus);
+        setMaxMana(getMaxMana() + levelDef.manaBonus);
+        
         setAttributeStrength(getAttributeStrength() + levelDef.strengthBonus);
         setAttributeAgility(getAttributeAgility() + levelDef.agilityBonus);
         setLuck(getLuck() + levelDef.luckBonus);
         
-        System.out.println("Bônus do nível " + level + ": HP+" + levelDef.healthBonus + 
-                          " MP+" + levelDef.manaBonus + " STR+" + levelDef.strengthBonus + 
-                          " AGI+" + levelDef.agilityBonus + " LUCK+" + levelDef.luckBonus);
+        String raceName = getRace().getRaceName().toLowerCase();
+        switch (raceName) {
+          case "orc":
+            ((Orc) getRace()).setRage(
+              ((Orc) getRace()).getRage() + levelDef.rageBonus
+            );
+            break;
+          case "archer":
+            ((Archer) getRace()).setDexterity(
+              ((Archer) getRace()).getDexterity() + levelDef.dexterityBonus
+            );
+            break;
+          case "breton":
+            ((Breton) getRace()).setWillpower(
+              ((Breton) getRace()).getWillpower() + levelDef.willpowerBonus
+            );
+            break;
+          case "dwarf":
+            ((Dwarf) getRace()).setEndurance(
+              ((Dwarf) getRace()).getEndurance() + levelDef.enduranceBonus
+            );
+            break;
+          case "mage":
+            ((Mage) getRace()).setMagicPower(
+              ((Mage) getRace()).getMagicPower() + levelDef.magicPowerBonus
+            );
+            break;
+        }
       }
     }
   }
@@ -315,5 +375,62 @@ public class Player extends Character {
     }
     
     return xpForNext - xpForCurrent;
+  }
+
+  /**
+   * Aplica dano ao jogador.
+   * @param damage Quantidade de dano a ser aplicado.
+   * @return true se o jogador sobreviveu, false se morreu.
+   */
+  public boolean takeDamage(int damage) {
+    int currentHealth = getAttributeLife();
+    int newHealth = Math.max(0, currentHealth - damage);
+    setAttributeHealth(newHealth);
+    
+    if (newHealth <= 0) {
+      gamePanel.getGameUI().showCenterMessage("GAME OVER", 5000); // 5 segundos
+      return false;
+    }
+    return true;
+  }
+
+  /**
+   * Gasta mana do jogador.
+   * @param manaCost Custo de mana.
+   * @return true se tem mana suficiente, false caso contrário.
+   */
+  public boolean spendMana(int manaCost) {
+    int currentMana = getAttributeMana();
+    if (currentMana < manaCost) {
+      gamePanel.getGameUI().addMessage("Mana insuficiente!", null, 3500);
+      return false;
+    }
+    
+    int newMana = currentMana - manaCost;
+    setAttributeMana(newMana);
+    
+    return true;
+  }
+
+  /**
+   * Restaura vida do jogador.
+   * @param healAmount Quantidade de vida a ser restaurada.
+   */
+  public void heal(int healAmount) {
+    int currentHealth = getAttributeLife();
+    int maxHealth = getMaxHealth();
+    int newHealth = Math.min(maxHealth, currentHealth + healAmount);
+    setAttributeHealth(newHealth);
+  }
+
+  /**
+   * Restaura mana do jogador.
+   * @param manaAmount Quantidade de mana a ser restaurada.
+   */
+  public void restoreMana(int manaAmount) {
+    int currentMana = getAttributeMana();
+    int maxMana = getMaxMana();
+    int newMana = Math.min(maxMana, currentMana + manaAmount);
+    setAttributeMana(newMana);
   }
 }

@@ -9,10 +9,12 @@ import br.com.cronicasdeeldoria.entity.character.races.Race;
 public class Character extends Entity {
   private Race race;
   private int attributeHealth;
+  private int maxHealth;
   private int attributeForce;
   private int attributeDefence;
   private int attributeStamina;
   private int attributeMana;
+  private int maxMana;
   private int attributeStrength;
   private int attributeAgility;
 
@@ -33,7 +35,9 @@ public class Character extends Entity {
     super(x, y, speed, direction, name);
     this.race = race;
     this.attributeHealth = attributeHealth;
+    this.maxHealth = attributeHealth;
     this.attributeMana = attributeMana;
+    this.maxMana = attributeMana;
     this.attributeStrength = attributeStrength;
     this.attributeAgility = attributeAgility;
   }
@@ -52,6 +56,22 @@ public class Character extends Entity {
 
   public void setAttributeHealth(int attributeHealth) {
     this.attributeHealth = attributeHealth;
+  }
+
+  public int getMaxHealth() {
+    return maxHealth;
+  }
+
+  public int getMaxMana() {
+    return maxMana;
+  }
+
+  public void setMaxHealth(int maxHealth) {
+    this.maxHealth = maxHealth;
+  }
+
+  public void setMaxMana(int maxMana) {
+    this.maxMana = maxMana;
   }
 
   public int getAttribueForce() {
@@ -81,18 +101,23 @@ public class Character extends Entity {
   public int getAttributeMana() {
     return attributeMana;
   }
+
   public void setAttributeMana(int attributeMana) {
     this.attributeMana = attributeMana;
   }
+
   public int getAttributeStrength() {
     return attributeStrength;
   }
+
   public void setAttributeStrength(int attributeStrength) {
     this.attributeStrength = attributeStrength;
   }
+
   public int getAttributeAgility() {
     return attributeAgility;
   }
+  
   public void setAttributeAgility(int attributeAgility) {
     this.attributeAgility = attributeAgility;
   }

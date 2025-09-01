@@ -8,13 +8,23 @@ import java.awt.Graphics2D;
 import javax.swing.JPanel;
 
 import br.com.cronicasdeeldoria.entity.character.player.Player;
+import br.com.cronicasdeeldoria.entity.character.races.Archer;
+import br.com.cronicasdeeldoria.entity.character.races.Breton;
+import br.com.cronicasdeeldoria.entity.character.races.Dwarf;
+import br.com.cronicasdeeldoria.entity.character.races.Mage;
+import br.com.cronicasdeeldoria.entity.character.races.Orc;
 import br.com.cronicasdeeldoria.entity.character.races.Race;
+import br.com.cronicasdeeldoria.entity.object.MapObject;
+import br.com.cronicasdeeldoria.entity.object.ObjectManager;
+import br.com.cronicasdeeldoria.entity.object.ObjectSpriteLoader;
+import br.com.cronicasdeeldoria.game.ui.GameUI;
 import br.com.cronicasdeeldoria.entity.character.npc.Npc;
+import br.com.cronicasdeeldoria.entity.character.npc.NpcFactory;
+import br.com.cronicasdeeldoria.entity.character.npc.NpcSpriteLoader;
 import br.com.cronicasdeeldoria.tile.TileManager;
 import br.com.cronicasdeeldoria.config.CharacterConfigLoader;
 import java.util.List;
 import java.util.ArrayList;
-
 
 /**
  * Painel principal do jogo, responsável pelo loop de atualização, renderização e gerenciamento dos elementos do jogo.
@@ -39,6 +49,7 @@ public class GamePanel extends JPanel implements Runnable{
   private List<Npc> npcs = new ArrayList<>();
   private br.com.cronicasdeeldoria.entity.character.npc.NpcSpriteLoader npcSpriteLoader;
   private br.com.cronicasdeeldoria.entity.object.ObjectManager objectManager;
+  private br.com.cronicasdeeldoria.game.ui.GameUI gameUI;
 
   /**
    * Inicializa o painel do jogo com as configurações fornecidas.
@@ -68,7 +79,6 @@ public class GamePanel extends JPanel implements Runnable{
     this.maxWorldCol = tileManager.getMapWidth();
     this.maxWorldRow = tileManager.getMapHeight();
     
-    // Inicializar componentes do jogo
     initializeGameComponents();
 
     int x = (maxWorldCol * tileSize) / 2 - (playerSize / 2);
@@ -104,19 +114,19 @@ public class GamePanel extends JPanel implements Runnable{
     Race raceInstance;
     switch (raceName) {
       case "dwarf":
-        raceInstance = new br.com.cronicasdeeldoria.entity.character.races.Dwarf(special);
+        raceInstance = new Dwarf(special);
         break;
       case "mage":
-        raceInstance = new br.com.cronicasdeeldoria.entity.character.races.Mage(special);
+        raceInstance = new Mage(special);
         break;
       case "orc":
-        raceInstance = new br.com.cronicasdeeldoria.entity.character.races.Orc(special);
+        raceInstance = new Orc(special);
         break;
       case "breton":
-        raceInstance = new br.com.cronicasdeeldoria.entity.character.races.Breton(special);
+        raceInstance = new Breton(special);
         break;
       case "archer":
-        raceInstance = new br.com.cronicasdeeldoria.entity.character.races.Archer(special);
+        raceInstance = new Archer(special);
         break;
       default:
         raceInstance = race;
@@ -211,7 +221,7 @@ public class GamePanel extends JPanel implements Runnable{
         
         // Verificar interação com objetos
         if (objectManager != null) {
-            for (br.com.cronicasdeeldoria.entity.object.MapObject obj : objectManager.getActiveObjects()) {
+            for (MapObject obj : objectManager.getActiveObjects()) {
                 if (isPlayerNearEntity(player, obj.getWorldX(), obj.getWorldY())) {
                     System.out.println("INTERAÇÃO COM OBJETO: " + obj.getName() + " (" + obj.getObjectId() + ")");
                     obj.interact(player);
@@ -241,6 +251,9 @@ public class GamePanel extends JPanel implements Runnable{
         for (Npc npc : npcs) {
             npc.draw(graphics2D, npcSpriteLoader, tileSize, player, player.getScreenX(), player.getScreenY());
         }
+        
+        // Renderizar interface do usuário
+        gameUI.draw(graphics2D);
         
         graphics2D.dispose();
     }
@@ -273,21 +286,28 @@ public class GamePanel extends JPanel implements Runnable{
       return tileManager;
     }
 
-    public java.util.List<br.com.cronicasdeeldoria.entity.character.npc.Npc> getNpcs() {
+    public List<Npc> getNpcs() {
       return npcs;
     }
 
-    public br.com.cronicasdeeldoria.entity.object.ObjectManager getObjectManager() {
+    public ObjectManager getObjectManager() {
       return objectManager;
+    }
+
+    public GameUI getGameUI() {
+      return gameUI;
     }
 
       /**
    * Inicializa componentes do jogo (NPCs e objetos).
    */
   private void initializeGameComponents() {
+    // Inicializar GameUI
+    this.gameUI = new GameUI(this);
+    
     // Inicializar NpcSpriteLoader
     try {
-      this.npcSpriteLoader = new br.com.cronicasdeeldoria.entity.character.npc.NpcSpriteLoader("/npc_sprites.json");
+      this.npcSpriteLoader = new NpcSpriteLoader("/npc_sprites.json");
     } catch (Exception e) {
       System.err.println("Erro ao inicializar NpcSpriteLoader: " + e.getMessage());
       this.npcSpriteLoader = null;
@@ -298,10 +318,9 @@ public class GamePanel extends JPanel implements Runnable{
     
     // Inicializar ObjectManager
     try {
-      br.com.cronicasdeeldoria.entity.object.ObjectSpriteLoader objectSpriteLoader = 
-          new br.com.cronicasdeeldoria.entity.object.ObjectSpriteLoader("/objects.json");
-      List<br.com.cronicasdeeldoria.tile.TileManager.MapTile> objectTiles = tileManager.getObjectTiles();
-      this.objectManager = new br.com.cronicasdeeldoria.entity.object.ObjectManager(this, objectSpriteLoader, objectTiles);
+      ObjectSpriteLoader objectSpriteLoader = new ObjectSpriteLoader("/objects.json");
+      List<TileManager.MapTile> objectTiles = tileManager.getObjectTiles();
+      this.objectManager = new ObjectManager(this, objectSpriteLoader, objectTiles);
     } catch (Exception e) {
       System.err.println("Erro ao inicializar ObjectManager: " + e.getMessage());
       e.printStackTrace();
@@ -314,9 +333,9 @@ public class GamePanel extends JPanel implements Runnable{
    */
   private void loadNpcsFromMap() {
     try {
-      List<br.com.cronicasdeeldoria.tile.TileManager.MapTile> npcTiles = tileManager.getNpcTiles();
+      List<TileManager.MapTile> npcTiles = tileManager.getNpcTiles();
       if (npcTiles != null && !npcTiles.isEmpty()) {
-        this.npcs = br.com.cronicasdeeldoria.entity.character.npc.NpcFactory.loadNpcsFromTiles(npcTiles, tileSize, getPlayerSize());
+        this.npcs = NpcFactory.loadNpcsFromTiles(npcTiles, tileSize, getPlayerSize());
       }
     } catch (Exception e) {
       System.err.println("Erro ao carregar NPCs: " + e.getMessage());
