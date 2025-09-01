@@ -18,7 +18,7 @@ public class OrcMonster extends Monster {
    * @param playerSize Tamanho do jogador (para hitbox).
    */
   public OrcMonster(String name, boolean isStatic, String dialog, int x, int y, String skin, int playerSize) {
-    super(x, y, 1, "down", name, null, 20, 20, 0, 0, 5, 5, 15, skin,"teste");
+    super(x, y, 1, "down", name, null, 20, 20, 0, 0, 5, 5, 15, skin,"guardiao");
   }
 
 }
