@@ -2030,6 +2030,11 @@
           "id": "guardiao",
           "x": 14,
           "y": 9
+        },
+        {
+          "id": "wolf",
+          "x": 13,
+          "y": 2
         }
       ],
       "collider": false

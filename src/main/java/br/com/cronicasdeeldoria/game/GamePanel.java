@@ -78,7 +78,7 @@ public class GamePanel extends JPanel implements Runnable{
     this.tileManager = new TileManager(this);
     this.maxWorldCol = tileManager.getMapWidth();
     this.maxWorldRow = tileManager.getMapHeight();
-    
+
     initializeGameComponents();
 
     int x = (maxWorldCol * tileSize) / 2 - (playerSize / 2);
@@ -172,19 +172,19 @@ public class GamePanel extends JPanel implements Runnable{
      * Atualiza o estado do jogo.
      */
     public void update() {
-        
+
         player.update();
-        
+
         // Atualizar NPCs
         for (Npc npc : npcs) {
             npc.update(this, player);
         }
-        
+
         // Atualizar objetos
         if (objectManager != null) {
             objectManager.updateActiveObjects(player.getWorldX() / tileSize, player.getWorldY() / tileSize);
         }
-        
+
         // Verificar se o GamePanel perdeu o foco e restaurá-lo
         if (!this.hasFocus()) {
             this.requestFocusInWindow();
@@ -199,13 +199,13 @@ public class GamePanel extends JPanel implements Runnable{
         int playerTileY = player.getWorldY() / tileSize;
         int entityTileX = entityX / tileSize;
         int entityTileY = entityY / tileSize;
-        
+
         int distanceX = Math.abs(playerTileX - entityTileX);
         int distanceY = Math.abs(playerTileY - entityTileY);
-        
+
         return distanceX <= 2 && distanceY <= 2;
     }
-    
+
     /**
      * Verifica e processa interações do jogador com NPCs e objetos.
      */
@@ -218,7 +218,7 @@ public class GamePanel extends JPanel implements Runnable{
                 return;
             }
         }
-        
+
         // Verificar interação com objetos
         if (objectManager != null) {
             for (MapObject obj : objectManager.getActiveObjects()) {
@@ -238,23 +238,23 @@ public class GamePanel extends JPanel implements Runnable{
     public void paintComponent(Graphics graphics) {
         super.paintComponent(graphics);
         Graphics2D graphics2D = (Graphics2D) graphics;
-        
+
         // Renderizar o mapa (layers de fundo, player e overlay)
         tileManager.draw(graphics2D);
-        
+
         // Renderizar objetos
         if (objectManager != null) {
             objectManager.drawObjects(graphics2D);
         }
-        
+
         // Renderizar NPCs
         for (Npc npc : npcs) {
             npc.draw(graphics2D, npcSpriteLoader, tileSize, player, player.getScreenX(), player.getScreenY());
         }
-        
+
         // Renderizar interface do usuário
         gameUI.draw(graphics2D);
-        
+
         graphics2D.dispose();
     }
 
@@ -304,7 +304,7 @@ public class GamePanel extends JPanel implements Runnable{
   private void initializeGameComponents() {
     // Inicializar GameUI
     this.gameUI = new GameUI(this);
-    
+
     // Inicializar NpcSpriteLoader
     try {
       this.npcSpriteLoader = new NpcSpriteLoader("/npc_sprites.json");
@@ -312,10 +312,10 @@ public class GamePanel extends JPanel implements Runnable{
       System.err.println("Erro ao inicializar NpcSpriteLoader: " + e.getMessage());
       this.npcSpriteLoader = null;
     }
-    
+
     // Carregar NPCs do mapa
     loadNpcsFromMap();
-    
+
     // Inicializar ObjectManager
     try {
       ObjectSpriteLoader objectSpriteLoader = new ObjectSpriteLoader("/objects.json");

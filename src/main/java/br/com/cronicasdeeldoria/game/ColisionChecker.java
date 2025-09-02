@@ -1,6 +1,9 @@
 package br.com.cronicasdeeldoria.game;
 
 import br.com.cronicasdeeldoria.entity.Entity;
+import br.com.cronicasdeeldoria.entity.character.npc.WarriorNpc;
+import br.com.cronicasdeeldoria.entity.character.npc.WolfMonster;
+import br.com.cronicasdeeldoria.entity.character.player.Player;
 
 public class ColisionChecker {
   GamePanel gamePanel;
@@ -21,7 +24,7 @@ public class ColisionChecker {
     int entityBottomRow = entityBottomWorldY / gamePanel.getTileSize();
 
     int tileSize = gamePanel.getTileSize();
-    
+
     switch (entity.getDirection()) {
       case "up": {
         entityTopRow = (entityTopWorldY - entity.getSpeed()) / tileSize;
@@ -88,35 +91,28 @@ public class ColisionChecker {
               entity.getHitbox().width,
               entity.getHitbox().height
             );
-            
+
             java.awt.Rectangle targetBox = new java.awt.Rectangle(
               targetEntity.getWorldX() + targetEntity.getHitbox().x,
               targetEntity.getWorldY() + targetEntity.getHitbox().y,
               targetEntity.getHitbox().width,
               targetEntity.getHitbox().height
             );
-            
+
             // Verificar colisão baseada na direção do movimento
             java.awt.Rectangle futureEntityBox = new java.awt.Rectangle(entityBox);
-            
+
             switch (entity.getDirection()) {
-              case "up":
-                futureEntityBox.y -= entity.getSpeed();
-                break;
-              case "down":
-                futureEntityBox.y += entity.getSpeed();
-                break;
-              case "left":
-                futureEntityBox.x -= entity.getSpeed();
-                break;
-              case "right":
-                futureEntityBox.x += entity.getSpeed();
-                break;
-              default:
-                break;
+              case "up": futureEntityBox.y -= entity.getSpeed(); break;
+              case "down": futureEntityBox.y += entity.getSpeed(); break;
+              case "left": futureEntityBox.x -= entity.getSpeed(); break;
+              case "right": futureEntityBox.x += entity.getSpeed(); break;
+              default: break;
             }
-            
             if (futureEntityBox.intersects(targetBox)) {
+              if (targetEntity.getClass().getSimpleName().contains("Monster")) {
+                System.out.println("Colisão com um monstro");
+              }
               entity.setCollisionOn(true);
               break;
             }
@@ -125,7 +121,7 @@ public class ColisionChecker {
       }
     }
   }
-  
+
   /**
    * Verifica colisão com objetos.
    * @param entity Entidade para verificar colisão.
@@ -142,35 +138,26 @@ public class ColisionChecker {
               entity.getHitbox().width,
               entity.getHitbox().height
             );
-            
+
             java.awt.Rectangle objBox = new java.awt.Rectangle(
               obj.getWorldX() + obj.getHitbox().x,
               obj.getWorldY() + obj.getHitbox().y,
               obj.getHitbox().width,
               obj.getHitbox().height
             );
-            
+
             // Verificar colisão baseada na direção do movimento
             java.awt.Rectangle futureEntityBox = new java.awt.Rectangle(entityBox);
-            
+
             switch (entity.getDirection()) {
-              case "up":
-                futureEntityBox.y -= entity.getSpeed();
-                break;
-              case "down":
-                futureEntityBox.y += entity.getSpeed();
-                break;
-              case "left":
-                futureEntityBox.x -= entity.getSpeed();
-                break;
-              case "right":
-                futureEntityBox.x += entity.getSpeed();
-                break;
-              default:
-                break;
+              case "up": futureEntityBox.y -= entity.getSpeed(); break;
+              case "down": futureEntityBox.y += entity.getSpeed(); break;
+              case "left": futureEntityBox.x -= entity.getSpeed(); break;
+              case "right": futureEntityBox.x += entity.getSpeed(); break;
+              default: break;
             }
-            
             if (futureEntityBox.intersects(objBox)) {
+              System.out.println("estou colidindo com um objeto");
               entity.setCollisionOn(true);
               break;
             }

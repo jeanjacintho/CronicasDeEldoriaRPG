@@ -78,7 +78,7 @@ public class Player extends Character {
       this.down = ImageIO.read(getClass().getResourceAsStream("/sprites/player/" + classFolder + "/" + classFolder + "_front.png"));
       this.left = ImageIO.read(getClass().getResourceAsStream("/sprites/player/" + classFolder + "/" + classFolder + "_left.png"));
       this.right = ImageIO.read(getClass().getResourceAsStream("/sprites/player/" + classFolder + "/" + classFolder + "_right.png"));
-      
+
       this.up1 = ImageIO.read(getClass().getResourceAsStream("/sprites/player/" + classFolder + "/" + classFolder + "_back_walk1.png"));
       this.up2 = ImageIO.read(getClass().getResourceAsStream("/sprites/player/" + classFolder + "/" + classFolder + "_back_walk2.png"));
       this.down1 = ImageIO.read(getClass().getResourceAsStream("/sprites/player/" + classFolder + "/" + classFolder + "_front_walk1.png"));
@@ -141,48 +141,48 @@ public class Player extends Character {
       spriteNum = 1;
       spriteCounter = 0;
     }
-    
+
     // Verificar interação com tecla E
     if (keyHandler.actionPressed) {
       gamePanel.checkInteraction();
       keyHandler.actionPressed = false;
     }
-    
+
     // Teste do sistema de XP (tecla X)
     if (keyHandler.xPressed) {
       gainXp(50);
       keyHandler.xPressed = false;
     }
-    
+
     // Teste do sistema de XP (tecla Z)
     if (keyHandler.zPressed) {
       gainXp(100);
       keyHandler.zPressed = false;
     }
-    
+
     if (keyHandler.qPressed) {
       gamePanel.getGameUI().toggleStatsWindow();
       keyHandler.qPressed = false;
     }
-    
+
     // Teste de dano (tecla R)
     if (keyHandler.rPressed) {
       takeDamage(20);
       keyHandler.rPressed = false;
     }
-    
+
     // Teste de gasto de mana (tecla F)
     if (keyHandler.fPressed) {
       spendMana(15);
       keyHandler.fPressed = false;
     }
-    
+
     // Teste de cura (tecla G)
     if (keyHandler.gPressed) {
       heal(30);
       keyHandler.gPressed = false;
     }
-    
+
     // Teste de restauração de mana (tecla H)
     if (keyHandler.hPressed) {
       restoreMana(25);
@@ -230,7 +230,7 @@ public class Player extends Character {
 
     graphics2d.drawImage(image, screenX, screenY, gamePanel.getPlayerSize(), gamePanel.getPlayerSize(), null);
   }
- 
+
   public int getLuck() {
     return luck;
   }
@@ -261,18 +261,18 @@ public class Player extends Character {
    */
   public void gainXp(int xp) {
     if (xp <= 0) return;
-    
+
     int oldLevel = currentLevel;
     totalXp += xp;
-    
+
     // Recalcular nível baseado no XP total
     currentLevel = levelManager.calculateLevel(totalXp);
-    
+
     // Se subiu de nível, aplicar bônus
     if (currentLevel > oldLevel) {
       levelUp(oldLevel, currentLevel);
     }
-    
+
     System.out.println("XP ganho: " + xp + " | Total: " + totalXp + " | Nível: " + currentLevel);
   }
 
@@ -283,18 +283,18 @@ public class Player extends Character {
    */
   private void levelUp(int oldLevel, int newLevel) {
     gamePanel.getGameUI().showCenterMessage("NÍVEL UP!", 3500);
-    
+
     for (int level = oldLevel + 1; level <= newLevel; level++) {
       LevelManager.LevelDefinition levelDef = levelManager.getLevelDefinition(level);
       if (levelDef != null) {
 
         setMaxHealth(getMaxHealth() + levelDef.healthBonus);
         setMaxMana(getMaxMana() + levelDef.manaBonus);
-        
+
         setAttributeStrength(getAttributeStrength() + levelDef.strengthBonus);
         setAttributeAgility(getAttributeAgility() + levelDef.agilityBonus);
         setLuck(getLuck() + levelDef.luckBonus);
-        
+
         String raceName = getRace().getRaceName().toLowerCase();
         switch (raceName) {
           case "orc":
@@ -369,11 +369,11 @@ public class Player extends Character {
   public int getXpNeededForLevel() {
     int xpForCurrent = levelManager.getXpForCurrentLevel(currentLevel);
     int xpForNext = levelManager.getXpForNextLevel(currentLevel);
-    
+
     if (xpForNext == -1) {
       return 0; // Nível máximo
     }
-    
+
     return xpForNext - xpForCurrent;
   }
 
@@ -386,7 +386,7 @@ public class Player extends Character {
     int currentHealth = getAttributeLife();
     int newHealth = Math.max(0, currentHealth - damage);
     setAttributeHealth(newHealth);
-    
+
     if (newHealth <= 0) {
       gamePanel.getGameUI().showCenterMessage("GAME OVER", 5000); // 5 segundos
       return false;
@@ -405,10 +405,10 @@ public class Player extends Character {
       gamePanel.getGameUI().addMessage("Mana insuficiente!", null, 3500);
       return false;
     }
-    
+
     int newMana = currentMana - manaCost;
     setAttributeMana(newMana);
-    
+
     return true;
   }
 

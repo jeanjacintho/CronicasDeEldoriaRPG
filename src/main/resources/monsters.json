@@ -1,0 +1,10 @@
+[
+  {
+    "id": "guardiao",
+    "name": "Guardião",
+    "isStatic": false,
+    "dialog": "Lute comigo, verme!",
+    "type": "monster",
+    "skin": "guardiao"
+  }
+]
