@@ -14,8 +14,8 @@ public class SkeletonMonster extends Npc {
    * @param playerSize Tamanho do jogador (para hitbox).
    */
 
-  public SkeletonMonster(String name, boolean isStatic, String dialog, int x, int y, String skin, int playerSize ) {
-    super(name, isStatic, dialog, x, y, skin, playerSize);
+  public SkeletonMonster(String name, boolean isStatic, String dialog, int x, int y, String skin, int playerSize, boolean interactive, boolean autoInteraction) {
+    super(name, isStatic, dialog, x, y, skin, playerSize, interactive, autoInteraction);
   }
 
   public int getXpReward() {

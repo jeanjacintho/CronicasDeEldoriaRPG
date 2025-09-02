@@ -417,10 +417,10 @@ public class GameUI {
     if (gamePanel.battle.isWaitingForPlayerInput()) {
       // Mostrar opções disponíveis
       g2.drawString("Escolha sua ação:", 20, screenHeight - 75);
-      g2.drawString("(R) - Ataque Mágico", 20, screenHeight - 35);
-      g2.drawString("(E) - Ataque Básico", 20, screenHeight - 55);
-      g2.drawString("(W) - Defender", 200, screenHeight - 55);
-      g2.drawString("(Q) - Tentar Fugir", 200, screenHeight - 35);
+      g2.drawString("(4) - Ataque Mágico", 20, screenHeight - 55);
+      g2.drawString("(3) - Ataque Básico", 20, screenHeight - 35);
+      g2.drawString("(2) - Defender", 200, screenHeight - 55);
+      g2.drawString("(1) - Tentar Fugir", 200, screenHeight - 35);
 
       // Destacar opções indisponíveis
       if (player.getAttributeMana() < 10) {

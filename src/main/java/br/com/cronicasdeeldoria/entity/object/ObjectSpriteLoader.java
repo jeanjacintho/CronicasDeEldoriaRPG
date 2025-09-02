@@ -76,6 +76,8 @@ public class ObjectSpriteLoader {
         public String id;
         public String name;
         public boolean collision;
+        public Boolean interactive; // null significa usar padrão (true)
+        public Boolean autoInteraction; // null significa usar padrão (false)
         public int[] size;
         public List<List<String>> spritePaths;
     }

@@ -1,0 +1,9 @@
+{
+  "keyboard_mappings": [
+    {
+      "key": "E",
+      "imagePath": "/ui/e-keybind.gif",
+      "description": "Tecla E para interação"
+    }
+  ]
+}

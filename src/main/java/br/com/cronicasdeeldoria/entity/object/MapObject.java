@@ -13,6 +13,8 @@ public class MapObject extends Entity {
     private String objectId;
     private String name;
     private boolean collision;
+    private boolean interactive;
+    private boolean autoInteraction;
     private int width;
     private int height;
     private ObjectSpriteLoader.ObjectDefinition objectDefinition;
@@ -27,20 +29,24 @@ public class MapObject extends Entity {
      * @param width Largura em tiles.
      * @param height Altura em tiles.
      * @param collision Se tem colisão.
+     * @param interactive Se é interativo.
+     * @param autoInteraction Se tem auto-interação.
      * @param objectDefinition Definição do objeto.
+     * @param tileSize Tamanho do tile.
      */
     public MapObject(String objectId, String name, int worldX, int worldY, int width, int height,
-                     boolean collision, ObjectSpriteLoader.ObjectDefinition objectDefinition) {
+                     boolean collision, boolean interactive, boolean autoInteraction, ObjectSpriteLoader.ObjectDefinition objectDefinition, int tileSize) {
         super(worldX, worldY, 0,"none", objectId);
         this.objectId = objectId;
         this.name = name;
         this.width = width;
         this.height = height;
         this.collision = collision;
+        this.interactive = interactive;
+        this.autoInteraction = autoInteraction;
         this.objectDefinition = objectDefinition;
 
         // Configurar hitbox baseada no tamanho do objeto em pixels (tiles * tileSize)
-        int tileSize = 48; // tileSize padrão do jogo
         this.setHitbox(new Rectangle(0, 0, width * tileSize, height * tileSize));
         this.setCollisionOn(collision);
     }
@@ -99,10 +105,37 @@ public class MapObject extends Entity {
      * @param interactor Entidade que interage com o objeto.
      */
     public void interact(Entity interactor) {
-        if (interactor instanceof br.com.cronicasdeeldoria.entity.character.player.Player) {
-            br.com.cronicasdeeldoria.entity.character.player.Player player =
-                (br.com.cronicasdeeldoria.entity.character.player.Player) interactor;
+        if (interactive) {
+            if (interactor instanceof br.com.cronicasdeeldoria.entity.character.player.Player) {
+                br.com.cronicasdeeldoria.entity.character.player.Player player =
+                    (br.com.cronicasdeeldoria.entity.character.player.Player) interactor;
+                System.out.println("Interagindo com objeto: " + getName() + " (" + getObjectId() + ")");
+            }
         }
+    }
+    
+    /**
+     * Verifica se o objeto é interativo.
+     * @return true se o objeto é interativo
+     */
+    public boolean isInteractive() {
+        return interactive;
+    }
+    
+    public void setInteractive(boolean interactive) {
+        this.interactive = interactive;
+    }
+    
+    /**
+     * Verifica se o objeto tem auto-interação.
+     * @return true se o objeto tem auto-interação
+     */
+    public boolean isAutoInteraction() {
+        return autoInteraction;
+    }
+    
+    public void setAutoInteraction(boolean autoInteraction) {
+        this.autoInteraction = autoInteraction;
     }
 
     public String getObjectId() { return objectId; }
