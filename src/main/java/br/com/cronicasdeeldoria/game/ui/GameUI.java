@@ -186,7 +186,7 @@ public class GameUI {
    */
   private void drawHearts(Graphics2D graphics2D, int x, int y, int currentHealth, int heartSize) {
     int healthPerHeart = 50;
-    int maxHealth = gamePanel.getPlayer().getMaxHealth();
+    int maxHealth = gamePanel.getPlayer().getAttributeMaxHealth();
     int heartsNeeded = maxHealth / healthPerHeart;
     
     for (int i = 0; i < heartsNeeded; i++) {
@@ -281,10 +281,10 @@ public class GameUI {
     textY += spacing;
     
     graphics2D.setColor(Color.WHITE);
-    graphics2D.drawString("Vida: " + player.getAttributeLife() + " / " + player.getMaxHealth(), x + 20, textY);
+    graphics2D.drawString("Vida: " + player.getAttributeLife() + " / " + player.getAttributeMaxHealth(), x + 20, textY);
     textY += spacing;
     
-    graphics2D.drawString("Mana: " + player.getAttributeMana() + " / " + player.getMaxMana(), x + 20, textY);
+    graphics2D.drawString("Mana: " + player.getAttributeMana() + " / " + player.getAttributeMaxMana(), x + 20, textY);
     textY += spacing;
     
     graphics2D.drawString("Força: " + player.getAttributeStrength(), x + 20, textY);

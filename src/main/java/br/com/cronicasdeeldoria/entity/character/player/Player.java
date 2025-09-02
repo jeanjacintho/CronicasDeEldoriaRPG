@@ -288,8 +288,8 @@ public class Player extends Character {
       LevelManager.LevelDefinition levelDef = levelManager.getLevelDefinition(level);
       if (levelDef != null) {
 
-        setMaxHealth(getMaxHealth() + levelDef.healthBonus);
-        setMaxMana(getMaxMana() + levelDef.manaBonus);
+        setAttributeMaxHealth(getAttributeMaxHealth() + levelDef.healthBonus);
+        setAttributeMaxMana(getAttributeMaxMana() + levelDef.manaBonus);
 
         setAttributeStrength(getAttributeStrength() + levelDef.strengthBonus);
         setAttributeAgility(getAttributeAgility() + levelDef.agilityBonus);
@@ -418,7 +418,7 @@ public class Player extends Character {
    */
   public void heal(int healAmount) {
     int currentHealth = getAttributeLife();
-    int maxHealth = getMaxHealth();
+    int maxHealth = getAttributeMaxHealth();
     int newHealth = Math.min(maxHealth, currentHealth + healAmount);
     setAttributeHealth(newHealth);
   }
@@ -429,7 +429,7 @@ public class Player extends Character {
    */
   public void restoreMana(int manaAmount) {
     int currentMana = getAttributeMana();
-    int maxMana = getMaxMana();
+    int maxMana = getAttributeMaxMana();
     int newMana = Math.min(maxMana, currentMana + manaAmount);
     setAttributeMana(newMana);
   }
