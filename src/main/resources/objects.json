@@ -7,7 +7,8 @@
       ["/sprites/objects/chest-0003.png", "/sprites/objects/chest-0004.png"]
     ],
     "size": [2, 2],
-    "collision": true
+    "collision": true,
+    "interactive": true
   },
   {
     "id": "boots",
@@ -16,7 +17,9 @@
       ["/sprites/objects/boots-0001.png"]
     ],
     "size": [1, 1],
-    "collision": false
+    "collision": false,
+    "interactive": true,
+    "autoInteraction": true
   },
   {
     "id": "key",
@@ -25,6 +28,8 @@
       ["/sprites/objects/key-0001.png"]
     ],
     "size": [1, 1],
-    "collision": false
+    "collision": false,
+    "interactive": true,
+    "autoInteraction": true
   }
 ]

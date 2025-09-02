@@ -12,6 +12,8 @@ public class Npc extends Character {
     protected boolean isStatic;
     protected String dialog;
     protected String skin;
+    protected boolean interactive;
+    protected boolean autoInteraction;
     private int actionCounter = 0;
     private int actionInterval = 120;
     private int spriteCounter = 0;
@@ -27,12 +29,16 @@ public class Npc extends Character {
      * @param y Posição Y.
      * @param skin Skin do NPC.
      * @param playerSize Tamanho do jogador (para hitbox).
+     * @param interactive Indica se o NPC é interativo.
+     * @param autoInteraction Indica se a interação é automática.
      */
-    public Npc(String name, boolean isStatic, String dialog, int x, int y, String skin, int playerSize) {
+    public Npc(String name, boolean isStatic, String dialog, int x, int y, String skin, int playerSize, boolean interactive, boolean autoInteraction) {
         super(x, y, 1, "down", name, null, 0, 0, 0, 0);
         this.isStatic = isStatic;
         this.dialog = dialog;
         this.skin = skin;
+        this.interactive = interactive;
+        this.autoInteraction = autoInteraction;
         int hitboxWidth = 32;
         int hitboxHeight = 36;
         int hitboxX = (playerSize - hitboxWidth) / 2;
@@ -44,7 +50,33 @@ public class Npc extends Character {
      * Interage com o NPC, exibindo seu diálogo.
      */
     public void interact() {
-        System.out.println("Interagindo com NPC: " + getName() + " - " + getDialog());
+        if (interactive) {
+            System.out.println("Interagindo com NPC: " + getName() + " - " + getDialog());
+        }
+    }
+    
+    /**
+     * Verifica se o NPC é interativo.
+     * @return true se o NPC é interativo
+     */
+    public boolean isInteractive() {
+        return interactive;
+    }
+    
+    public void setInteractive(boolean interactive) {
+        this.interactive = interactive;
+    }
+    
+    /**
+     * Verifica se o NPC tem auto-interação.
+     * @return true se o NPC tem auto-interação
+     */
+    public boolean isAutoInteraction() {
+        return autoInteraction;
+    }
+  
+    public void setAutoInteraction(boolean autoInteraction) {
+        this.autoInteraction = autoInteraction;
     }
 
     /**

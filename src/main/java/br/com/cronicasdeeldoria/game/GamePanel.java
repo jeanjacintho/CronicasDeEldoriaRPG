@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 
 import javax.swing.JPanel;
 
@@ -18,13 +19,18 @@ import br.com.cronicasdeeldoria.entity.object.MapObject;
 import br.com.cronicasdeeldoria.entity.object.ObjectManager;
 import br.com.cronicasdeeldoria.entity.object.ObjectSpriteLoader;
 import br.com.cronicasdeeldoria.game.ui.GameUI;
+import br.com.cronicasdeeldoria.game.ui.KeyboardMapper;
+import br.com.cronicasdeeldoria.game.ui.InteractionManager;
 import br.com.cronicasdeeldoria.entity.character.npc.Npc;
 import br.com.cronicasdeeldoria.entity.character.npc.NpcFactory;
 import br.com.cronicasdeeldoria.entity.character.npc.NpcSpriteLoader;
+import br.com.cronicasdeeldoria.entity.character.npc.WolfMonster;
 import br.com.cronicasdeeldoria.tile.TileManager;
 import br.com.cronicasdeeldoria.config.CharacterConfigLoader;
 import java.util.List;
 import java.util.ArrayList;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 
 /**
  * Painel principal do jogo, responsável pelo loop de atualização, renderização e gerenciamento dos elementos do jogo.
@@ -50,6 +56,8 @@ public class GamePanel extends JPanel implements Runnable{
   private br.com.cronicasdeeldoria.entity.character.npc.NpcSpriteLoader npcSpriteLoader;
   private br.com.cronicasdeeldoria.entity.object.ObjectManager objectManager;
   private br.com.cronicasdeeldoria.game.ui.GameUI gameUI;
+  private KeyboardMapper keyboardMapper;
+  private InteractionManager interactionManager;
 
   /**
    * Inicializa o painel do jogo com as configurações fornecidas.
@@ -185,6 +193,9 @@ public class GamePanel extends JPanel implements Runnable{
             objectManager.updateActiveObjects(player.getWorldX() / tileSize, player.getWorldY() / tileSize);
         }
 
+        // Atualizar pontos de interação
+        updateInteractionPoints();
+
         // Verificar se o GamePanel perdeu o foco e restaurá-lo
         if (!this.hasFocus()) {
             this.requestFocusInWindow();
@@ -192,40 +203,203 @@ public class GamePanel extends JPanel implements Runnable{
     }
 
     /**
+     * Atualiza os pontos de interação baseado na proximidade do jogador
+     */
+    private void updateInteractionPoints() {
+        if (interactionManager == null) return;
+        
+        interactionManager.clearInteractionPoints();
+        
+        // Verificar interação com NPCs
+        for (Npc npc : npcs) {
+            // Verificar se é um monstro (usar distância de 5 tiles)
+            if (npc instanceof WolfMonster) {
+                if (isPlayerNearMonster(player, npc.getWorldX(), npc.getWorldY()) && npc.isInteractive()) {
+                    
+                    // Verificar auto-interação
+                    if (npc.isAutoInteraction()) {
+                        System.out.println("AUTO-INTERAÇÃO com MONSTRO: " + npc.getName());
+                        npc.interact();
+                    } else {
+                        // Usar coordenadas de mundo diretamente
+                        interactionManager.addInteractionPoint(npc.getWorldX(), npc.getWorldY(), "E", "monster");
+                    }
+                }
+            } else {
+                // NPCs normais (usar distância de 2 tiles)
+                if (isPlayerNearNpc(player, npc.getWorldX(), npc.getWorldY()) && npc.isInteractive()) {
+                    
+                    // Verificar auto-interação
+                    if (npc.isAutoInteraction()) {
+                        System.out.println("AUTO-INTERAÇÃO com NPC: " + npc.getName());
+                        npc.interact();
+                    } else {
+                        // Usar coordenadas de mundo diretamente
+                        interactionManager.addInteractionPoint(npc.getWorldX(), npc.getWorldY(), "E", "npc");
+                    }
+                }
+            }
+        }
+        
+        // Verificar interação com objetos
+        if (objectManager != null) {
+            for (MapObject obj : objectManager.getActiveObjects()) {
+                if (obj.isInteractive()) {
+                    // Verificar auto-interação
+                    if (obj.isAutoInteraction()) {
+                        // Para objetos com auto-interação, verificar colisão real
+                        if (isPlayerCollidingWithObject(player, obj)) {
+                            System.out.println("AUTO-INTERAÇÃO com objeto: " + obj.getName());
+                            obj.interact(player);
+                        }
+                    } else {
+                        // Para objetos sem auto-interação, verificar proximidade e mostrar tecla E
+                        if (isPlayerNearObject(player, obj.getWorldX(), obj.getWorldY())) {
+                            interactionManager.addInteractionPoint(obj.getWorldX(), obj.getWorldY(), "E", "object");
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /**
      * Verifica se o jogador está próximo de uma entidade (NPC ou objeto).
      */
     private boolean isPlayerNearEntity(Player player, int entityX, int entityY) {
-        int playerTileX = player.getWorldX() / tileSize;
-        int playerTileY = player.getWorldY() / tileSize;
-        int entityTileX = entityX / tileSize;
-        int entityTileY = entityY / tileSize;
-
-        int distanceX = Math.abs(playerTileX - entityTileX);
-        int distanceY = Math.abs(playerTileY - entityTileY);
-
-        return distanceX <= 2 && distanceY <= 2;
+        // Usar o centro do jogador para cálculo de distância
+        int playerCenterX = player.getWorldX() + (player.getPlayerSize() / 2);
+        int playerCenterY = player.getWorldY() + (player.getPlayerSize() / 2);
+        
+        // Usar o centro da entidade
+        int entityCenterX = entityX + (tileSize / 2);
+        int entityCenterY = entityY + (tileSize / 2);
+        
+        // Calcular distância em pixels
+        int distanceX = Math.abs(playerCenterX - entityCenterX);
+        int distanceY = Math.abs(playerCenterY - entityCenterY);
+        
+        // Distância máxima de 2 tiles (em pixels) - padrão para NPCs
+        int maxDistance = tileSize * 2;
+        
+        return distanceX <= maxDistance && distanceY <= maxDistance;
+    }
+    
+    /**
+     * Verifica se o jogador está próximo de uma entidade com distância específica.
+     */
+    private boolean isPlayerNearEntity(Player player, int entityX, int entityY, int distanceInTiles) {
+        // Usar o centro do jogador para cálculo de distância
+        int playerCenterX = player.getWorldX() + (player.getPlayerSize() / 2);
+        int playerCenterY = player.getWorldY() + (player.getPlayerSize() / 2);
+        
+        // Usar o centro da entidade
+        int entityCenterX = entityX + (tileSize / 2);
+        int entityCenterY = entityY + (tileSize / 2);
+        
+        // Calcular distância em pixels
+        int distanceX = Math.abs(playerCenterX - entityCenterX);
+        int distanceY = Math.abs(playerCenterY - entityCenterY);
+        
+        // Distância máxima baseada no parâmetro (em pixels)
+        int maxDistance = tileSize * distanceInTiles;
+        
+        return distanceX <= maxDistance && distanceY <= maxDistance;
+    }
+    
+    /**
+     * Verifica se o jogador está próximo de um NPC (2 tiles).
+     */
+    private boolean isPlayerNearNpc(Player player, int entityX, int entityY) {
+        return isPlayerNearEntity(player, entityX, entityY, 2);
+    }
+    
+    /**
+     * Verifica se o jogador está próximo de um objeto (2 tiles).
+     */
+    private boolean isPlayerNearObject(Player player, int entityX, int entityY) {
+        return isPlayerNearEntity(player, entityX, entityY, 2);
+    }
+    
+    /**
+     * Verifica se o jogador está colidindo com um objeto (contato direto).
+     */
+    private boolean isPlayerCollidingWithObject(Player player, MapObject obj) {
+        // Obter as hitboxes do jogador e do objeto
+        Rectangle playerHitbox = player.getHitbox();
+        Rectangle objHitbox = obj.getHitbox();
+        
+        // Ajustar as hitboxes para as coordenadas de mundo
+        Rectangle playerWorldHitbox = new Rectangle(
+            player.getWorldX() + playerHitbox.x,
+            player.getWorldY() + playerHitbox.y,
+            playerHitbox.width,
+            playerHitbox.height
+        );
+        
+        Rectangle objWorldHitbox = new Rectangle(
+            obj.getWorldX() + objHitbox.x,
+            obj.getWorldY() + objHitbox.y,
+            objHitbox.width,
+            objHitbox.height
+        );
+        
+        // Verificar se há interseção entre as hitboxes
+        return playerWorldHitbox.intersects(objWorldHitbox);
+    }
+    
+    /**
+     * Verifica se o jogador está próximo de um monstro (5 tiles).
+     */
+    private boolean isPlayerNearMonster(Player player, int entityX, int entityY) {
+        return isPlayerNearEntity(player, entityX, entityY, 5);
     }
 
     /**
      * Verifica e processa interações do jogador com NPCs e objetos.
      */
     public void checkInteraction() {
-        // Verificar interação com NPCs primeiro
+        // Verificar interação com monstros primeiro (maior prioridade)
         for (Npc npc : npcs) {
-            if (isPlayerNearEntity(player, npc.getWorldX(), npc.getWorldY())) {
-                System.out.println("INTERAÇÃO COM NPC: " + npc.getName());
-                npc.interact();
-                return;
+            if (npc instanceof WolfMonster) {
+                if (isPlayerNearMonster(player, npc.getWorldX(), npc.getWorldY()) && npc.isInteractive()) {
+                    System.out.println("INTERAÇÃO COM MONSTRO: " + npc.getName());
+                    npc.interact();
+                    return;
+                }
+            }
+        }
+        
+        // Verificar interação com NPCs normais
+        for (Npc npc : npcs) {
+            if (!(npc instanceof WolfMonster)) {
+                if (isPlayerNearNpc(player, npc.getWorldX(), npc.getWorldY()) && npc.isInteractive()) {
+                    System.out.println("INTERAÇÃO COM NPC: " + npc.getName());
+                    npc.interact();
+                    return;
+                }
             }
         }
 
         // Verificar interação com objetos
         if (objectManager != null) {
             for (MapObject obj : objectManager.getActiveObjects()) {
-                if (isPlayerNearEntity(player, obj.getWorldX(), obj.getWorldY())) {
-                    System.out.println("INTERAÇÃO COM OBJETO: " + obj.getName() + " (" + obj.getObjectId() + ")");
-                    obj.interact(player);
-                    return;
+                if (obj.isInteractive()) {
+                    boolean shouldInteract = false;
+                    
+                    if (obj.isAutoInteraction()) {
+                        // Para objetos com auto-interação, verificar colisão real
+                        shouldInteract = isPlayerCollidingWithObject(player, obj);
+                    } else {
+                        // Para objetos sem auto-interação, verificar proximidade
+                        shouldInteract = isPlayerNearObject(player, obj.getWorldX(), obj.getWorldY());
+                    }
+                    
+                    if (shouldInteract) {
+                        System.out.println("INTERAÇÃO COM OBJETO: " + obj.getName() + " (" + obj.getObjectId() + ")");
+                        obj.interact(player);
+                        return;
+                    }
                 }
             }
         }
@@ -250,6 +424,26 @@ public class GamePanel extends JPanel implements Runnable{
         // Renderizar NPCs
         for (Npc npc : npcs) {
             npc.draw(graphics2D, npcSpriteLoader, tileSize, player, player.getScreenX(), player.getScreenY());
+            
+            // Renderizar tecla de interação para NPC se necessário
+            if (interactionManager != null) {
+                interactionManager.renderInteractionKeyForEntity(graphics2D, 
+                    npc.getWorldX(), npc.getWorldY(), 
+                    npc.getWorldX() - player.getWorldX() + player.getScreenX(),
+                    npc.getWorldY() - player.getWorldY() + player.getScreenY(),
+                    "npc", tileSize);
+            }
+        }
+
+        // Renderizar teclas de interação para objetos
+        if (objectManager != null && interactionManager != null) {
+            for (MapObject obj : objectManager.getActiveObjects()) {
+                interactionManager.renderInteractionKeyForEntity(graphics2D, 
+                    obj.getWorldX(), obj.getWorldY(), 
+                    obj.getWorldX() - player.getWorldX() + player.getScreenX(),
+                    obj.getWorldY() - player.getWorldY() + player.getScreenY(),
+                    "object", tileSize);
+            }
         }
 
         // Renderizar interface do usuário
@@ -298,12 +492,27 @@ public class GamePanel extends JPanel implements Runnable{
       return gameUI;
     }
 
+    public KeyboardMapper getKeyboardMapper() {
+      return keyboardMapper;
+    }
+
+    public InteractionManager getInteractionManager() {
+      return interactionManager;
+    }
+
+    public NpcSpriteLoader getNpcSpriteLoader() {
+      return npcSpriteLoader;
+    }
+
       /**
    * Inicializa componentes do jogo (NPCs e objetos).
    */
   private void initializeGameComponents() {
     // Inicializar GameUI
     this.gameUI = new GameUI(this);
+
+    // Inicializar sistema de interação
+    initializeInteractionSystem();
 
     // Inicializar NpcSpriteLoader
     try {
@@ -325,6 +534,20 @@ public class GamePanel extends JPanel implements Runnable{
       System.err.println("Erro ao inicializar ObjectManager: " + e.getMessage());
       e.printStackTrace();
       this.objectManager = null;
+    }
+  }
+
+  /**
+   * Inicializa o sistema de interação com teclas
+   */
+  private void initializeInteractionSystem() {
+    try {
+      // Inicializar o sistema de interação com imagens GIF separadas
+      this.keyboardMapper = new KeyboardMapper();
+      this.interactionManager = new InteractionManager(keyboardMapper);
+    } catch (Exception e) {
+      System.err.println("Erro ao inicializar sistema de interação: " + e.getMessage());
+      e.printStackTrace();
     }
   }
 

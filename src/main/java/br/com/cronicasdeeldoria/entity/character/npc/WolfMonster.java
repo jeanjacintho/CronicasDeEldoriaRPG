@@ -11,8 +11,10 @@ public class WolfMonster extends Npc {
    * @param y Posição Y.
    * @param skin Skin do NPC.
    * @param playerSize Tamanho do jogador (para hitbox).
+   * @param interactive Indica se o NPC é interativo.
+   * @param autoInteraction Indica se a interação é automática.
    */
-  public WolfMonster(String name, boolean isStatic, String dialog, int x, int y, String skin, int playerSize) {
-    super(name, isStatic, dialog, x, y, skin, playerSize);
+  public WolfMonster(String name, boolean isStatic, String dialog, int x, int y, String skin, int playerSize, boolean interactive, boolean autoInteraction) {
+    super(name, isStatic, dialog, x, y, skin, playerSize, interactive, autoInteraction);
   }
 }

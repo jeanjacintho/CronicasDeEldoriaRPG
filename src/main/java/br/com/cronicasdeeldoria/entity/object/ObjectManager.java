@@ -64,8 +64,6 @@ public class ObjectManager {
                         activeObjects.add(obj);
                     }
                 }
-                
-
             }
         }
     }
@@ -80,6 +78,12 @@ public class ObjectManager {
         int x = raw.x * gamePanel.getTileSize();
         int y = raw.y * gamePanel.getTileSize();
         
+        // Verificar se o objeto é interativo (padrão: true se não especificado)
+        boolean interactive = objDef.interactive != null ? objDef.interactive : true;
+        
+        // Verificar se o objeto tem auto-interação (padrão: false se não especificado)
+        boolean autoInteraction = objDef.autoInteraction != null ? objDef.autoInteraction : false;
+        
         return new MapObject(
             objDef.id,
             objDef.name,
@@ -88,7 +92,10 @@ public class ObjectManager {
             objDef.size[0], // width
             objDef.size[1], // height
             objDef.collision,
-            objDef
+            interactive,
+            autoInteraction,
+            objDef,
+            gamePanel.getTileSize()
         );
     }
 

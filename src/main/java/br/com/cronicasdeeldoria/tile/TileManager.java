@@ -3,8 +3,10 @@ package br.com.cronicasdeeldoria.tile;
 import java.awt.Graphics2D;
 import java.io.InputStream;
 import javax.imageio.ImageIO;
+
+import com.google.gson.Gson;
+
 import br.com.cronicasdeeldoria.game.GamePanel;
-// Jackson imports removidos para versão simplificada
 import java.util.List;
 import java.util.Map;
 import java.awt.image.BufferedImage;
@@ -33,13 +35,12 @@ public class TileManager {
                 throw new RuntimeException("tiles.json não encontrado no classpath!");
             }
 
-            // Usar Gson como alternativa ao Jackson
-            com.google.gson.Gson gson = new com.google.gson.Gson();
+            Gson gson = new Gson();
             TilesJson tilesJson = gson.fromJson(new java.io.InputStreamReader(is), TilesJson.class);
 
             // IMPORTANTE: Usar o tileSize do GamePanel (com escala) em vez do tiles.json
             this.tileSize = gamePanel.getTileSize();
-            int originalTileSize = tilesJson.tileSize; // Tamanho original da spritesheet
+            int originalTileSize = tilesJson.tileSize;
 
             InputStream spritesheetStream = getClass().getResourceAsStream(tilesJson.spritesheet);
             if (spritesheetStream == null) {
@@ -51,7 +52,6 @@ public class TileManager {
             tiles = new HashMap<>();
             for (TileDefinition def : tilesJson.tiles) {
                 Tile tile = new Tile();
-                // Extrair subimagem usando tamanho original da spritesheet
                 tile.image = spritesheet.getSubimage(
                     def.x * originalTileSize,
                     def.y * originalTileSize,
@@ -74,8 +74,7 @@ public class TileManager {
                 throw new RuntimeException("Mapa JSON não encontrado: " + path);
             }
 
-            // Usar Gson como alternativa ao Jackson
-            com.google.gson.Gson gson = new com.google.gson.Gson();
+            Gson gson = new Gson();
             MapJson mapJson = gson.fromJson(new java.io.InputStreamReader(is), MapJson.class);
 
             this.mapWidth = mapJson.mapWidth;
@@ -127,13 +126,11 @@ public class TileManager {
         int screenY = gamePanel.getPlayer().getScreenY();
         int playerSize = gamePanel.getPlayerSize();
 
-        // Calcular área visível
         int firstCol = Math.max((playerWorldX - screenX) / tileSize, 0);
         int lastCol = Math.min((playerWorldX + screenX + playerSize) / tileSize, mapWidth - 1);
         int firstRow = Math.max((playerWorldY - screenY) / tileSize, 0);
         int lastRow = Math.min((playerWorldY + screenY + playerSize) / tileSize, mapHeight - 1);
 
-        // Separar layers por tipo
         List<MapLayer> normalLayers = new ArrayList<>();
         List<MapLayer> overlayLayers = new ArrayList<>();
         List<MapLayer> objectLayers = new ArrayList<>();
@@ -186,7 +183,7 @@ public class TileManager {
 
     private void renderLayer(Graphics2D g2, MapLayer layer, int firstCol, int lastCol, int firstRow, int lastRow,
                            int playerWorldX, int playerWorldY, int screenX, int screenY) {
-        int tilesRendered = 0;
+
         for (MapTile tile : layer.tiles) {
             // Verificar se o tile está na área visível
             if (tile.x >= firstCol && tile.x <= lastCol &&
@@ -198,7 +195,7 @@ public class TileManager {
                     int drawY = tile.y * tileSize - playerWorldY + screenY;
                     // IMPORTANTE: Renderizar com o tileSize escalado
                     g2.drawImage(tileDef.image, drawX, drawY, tileSize, tileSize, null);
-                    tilesRendered++;
+
                 }
             }
         }
@@ -266,7 +263,7 @@ public class TileManager {
     }
 
 
-  /**
+      /**
      * Retorna os tiles de objetos das layers do mapa.
      */
     public List<MapTile> getObjectTiles() {
