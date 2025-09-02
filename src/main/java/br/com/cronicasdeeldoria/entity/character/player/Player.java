@@ -272,8 +272,9 @@ public class Player extends Character {
     if (currentLevel > oldLevel) {
       levelUp(oldLevel, currentLevel);
     }
+    int xpNextLevel = levelManager.getXpForNextLevel(currentLevel);
 
-    System.out.println("XP ganho: " + xp + " | Total: " + totalXp + " | Nível: " + currentLevel);
+    System.out.println("XP ganho: " + xp + " | Total: " + totalXp + "|" + xpNextLevel + " | Nível: " + currentLevel);
   }
 
   /**

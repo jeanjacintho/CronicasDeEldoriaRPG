@@ -1,6 +1,7 @@
 package br.com.cronicasdeeldoria.entity.character.npc;
 
 public class WolfMonster extends Npc {
+  private int xpReward = 50;
   /**
    * Cria um novo OrcMonster.
    * @param name Nome do NPC.
@@ -14,4 +15,8 @@ public class WolfMonster extends Npc {
   public WolfMonster(String name, boolean isStatic, String dialog, int x, int y, String skin, int playerSize ) {
     super(name, isStatic, dialog, x, y, skin, playerSize);
   }
+
+  public int getXpReward() { return xpReward; }
+
+  public void setXpReward(int xpReward) { this.xpReward = xpReward; }
 }

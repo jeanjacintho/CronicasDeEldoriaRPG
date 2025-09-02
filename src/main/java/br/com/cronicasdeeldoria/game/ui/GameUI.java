@@ -390,15 +390,15 @@ public class GameUI {
 
 
       // Usar sprite baseado no tipo de monstro ou sprite padrão
-      BufferedImage monsterSprite = getMonsterBattleSprite(battleMonster);
-      //System.out.println(monsterSprite);
-      if (monsterSprite != null) {
-        g2.drawImage(monsterSprite, monsterX, monsterY, tileSize * 2, tileSize * 2, null);
-        //g2.drawImage(monsterSprite, monsterX, monsterY, tileSize * 2, tileSize * 2, null);
-      } else {
-        // Fallback se não tiver sprite específico
-        g2.drawImage(battleMonster.getDown(), monsterX, monsterY, tileSize * 2, tileSize * 2, null);
-      }
+//      BufferedImage monsterSprite = getMonsterBattleSprite(battleMonster);
+//      //System.out.println(monsterSprite);
+//      if (monsterSprite != null) {
+//        g2.drawImage(monsterSprite, monsterX, monsterY, tileSize * 2, tileSize * 2, null);
+//        //g2.drawImage(monsterSprite, monsterX, monsterY, tileSize * 2, tileSize * 2, null);
+//      } else {
+//        // Fallback se não tiver sprite específico
+//        g2.drawImage(battleMonster.getDown(), monsterX, monsterY, tileSize * 2, tileSize * 2, null);
+//      }
     }
 
     // Desenhar o jogador (lado esquerdo, de costas)
@@ -523,22 +523,5 @@ public class GameUI {
     g2.setColor(Color.WHITE);
     g2.drawString("MP: " + player.getAttributeMana() + "/" + player.getAttributeMaxMana(),
       playerInfoX + 10, playerMpBarY + 18);
-  }
-
-  // Metodo auxiliar para obter sprite específico do monstro para batalha
-  private BufferedImage getMonsterBattleSprite(Npc monster) {
-    // Você pode expandir isso para ter sprites específicos de batalha
-    String monsterType = monster.getClass().getSimpleName().toLowerCase();
-    //System.out.println(monster.getClass().getSimpleName().toLowerCase());
-
-    switch (monsterType) {
-      case "wolfmonster":
-        // Se tiver sprite específico de batalha para lobos
-        return monster.getDown(); // ou um sprite específico
-      case "warriornpc":
-        return monster.getDown();
-      default:
-        return monster.getDown(); // Fallback para sprite padrão
-    }
   }
 }

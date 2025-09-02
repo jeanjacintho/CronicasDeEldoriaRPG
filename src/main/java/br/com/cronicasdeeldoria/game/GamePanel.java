@@ -8,6 +8,8 @@ import java.awt.Graphics2D;
 import javax.swing.JPanel;
 
 import br.com.cronicasdeeldoria.entity.character.Character;
+import br.com.cronicasdeeldoria.entity.character.npc.SkeletonMonster;
+import br.com.cronicasdeeldoria.entity.character.npc.WolfMonster;
 import br.com.cronicasdeeldoria.entity.character.player.Player;
 import br.com.cronicasdeeldoria.entity.character.races.Archer;
 import br.com.cronicasdeeldoria.entity.character.races.Breton;
@@ -59,6 +61,7 @@ public class GamePanel extends JPanel implements Runnable{
   public final int battleState = 2;
   public Npc battleMonster = null;
   public Battle battle;
+
 
   /**
    * Inicializa o painel do jogo com as configurações fornecidas.
@@ -145,7 +148,7 @@ public class GamePanel extends JPanel implements Runnable{
       default:
         raceInstance = race;
     }
-            player = new Player(this, keyHandler, raceInstance, x, y, speed, direction, playerName, health, maxHealth, mana, maxMana, strength, agility, luck);
+    player = new Player(this, keyHandler, raceInstance, x, y, speed, direction, playerName, health, maxHealth, mana, maxMana, strength, agility, luck);
   }
 
   public void setupGame() {
@@ -236,9 +239,14 @@ public class GamePanel extends JPanel implements Runnable{
   public void endBattle(boolean playerWon) {
     if (playerWon) {
       System.out.println("Victory! You defeated " + battleMonster.getName());
-      // Dar XP baseado no monstro derrotado
-      //int xpReward = calculateXpReward(battleMonster);
-      //player.gainXp(xpReward);
+
+      int xpReward = 0;
+      if (battleMonster instanceof WolfMonster ) {
+        xpReward = ((WolfMonster) battleMonster).getXpReward();
+      } else if (battleMonster instanceof SkeletonMonster) {
+        xpReward = ((SkeletonMonster) battleMonster).getXpReward();
+      }
+      player.gainXp(xpReward);
 
       // Remover monstro derrotado do mapa
       removeMonsterFromMap(battleMonster);
@@ -253,9 +261,8 @@ public class GamePanel extends JPanel implements Runnable{
     gameState = playState;
     battleMonster = null;
 
-    System.out.println("Returned to play state");
+    //System.out.println("Returned to play state");
   }
-
 
   /**
      * Verifica se o jogador está próximo de uma entidade (NPC ou objeto).
@@ -357,7 +364,7 @@ public class GamePanel extends JPanel implements Runnable{
   // Metodo para remover monstro derrotado do mapa
   private void removeMonsterFromMap(Npc monster) {
     npcs.remove(monster);
-    System.out.println("Removed " + monster.getName() + " from the map");
+    //System.out.println("Removed " + monster.getName() + " from the map");
   }
 
   public int getTileSize() {

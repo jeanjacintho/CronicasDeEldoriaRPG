@@ -52,7 +52,6 @@ public class Battle {
     turnOrder.add(monster);
 
     // Ordenar por agilidade se você tiver esse atributo
-    // Por enquanto, usa agilidade genérica ou ordem aleatória
     Collections.sort(turnOrder, (c1, c2) -> Integer.compare(c2.getAttributeAgility(), c1.getAttributeAgility()));
 
     System.out.println("Turn order determined by agility:");
@@ -64,6 +63,7 @@ public class Battle {
 
   public void processPlayerAction(String action) {
     if (!inBattle || !waitingForPlayerInput) return;
+    //if (!inBattle ) return;
 
     Character currentCharacter = getCurrentCharacter();
     if (!(currentCharacter instanceof Player)) {
@@ -74,24 +74,18 @@ public class Battle {
     waitingForPlayerInput = false;
 
     switch (action) {
-      case "ATTACK":
-        attack(player, monster);
-        break;
-      case "DEFEND":
-        defend(player);
-        break;
+      case "ATTACK": attack(player, monster); break;
+      case "DEFEND": defend(player); break;
       case "FLEE":
         if (flee(player)) {
           gp.endBattle(false);
           return;
         }
         break;
-      case "MAGIC":
-        useMagic(player, monster);
-        break;
+      case "MAGIC": useMagic(player, monster); break;
       default:
         System.out.println("Invalid action!");
-        waitingForPlayerInput = true; // Permite tentar novamente
+        //waitingForPlayerInput = true; // Permite tentar novamente
         return;
     }
 
@@ -112,6 +106,7 @@ public class Battle {
   private void processMonsterTurn() {
     if (!inBattle) return;
 
+
     Character currentCharacter = getCurrentCharacter();
     if (!(currentCharacter instanceof Npc)) return;
 
@@ -121,17 +116,17 @@ public class Battle {
     Random random = new Random();
     int choice = random.nextInt(100);
 
-    if (choice < 60) { // 60% chance de ataque
+    if (choice < 69) { // 70% chance de ataque
       attack(currentMonster, player);
-    } else if (choice < 80) { // 20% chance de defesa
+    } else if (choice < 99) { // 20% chance de defesa
       defend(currentMonster);
-    } else { // 20% chance de magia (se tiver mana)
-      if (currentMonster.getAttributeMana() >= 10) {
-        useMagic(currentMonster, player);
-      } else {
-        attack(currentMonster, player); // Ataque se não tiver mana
-      }
     }
+    // Caso monstro poder usar magia
+//    else { // 20% chance de magia (se tiver mana)
+//      if (currentMonster.getAttributeMana() >= 10) {
+//        useMagic(currentMonster, player);
+//      }
+//    }
 
     // Verificar se a batalha terminou
     if (checkBattleEnd()) return;
@@ -189,8 +184,7 @@ public class Battle {
   private void defend(Character character) {
     // Cura uma pequena quantidade e aumenta defesa temporariamente
     int healAmount = character.getAttributeMaxHealth() / 20; // 5% do HP máximo
-    int newHealth = Math.min(character.getAttributeMaxHealth(),
-      character.getAttributeHealth() + healAmount);
+    int newHealth = Math.min(character.getAttributeMaxHealth(), character.getAttributeHealth() + healAmount);
     character.setAttributeHealth(newHealth);
 
     System.out.println(character.getName() + " defended and recovered " + healAmount + " HP!");
