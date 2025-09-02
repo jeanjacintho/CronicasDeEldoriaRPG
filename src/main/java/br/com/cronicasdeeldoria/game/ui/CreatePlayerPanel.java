@@ -328,6 +328,7 @@ public class CreatePlayerPanel extends JPanel implements ActionListener {
       GamePanel gamePanel = new GamePanel(screenWidth, screenHeight, playerName, race, tileSize, maxScreenRow, maxScreenCol);
       window.add(gamePanel);
       gamePanel.startGameThread();
+      gamePanel.setupGame();
       window.revalidate();
       window.repaint();
       gamePanel.requestFocusInWindow();

@@ -29,7 +29,7 @@ public class Npc extends Character {
      * @param playerSize Tamanho do jogador (para hitbox).
      */
     public Npc(String name, boolean isStatic, String dialog, int x, int y, String skin, int playerSize) {
-        super(x, y, 1, "down", name, null, 0, 0, 0, 0);
+        super(x, y, 1, "down", name, null, 30, 30, 0, 0, 5, 10);
         this.isStatic = isStatic;
         this.dialog = dialog;
         this.skin = skin;

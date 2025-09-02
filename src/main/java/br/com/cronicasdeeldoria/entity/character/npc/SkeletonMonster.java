@@ -1,6 +1,7 @@
 package br.com.cronicasdeeldoria.entity.character.npc;
 
-public class WolfMonster extends Npc {
+public class SkeletonMonster extends Npc {
+
   /**
    * Cria um novo OrcMonster.
    * @param name Nome do NPC.
@@ -11,7 +12,8 @@ public class WolfMonster extends Npc {
    * @param skin Skin do NPC.
    * @param playerSize Tamanho do jogador (para hitbox).
    */
-  public WolfMonster(String name, boolean isStatic, String dialog, int x, int y, String skin, int playerSize ) {
+
+  public SkeletonMonster(String name, boolean isStatic, String dialog, int x, int y, String skin, int playerSize ) {
     super(name, isStatic, dialog, x, y, skin, playerSize);
   }
 }

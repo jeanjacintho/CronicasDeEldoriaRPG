@@ -93,4 +93,12 @@ public class Entity {
   public void setCollisionOn(boolean collisionOn) {
     this.collisionOn = collisionOn;
   }
+
+  public BufferedImage getUp() { return up; }
+
+  public void setUp(BufferedImage up) { this.up = up; }
+
+  public BufferedImage getDown() { return down; }
+
+  public void setDown(BufferedImage down) { this.down = down; }
 }

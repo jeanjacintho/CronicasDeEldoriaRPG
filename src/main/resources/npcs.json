@@ -22,5 +22,13 @@
     "dialog": "Lute comigo, verme!",
     "type": "enemy",
     "skin": "wolfMonster"
+  },
+  {
+    "id": "skeleton",
+    "name": "Skeleton",
+    "isStatic": false,
+    "dialog": "Lute comigo, verme!",
+    "type": "enemy",
+    "skin": "skeleton"
   }
 ]

@@ -49,8 +49,8 @@ public class Player extends Character {
    * @param agility Agilidade inicial.
    * @param luck Sorte inicial.
    */
-  public Player(GamePanel gamePanel, KeyHandler keyHandler, Race race, int x, int y, int speed, String direction, String name, int health, int mana, int strength, int agility, int luck) {
-    super(x, y, speed, direction, name, race, health, mana, strength, agility);
+  public Player(GamePanel gamePanel, KeyHandler keyHandler, Race race, int x, int y, int speed, String direction, String name, int health, int maxHealth, int mana, int maxMana, int strength, int agility, int luck) {
+    super(x, y, speed, direction, name, race, health, maxHealth, mana, maxMana, strength, agility);
     this.luck = luck;
     this.gamePanel = gamePanel;
     this.keyHandler = keyHandler;
@@ -383,7 +383,7 @@ public class Player extends Character {
    * @return true se o jogador sobreviveu, false se morreu.
    */
   public boolean takeDamage(int damage) {
-    int currentHealth = getAttributeLife();
+    int currentHealth = getAttributeHealth();
     int newHealth = Math.max(0, currentHealth - damage);
     setAttributeHealth(newHealth);
 
@@ -417,7 +417,7 @@ public class Player extends Character {
    * @param healAmount Quantidade de vida a ser restaurada.
    */
   public void heal(int healAmount) {
-    int currentHealth = getAttributeLife();
+    int currentHealth = getAttributeHealth();
     int maxHealth = getAttributeMaxHealth();
     int newHealth = Math.min(maxHealth, currentHealth + healAmount);
     setAttributeHealth(newHealth);

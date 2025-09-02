@@ -12,6 +12,9 @@ import java.util.ArrayList;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 
+import br.com.cronicasdeeldoria.entity.character.Character;
+import br.com.cronicasdeeldoria.entity.character.npc.Npc;
+import br.com.cronicasdeeldoria.entity.character.player.Player;
 import br.com.cronicasdeeldoria.game.GamePanel;
 import br.com.cronicasdeeldoria.game.font.FontManager;
 
@@ -43,7 +46,7 @@ public class GameUI {
     this.gamePanel = gamePanel;
     dogicaFont_40 = FontManager.getFont(40f);
     dogicaFont_16 = FontManager.getFont(16f);
-  
+
     loadHeartImages();
   }
 
@@ -114,15 +117,15 @@ public class GameUI {
   public void draw(Graphics2D graphics2D) {
     // Desenhar interface do jogador (vida, mana, nível)
     drawPlayerStats(graphics2D);
-    
+
     // Desenhar mensagens no canto inferior esquerdo
     drawMessages(graphics2D);
-    
+
     // Desenhar janela de stats se estiver visível
     if (showStatsWindow) {
       drawStatsWindow(graphics2D);
     }
-    
+
     // Desenhar mensagem central se estiver visível
     if (centerMessageVisible) {
       drawCenterMessage(graphics2D);
@@ -141,9 +144,9 @@ public class GameUI {
     int y = screenHeight - 50;
     int x = 20;
     int spacing = 48;
-    
+
     messages.removeIf(Message::isExpired);
-    
+
     for (int i = messages.size() - 1; i >= 0; i--) {
       Message msg = messages.get(i);
       if (msg.getImage() != null) {
@@ -165,13 +168,13 @@ public class GameUI {
     if (player == null) return;
 
     graphics2D.setFont(dogicaFont_16);
-    
+
     int x = 20;
     int y = 30;
     int heartSize = 24;
-    
-    drawHearts(graphics2D, x, y, player.getAttributeLife(), heartSize);
-    
+
+    drawHearts(graphics2D, x, y, player.getAttributeHealth(), heartSize);
+
     graphics2D.setColor(Color.WHITE);
     graphics2D.drawString("Level " + player.getCurrentLevel(), x, y + heartSize + 15);
   }
@@ -188,11 +191,11 @@ public class GameUI {
     int healthPerHeart = 50;
     int maxHealth = gamePanel.getPlayer().getAttributeMaxHealth();
     int heartsNeeded = maxHealth / healthPerHeart;
-    
+
     for (int i = 0; i < heartsNeeded; i++) {
       int heartX = x + (i * (heartSize + 2));
       BufferedImage heartImage = getHeartImage(currentHealth, i, healthPerHeart);
-      
+
       if (heartImage != null) {
         graphics2D.drawImage(heartImage, heartX, y, heartSize, heartSize, null);
       }
@@ -209,19 +212,19 @@ public class GameUI {
   private BufferedImage getHeartImage(int currentHealth, int heartIndex, int healthPerHeart) {
     int heartStartHealth = heartIndex * healthPerHeart;
     int heartEndHealth = heartStartHealth + healthPerHeart;
-    
+
     if (currentHealth <= heartStartHealth) {
       return heartEmpty;
     }
-    
+
     if (currentHealth >= heartEndHealth) {
       return heartFull;
     }
-    
+
     // Calcular quanto deste coração está preenchido
     int healthInThisHeart = currentHealth - heartStartHealth;
     double fillPercentage = (double) healthInThisHeart / healthPerHeart;
-    
+
     // Retornar coração baseado na porcentagem de preenchimento
     if (fillPercentage >= 0.75) {
       return heartThreeQuarters;
@@ -243,62 +246,62 @@ public class GameUI {
     if (player == null) return;
 
     graphics2D.setFont(dogicaFont_16);
-    
+
     int windowWidth = 300;
     int windowHeight = 450;
     int x = (gamePanel.getWidth() - windowWidth) / 2;
     int y = (gamePanel.getHeight() - windowHeight) / 2;
-    
+
     graphics2D.setColor(new Color(0, 0, 0, 200));
     graphics2D.fillRect(x, y, windowWidth, windowHeight);
-    
+
     graphics2D.setColor(Color.WHITE);
     graphics2D.drawRect(x, y, windowWidth, windowHeight);
-    
+
     graphics2D.setColor(Color.YELLOW);
     graphics2D.setFont(dogicaFont_16);
     graphics2D.drawString("STATS DO JOGADOR", x + 20, y + 40);
-    
+
     graphics2D.setColor(Color.WHITE);
-    
+
     int textY = y + 80;
     int spacing = 25;
-    
+
     graphics2D.drawString("Nome: " + player.getName(), x + 20, textY);
     textY += spacing;
-  
+
     graphics2D.drawString("Raça: " + player.getRace().getRaceName(), x + 20, textY);
     textY += spacing;
-    
+
     graphics2D.drawString("Nível: " + player.getCurrentLevel(), x + 20, textY);
     textY += spacing;
-    
+
     graphics2D.drawString("XP Total: " + player.getTotalXp(), x + 20, textY);
     textY += spacing;
-    
+
     graphics2D.setColor(Color.GRAY);
     graphics2D.drawLine(x + 20, textY, x + windowWidth - 20, textY);
     textY += spacing;
-    
+
     graphics2D.setColor(Color.WHITE);
-    graphics2D.drawString("Vida: " + player.getAttributeLife() + " / " + player.getAttributeMaxHealth(), x + 20, textY);
+    graphics2D.drawString("Vida: " + player.getAttributeHealth() + " / " + player.getAttributeMaxHealth(), x + 20, textY);
     textY += spacing;
-    
+
     graphics2D.drawString("Mana: " + player.getAttributeMana() + " / " + player.getAttributeMaxMana(), x + 20, textY);
     textY += spacing;
-    
+
     graphics2D.drawString("Força: " + player.getAttributeStrength(), x + 20, textY);
     textY += spacing;
-    
+
     graphics2D.drawString("Agilidade: " + player.getAttributeAgility(), x + 20, textY);
     textY += spacing;
-    
+
     graphics2D.drawString("Sorte: " + player.getLuck(), x + 20, textY);
     textY += spacing;
-    
+
     String specialAttrName = player.getRace().getSpecialAttributeName();
     int specialAttrValue = player.getRace().getSpecialAttributeValue();
-    
+
     String translatedAttrName = switch (specialAttrName.toLowerCase()) {
       case "rage" -> "Raiva";
       case "dexterity" -> "Destreza";
@@ -307,23 +310,23 @@ public class GameUI {
       case "magicpower" -> "Poder Mágico";
       default -> specialAttrName;
     };
-    
+
     graphics2D.setColor(Color.CYAN);
     graphics2D.drawString(translatedAttrName + ": " + specialAttrValue, x + 20, textY);
     textY += spacing;
-    
+
     graphics2D.setColor(Color.GRAY);
     graphics2D.drawLine(x + 20, textY, x + windowWidth - 20, textY);
     textY += spacing;
-    
+
     graphics2D.setColor(Color.WHITE);
     graphics2D.drawString("Próximo nível: " + player.getXpForNextLevel() + " XP", x + 20, textY);
     textY += spacing;
-    
+
     double xpProgress = player.getXpProgress() * 100;
     graphics2D.drawString("Progresso: " + String.format("%.1f", xpProgress) + "%", x + 20, textY);
     textY += spacing;
-    
+
     graphics2D.setColor(Color.YELLOW);
     graphics2D.drawString("Pressione Q para fechar", x, textY + 20);
   }
@@ -339,30 +342,203 @@ public class GameUI {
       centerMessageVisible = false;
       return;
     }
-    
+
     int screenWidth = gamePanel.getWidth();
     int screenHeight = gamePanel.getHeight();
-    
+
     graphics2D.setFont(dogicaFont_40);
-    
+
     FontMetrics fontMetrics = graphics2D.getFontMetrics();
     int textWidth = fontMetrics.stringWidth(centerMessage);
     int textHeight = fontMetrics.getHeight();
-    
+
     int x = (screenWidth - textWidth) / 2;
     int y = (screenHeight + textHeight) / 2;
-    
+
     graphics2D.setColor(new Color(0, 0, 0, 180));
     int padding = 20;
-    graphics2D.fillRect(x - padding, y - textHeight - padding, 
+    graphics2D.fillRect(x - padding, y - textHeight - padding,
                        textWidth + (padding * 2), textHeight + (padding * 2));
-    
+
     // Desenhar borda
     graphics2D.setColor(Color.WHITE);
-    graphics2D.drawRect(x - padding, y - textHeight - padding, 
+    graphics2D.drawRect(x - padding, y - textHeight - padding,
                        textWidth + (padding * 2), textHeight + (padding * 2));
-    
+
     graphics2D.setColor(Color.YELLOW);
     graphics2D.drawString(centerMessage, x, y);
+  }
+
+  public void drawBattleUI(Graphics2D g2) {
+    if (gamePanel.gameState != gamePanel.battleState || !gamePanel.battle.isInBattle()) return;
+
+    int screenWidth = gamePanel.getWidth();
+    int screenHeight = gamePanel.getHeight();
+    int tileSize = gamePanel.getTileSize();
+    Player player = gamePanel.battle.getPlayer();
+    Npc battleMonster = gamePanel.battle.getMonster();
+
+    // Fundo de batalha
+    g2.setColor(new Color(50, 50, 35));
+    g2.fillRect(0, 0, screenWidth, screenHeight);
+
+    // Desenhar o monstro (lado direito)
+    if (battleMonster != null) {
+      int monsterX = screenWidth / 2 + 2 * tileSize;
+      int monsterY = screenHeight / 6;
+      //System.out.println("Monster position: " + monsterX + ", " + monsterY);
+
+
+      // Usar sprite baseado no tipo de monstro ou sprite padrão
+      BufferedImage monsterSprite = getMonsterBattleSprite(battleMonster);
+      //System.out.println(monsterSprite);
+      if (monsterSprite != null) {
+        g2.drawImage(monsterSprite, monsterX, monsterY, tileSize * 2, tileSize * 2, null);
+        //g2.drawImage(monsterSprite, monsterX, monsterY, tileSize * 2, tileSize * 2, null);
+      } else {
+        // Fallback se não tiver sprite específico
+        g2.drawImage(battleMonster.getDown(), monsterX, monsterY, tileSize * 2, tileSize * 2, null);
+      }
+    }
+
+    // Desenhar o jogador (lado esquerdo, de costas)
+    int playerX = screenWidth / 5;
+    int playerY = screenHeight / 2;
+    g2.drawImage(player.getUp(), playerX, playerY, tileSize * 2, tileSize * 2, null);
+
+    // Interface de batalha (painel inferior)
+    g2.setColor(new Color(255, 255, 255, 200));
+    g2.fillRect(0, screenHeight - 100, screenWidth, 100);
+
+    // Opções de ação
+    g2.setColor(Color.BLACK);
+    g2.setFont(new Font("Arial", Font.PLAIN, 16));
+
+    if (gamePanel.battle.isWaitingForPlayerInput()) {
+      // Mostrar opções disponíveis
+      g2.drawString("Escolha sua ação:", 20, screenHeight - 75);
+      g2.drawString("(R) - Ataque Mágico", 20, screenHeight - 35);
+      g2.drawString("(E) - Ataque Básico", 20, screenHeight - 55);
+      g2.drawString("(W) - Defender", 200, screenHeight - 55);
+      g2.drawString("(Q) - Tentar Fugir", 200, screenHeight - 35);
+
+      // Destacar opções indisponíveis
+      if (player.getAttributeMana() < 10) {
+        g2.setColor(Color.GRAY);
+        g2.drawString("(3) - Ataque Mágico [Sem Mana]", 20, screenHeight - 35);
+      }
+    } else {
+      // Mostrar turno atual
+      Character currentChar = gamePanel.battle.getCurrentCharacter();
+      g2.setColor(Color.BLUE);
+      g2.setFont(new Font("Arial", Font.BOLD, 18));
+      g2.drawString("Turno de: " + currentChar.getName(), 20, screenHeight - 50);
+    }
+
+    // Informações do monstro (canto superior direito)
+    if (battleMonster != null) {
+      // Nome do monstro
+      g2.setColor(Color.WHITE);
+      g2.setFont(new Font("Arial", Font.PLAIN, 16));
+      g2.drawString(battleMonster.getName(), screenWidth - 275, screenHeight - 525);
+
+      // Barra de HP do monstro
+      int monsterHpBarX = screenWidth - 290;
+      int monsterHpBarY = screenHeight - 515;
+      int barWidth = 115;
+      int barHeight = 25;
+
+      // Fundo da barra (vermelho)
+      g2.setColor(Color.RED);
+      g2.fillRect(monsterHpBarX, monsterHpBarY, barWidth, barHeight);
+
+      // Barra de HP atual (verde)
+      g2.setColor(Color.GREEN);
+      double hpPercentage = (double) battleMonster.getAttributeHealth() / battleMonster.getAttributeMaxHealth();
+      g2.fillRect(monsterHpBarX, monsterHpBarY, (int) (barWidth * hpPercentage), barHeight);
+
+      // Contorno da barra
+      g2.setColor(Color.BLACK);
+      g2.drawRect(monsterHpBarX, monsterHpBarY, barWidth, barHeight);
+
+      // Texto de HP
+      g2.drawString("HP: " + battleMonster.getAttributeHealth() + "/" +
+        battleMonster.getAttributeMaxHealth(), monsterHpBarX + 15, monsterHpBarY + 18);
+
+      // Barra de MP do monstro (se tiver)
+      if (battleMonster.getAttributeMaxMana() > 0) {
+        int monsterMpBarY = monsterHpBarY + 25;
+
+        // Fundo da barra (cinza)
+        g2.setColor(Color.GRAY);
+        g2.fillRect(monsterHpBarX, monsterMpBarY, barWidth, barHeight);
+
+        // Barra de MP atual (azul)
+        g2.setColor(Color.BLUE);
+        double mpPercentage = (double) battleMonster.getAttributeMana() / battleMonster.getAttributeMaxMana();
+        g2.fillRect(monsterHpBarX, monsterMpBarY, (int) (barWidth * mpPercentage), barHeight);
+
+        // Contorno da barra
+        g2.setColor(Color.BLACK);
+        g2.drawRect(monsterHpBarX, monsterMpBarY, barWidth, barHeight);
+
+        // Texto de MP
+        g2.drawString("MP: " + battleMonster.getAttributeMana() + "/" +
+          battleMonster.getAttributeMaxMana(), monsterHpBarX + 15, monsterMpBarY - 50);
+      }
+    }
+
+    // Informações do jogador (canto inferior esquerdo, perto do sprite)
+    int playerInfoX = screenWidth - 620;
+    int playerHpBarY = screenHeight - 185;
+    int barWidth = 115;
+    int barHeight = 25;
+
+    // Barra de HP do jogador
+    g2.setColor(Color.RED);
+    g2.fillRect(playerInfoX, playerHpBarY, barWidth, barHeight);
+
+    g2.setColor(Color.GREEN);
+    double playerHpPercentage = (double) player.getAttributeHealth() / player.getAttributeMaxHealth();
+    g2.fillRect(playerInfoX, playerHpBarY, (int) (barWidth * playerHpPercentage), barHeight);
+
+    g2.setColor(Color.BLACK);
+    g2.drawRect(playerInfoX, playerHpBarY, barWidth, barHeight);
+    g2.drawString("HP: " + player.getAttributeHealth() + "/" + player.getAttributeMaxHealth(),
+      playerInfoX + 10, playerHpBarY + 17);
+
+    // Barra de Mana do jogador
+    int playerMpBarY = playerHpBarY + 25;
+
+    g2.setColor(Color.GRAY);
+    g2.fillRect(playerInfoX, playerMpBarY, barWidth, barHeight);
+
+    g2.setColor(Color.BLUE);
+    double playerMpPercentage = (double) player.getAttributeMana() / player.getAttributeMaxMana();
+    g2.fillRect(playerInfoX, playerMpBarY, (int) (barWidth * playerMpPercentage), barHeight);
+
+    g2.setColor(Color.BLACK);
+    g2.drawRect(playerInfoX, playerMpBarY, barWidth, barHeight);
+
+    g2.setColor(Color.WHITE);
+    g2.drawString("MP: " + player.getAttributeMana() + "/" + player.getAttributeMaxMana(),
+      playerInfoX + 10, playerMpBarY + 18);
+  }
+
+  // Metodo auxiliar para obter sprite específico do monstro para batalha
+  private BufferedImage getMonsterBattleSprite(Npc monster) {
+    // Você pode expandir isso para ter sprites específicos de batalha
+    String monsterType = monster.getClass().getSimpleName().toLowerCase();
+    //System.out.println(monster.getClass().getSimpleName().toLowerCase());
+
+    switch (monsterType) {
+      case "wolfmonster":
+        // Se tiver sprite específico de batalha para lobos
+        return monster.getDown(); // ou um sprite específico
+      case "warriornpc":
+        return monster.getDown();
+      default:
+        return monster.getDown(); // Fallback para sprite padrão
+    }
   }
 }

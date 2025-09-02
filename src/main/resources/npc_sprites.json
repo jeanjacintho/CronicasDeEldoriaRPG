@@ -16,5 +16,11 @@
     "up": ["monster/wolf/wolf_back.png", "monster/wolf/wolf_back_walk1.png", "monster/wolf/wolf_back_walk2.png"],
     "left": ["monster/wolf/wolf_left.png", "monster/wolf/wolf_left_walk1.png", "monster/wolf/wolf_left_walk2.png"],
     "right": ["monster/wolf/wolf_right.png", "monster/wolf/wolf_right_walk1.png", "monster/wolf/wolf_right_walk2.png"]
+  },
+  "skeleton": {
+    "down": ["monster/skeleton/skeleton_front.png", "monster/skeleton/skeleton_front_walk1.png", "monster/skeleton/skeleton_front_walk2.png"],
+    "up": ["monster/skeleton/skeleton_back.png", "monster/skeleton/skeleton_back_walk1.png", "monster/skeleton/skeleton_back_walk2.png"],
+    "left": ["monster/skeleton/skeleton_left.png", "monster/skeleton/skeleton_left_walk1.png", "monster/skeleton/skeleton_left_walk2.png"],
+    "right": ["monster/skeleton/skeleton_right.png", "monster/skeleton/skeleton_right_walk1.png", "monster/skeleton/skeleton_right_walk2.png"]
   }
 }
