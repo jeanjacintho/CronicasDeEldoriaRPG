@@ -1,9 +1,6 @@
 package br.com.cronicasdeeldoria.game;
 
 import br.com.cronicasdeeldoria.entity.Entity;
-import br.com.cronicasdeeldoria.entity.character.npc.WarriorNpc;
-import br.com.cronicasdeeldoria.entity.character.npc.WolfMonster;
-import br.com.cronicasdeeldoria.entity.character.player.Player;
 
 public class ColisionChecker {
   GamePanel gamePanel;
@@ -111,7 +108,7 @@ public class ColisionChecker {
             }
             if (futureEntityBox.intersects(targetBox)) {
               if (targetEntity.getClass().getSimpleName().contains("Monster")) {
-                System.out.println("Colisão com um monstro");
+                // Colisão com monstro
               }
               entity.setCollisionOn(true);
               break;
@@ -157,7 +154,7 @@ public class ColisionChecker {
               default: break;
             }
             if (futureEntityBox.intersects(objBox)) {
-              System.out.println("estou colidindo com um objeto");
+              // Colisao com objeto
               entity.setCollisionOn(true);
               break;
             }

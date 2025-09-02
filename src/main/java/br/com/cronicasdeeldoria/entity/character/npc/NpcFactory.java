@@ -1,8 +1,14 @@
 package br.com.cronicasdeeldoria.entity.character.npc;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+
 import br.com.cronicasdeeldoria.tile.TileManager.MapTile;
 
 /**
@@ -27,17 +33,19 @@ public class NpcFactory {
                 boolean isStatic = (Boolean) npcData.get("isStatic");
                 String dialog = (String) npcData.get("dialog");
                 String skin = (String) npcData.get("skin");
+                boolean interactive = npcData.containsKey("interactive") ? (Boolean) npcData.get("interactive") : true;
+                boolean autoInteraction = npcData.containsKey("autoInteraction") ? (Boolean) npcData.get("autoInteraction") : false;
 
                 int x = npcTile.x * tileSize + (tileSize / 2) - (playerSize / 2);
                 int y = npcTile.y * tileSize + (tileSize / 2) - (playerSize / 2);
 
                 if ("warrior".equals(type)) {
-                    npcs.add(new WarriorNpc(name, isStatic, dialog, x, y, skin, playerSize));
+                    npcs.add(new WarriorNpc(name, isStatic, dialog, x, y, skin, playerSize, interactive, autoInteraction));
                 }
                 else if ("enemy".equals(type)) {
-                  npcs.add(new WolfMonster(name, isStatic, dialog, x, y, skin, playerSize));
+                  npcs.add(new WolfMonster(name, isStatic, dialog, x, y, skin, playerSize, interactive, autoInteraction));
                 } else {
-                    npcs.add(new Npc(name, isStatic, dialog, x, y, skin, playerSize));
+                    npcs.add(new Npc(name, isStatic, dialog, x, y, skin, playerSize, interactive, autoInteraction));
                 }
             } else {
                 System.err.println("Definição não encontrada para NPC ID: " + npcTile.id);
@@ -56,20 +64,32 @@ public class NpcFactory {
         try {
             java.io.InputStream is = NpcFactory.class.getResourceAsStream("/npcs.json");
             if (is != null) {
-                // Usar Gson para parse mais confiável
-                com.google.gson.Gson gson = new com.google.gson.Gson();
-                com.google.gson.JsonArray jsonArray = gson.fromJson(new java.io.InputStreamReader(is), com.google.gson.JsonArray.class);
+                
+                Gson gson = new Gson();
+                JsonArray jsonArray = gson.fromJson(new java.io.InputStreamReader(is), JsonArray.class);
 
                 for (int i = 0; i < jsonArray.size(); i++) {
-                    com.google.gson.JsonObject npcJson = jsonArray.get(i).getAsJsonObject();
+                    JsonObject npcJson = jsonArray.get(i).getAsJsonObject();
 
-                    Map<String, Object> npcData = new java.util.HashMap<>();
+                    Map<String, Object> npcData = new HashMap<>();
                     npcData.put("id", npcJson.get("id").getAsString());
                     npcData.put("name", npcJson.get("name").getAsString());
                     npcData.put("isStatic", npcJson.get("isStatic").getAsBoolean());
                     npcData.put("dialog", npcJson.get("dialog").getAsString());
                     npcData.put("type", npcJson.get("type").getAsString());
                     npcData.put("skin", npcJson.get("skin").getAsString());
+                    
+                    if (npcJson.has("interactive")) {
+                        npcData.put("interactive", npcJson.get("interactive").getAsBoolean());
+                    } else {
+                        npcData.put("interactive", true);
+                    }
+                    
+                    if (npcJson.has("autoInteraction")) {
+                        npcData.put("autoInteraction", npcJson.get("autoInteraction").getAsBoolean());
+                    } else {
+                        npcData.put("autoInteraction", false);
+                    }
 
                     String id = npcData.get("id").toString();
                     definitions.put(id, npcData);

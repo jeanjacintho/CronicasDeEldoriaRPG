@@ -19,6 +19,7 @@
     "id": "wolf",
     "name": "White Wolf",
     "isStatic": false,
+    "interactive": false,
     "dialog": "Lute comigo, verme!",
     "type": "enemy",
     "skin": "wolfMonster"
