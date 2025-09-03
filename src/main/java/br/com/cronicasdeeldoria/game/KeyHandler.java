@@ -30,7 +30,7 @@ public class KeyHandler implements KeyListener {
             case KeyEvent.VK_S: downPressed = true; break;
             case KeyEvent.VK_A: leftPressed = true; break;
             case KeyEvent.VK_D: rightPressed = true; break;
-            case KeyEvent.VK_T: actionPressed = true; break;
+            case KeyEvent.VK_E: actionPressed = true; break;
             case KeyEvent.VK_X: xPressed = true; break;
             case KeyEvent.VK_Z: zPressed = true; break;
             case KeyEvent.VK_Q: qPressed = true; break;
@@ -44,7 +44,7 @@ public class KeyHandler implements KeyListener {
             case KeyEvent.VK_4: magicPressed = true; break;
             case KeyEvent.VK_3: attackPressed = true; break;
             case KeyEvent.VK_2: defendPressed = true; break;
-          case KeyEvent.VK_1: escapePressed = true; break;
+            case KeyEvent.VK_1: escapePressed = true; break;
 
         }
     }
@@ -61,7 +61,7 @@ public class KeyHandler implements KeyListener {
             case KeyEvent.VK_S: downPressed = false; break;
             case KeyEvent.VK_A: leftPressed = false; break;
             case KeyEvent.VK_D: rightPressed = false; break;
-            case KeyEvent.VK_T: actionPressed = false; break;
+            case KeyEvent.VK_E: actionPressed = false; break;
             case KeyEvent.VK_X: xPressed = false; break;
             case KeyEvent.VK_Z: zPressed = false; break;
             case KeyEvent.VK_Q: qPressed = false; break;

@@ -1,10 +1,6 @@
 package br.com.cronicasdeeldoria.game;
 
 import br.com.cronicasdeeldoria.entity.Entity;
-import br.com.cronicasdeeldoria.entity.character.npc.Npc;
-import br.com.cronicasdeeldoria.entity.character.npc.WarriorNpc;
-import br.com.cronicasdeeldoria.entity.character.npc.WolfMonster;
-import br.com.cronicasdeeldoria.entity.character.player.Player;
 
 public class ColisionChecker {
   GamePanel gamePanel;
@@ -111,9 +107,6 @@ public class ColisionChecker {
               default: break;
             }
             if (futureEntityBox.intersects(targetBox)) {
-              if (targetEntity.getClass().getSimpleName().contains("Monster")) {
-                gamePanel.startBattle(targetEntity);
-              }
               entity.setCollisionOn(true);
               break;
             }

@@ -18,8 +18,9 @@
   {
     "id": "wolf",
     "name": "White Wolf",
-    "isStatic": false,
-    "interactive": false,
+    "isStatic": true,
+    "interactive": true,
+    "autoInteraction": true,
     "dialog": "Lute comigo, verme!",
     "type": "enemy",
     "skin": "wolfMonster"
@@ -27,7 +28,9 @@
   {
     "id": "skeleton",
     "name": "Skeleton",
-    "isStatic": false,
+    "isStatic": true,
+    "interactive": true,
+    "autoInteraction": true,
     "dialog": "Lute comigo, verme!",
     "type": "enemy",
     "skin": "skeleton"

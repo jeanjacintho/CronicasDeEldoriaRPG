@@ -197,6 +197,10 @@ public class Battle {
 
       if (Math.random() * 100 < fleeChance) {
         System.out.println("You successfully fled from battle!");
+        
+        // Mover o jogador para fora da área de detecção (6 tiles de distância)
+        movePlayerAwayFromMonster();
+        
         return true;
       } else {
         System.out.println("Failed to flee!");
@@ -204,6 +208,53 @@ public class Battle {
       }
     }
     return false;
+  }
+
+  private void movePlayerAwayFromMonster() {
+    if (player == null || monster == null) return;
+    
+    int tileSize = gp.getTileSize();
+    int moveDistance = tileSize * 6; // 6 tiles de distância
+    
+    // Calcular diferença de posição
+    int deltaX = player.getWorldX() - monster.getWorldX();
+    int deltaY = player.getWorldY() - monster.getWorldY();
+    
+    // Determinar direção de movimento baseada na posição relativa
+    int newX = player.getWorldX();
+    int newY = player.getWorldY();
+    
+    if (Math.abs(deltaX) >= Math.abs(deltaY)) {
+      // Mover horizontalmente
+      if (deltaX >= 0) {
+        newX = monster.getWorldX() + moveDistance; // Mover para direita
+      } else {
+        newX = monster.getWorldX() - moveDistance; // Mover para esquerda
+      }
+    } else {
+      // Mover verticalmente
+      if (deltaY >= 0) {
+        newY = monster.getWorldY() + moveDistance; // Mover para baixo
+      } else {
+        newY = monster.getWorldY() - moveDistance; // Mover para cima
+      }
+    }
+    
+    // Se player e monster estão na mesma posição, mover para direita
+    if (deltaX == 0 && deltaY == 0) {
+      newX = monster.getWorldX() + moveDistance;
+    }
+    
+    // Verificar limites do mundo
+    int maxWorldX = gp.maxWorldCol * tileSize - player.getPlayerSize();
+    int maxWorldY = gp.maxWorldRow * tileSize - player.getPlayerSize();
+    
+    newX = Math.max(0, Math.min(newX, maxWorldX));
+    newY = Math.max(0, Math.min(newY, maxWorldY));
+    
+    // Aplicar o movimento diretamente
+    player.setWorldX(newX);
+    player.setWorldY(newY);
   }
 
   private void useMagic(Character attacker, Character target) {

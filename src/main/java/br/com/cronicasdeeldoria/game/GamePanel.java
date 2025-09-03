@@ -69,6 +69,10 @@ public class GamePanel extends JPanel implements Runnable{
   public final int battleState = 2;
   public Npc battleMonster = null;
   public Battle battle;
+  
+  // Cooldown para evitar re-engajamento imediato
+  private long lastBattleEndTime = 0;
+  private final long BATTLE_COOLDOWN = 1000; // 1 segundo de cooldown
 
 
   /**
@@ -271,8 +275,7 @@ public class GamePanel extends JPanel implements Runnable{
     battle.endBattle();
     gameState = playState;
     battleMonster = null;
-
-    //System.out.println("Returned to play state");
+    lastBattleEndTime = System.currentTimeMillis();
   }
 
   /**
@@ -284,6 +287,13 @@ public class GamePanel extends JPanel implements Runnable{
 
         interactionManager.clearInteractionPoints();
 
+        // Não processar interações se estivermos em batalha
+        if (gameState == battleState) return;
+        
+        // Verificar cooldown de batalha para evitar re-engajamento imediato
+        long currentTime = System.currentTimeMillis();
+        if (currentTime - lastBattleEndTime < BATTLE_COOLDOWN) return;
+
         // Verificar interação com NPCs
         for (Npc npc : npcs) {
             // Verificar se é um monstro (usar distância de 5 tiles)
@@ -292,7 +302,7 @@ public class GamePanel extends JPanel implements Runnable{
 
                     // Verificar auto-interação
                     if (npc.isAutoInteraction()) {
-                        System.out.println("AUTO-INTERAÇÃO com MONSTRO: " + npc.getName());
+                        startBattle(npc);
                         npc.interact();
                     } else {
                         // Usar coordenadas de mundo diretamente
@@ -335,28 +345,6 @@ public class GamePanel extends JPanel implements Runnable{
                 }
             }
         }
-    }
-
-    /**
-     * Verifica se o jogador está próximo de uma entidade (NPC ou objeto).
-     */
-    private boolean isPlayerNearEntity(Player player, int entityX, int entityY) {
-        // Usar o centro do jogador para cálculo de distância
-        int playerCenterX = player.getWorldX() + (player.getPlayerSize() / 2);
-        int playerCenterY = player.getWorldY() + (player.getPlayerSize() / 2);
-
-        // Usar o centro da entidade
-        int entityCenterX = entityX + (tileSize / 2);
-        int entityCenterY = entityY + (tileSize / 2);
-
-        // Calcular distância em pixels
-        int distanceX = Math.abs(playerCenterX - entityCenterX);
-        int distanceY = Math.abs(playerCenterY - entityCenterY);
-
-        // Distância máxima de 2 tiles (em pixels) - padrão para NPCs
-        int maxDistance = tileSize * 2;
-
-        return distanceX <= maxDistance && distanceY <= maxDistance;
     }
 
     /**
@@ -433,11 +421,17 @@ public class GamePanel extends JPanel implements Runnable{
      * Verifica e processa interações do jogador com NPCs e objetos.
      */
     public void checkInteraction() {
+        // Não processar interações se estivermos em batalha
+        if (gameState == battleState) return;
+        
+        // Verificar cooldown de batalha para evitar re-engajamento imediato
+        long currentTime = System.currentTimeMillis();
+        if (currentTime - lastBattleEndTime < BATTLE_COOLDOWN) return;
+        
         // Verificar interação com monstros primeiro (maior prioridade)
         for (Npc npc : npcs) {
             if (npc instanceof WolfMonster) {
                 if (isPlayerNearMonster(player, npc.getWorldX(), npc.getWorldY()) && npc.isInteractive()) {
-                    System.out.println("INTERAÇÃO COM MONSTRO: " + npc.getName());
                     npc.interact();
                     return;
                 }
