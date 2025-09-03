@@ -1,6 +1,8 @@
 package br.com.cronicasdeeldoria.entity.object;
 
 import br.com.cronicasdeeldoria.entity.Entity;
+import br.com.cronicasdeeldoria.entity.character.player.Player;
+
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
@@ -106,9 +108,7 @@ public class MapObject extends Entity {
      */
     public void interact(Entity interactor) {
         if (interactive) {
-            if (interactor instanceof br.com.cronicasdeeldoria.entity.character.player.Player) {
-                br.com.cronicasdeeldoria.entity.character.player.Player player =
-                    (br.com.cronicasdeeldoria.entity.character.player.Player) interactor;
+            if (interactor instanceof Player) {
                 System.out.println("Interagindo com objeto: " + getName() + " (" + getObjectId() + ")");
             }
         }

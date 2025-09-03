@@ -67,7 +67,7 @@ public class TileManager {
         }
     }
 
-    private void loadMapJson(String path) {
+    public void loadMapJson(String path) {
         try {
             InputStream is = getClass().getResourceAsStream(path);
             if (is == null) {
@@ -80,6 +80,11 @@ public class TileManager {
             this.mapWidth = mapJson.mapWidth;
             this.mapHeight = mapJson.mapHeight;
             this.mapLayers = mapJson.layers;
+            
+            // Mostrar mensagem do mapa se presente
+            if (mapJson.message != null && !mapJson.message.isEmpty()) {
+                gamePanel.getGameUI().showCenterMessage(mapJson.message, 4000);
+            }
 
         } catch (Exception e) {
             System.err.println("ERRO ao carregar mapa: " + e.getMessage());
@@ -104,6 +109,10 @@ public class TileManager {
         public String id;
         public int x;
         public int y;
+        public Boolean interactive = false;
+        public String toMap;
+        public int toX;
+        public int toY;
     }
 
     public static class MapLayer {
@@ -116,6 +125,7 @@ public class TileManager {
         public int tileSize;
         public int mapWidth;
         public int mapHeight;
+        public String message;
         public List<MapLayer> layers;
     }
 
@@ -162,14 +172,18 @@ public class TileManager {
             renderLayer(g2, layer, firstCol, lastCol, firstRow, lastRow, playerWorldX, playerWorldY, screenX, screenY);
         }
 
-        // 3. Renderizar NPCs
-        for (MapLayer layer : npcLayers) {
-            renderLayer(g2, layer, firstCol, lastCol, firstRow, lastRow, playerWorldX, playerWorldY, screenX, screenY);
+        // 3. Renderizar NPCs apenas se houver NPCs reais no GamePanel
+        if (gamePanel.getNpcs() != null && !gamePanel.getNpcs().isEmpty()) {
+          for (MapLayer layer : npcLayers) {
+              renderLayer(g2, layer, firstCol, lastCol, firstRow, lastRow, playerWorldX, playerWorldY, screenX, screenY);
+          }
         }
 
-        // 3. Renderizar Monsters
-        for (MapLayer layer : monsterLayers) {
-          renderLayer(g2, layer, firstCol, lastCol, firstRow, lastRow, playerWorldX, playerWorldY, screenX, screenY);
+        // 4. Renderizar Monsters apenas se houver monstros reais no GamePanel
+        if (gamePanel.getNpcs() != null && !gamePanel.getNpcs().isEmpty()) {
+          for (MapLayer layer : monsterLayers) {
+            renderLayer(g2, layer, firstCol, lastCol, firstRow, lastRow, playerWorldX, playerWorldY, screenX, screenY);
+          }
         }
 
         // 4. Renderizar o player
@@ -264,6 +278,22 @@ public class TileManager {
 
 
       /**
+     * Retorna os tiles de teleporte das layers do mapa.
+     */
+    public List<MapTile> getTeleportTiles() {
+        List<MapTile> teleportTiles = new ArrayList<>();
+
+        for (MapLayer layer : mapLayers) {
+            String layerName = layer.name.toLowerCase();
+            if (layerName.contains("teleport")) {
+                teleportTiles.addAll(layer.tiles);
+            }
+        }
+
+        return teleportTiles;
+    }
+
+    /**
      * Retorna os tiles de objetos das layers do mapa.
      */
     public List<MapTile> getObjectTiles() {

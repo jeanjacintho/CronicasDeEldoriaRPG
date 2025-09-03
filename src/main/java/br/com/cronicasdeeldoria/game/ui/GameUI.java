@@ -14,7 +14,6 @@ import java.awt.image.BufferedImage;
 
 import br.com.cronicasdeeldoria.entity.character.Character;
 import br.com.cronicasdeeldoria.entity.character.npc.Npc;
-import br.com.cronicasdeeldoria.entity.character.npc.NpcSpriteLoader;
 import br.com.cronicasdeeldoria.entity.character.player.Player;
 import br.com.cronicasdeeldoria.game.GamePanel;
 import br.com.cronicasdeeldoria.game.font.FontManager;

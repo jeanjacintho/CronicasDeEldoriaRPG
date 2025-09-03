@@ -8,7 +8,6 @@ import java.awt.Rectangle;
 
 import javax.swing.JPanel;
 
-import br.com.cronicasdeeldoria.entity.character.Character;
 import br.com.cronicasdeeldoria.entity.character.npc.SkeletonMonster;
 import br.com.cronicasdeeldoria.entity.character.npc.WolfMonster;
 import br.com.cronicasdeeldoria.entity.character.player.Player;
@@ -27,13 +26,11 @@ import br.com.cronicasdeeldoria.game.ui.InteractionManager;
 import br.com.cronicasdeeldoria.entity.character.npc.Npc;
 import br.com.cronicasdeeldoria.entity.character.npc.NpcFactory;
 import br.com.cronicasdeeldoria.entity.character.npc.NpcSpriteLoader;
-import br.com.cronicasdeeldoria.entity.character.npc.WolfMonster;
 import br.com.cronicasdeeldoria.tile.TileManager;
+import br.com.cronicasdeeldoria.tile.TileManager.MapTile;
 import br.com.cronicasdeeldoria.config.CharacterConfigLoader;
 import java.util.List;
 import java.util.ArrayList;
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
 
 import br.com.cronicasdeeldoria.entity.Entity;
 /**
@@ -210,9 +207,11 @@ public class GamePanel extends JPanel implements Runnable{
       if (gameState == playState) {
         player.update();
 
-        // Atualizar NPCs
-        for (Npc npc : npcs) {
-          npc.update(this, player);
+        // Atualizar NPCs apenas se houver NPCs no mapa
+        if (npcs != null && !npcs.isEmpty()) {
+          for (Npc npc : npcs) {
+            npc.update(this, player);
+          }
         }
 
         // Atualizar objetos
@@ -222,6 +221,9 @@ public class GamePanel extends JPanel implements Runnable{
 
         // Atualizar pontos de interação
         updateInteractionPoints();
+        
+        // Verificar teleportes automáticos
+        checkAutomaticTeleports();
 
         // Verificar se o GamePanel perdeu o foco e restaurá-lo
         if (!this.hasFocus()) {
@@ -294,8 +296,9 @@ public class GamePanel extends JPanel implements Runnable{
         long currentTime = System.currentTimeMillis();
         if (currentTime - lastBattleEndTime < BATTLE_COOLDOWN) return;
 
-        // Verificar interação com NPCs
-        for (Npc npc : npcs) {
+        // Verificar interação com NPCs apenas se houver NPCs no mapa
+        if (npcs != null && !npcs.isEmpty()) {
+          for (Npc npc : npcs) {
             // Verificar se é um monstro (usar distância de 5 tiles)
             if (npc instanceof WolfMonster) {
                 if (isPlayerNearMonster(player, npc.getWorldX(), npc.getWorldY()) && npc.isInteractive()) {
@@ -345,6 +348,22 @@ public class GamePanel extends JPanel implements Runnable{
                 }
             }
         }
+
+        // Verificar interação com teleportes interativos
+        List<MapTile> teleportTiles = tileManager.getTeleportTiles();
+        for (MapTile teleportTile : teleportTiles) {
+            // Verificar apenas teleportes interativos
+            if (teleportTile.interactive != null && teleportTile.interactive) {
+                int teleportWorldX = teleportTile.x * tileSize;
+                int teleportWorldY = teleportTile.y * tileSize;
+                
+                // Teleporte interativo - mostrar tecla E quando próximo
+                if (isPlayerNearObject(player, teleportWorldX, teleportWorldY)) {
+                    interactionManager.addInteractionPoint(teleportWorldX, teleportWorldY, "E", "teleport");
+                }
+            }
+        }
+      }
     }
 
     /**
@@ -428,18 +447,19 @@ public class GamePanel extends JPanel implements Runnable{
         long currentTime = System.currentTimeMillis();
         if (currentTime - lastBattleEndTime < BATTLE_COOLDOWN) return;
         
-        // Verificar interação com monstros primeiro (maior prioridade)
-        for (Npc npc : npcs) {
+        // Verificar interação com monstros primeiro (maior prioridade) apenas se houver NPCs
+        if (npcs != null && !npcs.isEmpty()) {
+          for (Npc npc : npcs) {
             if (npc instanceof WolfMonster) {
                 if (isPlayerNearMonster(player, npc.getWorldX(), npc.getWorldY()) && npc.isInteractive()) {
                     npc.interact();
                     return;
                 }
             }
-        }
+          }
 
-        // Verificar interação com NPCs normais
-        for (Npc npc : npcs) {
+          // Verificar interação com NPCs normais
+          for (Npc npc : npcs) {
             if (!(npc instanceof WolfMonster)) {
                 if (isPlayerNearNpc(player, npc.getWorldX(), npc.getWorldY()) && npc.isInteractive()) {
                     System.out.println("INTERAÇÃO COM NPC: " + npc.getName());
@@ -447,6 +467,7 @@ public class GamePanel extends JPanel implements Runnable{
                     return;
                 }
             }
+          }
         }
 
         // Verificar interação com objetos
@@ -471,6 +492,22 @@ public class GamePanel extends JPanel implements Runnable{
                 }
             }
         }
+
+        // Verificar interação com teleportes
+        List<MapTile> teleportTiles = tileManager.getTeleportTiles();
+        for (MapTile teleportTile : teleportTiles) {
+            int teleportWorldX = teleportTile.x * tileSize;
+            int teleportWorldY = teleportTile.y * tileSize;
+            
+            if (teleportTile.interactive) {
+                // Teleporte interativo - verificar proximidade
+                if (isPlayerNearObject(player, teleportWorldX, teleportWorldY)) {
+                    System.out.println("INTERAÇÃO COM TELEPORTE: " + teleportTile.id);
+                    performTeleport(teleportTile);
+                    return;
+                }
+            }
+        }
     }
 
     /**
@@ -490,17 +527,20 @@ public class GamePanel extends JPanel implements Runnable{
           objectManager.drawObjects(graphics2D);
         }
 
-        for (Npc npc : npcs) {
-          npc.draw(graphics2D, npcSpriteLoader, tileSize, player, player.getScreenX(), player.getScreenY());
+        // Renderizar NPCs apenas se houver NPCs no mapa
+        if (npcs != null && !npcs.isEmpty()) {
+          for (Npc npc : npcs) {
+            npc.draw(graphics2D, npcSpriteLoader, tileSize, player, player.getScreenX(), player.getScreenY());
 
-            // Renderizar tecla de interação para NPC se necessário
-            if (interactionManager != null) {
-                interactionManager.renderInteractionKeyForEntity(graphics2D,
-                    npc.getWorldX(), npc.getWorldY(),
-                    npc.getWorldX() - player.getWorldX() + player.getScreenX(),
-                    npc.getWorldY() - player.getWorldY() + player.getScreenY(),
-                    "npc", tileSize);
-            }
+              // Renderizar tecla de interação para NPC se necessário
+              if (interactionManager != null) {
+                  interactionManager.renderInteractionKeyForEntity(graphics2D,
+                      npc.getWorldX(), npc.getWorldY(),
+                      npc.getWorldX() - player.getWorldX() + player.getScreenX(),
+                      npc.getWorldY() - player.getWorldY() + player.getScreenY(),
+                      "npc", tileSize);
+              }
+          }
         }
 
         // Renderizar teclas de interação para objetos
@@ -511,6 +551,24 @@ public class GamePanel extends JPanel implements Runnable{
                     obj.getWorldX() - player.getWorldX() + player.getScreenX(),
                     obj.getWorldY() - player.getWorldY() + player.getScreenY(),
                     "object", tileSize);
+            }
+        }
+
+        // Renderizar teclas de interação para teleportes
+        if (interactionManager != null) {
+            List<MapTile> teleportTiles = tileManager.getTeleportTiles();
+            for (MapTile teleportTile : teleportTiles) {
+                if (teleportTile.interactive != null && teleportTile.interactive) {
+                    int teleportWorldX = teleportTile.x * tileSize;
+                    int teleportWorldY = teleportTile.y * tileSize;
+                    
+                    // Usar o método específico para tiles que centraliza a tecla
+                    interactionManager.renderInteractionKeyForTile(graphics2D,
+                        teleportWorldX, teleportWorldY,
+                        teleportWorldX - player.getWorldX() + player.getScreenX(),
+                        teleportWorldY - player.getWorldY() + player.getScreenY(),
+                        "teleport", tileSize);
+                }
             }
         }
 
@@ -661,12 +719,115 @@ public class GamePanel extends JPanel implements Runnable{
    */
   private void loadNpcsFromMap() {
     try {
+      // Garantir que a lista de NPCs está inicializada
+      if (this.npcs == null) {
+        this.npcs = new ArrayList<>();
+      } else {
+        // Limpar lista de NPCs existente
+        this.npcs.clear();
+      }
+      
       List<TileManager.MapTile> npcTiles = tileManager.getNpcTiles();
       if (npcTiles != null && !npcTiles.isEmpty()) {
         this.npcs = NpcFactory.loadNpcsFromTiles(npcTiles, tileSize, getPlayerSize());
+      } else {
+        // Se não há NPCs no mapa, garantir que a lista está vazia
+        this.npcs = new ArrayList<>();
       }
     } catch (Exception e) {
       System.err.println("Erro ao carregar NPCs: " + e.getMessage());
+      e.printStackTrace();
+      // Em caso de erro, garantir que a lista está vazia
+      this.npcs = new ArrayList<>();
+    }
+  }
+
+  /**
+   * Verifica teleportes automáticos independentemente do sistema de interação.
+   */
+  private void checkAutomaticTeleports() {
+    List<MapTile> teleportTiles = tileManager.getTeleportTiles();
+    for (MapTile teleportTile : teleportTiles) {
+      // Verificar apenas teleportes automáticos (não interativos)
+      if (teleportTile.interactive == null || !teleportTile.interactive) {
+        int teleportWorldX = teleportTile.x * tileSize;
+        int teleportWorldY = teleportTile.y * tileSize;
+        
+        if (isPlayerCollidingWithTeleport(player, teleportWorldX, teleportWorldY)) {
+          System.out.println("TELEPORTE AUTOMÁTICO ativado!");
+          performTeleport(teleportTile);
+          return; // Sair após o primeiro teleporte
+        }
+      }
+    }
+  }
+
+  /**
+   * Verifica se o jogador está colidindo com um teleporte.
+   */
+  private boolean isPlayerCollidingWithTeleport(Player player, int teleportWorldX, int teleportWorldY) {
+    // Obter a posição e tamanho do jogador
+    int playerX = player.getWorldX();
+    int playerY = player.getWorldY();
+    int playerSize = player.getPlayerSize();
+    
+    // Calcular o centro do jogador
+    int playerCenterX = playerX + (playerSize / 2);
+    int playerCenterY = playerY + (playerSize / 2);
+    
+    // Calcular o centro do teleporte
+    int teleportCenterX = teleportWorldX + (tileSize / 2);
+    int teleportCenterY = teleportWorldY + (tileSize / 2);
+    
+    // Calcular a distância entre os centros
+    double distance = Math.sqrt(
+        Math.pow(playerCenterX - teleportCenterX, 2) + 
+        Math.pow(playerCenterY - teleportCenterY, 2)
+    );
+    
+    // Considerar colisão se a distância for menor que metade do tamanho do tile
+    // Isso torna a detecção mais permissiva
+    boolean isColliding = distance <= (tileSize / 2);
+    
+    return isColliding;
+  }
+
+  /**
+   * Executa o teleporte do jogador.
+   */
+  private void performTeleport(MapTile teleportTile) {
+    if (teleportTile.toMap != null && !teleportTile.toMap.isEmpty()) {
+      System.out.println("Teleportando para: " + teleportTile.toMap + " na posição (" + teleportTile.toX + ", " + teleportTile.toY + ")");
+      
+      // Carregar novo mapa
+      loadMap(teleportTile.toMap);
+      
+      // Posicionar jogador na nova posição
+      player.setWorldX(teleportTile.toX * tileSize);
+      player.setWorldY(teleportTile.toY * tileSize);
+    }
+  }
+
+  /**
+   * Carrega um novo mapa.
+   */
+  private void loadMap(String mapName) {
+    try {
+      String mapPath = "/maps/" + mapName + ".json";
+      tileManager.loadMapJson(mapPath);
+      
+      // Recarregar NPCs e objetos do novo mapa
+      loadNpcsFromMap();
+      
+      if (objectManager != null) {
+        ObjectSpriteLoader objectSpriteLoader = new ObjectSpriteLoader("/objects.json");
+        List<TileManager.MapTile> objectTiles = tileManager.getObjectTiles();
+        this.objectManager = new ObjectManager(this, objectSpriteLoader, objectTiles);
+      }
+      
+      System.out.println("Mapa carregado: " + mapName);
+    } catch (Exception e) {
+      System.err.println("Erro ao carregar mapa: " + e.getMessage());
       e.printStackTrace();
     }
   }
