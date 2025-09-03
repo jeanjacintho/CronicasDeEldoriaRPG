@@ -8,7 +8,7 @@ import java.awt.event.KeyListener;
  */
 public class KeyHandler implements KeyListener {
     public boolean actionPressed, upPressed, downPressed, leftPressed, rightPressed, xPressed, zPressed, qPressed;
-    public boolean rPressed, fPressed, gPressed, hPressed, tPressed, magicPressed, attackPressed, defendPressed, escapePressed;
+    public boolean rPressed, fPressed, gPressed, hPressed, tPressed, magicPressed, attackPressed, defendPressed, escapePressed, healthPressed, manaPressed;
 
     /**
      * Evento chamado quando uma tecla é digitada.
@@ -45,6 +45,8 @@ public class KeyHandler implements KeyListener {
             case KeyEvent.VK_3: attackPressed = true; break;
             case KeyEvent.VK_2: defendPressed = true; break;
             case KeyEvent.VK_1: escapePressed = true; break;
+            case KeyEvent.VK_6: healthPressed = true; break;
+            case KeyEvent.VK_7: manaPressed = true; break;
 
         }
     }
@@ -57,24 +59,27 @@ public class KeyHandler implements KeyListener {
     public void keyReleased(KeyEvent e) {
         int code = e.getKeyCode();
         switch (code) {
-            case KeyEvent.VK_W: upPressed = false; break;
-            case KeyEvent.VK_S: downPressed = false; break;
-            case KeyEvent.VK_A: leftPressed = false; break;
-            case KeyEvent.VK_D: rightPressed = false; break;
-            case KeyEvent.VK_E: actionPressed = false; break;
-            case KeyEvent.VK_X: xPressed = false; break;
-            case KeyEvent.VK_Z: zPressed = false; break;
-            case KeyEvent.VK_Q: qPressed = false; break;
-            case KeyEvent.VK_R: rPressed = false; break;
-            case KeyEvent.VK_F: fPressed = false; break;
-            case KeyEvent.VK_G: gPressed = false; break;
-            case KeyEvent.VK_H: hPressed = false; break;
-            //case KeyEvent.VK_T: tPressed = false; break;
+          case KeyEvent.VK_W: upPressed = false; break;
+          case KeyEvent.VK_S: downPressed = false; break;
+          case KeyEvent.VK_A: leftPressed = false; break;
+          case KeyEvent.VK_D: rightPressed = false; break;
+          case KeyEvent.VK_E: actionPressed = false; break;
+          case KeyEvent.VK_X: xPressed = false; break;
+          case KeyEvent.VK_Z: zPressed = false; break;
+          case KeyEvent.VK_Q: qPressed = false; break;
+          case KeyEvent.VK_R: rPressed = false; break;
+          case KeyEvent.VK_F: fPressed = false; break;
+          case KeyEvent.VK_G: gPressed = false; break;
+          case KeyEvent.VK_H: hPressed = false; break;
+          //case KeyEvent.VK_T: tPressed = false; break;
 
+          // Batalha
           case KeyEvent.VK_4: magicPressed = false; break;
           case KeyEvent.VK_3: attackPressed = false; break;
           case KeyEvent.VK_2: defendPressed = false; break;
           case KeyEvent.VK_1: escapePressed = false; break;
+          case KeyEvent.VK_6: healthPressed = false; break;
+          case KeyEvent.VK_7: manaPressed = false; break;
         }
     }
 }

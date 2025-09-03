@@ -66,7 +66,7 @@ public class GamePanel extends JPanel implements Runnable{
   public final int battleState = 2;
   public Npc battleMonster = null;
   public Battle battle;
-  
+
   // Cooldown para evitar re-engajamento imediato
   private long lastBattleEndTime = 0;
   private final long BATTLE_COOLDOWN = 1000; // 1 segundo de cooldown
@@ -221,7 +221,7 @@ public class GamePanel extends JPanel implements Runnable{
 
         // Atualizar pontos de interação
         updateInteractionPoints();
-        
+
         // Verificar teleportes automáticos
         checkAutomaticTeleports();
 
@@ -291,7 +291,7 @@ public class GamePanel extends JPanel implements Runnable{
 
         // Não processar interações se estivermos em batalha
         if (gameState == battleState) return;
-        
+
         // Verificar cooldown de batalha para evitar re-engajamento imediato
         long currentTime = System.currentTimeMillis();
         if (currentTime - lastBattleEndTime < BATTLE_COOLDOWN) return;
@@ -356,7 +356,7 @@ public class GamePanel extends JPanel implements Runnable{
             if (teleportTile.interactive != null && teleportTile.interactive) {
                 int teleportWorldX = teleportTile.x * tileSize;
                 int teleportWorldY = teleportTile.y * tileSize;
-                
+
                 // Teleporte interativo - mostrar tecla E quando próximo
                 if (isPlayerNearObject(player, teleportWorldX, teleportWorldY)) {
                     interactionManager.addInteractionPoint(teleportWorldX, teleportWorldY, "E", "teleport");
@@ -442,11 +442,11 @@ public class GamePanel extends JPanel implements Runnable{
     public void checkInteraction() {
         // Não processar interações se estivermos em batalha
         if (gameState == battleState) return;
-        
+
         // Verificar cooldown de batalha para evitar re-engajamento imediato
         long currentTime = System.currentTimeMillis();
         if (currentTime - lastBattleEndTime < BATTLE_COOLDOWN) return;
-        
+
         // Verificar interação com monstros primeiro (maior prioridade) apenas se houver NPCs
         if (npcs != null && !npcs.isEmpty()) {
           for (Npc npc : npcs) {
@@ -498,7 +498,7 @@ public class GamePanel extends JPanel implements Runnable{
         for (MapTile teleportTile : teleportTiles) {
             int teleportWorldX = teleportTile.x * tileSize;
             int teleportWorldY = teleportTile.y * tileSize;
-            
+
             if (teleportTile.interactive) {
                 // Teleporte interativo - verificar proximidade
                 if (isPlayerNearObject(player, teleportWorldX, teleportWorldY)) {
@@ -561,7 +561,7 @@ public class GamePanel extends JPanel implements Runnable{
                 if (teleportTile.interactive != null && teleportTile.interactive) {
                     int teleportWorldX = teleportTile.x * tileSize;
                     int teleportWorldY = teleportTile.y * tileSize;
-                    
+
                     // Usar o método específico para tiles que centraliza a tecla
                     interactionManager.renderInteractionKeyForTile(graphics2D,
                         teleportWorldX, teleportWorldY,
@@ -603,6 +603,12 @@ public class GamePanel extends JPanel implements Runnable{
       } else if (keyHandler.magicPressed) {
         battle.processPlayerAction("MAGIC");
         keyHandler.magicPressed = false;
+      } else if (keyHandler.healthPressed) {
+        battle.processPlayerAction("HEALTH");
+        keyHandler.healthPressed = false;
+      } else if (keyHandler.manaPressed) {
+        battle.processPlayerAction("MANA");
+        keyHandler.manaPressed = false;
       }
     }
 
@@ -726,7 +732,7 @@ public class GamePanel extends JPanel implements Runnable{
         // Limpar lista de NPCs existente
         this.npcs.clear();
       }
-      
+
       List<TileManager.MapTile> npcTiles = tileManager.getNpcTiles();
       if (npcTiles != null && !npcTiles.isEmpty()) {
         this.npcs = NpcFactory.loadNpcsFromTiles(npcTiles, tileSize, getPlayerSize());
@@ -752,7 +758,7 @@ public class GamePanel extends JPanel implements Runnable{
       if (teleportTile.interactive == null || !teleportTile.interactive) {
         int teleportWorldX = teleportTile.x * tileSize;
         int teleportWorldY = teleportTile.y * tileSize;
-        
+
         if (isPlayerCollidingWithTeleport(player, teleportWorldX, teleportWorldY)) {
           System.out.println("TELEPORTE AUTOMÁTICO ativado!");
           performTeleport(teleportTile);
@@ -770,25 +776,25 @@ public class GamePanel extends JPanel implements Runnable{
     int playerX = player.getWorldX();
     int playerY = player.getWorldY();
     int playerSize = player.getPlayerSize();
-    
+
     // Calcular o centro do jogador
     int playerCenterX = playerX + (playerSize / 2);
     int playerCenterY = playerY + (playerSize / 2);
-    
+
     // Calcular o centro do teleporte
     int teleportCenterX = teleportWorldX + (tileSize / 2);
     int teleportCenterY = teleportWorldY + (tileSize / 2);
-    
+
     // Calcular a distância entre os centros
     double distance = Math.sqrt(
-        Math.pow(playerCenterX - teleportCenterX, 2) + 
+        Math.pow(playerCenterX - teleportCenterX, 2) +
         Math.pow(playerCenterY - teleportCenterY, 2)
     );
-    
+
     // Considerar colisão se a distância for menor que metade do tamanho do tile
     // Isso torna a detecção mais permissiva
     boolean isColliding = distance <= (tileSize / 2);
-    
+
     return isColliding;
   }
 
@@ -798,10 +804,10 @@ public class GamePanel extends JPanel implements Runnable{
   private void performTeleport(MapTile teleportTile) {
     if (teleportTile.toMap != null && !teleportTile.toMap.isEmpty()) {
       System.out.println("Teleportando para: " + teleportTile.toMap + " na posição (" + teleportTile.toX + ", " + teleportTile.toY + ")");
-      
+
       // Carregar novo mapa
       loadMap(teleportTile.toMap);
-      
+
       // Posicionar jogador na nova posição
       player.setWorldX(teleportTile.toX * tileSize);
       player.setWorldY(teleportTile.toY * tileSize);
@@ -815,16 +821,16 @@ public class GamePanel extends JPanel implements Runnable{
     try {
       String mapPath = "/maps/" + mapName + ".json";
       tileManager.loadMapJson(mapPath);
-      
+
       // Recarregar NPCs e objetos do novo mapa
       loadNpcsFromMap();
-      
+
       if (objectManager != null) {
         ObjectSpriteLoader objectSpriteLoader = new ObjectSpriteLoader("/objects.json");
         List<TileManager.MapTile> objectTiles = tileManager.getObjectTiles();
         this.objectManager = new ObjectManager(this, objectSpriteLoader, objectTiles);
       }
-      
+
       System.out.println("Mapa carregado: " + mapName);
     } catch (Exception e) {
       System.err.println("Erro ao carregar mapa: " + e.getMessage());
