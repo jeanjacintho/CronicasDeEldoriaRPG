@@ -417,11 +417,11 @@ public class GameUI {
 
     // Interface de batalha (painel inferior)
     g2.setColor(new Color(255, 255, 255, 200));
-    g2.fillRect(0, screenHeight - 100, screenWidth, 100);
+    g2.fillRect(0, screenHeight - 145, screenWidth, 150);
 
     // Opções de ação
     g2.setColor(Color.BLACK);
-    g2.setFont(new Font("Arial", Font.PLAIN, 16));
+    g2.setFont(new Font("Arial", Font.PLAIN, 24));
 
     if (gamePanel.battle.isWaitingForPlayerInput()) {
       int potionIconSize = 25;
@@ -433,22 +433,22 @@ public class GameUI {
       }
 
       // Mostrar opções disponíveis
-      g2.drawString("Escolha sua ação:", 20, screenHeight - 75);
-      g2.drawString("(4) - Ataque Mágico", 20, screenHeight - 50);
-      g2.drawString("(3) - Ataque Básico", 20, screenHeight - 27);
-      g2.drawString("(2) - Defender", 200, screenHeight - 50);
-      g2.drawString("(1) - Tentar Fugir", 200, screenHeight - 27);
+      g2.drawString("Escolha sua ação:", 20, screenHeight - 115);
+      g2.drawString("(1) - Ataque Mágico", 20, screenHeight - 75);
+      g2.drawString("(2) - Ataque Básico", 20, screenHeight - 35);
+      g2.drawString("(3) - Defender", 250, screenHeight - 75);
+      g2.drawString("(4) - Tentar Fugir", 250, screenHeight - 35);
 
-      if (healthPotionImg != null) {
-        g2.drawImage(healthPotionImg, 455, screenHeight - 83, potionIconSize, potionIconSize, null);
-      }
       g2.setColor(Color.BLACK);
-      g2.drawString("(6) - ", 420, screenHeight - 65);
-
       if (healthPotionImg != null) {
-        g2.drawImage(manaPotionImg, 455, screenHeight - 45, potionIconSize, potionIconSize, null);
+        g2.drawImage(healthPotionImg, 550, screenHeight - 97, potionIconSize, potionIconSize, null);
       }
-      g2.drawString("(7) - ", 420, screenHeight - 27);
+      g2.drawString("(6) - ", 500, screenHeight - 75);
+
+      if (manaPotionImg != null) {
+        g2.drawImage(manaPotionImg, 550, screenHeight - 55, potionIconSize, potionIconSize, null);
+      }
+      g2.drawString("(7) - ", 500, screenHeight - 35);
 
       // Destacar opções indisponíveis
       if (player.getAttributeMana() < 10) {

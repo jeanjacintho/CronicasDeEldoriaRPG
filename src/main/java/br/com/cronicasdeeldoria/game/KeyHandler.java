@@ -41,10 +41,10 @@ public class KeyHandler implements KeyListener {
             //case KeyEvent.VK_T: tPressed = true; break;
 
             // Key de batalha
-            case KeyEvent.VK_4: magicPressed = true; break;
-            case KeyEvent.VK_3: attackPressed = true; break;
-            case KeyEvent.VK_2: defendPressed = true; break;
-            case KeyEvent.VK_1: escapePressed = true; break;
+            case KeyEvent.VK_1: magicPressed = true; break;
+            case KeyEvent.VK_2: attackPressed = true; break;
+            case KeyEvent.VK_3: defendPressed = true; break;
+            case KeyEvent.VK_4: escapePressed = true; break;
             case KeyEvent.VK_6: healthPressed = true; break;
             case KeyEvent.VK_7: manaPressed = true; break;
 
@@ -74,10 +74,10 @@ public class KeyHandler implements KeyListener {
           //case KeyEvent.VK_T: tPressed = false; break;
 
           // Batalha
-          case KeyEvent.VK_4: magicPressed = false; break;
-          case KeyEvent.VK_3: attackPressed = false; break;
-          case KeyEvent.VK_2: defendPressed = false; break;
-          case KeyEvent.VK_1: escapePressed = false; break;
+          case KeyEvent.VK_1: magicPressed = false; break;
+          case KeyEvent.VK_2: attackPressed = false; break;
+          case KeyEvent.VK_3: defendPressed = false; break;
+          case KeyEvent.VK_4: escapePressed = false; break;
           case KeyEvent.VK_6: healthPressed = false; break;
           case KeyEvent.VK_7: manaPressed = false; break;
         }
