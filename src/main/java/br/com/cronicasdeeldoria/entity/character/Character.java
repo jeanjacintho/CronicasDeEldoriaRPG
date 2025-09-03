@@ -27,19 +27,19 @@ public class Character extends Entity {
    * @param name Nome do personagem.
    * @param race Raça do personagem.
    * @param attributeHealth Vida.
-   * @param attributeMaxHealth Vida.
+   * @param attributeMaxHealth Vida máxima.
    * @param attributeMana Mana.
-   * @param attributeMaxMana Mana.
+   * @param attributeMaxMana Mana máxima.
    * @param attributeStrength Força.
    * @param attributeAgility Agilidade.
    */
-  public Character(int x, int y, int speed, String direction, String name, Race race, int attributeHealth, int attributeMana, int attributeStrength, int attributeAgility) {
+  public Character(int x, int y, int speed, String direction, String name, Race race, int attributeHealth, int attributeMaxHealth, int attributeMana, int attributeMaxMana, int attributeStrength, int attributeAgility) {
     super(x, y, speed, direction, name);
     this.race = race;
     this.attributeHealth = attributeHealth;
-    this.attributeMaxHealth = attributeHealth;
+    this.attributeMaxHealth = attributeMaxHealth;
     this.attributeMana = attributeMana;
-    this.attributeMaxMana = attributeMana;
+    this.attributeMaxMana = attributeMaxMana;
     this.attributeStrength = attributeStrength;
     this.attributeAgility = attributeAgility;
   }
@@ -50,7 +50,7 @@ public class Character extends Entity {
   public void setRace(Race race) {
     this.race = race;
   }
-  public int getAttributeLife() {
+  public int getAttributeHealth() {
     return attributeHealth;
   }
   public void setAttributeHealth(int attributeHealth) {
@@ -115,7 +115,7 @@ public class Character extends Entity {
   public int getAttributeAgility() {
     return attributeAgility;
   }
-  
+
   public void setAttributeAgility(int attributeAgility) {
     this.attributeAgility = attributeAgility;
   }

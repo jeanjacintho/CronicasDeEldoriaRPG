@@ -33,7 +33,7 @@ public class Npc extends Character {
      * @param autoInteraction Indica se a interação é automática.
      */
     public Npc(String name, boolean isStatic, String dialog, int x, int y, String skin, int playerSize, boolean interactive, boolean autoInteraction) {
-        super(x, y, 1, "down", name, null, 0, 0, 0, 0);
+        super(x, y, 1, "down", name, null, 30, 30, 0, 0, 5, 10);
         this.isStatic = isStatic;
         this.dialog = dialog;
         this.skin = skin;
@@ -54,7 +54,7 @@ public class Npc extends Character {
             System.out.println("Interagindo com NPC: " + getName() + " - " + getDialog());
         }
     }
-    
+
     /**
      * Verifica se o NPC é interativo.
      * @return true se o NPC é interativo
@@ -62,11 +62,11 @@ public class Npc extends Character {
     public boolean isInteractive() {
         return interactive;
     }
-    
+
     public void setInteractive(boolean interactive) {
         this.interactive = interactive;
     }
-    
+
     /**
      * Verifica se o NPC tem auto-interação.
      * @return true se o NPC tem auto-interação
@@ -74,7 +74,7 @@ public class Npc extends Character {
     public boolean isAutoInteraction() {
         return autoInteraction;
     }
-  
+
     public void setAutoInteraction(boolean autoInteraction) {
         this.autoInteraction = autoInteraction;
     }

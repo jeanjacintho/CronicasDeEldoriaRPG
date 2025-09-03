@@ -8,6 +8,9 @@ import java.awt.Rectangle;
 
 import javax.swing.JPanel;
 
+import br.com.cronicasdeeldoria.entity.character.Character;
+import br.com.cronicasdeeldoria.entity.character.npc.SkeletonMonster;
+import br.com.cronicasdeeldoria.entity.character.npc.WolfMonster;
 import br.com.cronicasdeeldoria.entity.character.player.Player;
 import br.com.cronicasdeeldoria.entity.character.races.Archer;
 import br.com.cronicasdeeldoria.entity.character.races.Breton;
@@ -32,6 +35,7 @@ import java.util.ArrayList;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 
+import br.com.cronicasdeeldoria.entity.Entity;
 /**
  * Painel principal do jogo, responsável pelo loop de atualização, renderização e gerenciamento dos elementos do jogo.
  */
@@ -59,6 +63,14 @@ public class GamePanel extends JPanel implements Runnable{
   private KeyboardMapper keyboardMapper;
   private InteractionManager interactionManager;
 
+  // Sistema de batalha
+  public int gameState;
+  public final int playState = 1;
+  public final int battleState = 2;
+  public Npc battleMonster = null;
+  public Battle battle;
+
+
   /**
    * Inicializa o painel do jogo com as configurações fornecidas.
    * @param screenWidth Largura da tela.
@@ -79,6 +91,9 @@ public class GamePanel extends JPanel implements Runnable{
     this.addKeyListener(keyHandler);
     this.setFocusable(true);
 
+    this.battle = new Battle(this);
+    gameState = playState;
+
     CharacterConfigLoader configLoader = CharacterConfigLoader.getInstance();
     String raceName = race.getRaceName().toLowerCase();
     int playerSize = getPlayerSize();
@@ -94,7 +109,9 @@ public class GamePanel extends JPanel implements Runnable{
     int speed = configLoader.getIntAttribute(raceName, "speed", 4);
     String direction = configLoader.getStringAttribute(raceName, "direction", "down");
     int health = configLoader.getIntAttribute(raceName, "health", 100);
+    int maxHealth = configLoader.getIntAttribute(raceName, "maxHealth", 100);
     int mana = configLoader.getIntAttribute(raceName, "mana", 100);
+    int maxMana = configLoader.getIntAttribute(raceName, "maxMana", 100);
     int strength = configLoader.getIntAttribute(raceName, "strength", 10);
     int agility = configLoader.getIntAttribute(raceName, "agility", 10);
     int luck = configLoader.getIntAttribute(raceName, "luck", 0);
@@ -139,7 +156,12 @@ public class GamePanel extends JPanel implements Runnable{
       default:
         raceInstance = race;
     }
-            player = new Player(this, keyHandler, raceInstance, x, y, speed, direction, playerName, health, mana, strength, agility, luck);
+    player = new Player(this, keyHandler, raceInstance, x, y, speed, direction, playerName, health, maxHealth, mana, maxMana, strength, agility, luck);
+  }
+
+  public void setupGame() {
+    // Garantir que começa no estado de jogo
+    gameState = playState;
   }
 
   /**
@@ -181,16 +203,17 @@ public class GamePanel extends JPanel implements Runnable{
      */
     public void update() {
 
+      if (gameState == playState) {
         player.update();
 
         // Atualizar NPCs
         for (Npc npc : npcs) {
-            npc.update(this, player);
+          npc.update(this, player);
         }
 
         // Atualizar objetos
         if (objectManager != null) {
-            objectManager.updateActiveObjects(player.getWorldX() / tileSize, player.getWorldY() / tileSize);
+          objectManager.updateActiveObjects(player.getWorldX() / tileSize, player.getWorldY() / tileSize);
         }
 
         // Atualizar pontos de interação
@@ -198,24 +221,75 @@ public class GamePanel extends JPanel implements Runnable{
 
         // Verificar se o GamePanel perdeu o foco e restaurá-lo
         if (!this.hasFocus()) {
-            this.requestFocusInWindow();
+          this.requestFocusInWindow();
         }
+      }
+
+      if (gameState == battleState) {
+        updateBattle();
+      }
     }
 
+  public void startBattle(Entity targetEntity) {
+    if (targetEntity instanceof Npc) {
+      Npc monster = (Npc) targetEntity;
+      battleMonster = monster;
+
+      // Iniciar batalha
+      battle.startBattle(player, monster);
+
+      // Mudar para estado de batalha
+      gameState = battleState;
+
+      System.out.println("Entered battle state with " + monster.getName());
+    } else {
+      System.out.println("Cannot start battle: target is not a monster");
+    }
+  }
+
+  public void endBattle(boolean playerWon) {
+    if (playerWon) {
+      System.out.println("Victory! You defeated " + battleMonster.getName());
+
+      int xpReward = 0;
+      if (battleMonster instanceof WolfMonster ) {
+        xpReward = ((WolfMonster) battleMonster).getXpReward();
+      } else if (battleMonster instanceof SkeletonMonster) {
+        xpReward = ((SkeletonMonster) battleMonster).getXpReward();
+      }
+      player.gainXp(xpReward);
+
+      // Remover monstro derrotado do mapa
+      removeMonsterFromMap(battleMonster);
+    } else {
+      System.out.println("Defeat! You were defeated by " + battleMonster.getName());
+      // Aplicar penalidade se necessário
+      // player.applyDeathPenalty(); // se você tiver este metodo
+    }
+
+    // Limpar estado de batalha
+    battle.endBattle();
+    gameState = playState;
+    battleMonster = null;
+
+    //System.out.println("Returned to play state");
+  }
+
+  /**
     /**
      * Atualiza os pontos de interação baseado na proximidade do jogador
      */
     private void updateInteractionPoints() {
         if (interactionManager == null) return;
-        
+
         interactionManager.clearInteractionPoints();
-        
+
         // Verificar interação com NPCs
         for (Npc npc : npcs) {
             // Verificar se é um monstro (usar distância de 5 tiles)
             if (npc instanceof WolfMonster) {
                 if (isPlayerNearMonster(player, npc.getWorldX(), npc.getWorldY()) && npc.isInteractive()) {
-                    
+
                     // Verificar auto-interação
                     if (npc.isAutoInteraction()) {
                         System.out.println("AUTO-INTERAÇÃO com MONSTRO: " + npc.getName());
@@ -228,7 +302,7 @@ public class GamePanel extends JPanel implements Runnable{
             } else {
                 // NPCs normais (usar distância de 2 tiles)
                 if (isPlayerNearNpc(player, npc.getWorldX(), npc.getWorldY()) && npc.isInteractive()) {
-                    
+
                     // Verificar auto-interação
                     if (npc.isAutoInteraction()) {
                         System.out.println("AUTO-INTERAÇÃO com NPC: " + npc.getName());
@@ -240,7 +314,7 @@ public class GamePanel extends JPanel implements Runnable{
                 }
             }
         }
-        
+
         // Verificar interação com objetos
         if (objectManager != null) {
             for (MapObject obj : objectManager.getActiveObjects()) {
@@ -270,21 +344,21 @@ public class GamePanel extends JPanel implements Runnable{
         // Usar o centro do jogador para cálculo de distância
         int playerCenterX = player.getWorldX() + (player.getPlayerSize() / 2);
         int playerCenterY = player.getWorldY() + (player.getPlayerSize() / 2);
-        
+
         // Usar o centro da entidade
         int entityCenterX = entityX + (tileSize / 2);
         int entityCenterY = entityY + (tileSize / 2);
-        
+
         // Calcular distância em pixels
         int distanceX = Math.abs(playerCenterX - entityCenterX);
         int distanceY = Math.abs(playerCenterY - entityCenterY);
-        
+
         // Distância máxima de 2 tiles (em pixels) - padrão para NPCs
         int maxDistance = tileSize * 2;
-        
+
         return distanceX <= maxDistance && distanceY <= maxDistance;
     }
-    
+
     /**
      * Verifica se o jogador está próximo de uma entidade com distância específica.
      */
@@ -292,35 +366,35 @@ public class GamePanel extends JPanel implements Runnable{
         // Usar o centro do jogador para cálculo de distância
         int playerCenterX = player.getWorldX() + (player.getPlayerSize() / 2);
         int playerCenterY = player.getWorldY() + (player.getPlayerSize() / 2);
-        
+
         // Usar o centro da entidade
         int entityCenterX = entityX + (tileSize / 2);
         int entityCenterY = entityY + (tileSize / 2);
-        
+
         // Calcular distância em pixels
         int distanceX = Math.abs(playerCenterX - entityCenterX);
         int distanceY = Math.abs(playerCenterY - entityCenterY);
-        
+
         // Distância máxima baseada no parâmetro (em pixels)
         int maxDistance = tileSize * distanceInTiles;
-        
+
         return distanceX <= maxDistance && distanceY <= maxDistance;
     }
-    
+
     /**
      * Verifica se o jogador está próximo de um NPC (2 tiles).
      */
     private boolean isPlayerNearNpc(Player player, int entityX, int entityY) {
         return isPlayerNearEntity(player, entityX, entityY, 2);
     }
-    
+
     /**
      * Verifica se o jogador está próximo de um objeto (2 tiles).
      */
     private boolean isPlayerNearObject(Player player, int entityX, int entityY) {
         return isPlayerNearEntity(player, entityX, entityY, 2);
     }
-    
+
     /**
      * Verifica se o jogador está colidindo com um objeto (contato direto).
      */
@@ -328,7 +402,7 @@ public class GamePanel extends JPanel implements Runnable{
         // Obter as hitboxes do jogador e do objeto
         Rectangle playerHitbox = player.getHitbox();
         Rectangle objHitbox = obj.getHitbox();
-        
+
         // Ajustar as hitboxes para as coordenadas de mundo
         Rectangle playerWorldHitbox = new Rectangle(
             player.getWorldX() + playerHitbox.x,
@@ -336,18 +410,18 @@ public class GamePanel extends JPanel implements Runnable{
             playerHitbox.width,
             playerHitbox.height
         );
-        
+
         Rectangle objWorldHitbox = new Rectangle(
             obj.getWorldX() + objHitbox.x,
             obj.getWorldY() + objHitbox.y,
             objHitbox.width,
             objHitbox.height
         );
-        
+
         // Verificar se há interseção entre as hitboxes
         return playerWorldHitbox.intersects(objWorldHitbox);
     }
-    
+
     /**
      * Verifica se o jogador está próximo de um monstro (5 tiles).
      */
@@ -369,7 +443,7 @@ public class GamePanel extends JPanel implements Runnable{
                 }
             }
         }
-        
+
         // Verificar interação com NPCs normais
         for (Npc npc : npcs) {
             if (!(npc instanceof WolfMonster)) {
@@ -386,7 +460,7 @@ public class GamePanel extends JPanel implements Runnable{
             for (MapObject obj : objectManager.getActiveObjects()) {
                 if (obj.isInteractive()) {
                     boolean shouldInteract = false;
-                    
+
                     if (obj.isAutoInteraction()) {
                         // Para objetos com auto-interação, verificar colisão real
                         shouldInteract = isPlayerCollidingWithObject(player, obj);
@@ -394,7 +468,7 @@ public class GamePanel extends JPanel implements Runnable{
                         // Para objetos sem auto-interação, verificar proximidade
                         shouldInteract = isPlayerNearObject(player, obj.getWorldX(), obj.getWorldY());
                     }
-                    
+
                     if (shouldInteract) {
                         System.out.println("INTERAÇÃO COM OBJETO: " + obj.getName() + " (" + obj.getObjectId() + ")");
                         obj.interact(player);
@@ -410,25 +484,25 @@ public class GamePanel extends JPanel implements Runnable{
      * @param graphics Contexto gráfico.
      */
     public void paintComponent(Graphics graphics) {
-        super.paintComponent(graphics);
-        Graphics2D graphics2D = (Graphics2D) graphics;
+      super.paintComponent(graphics);
+      Graphics2D graphics2D = (Graphics2D) graphics;
 
-        // Renderizar o mapa (layers de fundo, player e overlay)
+      if (gameState == playState) {
+        // Renderização normal do jogo
         tileManager.draw(graphics2D);
 
         // Renderizar objetos
         if (objectManager != null) {
-            objectManager.drawObjects(graphics2D);
+          objectManager.drawObjects(graphics2D);
         }
 
-        // Renderizar NPCs
         for (Npc npc : npcs) {
-            npc.draw(graphics2D, npcSpriteLoader, tileSize, player, player.getScreenX(), player.getScreenY());
-            
+          npc.draw(graphics2D, npcSpriteLoader, tileSize, player, player.getScreenX(), player.getScreenY());
+
             // Renderizar tecla de interação para NPC se necessário
             if (interactionManager != null) {
-                interactionManager.renderInteractionKeyForEntity(graphics2D, 
-                    npc.getWorldX(), npc.getWorldY(), 
+                interactionManager.renderInteractionKeyForEntity(graphics2D,
+                    npc.getWorldX(), npc.getWorldY(),
                     npc.getWorldX() - player.getWorldX() + player.getScreenX(),
                     npc.getWorldY() - player.getWorldY() + player.getScreenY(),
                     "npc", tileSize);
@@ -438,59 +512,96 @@ public class GamePanel extends JPanel implements Runnable{
         // Renderizar teclas de interação para objetos
         if (objectManager != null && interactionManager != null) {
             for (MapObject obj : objectManager.getActiveObjects()) {
-                interactionManager.renderInteractionKeyForEntity(graphics2D, 
-                    obj.getWorldX(), obj.getWorldY(), 
+                interactionManager.renderInteractionKeyForEntity(graphics2D,
+                    obj.getWorldX(), obj.getWorldY(),
                     obj.getWorldX() - player.getWorldX() + player.getScreenX(),
                     obj.getWorldY() - player.getWorldY() + player.getScreenY(),
                     "object", tileSize);
             }
         }
 
-        // Renderizar interface do usuário
+        // Renderizar player
+        player.draw(graphics2D);
+
+        // Interface normal de jogo
         gameUI.draw(graphics2D);
 
-        graphics2D.dispose();
+      } else if (gameState == battleState) {
+        // Desenhar interface de batalha
+        gameUI.drawBattleUI(graphics2D);
+      }
+      graphics2D.dispose();
     }
 
-    public int getTileSize() {
-      return tileSize;
-    }
-    public int getPlayerSize() {
-      return tileSize * 2;
-    }
-    public int getScreenWidth() {
-        return tileSize * maxScreenCol;
-    }
-    public int getScreenHeight() {
-        return tileSize * maxScreenRow;
-    }
-    public int getMaxScreenCol() {
-        return this.maxScreenCol;
-    }
-    public int getMaxScreenRow() {
-        return this.maxScreenRow;
-    }
-    public Player getPlayer() {
-      return player;
-    }
-    public ColisionChecker getColisionChecker() {
-      return colisionChecker;
-    }
-    public TileManager getTileManager() {
-      return tileManager;
+  // Batalha por turnos
+  private void updateBattle() {
+    if (!battle.isInBattle()) return;
+
+    // Processar apenas entrada do jogador quando for sua vez
+    if (battle.isWaitingForPlayerInput()) {
+      if (keyHandler.attackPressed) {
+        battle.processPlayerAction("ATTACK");
+        keyHandler.attackPressed = false;
+      } else if (keyHandler.defendPressed) {
+        battle.processPlayerAction("DEFEND");
+        keyHandler.defendPressed = false;
+      } else if (keyHandler.escapePressed) {
+        battle.processPlayerAction("FLEE");
+        keyHandler.escapePressed = false;
+      } else if (keyHandler.magicPressed) {
+        battle.processPlayerAction("MAGIC");
+        keyHandler.magicPressed = false;
+      }
     }
 
-    public List<Npc> getNpcs() {
-      return npcs;
-    }
+    // A lógica do monstro é processada automaticamente dentro da Battle class
+  }
 
-    public ObjectManager getObjectManager() {
-      return objectManager;
-    }
+  // Metodo para remover monstro derrotado do mapa
+  private void removeMonsterFromMap(Npc monster) {
+    npcs.remove(monster);
+    //System.out.println("Removed " + monster.getName() + " from the map");
+  }
 
-    public GameUI getGameUI() {
-      return gameUI;
-    }
+  public int getTileSize() {
+    return tileSize;
+  }
+  public int getPlayerSize() {
+    return tileSize * 2;
+  }
+  public int getScreenWidth() {
+      return tileSize * maxScreenCol;
+  }
+  public int getScreenHeight() {
+      return tileSize * maxScreenRow;
+  }
+  public int getMaxScreenCol() {
+      return this.maxScreenCol;
+  }
+  public int getMaxScreenRow() {
+      return this.maxScreenRow;
+  }
+  public Player getPlayer() {
+    return player;
+  }
+  public ColisionChecker getColisionChecker() {
+    return colisionChecker;
+  }
+  public TileManager getTileManager() {
+    return tileManager;
+  }
+
+  public List<Npc> getNpcs() {
+    return npcs;
+  }
+
+  public ObjectManager getObjectManager() {
+    return objectManager;
+  }
+
+  public GameUI getGameUI() {
+    return gameUI;
+  }
 
     public KeyboardMapper getKeyboardMapper() {
       return keyboardMapper;
