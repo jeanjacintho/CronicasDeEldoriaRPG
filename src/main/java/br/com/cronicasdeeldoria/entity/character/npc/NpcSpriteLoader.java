@@ -181,4 +181,92 @@ public class NpcSpriteLoader {
         }
         return null;
     }
+
+    /**
+     * Obtém apenas o sprite de costas (back) de um NPC.
+     * @param skin Nome do skin do NPC
+     * @return Lista com o sprite de costas, ou null se não encontrado
+     */
+    public List<String> getBackSprites(String skin) {
+        return getSprites(skin, "up");
+    }
+    
+    /**
+     * Obtém apenas o primeiro sprite de costas (back) de um NPC.
+     * @param skin Nome do skin do NPC
+     * @return Caminho do sprite de costas, ou null se não encontrado
+     */
+    public String getBackSprite(String skin) {
+        List<String> backSprites = getBackSprites(skin);
+        if (backSprites != null && !backSprites.isEmpty()) {
+            return backSprites.get(0); // Retorna o primeiro sprite (estático)
+        }
+        return null;
+    }
+    
+    /**
+     * Obtém apenas o sprite frontal de um NPC.
+     * @param skin Nome do skin do NPC
+     * @return Lista com o sprite frontal, ou null se não encontrado
+     */
+    public List<String> getFrontSprites(String skin) {
+        return getSprites(skin, "down");
+    }
+    
+    /**
+     * Obtém apenas o primeiro sprite frontal de um NPC.
+     * @param skin Nome do skin do NPC
+     * @return Caminho do sprite frontal, ou null se não encontrado
+     */
+    public String getFrontSprite(String skin) {
+        List<String> frontSprites = getFrontSprites(skin);
+        if (frontSprites != null && !frontSprites.isEmpty()) {
+            return frontSprites.get(0); // Retorna o primeiro sprite (estático)
+        }
+        return null;
+    }
+    
+    /**
+     * Obtém apenas o sprite lateral esquerdo de um NPC.
+     * @param skin Nome do skin do NPC
+     * @return Lista com o sprite lateral esquerdo, ou null se não encontrado
+     */
+    public List<String> getLeftSprites(String skin) {
+        return getSprites(skin, "left");
+    }
+    
+    /**
+     * Obtém apenas o primeiro sprite lateral esquerdo de um NPC.
+     * @param skin Nome do skin do NPC
+     * @return Caminho do sprite lateral esquerdo, ou null se não encontrado
+     */
+    public String getLeftSprite(String skin) {
+        List<String> leftSprites = getLeftSprites(skin);
+        if (leftSprites != null && !leftSprites.isEmpty()) {
+            return leftSprites.get(0); // Retorna o primeiro sprite (estático)
+        }
+        return null;
+    }
+    
+    /**
+     * Obtém apenas o sprite lateral direito de um NPC.
+     * @param skin Nome do skin do NPC
+     * @return Lista com o sprite lateral direito, ou null se não encontrado
+     */
+    public List<String> getRightSprites(String skin) {
+        return getSprites(skin, "right");
+    }
+    
+    /**
+     * Obtém apenas o primeiro sprite lateral direito de um NPC.
+     * @param skin Nome do skin do NPC
+     * @return Caminho do sprite lateral direito, ou null se não encontrado
+     */
+    public String getRightSprite(String skin) {
+        List<String> rightSprites = getRightSprites(skin);
+        if (rightSprites != null && !rightSprites.isEmpty()) {
+            return rightSprites.get(0); // Retorna o primeiro sprite (estático)
+        }
+        return null;
+    }
 }

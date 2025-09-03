@@ -113,9 +113,9 @@ public class GamePanel extends JPanel implements Runnable{
     int speed = configLoader.getIntAttribute(raceName, "speed", 4);
     String direction = configLoader.getStringAttribute(raceName, "direction", "down");
     int health = configLoader.getIntAttribute(raceName, "health", 100);
-    int maxHealth = configLoader.getIntAttribute(raceName, "maxHealth", 100);
+    int maxHealth = health;
     int mana = configLoader.getIntAttribute(raceName, "mana", 100);
-    int maxMana = configLoader.getIntAttribute(raceName, "maxMana", 100);
+    int maxMana = mana;
     int strength = configLoader.getIntAttribute(raceName, "strength", 10);
     int agility = configLoader.getIntAttribute(raceName, "agility", 10);
     int luck = configLoader.getIntAttribute(raceName, "luck", 0);

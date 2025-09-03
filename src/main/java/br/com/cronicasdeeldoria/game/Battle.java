@@ -1,6 +1,5 @@
 package br.com.cronicasdeeldoria.game;
 
-import br.com.cronicasdeeldoria.entity.Entity;
 import br.com.cronicasdeeldoria.entity.character.Character;
 import br.com.cronicasdeeldoria.entity.character.player.Player;
 import br.com.cronicasdeeldoria.entity.character.npc.Npc;

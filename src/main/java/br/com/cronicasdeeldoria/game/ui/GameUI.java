@@ -14,6 +14,7 @@ import java.awt.image.BufferedImage;
 
 import br.com.cronicasdeeldoria.entity.character.Character;
 import br.com.cronicasdeeldoria.entity.character.npc.Npc;
+import br.com.cronicasdeeldoria.entity.character.npc.NpcSpriteLoader;
 import br.com.cronicasdeeldoria.entity.character.player.Player;
 import br.com.cronicasdeeldoria.game.GamePanel;
 import br.com.cronicasdeeldoria.game.font.FontManager;
@@ -386,19 +387,23 @@ public class GameUI {
     if (battleMonster != null) {
       int monsterX = screenWidth / 2 + 2 * tileSize;
       int monsterY = screenHeight / 6;
-      //System.out.println("Monster position: " + monsterX + ", " + monsterY);
-
-
-      // Usar sprite baseado no tipo de monstro ou sprite padrão
-//      BufferedImage monsterSprite = getMonsterBattleSprite(battleMonster);
-//      //System.out.println(monsterSprite);
-//      if (monsterSprite != null) {
-//        g2.drawImage(monsterSprite, monsterX, monsterY, tileSize * 2, tileSize * 2, null);
-//        //g2.drawImage(monsterSprite, monsterX, monsterY, tileSize * 2, tileSize * 2, null);
-//      } else {
-//        // Fallback se não tiver sprite específico
-//        g2.drawImage(battleMonster.getDown(), monsterX, monsterY, tileSize * 2, tileSize * 2, null);
-//      }
+      BufferedImage monsterSkin = null;
+      try {
+        String spritePath = gamePanel.getNpcSpriteLoader().getFrontSprite(battleMonster.getSkin());
+        if (spritePath != null) {
+          java.io.InputStream is = getClass().getResourceAsStream("/sprites/" + spritePath);
+          if (is != null) {
+            monsterSkin = javax.imageio.ImageIO.read(is);
+          }
+        }
+      } catch (Exception e) {
+        System.err.println("Erro ao carregar sprite do monstro: " + e.getMessage());
+        e.printStackTrace();
+      }
+      
+      if (monsterSkin != null) {
+        g2.drawImage(monsterSkin, monsterX, monsterY, tileSize * 2, tileSize * 2, null);
+      }
     }
 
     // Desenhar o jogador (lado esquerdo, de costas)
