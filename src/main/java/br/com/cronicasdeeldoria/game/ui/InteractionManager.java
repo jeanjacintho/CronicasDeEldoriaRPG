@@ -66,6 +66,39 @@ public class InteractionManager {
     }
     
     /**
+     * Renderiza uma tecla de interação centralizada em um tile.
+     * @param g2d Graphics2D para renderização
+     * @param worldX Posição X do tile no mundo
+     * @param worldY Posição Y do tile no mundo
+     * @param screenX Posição X do tile na tela
+     * @param screenY Posição Y do tile na tela
+     * @param entityType Tipo da entidade
+     * @param tileSize Tamanho do tile
+     */
+    public void renderInteractionKeyForTile(Graphics2D g2d, int worldX, int worldY, 
+                                           int screenX, int screenY, String entityType, int tileSize) {
+        String key = getInteractionKeyForEntity(worldX, worldY, entityType);
+        if (key != null) {
+            // Tentar usar ImageIcon para GIFs animados primeiro
+            ImageIcon keyImageIcon = keyboardMapper.getKeyImageIcon(key);
+            if (keyImageIcon != null) {
+                int keyScreenX = screenX + (tileSize / 2) - (tileSize / 2);
+                int keyScreenY = screenY + (tileSize / 2) - (tileSize / 2) - 40;
+                
+                g2d.drawImage(keyImageIcon.getImage(), keyScreenX, keyScreenY, tileSize, tileSize, null);
+            } else {
+                BufferedImage keySprite = keyboardMapper.getKeySprite(key);
+                if (keySprite != null) {
+                    int keyScreenX = screenX + (tileSize / 2) - (tileSize / 2);
+                    int keyScreenY = screenY + (tileSize / 2) - (tileSize / 2) - 40;
+                    
+                    g2d.drawImage(keySprite, keyScreenX, keyScreenY, tileSize, tileSize, null);
+                }
+            }
+        }
+    }
+
+    /**
      * Renderiza uma tecla de interação para uma entidade específica
      * @param g2d Graphics2D para renderização
      * @param worldX Posição X da entidade no mundo

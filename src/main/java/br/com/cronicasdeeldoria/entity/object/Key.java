@@ -2,6 +2,7 @@ package br.com.cronicasdeeldoria.entity.object;
 
 import java.awt.image.BufferedImage;
 import br.com.cronicasdeeldoria.entity.Entity;
+import br.com.cronicasdeeldoria.entity.character.player.Player;
 
 /**
  * Representa uma chave coletável no jogo.
@@ -24,10 +25,7 @@ public class Key extends GameObject {
     @Override
     public void interact(Entity interactor) {
         setActive(false);
-        if (interactor instanceof br.com.cronicasdeeldoria.entity.character.player.Player) {
-            br.com.cronicasdeeldoria.entity.character.player.Player player =
-                (br.com.cronicasdeeldoria.entity.character.player.Player) interactor;
-            
+        if (interactor instanceof Player) {
             System.out.println("Você pegou uma chave!");
         }
     }
