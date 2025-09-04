@@ -441,12 +441,12 @@ public class GameUI {
 
       g2.setColor(Color.BLACK);
       if (healthPotionImg != null) {
-        g2.drawImage(healthPotionImg, 550, screenHeight - 97, potionIconSize, potionIconSize, null);
+        g2.drawImage(healthPotionImg, 550, screenHeight - 97, potionIconSize - 5, potionIconSize, null);
       }
       g2.drawString("(6) - ", 500, screenHeight - 75);
 
       if (manaPotionImg != null) {
-        g2.drawImage(manaPotionImg, 550, screenHeight - 55, potionIconSize, potionIconSize, null);
+        g2.drawImage(manaPotionImg, 550, screenHeight - 55, potionIconSize - 5, potionIconSize , null);
       }
       g2.drawString("(7) - ", 500, screenHeight - 35);
 
