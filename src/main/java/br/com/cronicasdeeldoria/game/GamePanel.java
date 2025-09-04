@@ -433,7 +433,7 @@ public class GamePanel extends JPanel implements Runnable{
      * Verifica se o jogador está próximo de um monstro (5 tiles).
      */
     private boolean isPlayerNearMonster(Player player, int entityX, int entityY) {
-        return isPlayerNearEntity(player, entityX, entityY, 5);
+        return isPlayerNearEntity(player, entityX, entityY, 1);
     }
 
     /**
