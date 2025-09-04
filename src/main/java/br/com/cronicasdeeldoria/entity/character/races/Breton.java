@@ -2,6 +2,7 @@ package br.com.cronicasdeeldoria.entity.character.races;
 
 import br.com.cronicasdeeldoria.entity.character.Character;
 import br.com.cronicasdeeldoria.game.Battle;
+import br.com.cronicasdeeldoria.game.Buff;
 
 /**
  * Representa a raça Breton, cujo atributo especial é força de vontade (willpower).
@@ -54,7 +55,7 @@ public class Breton implements Race {
 
   @Override
   public String getSpecialAbilityName() {
-    return "Ataque Sagrado";
+    return "Furia de Batalha";
   }
 
   @Override
@@ -62,28 +63,12 @@ public class Breton implements Race {
     int manaCost = 15;
 
     if (attacker.getAttributeMana() >= manaCost) {
+      int bonus = (int)(attacker.getAttributeStrength() * 1.5);
       attacker.setAttributeMana(attacker.getAttributeMana() - manaCost);
-      int magicDamage = (int) (Battle.calculateDamage(attacker, target) * 1.3); // 30% mais dano
-      int newHealth = Math.max(0, target.getAttributeHealth() - magicDamage);
-      target.setAttributeHealth(newHealth);
 
-      // Cura o atacante com 60% do dano causado
-      int finalHeal = (int) (magicDamage * 0.6);
-      int diffCurrentHpAndMaxHp = attacker.getAttributeMaxHealth() - attacker.getAttributeHealth();
-
-      if (diffCurrentHpAndMaxHp > finalHeal) {
-        attacker.setAttributeHealth(attacker.getAttributeHealth() + finalHeal);
-        System.out.println(attacker.getName() + " recuperou " + finalHeal + " de Vida");
-        System.out.println("-----------------------------");
-      } else {
-        attacker.setAttributeHealth(attacker.getAttributeHealth() + diffCurrentHpAndMaxHp);
-        System.out.println(attacker.getName() + " recuperou " + diffCurrentHpAndMaxHp + " de Vida");
-        System.out.println("-----------------------------");
-      }
-
-      System.out.println(attacker.getName() + " uses magic on " + target.getName() +
-        " causing " + magicDamage + " Fisical damage!");
-      System.out.println("-----------------------------");
+      // 50% de buff por 2 turnos atacando e 4 de cooldown
+      Buff strBuff = new Buff("STRENGTH", bonus, 3 * 2, 3 * 2);
+      attacker.applyBuff(strBuff);
     }
     return false;
   }

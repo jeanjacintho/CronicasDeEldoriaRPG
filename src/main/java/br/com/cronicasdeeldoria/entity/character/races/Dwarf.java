@@ -56,7 +56,7 @@ public class Dwarf implements Race {
 
   @Override
   public String getSpecialAbilityName() {
-    return "Endurecer";
+    return "Ataque Sagrado";
   }
 
   @Override
@@ -65,12 +65,12 @@ public class Dwarf implements Race {
 
     if (attacker.getAttributeMana() >= manaCost) {
       attacker.setAttributeMana(attacker.getAttributeMana() - manaCost);
-      int damage = (int) (Battle.calculateDamage(attacker, target) * 1.5); // 50% mais dano
+      int damage = (int) (Battle.calculateDamage(attacker, target) * 2); // 100% mais dano
       int newHealth = Math.max(0, target.getAttributeHealth() - damage);
       target.setAttributeHealth(newHealth);
 
       // Cura o atacante com 60% do dano causado
-      int finalHeal = (int) (damage * 0.6);
+      int finalHeal = (int) (damage * 0.8);
       int diffCurrentHpAndMaxHp = attacker.getAttributeMaxHealth() - attacker.getAttributeHealth();
 
       if (diffCurrentHpAndMaxHp > finalHeal) {

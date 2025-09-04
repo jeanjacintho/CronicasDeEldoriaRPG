@@ -2,6 +2,10 @@ package br.com.cronicasdeeldoria.entity.character;
 
 import br.com.cronicasdeeldoria.entity.Entity;
 import br.com.cronicasdeeldoria.entity.character.races.Race;
+import br.com.cronicasdeeldoria.game.Buff;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Classe base para personagens jogáveis e NPCs, contendo atributos de raça e status.
@@ -18,9 +22,7 @@ public class Character extends Entity {
   private int attributeStrength;
   private int attributeAgility;
   private int attributeArmor;
-  private int temporaryArmorBonus = 0;
-  private int armorBuffTurnsLeft = 0;
-  private int armorBuffCooldown = 0;
+  private List<Buff> activeBuffs = new ArrayList<>();
 
   /**
    * Cria um novo personagem.
@@ -49,31 +51,49 @@ public class Character extends Entity {
     this.attributeArmor = attributeArmor;
   }
 
-  public boolean canUseArmorBuff() {
-    return armorBuffCooldown == 0 && armorBuffTurnsLeft == 0;
+  public boolean canApplyBuff(String type) {
+    // até 2 buffs diferentes ativos
+    if (activeBuffs.size() >= 2) return false;
+
+    // impede reaplicar mesmo tipo de buff ativo ou em cooldown
+    for (Buff b : activeBuffs) {
+      if (b.getType().equals(type) && (b.isActive() || b.isOnCooldown())) {
+        return false;
+      }
+    }
+    return true;
   }
 
-  public void applyArmorBuff(int bonus, int duration, int cooldown) {
-    this.temporaryArmorBonus = bonus;
-    this.armorBuffTurnsLeft = duration;
-    this.armorBuffCooldown = cooldown;
+  public void applyBuff(Buff buff) {
+    if (canApplyBuff(buff.getType())) {
+      activeBuffs.add(buff);
+      System.out.println(getName() + " gained " + buff.getType() + " buff!");
+    } else {
+      System.out.println(getName() + " cannot apply " + buff.getType() + " buff right now.");
+    }
+  }
+
+  public void updateBuffs() {
+    activeBuffs.removeIf(b -> !b.isActive() && !b.isOnCooldown()); // limpa buffs que terminaram
+    for (Buff b : activeBuffs) {
+      b.decrementDuration(this);
+    }
   }
 
   public int getEffectiveArmor() {
-    return attributeArmor + temporaryArmorBonus;
+    int bonus = activeBuffs.stream()
+      .filter(b -> b.getType().equals("ARMOR") && b.isActive())
+      .mapToInt(Buff::getBonus)
+      .sum();
+    return attributeArmor + bonus;
   }
 
-  public void decrementBuffDuration() {
-    if (armorBuffTurnsLeft > 0) {
-      armorBuffTurnsLeft--;
-      if (armorBuffTurnsLeft == 0) {
-        temporaryArmorBonus = 0;
-        System.out.println(getName() + "'s Armor Buff has expired!");
-      }
-    }
-    if (armorBuffCooldown > 0) {
-      armorBuffCooldown--;
-    }
+  public int getEffectiveStrength() {
+    int bonus = activeBuffs.stream()
+      .filter(b -> b.getType().equals("STRENGTH") && b.isActive())
+      .mapToInt(Buff::getBonus)
+      .sum();
+    return attributeStrength + bonus;
   }
 
   public Race getRace() {

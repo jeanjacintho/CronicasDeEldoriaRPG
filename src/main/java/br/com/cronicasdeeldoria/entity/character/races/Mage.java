@@ -65,7 +65,7 @@ public class Mage implements Race {
 
     if (attacker.getAttributeMana() >= manaCost) {
       attacker.setAttributeMana(attacker.getAttributeMana() - manaCost);
-      int magicDamage = (int) (Battle.calculateDamage(attacker, target) * 2.5); // 150% mais dano
+      int magicDamage = (int) (Battle.calculateDamage(attacker, target) * 3); // 300% mais dano
       int newHealth = Math.max(0, target.getAttributeHealth() - magicDamage);
       target.setAttributeHealth(newHealth);
 

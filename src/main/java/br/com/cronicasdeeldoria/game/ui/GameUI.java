@@ -437,8 +437,8 @@ public class GameUI {
       g2.drawString("Escolha sua ação:", 20, screenHeight - 115);
       g2.drawString("(1) - " + player.getRace().getSpecialAbilityName(), 20, screenHeight - 75);
       g2.drawString("(2) - Ataque Básico", 20, screenHeight - 35);
-      g2.drawString("(3) - Defender", 250, screenHeight - 75);
-      g2.drawString("(4) - Tentar Fugir", 250, screenHeight - 35);
+      g2.drawString("(3) - Defender", 280, screenHeight - 75);
+      g2.drawString("(4) - Tentar Fugir", 280, screenHeight - 35);
 
       g2.setColor(Color.BLACK);
       if (healthPotionImg != null) {
@@ -452,9 +452,23 @@ public class GameUI {
       g2.drawString("(7) - ", 500, screenHeight - 35);
 
       // Destacar opções indisponíveis
-      if (player.getAttributeMana() < 10) {
+      if (player.getAttributeMana() < 15) {
         g2.setColor(Color.GRAY);
-        g2.drawString("(3) - Ataque Mágico [Sem Mana]", 20, screenHeight - 35);
+        g2.drawString("(1) - " + player.getRace().getSpecialAbilityName(), 20, screenHeight - 75);
+      }
+      if (!player.canApplyBuff("ARMOR")) {
+        g2.setColor(Color.GRAY);
+        g2.drawString("(3) - Defender", 280, screenHeight - 75);
+      } else if (player.canApplyBuff("ARMOR")){
+        g2.setColor(Color.BLACK);
+        g2.drawString("(3) - Defender", 280, screenHeight - 75);
+      }
+      if (!player.canApplyBuff("STRENGTH")) {
+        g2.setColor(Color.GRAY);
+        g2.drawString("(1) - " + player.getRace().getSpecialAbilityName(), 20, screenHeight - 75);
+      } else if (player.canApplyBuff("STRENGTH")) {
+        g2.setColor(Color.BLACK);
+        g2.drawString("(1) - " + player.getRace().getSpecialAbilityName(), 20, screenHeight - 75);
       }
     }
 //    else {
