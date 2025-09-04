@@ -6346,9 +6346,24 @@
           "y": 15
         },
         {
+          "id": "wolf",
+          "x": 24,
+          "y": 18
+        },
+        {
           "id": "skeleton",
           "x": 9,
           "y": 23
+        },
+        {
+          "id": "skeleton",
+          "x": 26,
+          "y": 17
+        },
+        {
+          "id": "skeleton",
+          "x": 24,
+          "y": 16
         },
         {
           "id": "guerreiro",

@@ -47,37 +47,29 @@ public class Archer implements Race {
 
   @Override
   public String getSpecialAbilityName() {
-    return "Golpe Duplo";
+    return "Flecha Certeira";
   }
 
   @Override
   public boolean getSpecialAbility(Character attacker, Character target, int countTurn) {
     int manaCost = 15;
 
+    // Variação de dano, mas ignora a armadura do alvo
+    int baseDamage = Math.max(1, attacker.getEffectiveStrength());
+    int variation = Math.max(1, (int)(baseDamage * 0.4)); // 40% variation
+    int finalDamage = baseDamage + (int)(Math.random() * variation * 2) - variation;
+
     if (attacker.getAttributeMana() >= manaCost) {
       attacker.setAttributeMana(attacker.getAttributeMana() - manaCost);
-      int magicDamage = (int) (Battle.calculateDamage(attacker, target) * 1.3); // 30% mais dano
-      int newHealth = Math.max(0, target.getAttributeHealth() - magicDamage);
+      int damage = (int)((Math.max(1, finalDamage)) * 1.4); // 40% mais dano
+      int newHealth = Math.max(0, target.getAttributeHealth() - damage);
       target.setAttributeHealth(newHealth);
 
-      // Cura o atacante com 60% do dano causado
-      int finalHeal = (int) (magicDamage * 0.6);
-      int diffCurrentHpAndMaxHp = attacker.getAttributeMaxHealth() - attacker.getAttributeHealth();
-
-      if (diffCurrentHpAndMaxHp > finalHeal) {
-        attacker.setAttributeHealth(attacker.getAttributeHealth() + finalHeal);
-        System.out.println(attacker.getName() + " recuperou " + finalHeal + " de Vida");
-        System.out.println("-----------------------------");
-      } else {
-        attacker.setAttributeHealth(attacker.getAttributeHealth() + diffCurrentHpAndMaxHp);
-        System.out.println(attacker.getName() + " recuperou " + diffCurrentHpAndMaxHp + " de Vida");
-        System.out.println("-----------------------------");
-      }
-
       System.out.println(attacker.getName() + " uses magic on " + target.getName() +
-        " causing " + magicDamage + " Fisical damage!");
+        " causing " + damage + " Physical damage!");
       System.out.println("-----------------------------");
     }
+
     return false;
   }
 

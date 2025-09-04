@@ -174,7 +174,7 @@ public class Battle {
 
   public static int calculateDamage(Character attacker, Character target) {
     int baseDamage = Math.max(1, attacker.getEffectiveStrength() - (target.getEffectiveArmor() / 2));
-    int variation = Math.max(1, (int)(baseDamage * 0.2)); // 20% variation
+    int variation = Math.max(1, (int)(baseDamage * 0.4)); // 40% variation
     int finalDamage = baseDamage + (int)(Math.random() * variation * 2) - variation;
 
     return Math.max(1, finalDamage); // Minimum 1 damage
