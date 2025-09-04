@@ -59,7 +59,7 @@ public class Breton implements Race {
 
   @Override
   public boolean getSpecialAbility(Character attacker, Character target, int countTurn) {
-    int manaCost = 10;
+    int manaCost = 15;
 
     if (attacker.getAttributeMana() >= manaCost) {
       attacker.setAttributeMana(attacker.getAttributeMana() - manaCost);
@@ -82,7 +82,7 @@ public class Breton implements Race {
       }
 
       System.out.println(attacker.getName() + " uses magic on " + target.getName() +
-        " causing " + magicDamage + " magic damage!");
+        " causing " + magicDamage + " Fisical damage!");
       System.out.println("-----------------------------");
     }
     return false;

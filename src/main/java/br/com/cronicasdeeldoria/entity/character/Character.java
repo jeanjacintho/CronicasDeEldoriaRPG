@@ -18,6 +18,9 @@ public class Character extends Entity {
   private int attributeStrength;
   private int attributeAgility;
   private int attributeArmor;
+  private int temporaryArmorBonus = 0;
+  private int armorBuffTurnsLeft = 0;
+  private int armorBuffCooldown = 0;
 
   /**
    * Cria um novo personagem.
@@ -44,6 +47,33 @@ public class Character extends Entity {
     this.attributeStrength = attributeStrength;
     this.attributeAgility = attributeAgility;
     this.attributeArmor = attributeArmor;
+  }
+
+  public boolean canUseArmorBuff() {
+    return armorBuffCooldown == 0 && armorBuffTurnsLeft == 0;
+  }
+
+  public void applyArmorBuff(int bonus, int duration, int cooldown) {
+    this.temporaryArmorBonus = bonus;
+    this.armorBuffTurnsLeft = duration;
+    this.armorBuffCooldown = cooldown;
+  }
+
+  public int getEffectiveArmor() {
+    return attributeArmor + temporaryArmorBonus;
+  }
+
+  public void decrementBuffDuration() {
+    if (armorBuffTurnsLeft > 0) {
+      armorBuffTurnsLeft--;
+      if (armorBuffTurnsLeft == 0) {
+        temporaryArmorBonus = 0;
+        System.out.println(getName() + "'s Armor Buff has expired!");
+      }
+    }
+    if (armorBuffCooldown > 0) {
+      armorBuffCooldown--;
+    }
   }
 
   public Race getRace() {

@@ -61,17 +61,16 @@ public class Dwarf implements Race {
 
   @Override
   public boolean getSpecialAbility(Character attacker, Character target, int countTurn) {
-    int manaCost = 10;
-
+    int manaCost = 15;
 
     if (attacker.getAttributeMana() >= manaCost) {
       attacker.setAttributeMana(attacker.getAttributeMana() - manaCost);
-      int magicDamage = (int) (Battle.calculateDamage(attacker, target) * 1.3); // 30% mais dano
-      int newHealth = Math.max(0, target.getAttributeHealth() - magicDamage);
+      int damage = (int) (Battle.calculateDamage(attacker, target) * 1.5); // 50% mais dano
+      int newHealth = Math.max(0, target.getAttributeHealth() - damage);
       target.setAttributeHealth(newHealth);
 
       // Cura o atacante com 60% do dano causado
-      int finalHeal = (int) (magicDamage * 0.6);
+      int finalHeal = (int) (damage * 0.6);
       int diffCurrentHpAndMaxHp = attacker.getAttributeMaxHealth() - attacker.getAttributeHealth();
 
       if (diffCurrentHpAndMaxHp > finalHeal) {
@@ -84,8 +83,8 @@ public class Dwarf implements Race {
         System.out.println("-----------------------------");
       }
 
-      System.out.println(attacker.getName() + " uses magic on " + target.getName() +
-        " causing " + magicDamage + " magic damage!");
+      System.out.println(attacker.getName() + " uses Special Ability on " + target.getName() +
+        " causing " + damage + " Holy damage!");
       System.out.println("-----------------------------");
     }
     return false;

@@ -11,8 +11,6 @@ public class Archer implements Race {
   private String specialAbilityName;
   private String specialAbility;
 
-
-
   /**
    * Cria um Archer com destreza definida.
    * @param dexterity Destreza do Archer.
@@ -54,16 +52,13 @@ public class Archer implements Race {
 
   @Override
   public boolean getSpecialAbility(Character attacker, Character target, int countTurn) {
-    int manaCost = 10;
+    int manaCost = 15;
 
     if (attacker.getAttributeMana() >= manaCost) {
       attacker.setAttributeMana(attacker.getAttributeMana() - manaCost);
       int magicDamage = (int) (Battle.calculateDamage(attacker, target) * 1.3); // 30% mais dano
       int newHealth = Math.max(0, target.getAttributeHealth() - magicDamage);
       target.setAttributeHealth(newHealth);
-
-      System.out.println(attacker.getName() + " uses magic on " + target.getName() +
-        " causing " + magicDamage + " magic damage!");
 
       // Cura o atacante com 60% do dano causado
       int finalHeal = (int) (magicDamage * 0.6);
@@ -78,6 +73,9 @@ public class Archer implements Race {
         System.out.println(attacker.getName() + " recuperou " + diffCurrentHpAndMaxHp + " de Vida");
         System.out.println("-----------------------------");
       }
+
+      System.out.println(attacker.getName() + " uses magic on " + target.getName() +
+        " causing " + magicDamage + " Fisical damage!");
       System.out.println("-----------------------------");
     }
     return false;

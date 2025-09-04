@@ -145,7 +145,6 @@ public class Battle {
     }
   }
 
-
   private boolean checkBattleEnd() {
     if (player.getAttributeHealth() <= 0) {
       countTurn = 0;
@@ -164,8 +163,22 @@ public class Battle {
   private void nextTurn() {
     countTurn += 1;
     currentTurn = (currentTurn + 1) % turnOrder.size();
+
+    // Atualiza buffs ativos
+    for (Character c : turnOrder) {
+      c.decrementBuffDuration();
+    }
+
     System.out.println("\n----------" + " Turn: " + countTurn + " ----------");
     //System.out.println("----- " + getCurrentCharacter().getName() + "'s turn: "+ countTurn +"-----");
+  }
+
+  public static int calculateDamage(Character attacker, Character target) {
+    int baseDamage = Math.max(1, attacker.getAttributeStrength() - (target.getEffectiveArmor() / 2));
+    int variation = Math.max(1, (int)(baseDamage * 0.2)); // 20% variation
+    int finalDamage = baseDamage + (int)(Math.random() * variation * 2) - variation;
+
+    return Math.max(1, finalDamage); // Minimum 1 damage
   }
 
   private void attack(Character attacker, Character target) {
@@ -177,17 +190,23 @@ public class Battle {
     System.out.println("-----------------------------");
   }
 
-  public static int calculateDamage(Character attacker, Character target) {
-    int baseDamage = Math.max(1, attacker.getAttributeStrength() - (target.getAttributeDefence() / 2));
-    int variation = Math.max(1, (int)(baseDamage * 0.2)); // 20% variation
-    int finalDamage = baseDamage + (int)(Math.random() * variation * 2) - variation;
-
-    return Math.max(1, finalDamage); // Minimum 1 damage
-  }
-
   private void defend(Character character) {
-    // Aumenta defesa temporariamente
-    System.out.println(character.getName() + " defended ");
+    System.out.println("Armor padrão do player: " + character.getAttributeArmor());
+    System.out.println("Força padrão do player: " + character.getAttributeStrength());
+    if (!character.canUseArmorBuff()) {
+      System.out.println(character.getName() + " cannot defend right now (buff active or on cooldown).");
+      System.out.println("-----------------------------");
+      return;
+    }
+
+    // Aumenta a armadura do character em 50% por 2 turno
+    int bonus = (int)(character.getAttributeArmor() * 1.5);
+    int duration = 2;
+    int cooldown = 3;
+
+    character.applyArmorBuff(bonus, duration * 2, cooldown * 2);
+    System.out.println(character.getName() + " defended and gained +" + bonus + " Armor for " + duration + " turns!");
+    System.out.println("Cooldown: " + cooldown + " turns after buff ends.");
     System.out.println("-----------------------------");
   }
 
