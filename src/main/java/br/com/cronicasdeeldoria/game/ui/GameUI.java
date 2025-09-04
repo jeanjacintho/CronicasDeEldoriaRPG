@@ -433,8 +433,9 @@ public class GameUI {
       }
 
       // Mostrar opções disponíveis
+
       g2.drawString("Escolha sua ação:", 20, screenHeight - 115);
-      g2.drawString("(1) - Ataque Mágico", 20, screenHeight - 75);
+      g2.drawString("(1) - " + player.getRace().getSpecialAbilityName(), 20, screenHeight - 75);
       g2.drawString("(2) - Ataque Básico", 20, screenHeight - 35);
       g2.drawString("(3) - Defender", 250, screenHeight - 75);
       g2.drawString("(4) - Tentar Fugir", 250, screenHeight - 35);

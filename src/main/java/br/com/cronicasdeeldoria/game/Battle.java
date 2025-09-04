@@ -15,6 +15,7 @@ public class Battle {
   private Player player;
   private Npc monster;
   private boolean waitingForPlayerInput;
+  private int countTurn = 0;
 
   public Battle(GamePanel gp) {
     this.gp = gp;
@@ -81,7 +82,7 @@ public class Battle {
           return;
         }
         break;
-      case "MAGIC": useMagic(player, monster); break;
+      case "SPECIAL": specialAttack(player, monster, countTurn); break;
       case "HEALTH": healthPotion(player); break;
       case "MANA": manaPotion(player); break;
       default:
@@ -144,7 +145,7 @@ public class Battle {
     }
   }
 
-  int countTurn = 0;
+
   private boolean checkBattleEnd() {
     if (player.getAttributeHealth() <= 0) {
       countTurn = 0;
@@ -157,7 +158,6 @@ public class Battle {
       gp.endBattle(true);
       return true;
     }
-
     return false;
   }
 
@@ -177,7 +177,7 @@ public class Battle {
     System.out.println("-----------------------------");
   }
 
-  private int calculateDamage(Character attacker, Character target) {
+  public static int calculateDamage(Character attacker, Character target) {
     int baseDamage = Math.max(1, attacker.getAttributeStrength() - (target.getAttributeDefence() / 2));
     int variation = Math.max(1, (int)(baseDamage * 0.2)); // 20% variation
     int finalDamage = baseDamage + (int)(Math.random() * variation * 2) - variation;
@@ -212,6 +212,10 @@ public class Battle {
     return false;
   }
 
+  private void specialAttack(Character attacker, Character target, int countTurn) {
+    System.out.println(attacker.getRace().getSpecialAbility(attacker, target, countTurn));
+  }
+
   // Health Potion
   private void healthPotion(Character character) {
     int baseHeal = 25;
@@ -228,7 +232,6 @@ public class Battle {
       System.out.println(character.getName() + " recuperou " + diffCurrentHpAndMaxHp + " de Vida");
       System.out.println("-----------------------------");
     }
-
   }
 
   // Mana Potion
@@ -245,7 +248,6 @@ public class Battle {
       character.setAttributeMana(character.getAttributeMana() + diffCurrentMpAndMaxMp);
       System.out.println(character.getName() + " recuperou " + diffCurrentMpAndMaxMp + " de Mana");
     }
-
   }
 
   private void movePlayerAwayFromMonster() {
@@ -293,27 +295,6 @@ public class Battle {
     // Aplicar o movimento diretamente
     player.setWorldX(newX);
     player.setWorldY(newY);
-  }
-
-  private void useMagic(Character attacker, Character target) {
-    int manaCost = 10;
-
-    if (attacker.getAttributeMana() >= manaCost) {
-      attacker.setAttributeMana(attacker.getAttributeMana() - manaCost);
-      int magicDamage = (int)(calculateDamage(attacker, target) * 1.5); // 50% mais dano
-      int newHealth = Math.max(0, target.getAttributeHealth() - magicDamage);
-      target.setAttributeHealth(newHealth);
-
-      System.out.println(attacker.getName() + " uses magic on " + target.getName() +
-        " causing " + magicDamage + " magic damage!");
-      System.out.println("-----------------------------");
-    } else {
-      System.out.println(attacker.getName() + " doesn't have enough mana!");
-      // Se for o jogador, permite tentar outra ação
-      if (attacker instanceof Player) {
-        waitingForPlayerInput = true;
-      }
-    }
   }
 
   // Getters e métodos de utilidade

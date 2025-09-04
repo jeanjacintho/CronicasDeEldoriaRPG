@@ -1,5 +1,7 @@
 package br.com.cronicasdeeldoria.entity.character.races;
 
+import br.com.cronicasdeeldoria.entity.character.Character;
+
 /**
  * Interface que representa uma raça de personagem, com nome e atributo especial.
  */
@@ -19,4 +21,17 @@ public interface Race {
    * @return Valor do atributo especial.
    */
   int getSpecialAttributeValue();
+
+  /**
+   * Retorna o nome da habilide especial da raça.
+   * @return Nome da habilide especial da raça.
+   */
+  String getSpecialAbilityName();
+
+  /**
+   * Retorna o efeito da habiliade especial.
+   *
+   * @return Efeito da habilide especial da raça.
+   */
+  boolean getSpecialAbility(Character attacker, Character target, int countTurn);
 }

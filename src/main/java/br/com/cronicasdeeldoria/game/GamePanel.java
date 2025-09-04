@@ -116,6 +116,7 @@ public class GamePanel extends JPanel implements Runnable{
     int strength = configLoader.getIntAttribute(raceName, "strength", 10);
     int agility = configLoader.getIntAttribute(raceName, "agility", 10);
     int luck = configLoader.getIntAttribute(raceName, "luck", 0);
+    int armor = configLoader.getIntAttribute(raceName, "armor", 0);
 
     int special = 0;
     switch (raceName) {
@@ -139,25 +140,14 @@ public class GamePanel extends JPanel implements Runnable{
     }
     Race raceInstance;
     switch (raceName) {
-      case "dwarf":
-        raceInstance = new Dwarf(special);
-        break;
-      case "mage":
-        raceInstance = new Mage(special);
-        break;
-      case "orc":
-        raceInstance = new Orc(special);
-        break;
-      case "breton":
-        raceInstance = new Breton(special);
-        break;
-      case "archer":
-        raceInstance = new Archer(special);
-        break;
-      default:
-        raceInstance = race;
+      case "dwarf": raceInstance = new Dwarf(special); break;
+      case "mage": raceInstance = new Mage(special); break;
+      case "orc": raceInstance = new Orc(special); break;
+      case "breton": raceInstance = new Breton(special); break;
+      case "archer": raceInstance = new Archer(special); break;
+      default: raceInstance = race;
     }
-    player = new Player(this, keyHandler, raceInstance, x, y, speed, direction, playerName, health, maxHealth, mana, maxMana, strength, agility, luck);
+    player = new Player(this, keyHandler, raceInstance, x, y, speed, direction, playerName, health, maxHealth, mana, maxMana, strength, agility, luck, armor);
   }
 
   public void setupGame() {
@@ -600,9 +590,9 @@ public class GamePanel extends JPanel implements Runnable{
       } else if (keyHandler.escapePressed) {
         battle.processPlayerAction("FLEE");
         keyHandler.escapePressed = false;
-      } else if (keyHandler.magicPressed) {
-        battle.processPlayerAction("MAGIC");
-        keyHandler.magicPressed = false;
+      } else if (keyHandler.specialPressed) {
+        battle.processPlayerAction("SPECIAL");
+        keyHandler.specialPressed = false;
       } else if (keyHandler.healthPressed) {
         battle.processPlayerAction("HEALTH");
         keyHandler.healthPressed = false;

@@ -17,6 +17,7 @@ public class Character extends Entity {
   private int attributeStamina;
   private int attributeStrength;
   private int attributeAgility;
+  private int attributeArmor;
 
   /**
    * Cria um novo personagem.
@@ -33,7 +34,7 @@ public class Character extends Entity {
    * @param attributeStrength Força.
    * @param attributeAgility Agilidade.
    */
-  public Character(int x, int y, int speed, String direction, String name, Race race, int attributeHealth, int attributeMaxHealth, int attributeMana, int attributeMaxMana, int attributeStrength, int attributeAgility) {
+  public Character(int x, int y, int speed, String direction, String name, Race race, int attributeHealth, int attributeMaxHealth, int attributeMana, int attributeMaxMana, int attributeStrength, int attributeAgility, int attributeArmor) {
     super(x, y, speed, direction, name);
     this.race = race;
     this.attributeHealth = attributeHealth;
@@ -42,6 +43,7 @@ public class Character extends Entity {
     this.attributeMaxMana = attributeMaxMana;
     this.attributeStrength = attributeStrength;
     this.attributeAgility = attributeAgility;
+    this.attributeArmor = attributeArmor;
   }
 
   public Race getRace() {
@@ -120,5 +122,7 @@ public class Character extends Entity {
     this.attributeAgility = attributeAgility;
   }
 
+  public int getAttributeArmor() { return attributeArmor; }
 
+  public void setAttributeArmor(int attributeArmor) { this.attributeArmor = attributeArmor; }
 }
