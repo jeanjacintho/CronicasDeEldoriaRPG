@@ -82,6 +82,8 @@ public class Battle {
         }
         break;
       case "MAGIC": useMagic(player, monster); break;
+      case "HEALTH": healthPotion(player); break;
+      case "MANA": manaPotion(player); break;
       default:
         System.out.println("Invalid action!");
         //waitingForPlayerInput = true; // Permite tentar novamente
@@ -142,15 +144,16 @@ public class Battle {
     }
   }
 
+  int countTurn = 0;
   private boolean checkBattleEnd() {
     if (player.getAttributeHealth() <= 0) {
-      System.out.println("You were defeated!");
+      countTurn = 0;
       gp.endBattle(false);
       return true;
     }
 
     if (monster.getAttributeHealth() <= 0) {
-      System.out.println("You won the battle!");
+      countTurn = 0;
       gp.endBattle(true);
       return true;
     }
@@ -159,8 +162,10 @@ public class Battle {
   }
 
   private void nextTurn() {
+    countTurn += 1;
     currentTurn = (currentTurn + 1) % turnOrder.size();
-    System.out.println("\n--- " + getCurrentCharacter().getName() + "'s turn ---");
+    System.out.println("\n----------" + " Turn: " + countTurn + " ----------");
+    //System.out.println("----- " + getCurrentCharacter().getName() + "'s turn: "+ countTurn +"-----");
   }
 
   private void attack(Character attacker, Character target) {
@@ -169,7 +174,7 @@ public class Battle {
     target.setAttributeHealth(newHealth);
 
     System.out.println(attacker.getName() + " attacks " + target.getName() + " causing " + damage + " damage!");
-    System.out.println(target.getName() + " HP: " + target.getAttributeHealth() + "/" + target.getAttributeMaxHealth());
+    System.out.println("-----------------------------");
   }
 
   private int calculateDamage(Character attacker, Character target) {
@@ -181,13 +186,9 @@ public class Battle {
   }
 
   private void defend(Character character) {
-    // Cura uma pequena quantidade e aumenta defesa temporariamente
-    int healAmount = character.getAttributeMaxHealth() / 20; // 5% do HP máximo
-    int newHealth = Math.min(character.getAttributeMaxHealth(), character.getAttributeHealth() + healAmount);
-    character.setAttributeHealth(newHealth);
-
-    System.out.println(character.getName() + " defended and recovered " + healAmount + " HP!");
-    System.out.println(character.getName() + " HP: " + character.getAttributeHealth() + "/" + character.getAttributeMaxHealth());
+    // Aumenta defesa temporariamente
+    System.out.println(character.getName() + " defended ");
+    System.out.println("-----------------------------");
   }
 
   private boolean flee(Character character) {
@@ -196,33 +197,71 @@ public class Battle {
 
       if (Math.random() * 100 < fleeChance) {
         System.out.println("You successfully fled from battle!");
-        
+        System.out.println("-----------------------------");
+
         // Mover o jogador para fora da área de detecção (6 tiles de distância)
         movePlayerAwayFromMonster();
-        
+
         return true;
       } else {
         System.out.println("Failed to flee!");
+        System.out.println("-----------------------------");
         return false;
       }
     }
     return false;
   }
 
+  // Health Potion
+  private void healthPotion(Character character) {
+    int baseHeal = 25;
+    int variation = (int) (baseHeal * 0.4); // 40% de variação
+    int finalHeal = baseHeal + (int)(Math.random() * variation * 2) - variation;
+    int diffCurrentHpAndMaxHp = character.getAttributeMaxHealth() - character.getAttributeHealth();
+
+    if (diffCurrentHpAndMaxHp > finalHeal) {
+      character.setAttributeHealth(character.getAttributeHealth() + finalHeal);
+      System.out.println(character.getName() + " recuperou " + finalHeal + " de Vida");
+      System.out.println("-----------------------------");
+    } else {
+      character.setAttributeHealth(character.getAttributeHealth() + diffCurrentHpAndMaxHp);
+      System.out.println(character.getName() + " recuperou " + diffCurrentHpAndMaxHp + " de Vida");
+      System.out.println("-----------------------------");
+    }
+
+  }
+
+  // Mana Potion
+  private void manaPotion(Character character) {
+    int baseManaRecover = 20;
+    int variation = (int) (baseManaRecover * 0.3); // 30% de variação
+    int finalManaRecover = baseManaRecover + (int)(Math.random() * variation * 2) - variation;
+    int diffCurrentMpAndMaxMp = character.getAttributeMaxMana() - character.getAttributeMana();
+
+    if (diffCurrentMpAndMaxMp > finalManaRecover) {
+      character.setAttributeMana(character.getAttributeMana() + finalManaRecover);
+      System.out.println(character.getName() + " recuperou " + finalManaRecover + " de Mana");
+    } else {
+      character.setAttributeMana(character.getAttributeMana() + diffCurrentMpAndMaxMp);
+      System.out.println(character.getName() + " recuperou " + diffCurrentMpAndMaxMp + " de Mana");
+    }
+
+  }
+
   private void movePlayerAwayFromMonster() {
     if (player == null || monster == null) return;
-    
+
     int tileSize = gp.getTileSize();
     int moveDistance = tileSize * 6; // 6 tiles de distância
-    
+
     // Calcular diferença de posição
     int deltaX = player.getWorldX() - monster.getWorldX();
     int deltaY = player.getWorldY() - monster.getWorldY();
-    
+
     // Determinar direção de movimento baseada na posição relativa
     int newX = player.getWorldX();
     int newY = player.getWorldY();
-    
+
     if (Math.abs(deltaX) >= Math.abs(deltaY)) {
       // Mover horizontalmente
       if (deltaX >= 0) {
@@ -238,19 +277,19 @@ public class Battle {
         newY = monster.getWorldY() - moveDistance; // Mover para cima
       }
     }
-    
+
     // Se player e monster estão na mesma posição, mover para direita
     if (deltaX == 0 && deltaY == 0) {
       newX = monster.getWorldX() + moveDistance;
     }
-    
+
     // Verificar limites do mundo
     int maxWorldX = gp.maxWorldCol * tileSize - player.getPlayerSize();
     int maxWorldY = gp.maxWorldRow * tileSize - player.getPlayerSize();
-    
+
     newX = Math.max(0, Math.min(newX, maxWorldX));
     newY = Math.max(0, Math.min(newY, maxWorldY));
-    
+
     // Aplicar o movimento diretamente
     player.setWorldX(newX);
     player.setWorldY(newY);
@@ -267,10 +306,7 @@ public class Battle {
 
       System.out.println(attacker.getName() + " uses magic on " + target.getName() +
         " causing " + magicDamage + " magic damage!");
-      System.out.println(target.getName() + " HP: " + target.getAttributeHealth() +
-        "/" + target.getAttributeMaxHealth());
-      System.out.println(attacker.getName() + " Mana: " + attacker.getAttributeMana() +
-        "/" + attacker.getAttributeMaxMana());
+      System.out.println("-----------------------------");
     } else {
       System.out.println(attacker.getName() + " doesn't have enough mana!");
       // Se for o jogador, permite tentar outra ação
