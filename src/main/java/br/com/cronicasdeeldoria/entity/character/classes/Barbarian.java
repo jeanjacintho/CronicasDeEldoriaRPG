@@ -1,23 +1,22 @@
-package br.com.cronicasdeeldoria.entity.character.races;
+package br.com.cronicasdeeldoria.entity.character.classes;
 
 import br.com.cronicasdeeldoria.entity.character.Character;
-import br.com.cronicasdeeldoria.game.Battle;
 import br.com.cronicasdeeldoria.game.Buff;
 
 /**
- * Representa a raça Breton, cujo atributo especial é força de vontade (willpower).
+ * Representa a raça Barbarian, cujo atributo especial é força de vontade (willpower).
  */
-public class Breton implements Race {
+public class Barbarian implements CharacterClass {
   private int willpower;
   private String specialAbilityName;
   private String specialAbility;
 
 
   /**
-   * Cria um Breton com força de vontade definida.
+   * Cria um Barbarian com força de vontade definida.
    * @param willpower Força de vontade.
    */
-  public Breton(int willpower) {
+  public Barbarian(int willpower) {
     this.willpower = willpower;
   }
 
@@ -26,8 +25,8 @@ public class Breton implements Race {
    * @return Nome da raça.
    */
   @Override
-  public String getRaceName() {
-    return "Breton";
+  public String getCharacterClassName() {
+    return "Barbarian";
   }
 
   /**
@@ -63,7 +62,7 @@ public class Breton implements Race {
     int manaCost = 15;
 
     if (attacker.getAttributeMana() >= manaCost) {
-      int bonus = (int)(attacker.getAttributeStrength() * 1.5);
+      int bonus = (int)(attacker.getAttributeStrength() * 1.4);
       attacker.setAttributeMana(attacker.getAttributeMana() - manaCost);
 
       // 50% de buff por 2 turnos atacando e 4 de cooldown

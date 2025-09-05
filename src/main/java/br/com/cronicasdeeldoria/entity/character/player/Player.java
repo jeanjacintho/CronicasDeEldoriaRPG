@@ -1,14 +1,10 @@
 package br.com.cronicasdeeldoria.entity.character.player;
 
 import br.com.cronicasdeeldoria.entity.character.Character;
+import br.com.cronicasdeeldoria.entity.character.classes.*;
 import br.com.cronicasdeeldoria.game.GamePanel;
 import br.com.cronicasdeeldoria.game.KeyHandler;
-import br.com.cronicasdeeldoria.entity.character.races.Archer;
-import br.com.cronicasdeeldoria.entity.character.races.Breton;
-import br.com.cronicasdeeldoria.entity.character.races.Dwarf;
-import br.com.cronicasdeeldoria.entity.character.races.Mage;
-import br.com.cronicasdeeldoria.entity.character.races.Orc;
-import br.com.cronicasdeeldoria.entity.character.races.Race;
+import br.com.cronicasdeeldoria.entity.character.classes.Ranger;
 
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
@@ -37,7 +33,7 @@ public class Player extends Character {
    * Cria um novo jogador.
    * @param gamePanel Painel do jogo.
    * @param keyHandler Handler de teclas.
-   * @param race Raça do jogador.
+   * @param characterClass Raça do jogador.
    * @param x Posição X.
    * @param y Posição Y.
    * @param speed Velocidade do jogador.
@@ -49,8 +45,8 @@ public class Player extends Character {
    * @param agility Agilidade inicial.
    * @param luck Sorte inicial.
    */
-  public Player(GamePanel gamePanel, KeyHandler keyHandler, Race race, int x, int y, int speed, String direction, String name, int health, int maxHealth, int mana, int maxMana, int strength, int agility, int luck, int armor) {
-    super(x, y, speed, direction, name, race, health, maxHealth, mana, maxMana, strength, agility, armor);
+  public Player(GamePanel gamePanel, KeyHandler keyHandler, CharacterClass characterClass, int x, int y, int speed, String direction, String name, int health, int maxHealth, int mana, int maxMana, int strength, int agility, int luck, int armor) {
+    super(x, y, speed, direction, name, characterClass, health, maxHealth, mana, maxMana, strength, agility, armor);
     this.luck = luck;
     this.gamePanel = gamePanel;
     this.keyHandler = keyHandler;
@@ -73,7 +69,7 @@ public class Player extends Character {
    */
   public void getPlayerImage() {
     try {
-      String classFolder = getRace().getRaceName().toLowerCase();
+      String classFolder = getCharacterClass().getCharacterClassName().toLowerCase();
       this.up = ImageIO.read(getClass().getResourceAsStream("/sprites/player/" + classFolder + "/" + classFolder + "_back.png"));
       this.down = ImageIO.read(getClass().getResourceAsStream("/sprites/player/" + classFolder + "/" + classFolder + "_front.png"));
       this.left = ImageIO.read(getClass().getResourceAsStream("/sprites/player/" + classFolder + "/" + classFolder + "_left.png"));
@@ -296,31 +292,31 @@ public class Player extends Character {
         setAttributeAgility(getAttributeAgility() + levelDef.agilityBonus);
         setLuck(getLuck() + levelDef.luckBonus);
 
-        String raceName = getRace().getRaceName().toLowerCase();
+        String raceName = getCharacterClass().getCharacterClassName().toLowerCase();
         switch (raceName) {
           case "orc":
-            ((Orc) getRace()).setRage(
-              ((Orc) getRace()).getRage() + levelDef.rageBonus
+            ((Orc) getCharacterClass()).setRage(
+              ((Orc) getCharacterClass()).getRage() + levelDef.rageBonus
             );
             break;
           case "archer":
-            ((Archer) getRace()).setDexterity(
-              ((Archer) getRace()).getDexterity() + levelDef.dexterityBonus
+            ((Ranger) getCharacterClass()).setDexterity(
+              ((Ranger) getCharacterClass()).getDexterity() + levelDef.dexterityBonus
             );
             break;
           case "breton":
-            ((Breton) getRace()).setWillpower(
-              ((Breton) getRace()).getWillpower() + levelDef.willpowerBonus
+            ((Barbarian) getCharacterClass()).setWillpower(
+              ((Barbarian) getCharacterClass()).getWillpower() + levelDef.willpowerBonus
             );
             break;
           case "dwarf":
-            ((Dwarf) getRace()).setEndurance(
-              ((Dwarf) getRace()).getEndurance() + levelDef.enduranceBonus
+            ((Paladin) getCharacterClass()).setEndurance(
+              ((Paladin) getCharacterClass()).getEndurance() + levelDef.enduranceBonus
             );
             break;
           case "mage":
-            ((Mage) getRace()).setMagicPower(
-              ((Mage) getRace()).getMagicPower() + levelDef.magicPowerBonus
+            ((Mage) getCharacterClass()).setMagicPower(
+              ((Mage) getCharacterClass()).getMagicPower() + levelDef.magicPowerBonus
             );
             break;
         }

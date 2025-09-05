@@ -1,16 +1,16 @@
-package br.com.cronicasdeeldoria.entity.character.races;
+package br.com.cronicasdeeldoria.entity.character.classes;
 
 import br.com.cronicasdeeldoria.entity.character.Character;
 
 /**
  * Interface que representa uma raça de personagem, com nome e atributo especial.
  */
-public interface Race {
+public interface CharacterClass {
   /**
    * Retorna o nome da raça.
    * @return Nome da raça.
    */
-  String getRaceName();
+  String getCharacterClassName();
   /**
    * Retorna o nome do atributo especial da raça.
    * @return Nome do atributo especial.
