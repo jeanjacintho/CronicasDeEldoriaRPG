@@ -2,10 +2,14 @@ package br.com.cronicasdeeldoria.entity.object;
 
 import br.com.cronicasdeeldoria.entity.Entity;
 import br.com.cronicasdeeldoria.entity.character.player.Player;
+import br.com.cronicasdeeldoria.entity.item.Item;
+import br.com.cronicasdeeldoria.game.inventory.ItemFactory;
 
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.List;
 
 /**
@@ -107,10 +111,72 @@ public class MapObject extends Entity {
      * @param interactor Entidade que interage com o objeto.
      */
     public void interact(Entity interactor) {
-        if (interactive) {
+        if (interactive && active) {
             if (interactor instanceof Player) {
-                System.out.println("Interagindo com objeto: " + getName() + " (" + getObjectId() + ")");
+                
+                // Verificar se é um item coletável
+                if (isCollectibleItem()) {
+                    collectItem((Player) interactor);
+                }
             }
+        }
+    }
+    
+    /**
+     * Verifica se o objeto é um item coletável.
+     * @return true se é um item coletável.
+     */
+    public boolean isCollectibleItem() {
+        // Usar o ItemFactory para verificar se pode criar um item a partir deste objeto
+        boolean canCollect = ItemFactory.canCreateItem(this);
+        
+        return canCollect;
+    }
+    
+    /**
+     * Coleta o item e adiciona ao inventário do jogador.
+     * @param player Jogador que está coletando.
+     */
+    private void collectItem(Player player) {
+        // Verificar se o objeto já foi coletado
+        if (!active) {
+            return;
+        }
+        
+        try {
+            // Usar reflexão para acessar o GamePanel e InventoryManager
+            Field gamePanelField = player.getClass().getDeclaredField("gamePanel");
+            gamePanelField.setAccessible(true);
+            Object gamePanel = gamePanelField.get(player);
+            
+            Method getInventoryManagerMethod = gamePanel.getClass().getMethod("getInventoryManager");
+            Object inventoryManager = getInventoryManagerMethod.invoke(gamePanel);
+            
+            // Criar item a partir do objeto
+            Item item = ItemFactory.createItemFromMapObject(this, 48);
+            
+            if (item != null) {
+                // Adicionar ao inventário
+                Method addItemMethod = inventoryManager.getClass().getMethod("addItem", Item.class);
+                boolean added = (Boolean) addItemMethod.invoke(inventoryManager, item);
+                
+                if (added) {
+                    Method getGameUIMethod = gamePanel.getClass().getMethod("getGameUI");
+                    Object gameUI = getGameUIMethod.invoke(gamePanel);
+                    Method addMessageMethod = gameUI.getClass().getMethod("addMessage", String.class, java.awt.Image.class, long.class);
+                    addMessageMethod.invoke(gameUI, "1X " + getName(), null, 3500L);
+                    setActive(false);
+                    setInteractive(false);
+                } else {
+                    Method getGameUIMethod = gamePanel.getClass().getMethod("getGameUI");
+                    Object gameUI = getGameUIMethod.invoke(gamePanel);
+                    Method addMessageMethod = gameUI.getClass().getMethod("addMessage", String.class, java.awt.Image.class, long.class);
+                    addMessageMethod.invoke(gameUI, "Inventário cheio! Não foi possível coletar: " + getName(), null, 3500L);
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Erro ao coletar item: " + e.getMessage());
+            e.printStackTrace();
         }
     }
     

@@ -80,5 +80,11 @@ public class ObjectSpriteLoader {
         public Boolean autoInteraction; // null significa usar padrão (false)
         public int[] size;
         public List<List<String>> spritePaths;
+        
+        // Campos adicionais para itens
+        public String itemType;
+        public String rarity;
+        public String description;
+        public int value;
     }
 }

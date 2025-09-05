@@ -17,6 +17,8 @@ import br.com.cronicasdeeldoria.entity.character.npc.Npc;
 import br.com.cronicasdeeldoria.entity.character.player.Player;
 import br.com.cronicasdeeldoria.game.GamePanel;
 import br.com.cronicasdeeldoria.game.font.FontManager;
+import br.com.cronicasdeeldoria.game.inventory.InventoryManager;
+import br.com.cronicasdeeldoria.game.inventory.InventoryUI;
 
 /**
  * Gerencia a interface gráfica do jogo, exibindo mensagens e elementos de UI.
@@ -37,6 +39,7 @@ public class GameUI {
   private boolean centerMessageVisible = false;
 
   private final List<Message> messages = new ArrayList<>();
+  private InventoryUI inventoryUI;
 
   /**
    * Cria uma nova interface de jogo.
@@ -48,6 +51,9 @@ public class GameUI {
     dogicaFont_16 = FontManager.getFont(16f);
 
     loadHeartImages();
+    
+    // Inicializar InventoryUI
+    this.inventoryUI = new InventoryUI(gamePanel);
   }
 
   /**
@@ -527,5 +533,16 @@ public class GameUI {
     g2.setColor(Color.WHITE);
     g2.drawString("MP: " + player.getAttributeMana() + "/" + player.getAttributeMaxMana(),
       playerInfoX + 10, playerMpBarY + 18);
+  }
+  
+  /**
+   * Desenha a interface do inventário.
+   * @param g2 Contexto gráfico.
+   * @param inventoryManager Gerenciador do inventário.
+   */
+  public void drawInventoryUI(Graphics2D g2, InventoryManager inventoryManager) {
+    if (inventoryUI != null) {
+      inventoryUI.draw(g2, inventoryManager);
+    }
   }
 }

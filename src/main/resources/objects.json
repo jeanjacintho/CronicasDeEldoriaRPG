@@ -11,25 +11,723 @@
     "interactive": true
   },
   {
-    "id": "boots",
-    "name": "Botas",
+    "id": "boots_speed",
+    "name": "Bota de Velocidade",
     "spritePaths": [
-      ["/sprites/objects/boots-0001.png"]
+      ["/sprites/objects/items/boot_speed.png"]
     ],
     "size": [1, 1],
     "collision": false,
     "interactive": true,
-    "autoInteraction": true
+    "autoInteraction": true,
+    "itemType": "boot",
+    "rarity": "common",
+    "description": "Botas básicas de couro que aumentam a velocidade.",
+    "value": 10
   },
   {
-    "id": "key",
-    "name": "Chave",
+    "id": "lamp",
+    "name": "Lâmpada Comum",
     "spritePaths": [
-      ["/sprites/objects/key-0001.png"]
+      ["/sprites/objects/items/lamp.png"]
     ],
     "size": [1, 1],
     "collision": false,
     "interactive": true,
-    "autoInteraction": true
+    "autoInteraction": true,
+    "itemType": "lefthand",
+    "rarity": "common",
+    "description": "Uma lâmpada básica.",
+    "value": 5
+  },
+  {
+    "id": "key_common",
+    "name": "Chave Comum",
+    "spritePaths": [
+      ["/sprites/objects/items/key_common.png"]
+    ],
+    "size": [1, 1],
+    "collision": false,
+    "interactive": true,
+    "autoInteraction": true,
+    "itemType": "key",
+    "rarity": "common",
+    "description": "Uma chave misteriosa comum. Pode ser usada para abrir portas e baus.",
+    "value": 5
+  },
+  {
+    "id": "key_legendary",
+    "name": "Chave Lendária",
+    "spritePaths": [
+      ["/sprites/objects/items/key_legendary.png"]
+    ],
+    "size": [1, 1],
+    "collision": false,
+    "interactive": true,
+    "autoInteraction": true,
+    "itemType": "key",
+    "rarity": "legendary",
+    "description": "Uma chave misteriosa lendária. Pode ser usada para abrir portas e baus.",
+    "value": 5
+  },
+  {
+    "id": "health_potion",
+    "name": "Poção de Vida",
+    "spritePaths": [
+      ["/sprites/objects/items/health_potion.png"]
+    ],
+    "size": [1, 1],
+    "collision": false,
+    "interactive": true,
+    "autoInteraction": true,
+    "itemType": "consumable",
+    "rarity": "common",
+    "description": "Uma poção que restaura a vida.",
+    "value": 5
+  },
+  {
+    "id": "mana_potion",
+    "name": "Poção de Mana",
+    "spritePaths": [
+      ["/sprites/objects/items/mana_potion.png"]
+    ],
+    "size": [1, 1],
+    "collision": false,
+    "interactive": true,
+    "autoInteraction": true,
+    "itemType": "consumable",
+    "rarity": "common",
+    "description": "Uma poção que restaura a mana.",
+    "value": 5
+  },
+  {
+    "id": "sword_common",
+    "name": "Espada Comum",
+    "spritePaths": [
+      ["/sprites/objects/items/sword_common.png"]
+    ],
+    "size": [1, 1],
+    "collision": false,
+    "interactive": true,
+    "autoInteraction": true,
+    "itemType": "weapon",
+    "rarity": "common",
+    "description": "Uma espada básica.",
+    "value": 5
+  },
+  {
+    "id": "sword_uncommon",
+    "name": "Espada Incomum",
+    "spritePaths": [
+      ["/sprites/objects/items/sword_uncommon.png"]
+    ],
+    "size": [1, 1],
+    "collision": false,
+    "interactive": true,
+    "autoInteraction": true,
+    "itemType": "weapon",
+    "rarity": "uncommon",
+    "description": "Uma espada incomum.",
+    "value": 5
+  },
+  {
+    "id": "sword_rare",
+    "name": "Espada Rara",
+    "spritePaths": [
+      ["/sprites/objects/items/sword_rare.png"]
+    ],
+    "size": [1, 1],
+    "collision": false,
+    "interactive": true,
+    "autoInteraction": true,
+    "itemType": "weapon",
+    "rarity": "rare",
+    "description": "Uma espada rara.",
+    "value": 5
+  },
+  {
+    "id": "sword_epic",
+    "name": "Espada Épica",
+    "spritePaths": [
+      ["/sprites/objects/items/sword_epic.png"]
+    ],
+    "size": [1, 1],
+    "collision": false,
+    "interactive": true,
+    "autoInteraction": true,
+    "itemType": "weapon",
+    "rarity": "epic",
+    "description": "Uma espada épica.",
+    "value": 5
+  },
+  {
+    "id": "sword_legendary",
+    "name": "Espada Lendária",
+    "spritePaths": [
+      ["/sprites/objects/items/sword_legendary.png"]
+    ],
+    "size": [1, 1],
+    "collision": false,
+    "interactive": true,
+    "autoInteraction": true,
+    "itemType": "weapon",
+    "rarity": "legendary",
+    "description": "Uma espada lendária.",
+    "value": 5
+  },
+  {
+    "id": "shield_common",
+    "name": "Escudo Comum",
+    "spritePaths": [
+      ["/sprites/objects/items/shield_common.png"]
+    ],
+    "size": [1, 1],
+    "collision": false,
+    "interactive": true,
+    "autoInteraction": true,
+    "itemType": "lefthand",
+    "rarity": "common",
+    "description": "Um escudo básico.",
+    "value": 5
+  },
+  {
+    "id": "shield_legendary",
+    "name": "Escudo Lendário",
+    "spritePaths": [
+      ["/sprites/objects/items/shield_legendary.png"]
+    ],
+    "size": [1, 1],
+    "collision": false,
+    "interactive": true,
+    "autoInteraction": true,
+    "itemType": "lefthand",
+    "rarity": "legendary",
+    "description": "Um escudo lendário.",
+    "value": 5
+  },
+  {
+    "id": "armor_common",
+    "name": "Armadura Comum",
+    "spritePaths": [
+      ["/sprites/objects/items/armor_common.png"]
+    ],
+    "size": [1, 1],
+    "collision": false,
+    "interactive": true,
+    "autoInteraction": true,
+    "itemType": "armor",
+    "rarity": "common",
+    "description": "Uma armadura básica.",
+    "value": 5
+  },
+  {
+    "id": "armor_uncommon",
+    "name": "Armadura Incomum",
+    "spritePaths": [
+      ["/sprites/objects/items/armor_uncommon.png"]
+    ],
+    "size": [1, 1],
+    "collision": false,
+    "interactive": true,
+    "autoInteraction": true,
+    "itemType": "armor",
+    "rarity": "uncommon",
+    "description": "Uma armadura incomum.",
+    "value": 5
+  },
+  {
+    "id": "armor_rare",
+    "name": "Armadura Rara",
+    "spritePaths": [
+      ["/sprites/objects/items/armor_rare.png"]
+    ],
+    "size": [1, 1],
+    "collision": false,
+    "interactive": true,
+    "autoInteraction": true,
+    "itemType": "armor",
+    "rarity": "rare",
+    "description": "Uma armadura rara.",
+    "value": 5
+  },
+  {
+    "id": "armor_epic",
+    "name": "Armadura Épica",
+    "spritePaths": [
+      ["/sprites/objects/items/armor_epic.png"]
+    ],
+    "size": [1, 1],
+    "collision": false,
+    "interactive": true,
+    "autoInteraction": true,
+    "itemType": "armor",
+    "rarity": "epic",
+    "description": "Uma armadura épica.",
+    "value": 5
+  },
+  {
+    "id": "armor_legendary",
+    "name": "Armadura Lendária",
+    "spritePaths": [
+      ["/sprites/objects/items/armor_legendary.png"]
+    ],
+    "size": [1, 1],
+    "collision": false,
+    "interactive": true,
+    "autoInteraction": true,
+    "itemType": "armor",
+    "rarity": "legendary",
+    "description": "Uma armadura lendária.",
+    "value": 5
+  },
+  {
+    "id": "axe_common",
+    "name": "Machado Comum",
+    "spritePaths": [
+      ["/sprites/objects/items/axe_common.png"]
+    ],
+    "size": [1, 1],
+    "collision": false,
+    "interactive": true,
+    "autoInteraction": true,
+    "itemType": "weapon",
+    "rarity": "common",
+    "description": "Um machado básico.",
+    "value": 5
+  },
+  {
+    "id": "axe_uncommon",
+    "name": "Machado Incomum",
+    "spritePaths": [
+      ["/sprites/objects/items/axe_uncommon.png"]
+    ],
+    "size": [1, 1],
+    "collision": false,
+    "interactive": true,
+    "autoInteraction": true,
+    "itemType": "weapon",
+    "rarity": "uncommon",
+    "description": "Um machado incomum.",
+    "value": 5
+  },
+  {
+    "id": "axe_rare",
+    "name": "Machado Raro",
+    "spritePaths": [
+      ["/sprites/objects/items/axe_rare.png"]
+    ],
+    "size": [1, 1],
+    "collision": false,
+    "interactive": true,
+    "autoInteraction": true,
+    "itemType": "weapon",
+    "rarity": "rare",
+    "description": "Um machado raro.",
+    "value": 5
+  },
+  {
+    "id": "axe_epic",
+    "name": "Machado Épico",
+    "spritePaths": [
+      ["/sprites/objects/items/axe_epic.png"]
+    ],
+    "size": [1, 1],
+    "collision": false,
+    "interactive": true,
+    "autoInteraction": true,
+    "itemType": "weapon",
+    "rarity": "epic",
+    "description": "Um machado épico.",
+    "value": 5
+  },
+  {
+    "id": "axe_legendary",
+    "name": "Machado Lendário",
+    "spritePaths": [
+      ["/sprites/objects/items/axe_legendary.png"]
+    ],
+    "size": [1, 1],
+    "collision": false,
+    "interactive": true,
+    "autoInteraction": true,
+    "itemType": "weapon",
+    "rarity": "legendary",
+    "description": "Um machado lendário.",
+    "value": 5
+  },
+  {
+    "id": "bow_common",
+    "name": "Arco Comum",
+    "spritePaths": [
+      ["/sprites/objects/items/bow_common.png"]
+    ],
+    "size": [1, 1],
+    "collision": false,
+    "interactive": true,
+    "autoInteraction": true,
+    "itemType": "weapon",
+    "rarity": "common",
+    "description": "Um arco básico.",
+    "value": 5
+  },
+  {
+    "id": "bow_uncommon",
+    "name": "Arco Incomum",
+    "spritePaths": [
+      ["/sprites/objects/items/bow_uncommon.png"]
+    ],
+    "size": [1, 1],
+    "collision": false,
+    "interactive": true,
+    "autoInteraction": true,
+    "itemType": "weapon",
+    "rarity": "uncommon",
+    "description": "Um arco incomum.",
+    "value": 5
+  },
+  {
+    "id": "bow_rare",
+    "name": "Arco Raro",
+    "spritePaths": [
+      ["/sprites/objects/items/bow_rare.png"]
+    ],
+    "size": [1, 1],
+    "collision": false,
+    "interactive": true,
+    "autoInteraction": true,
+    "itemType": "weapon",
+    "rarity": "rare",
+    "description": "Um arco raro.",
+    "value": 5
+  },
+  {
+    "id": "bow_epic",
+    "name": "Arco Épico",
+    "spritePaths": [
+      ["/sprites/objects/items/bow_epic.png"]
+    ],
+    "size": [1, 1],
+    "collision": false,
+    "interactive": true,
+    "autoInteraction": true,
+    "itemType": "weapon",
+    "rarity": "epic",
+    "description": "Um arco épico.",
+    "value": 5
+  },
+  {
+    "id": "bow_legendary",
+    "name": "Arco Lendário",
+    "spritePaths": [
+      ["/sprites/objects/items/bow_legendary.png"]
+    ],
+    "size": [1, 1],
+    "collision": false,
+    "interactive": true,
+    "autoInteraction": true,
+    "itemType": "weapon",
+    "rarity": "legendary",
+    "description": "Um arco lendário.",
+    "value": 5
+  },
+  {
+    "id": "axe_common",
+    "name": "Machado Comum",
+    "spritePaths": [
+      ["/sprites/objects/items/axe_common.png"]
+    ],
+    "size": [1, 1],
+    "collision": false,
+    "interactive": true,
+    "autoInteraction": true,
+    "itemType": "weapon",
+    "rarity": "common",
+    "description": "Um machado básico.",
+    "value": 5
+  },
+  {
+    "id": "axe_uncommon",
+    "name": "Machado Incomum",
+    "spritePaths": [
+      ["/sprites/objects/items/axe_uncommon.png"]
+    ],
+    "size": [1, 1],
+    "collision": false,
+    "interactive": true,
+    "autoInteraction": true,
+    "itemType": "weapon",
+    "rarity": "uncommon",
+    "description": "Um machado incomum.",
+    "value": 5
+  },
+  {
+    "id": "axe_rare",
+    "name": "Machado Raro",
+    "spritePaths": [
+      ["/sprites/objects/items/axe_rare.png"]
+    ],
+    "size": [1, 1],
+    "collision": false,
+    "interactive": true,
+    "autoInteraction": true,
+    "itemType": "weapon",
+    "rarity": "rare",
+    "description": "Um machado raro.",
+    "value": 5
+  },
+  {
+    "id": "axe_epic",
+    "name": "Machado Épico",
+    "spritePaths": [
+      ["/sprites/objects/items/axe_epic.png"]
+    ],
+    "size": [1, 1],
+    "collision": false,
+    "interactive": true,
+    "autoInteraction": true,
+    "itemType": "weapon",
+    "rarity": "epic",
+    "description": "Um machado épico.",
+    "value": 5
+  },
+  {
+    "id": "axe_legendary",
+    "name": "Machado Lendário",
+    "spritePaths": [
+      ["/sprites/objects/items/axe_legendary.png"]
+    ],
+    "size": [1, 1],
+    "collision": false,
+    "interactive": true,
+    "autoInteraction": true,
+    "itemType": "weapon",
+    "rarity": "legendary",
+    "description": "Um machado lendário.",
+    "value": 5
+  },
+  {
+    "id": "bow_common",
+    "name": "Arco Comum",
+    "spritePaths": [
+      ["/sprites/objects/items/bow_common.png"]
+    ],
+    "size": [1, 1],
+    "collision": false,
+    "interactive": true,
+    "autoInteraction": true,
+    "itemType": "weapon",
+    "rarity": "common",
+    "description": "Um arco básico.",
+    "value": 5
+  },
+  {
+    "id": "bow_uncommon",
+    "name": "Arco Incomum",
+    "spritePaths": [
+      ["/sprites/objects/items/bow_uncommon.png"]
+    ],
+    "size": [1, 1],
+    "collision": false,
+    "interactive": true,
+    "autoInteraction": true,
+    "itemType": "weapon",
+    "rarity": "uncommon",
+    "description": "Um arco incomum.",
+    "value": 5
+  },
+  {
+    "id": "bow_rare",
+    "name": "Arco Raro",
+    "spritePaths": [
+      ["/sprites/objects/items/bow_rare.png"]
+    ],
+    "size": [1, 1],
+    "collision": false,
+    "interactive": true,
+    "autoInteraction": true,
+    "itemType": "weapon",
+    "rarity": "rare",
+    "description": "Um arco raro.",
+    "value": 5
+  },
+  {
+    "id": "bow_epic",
+    "name": "Arco Épico",
+    "spritePaths": [
+      ["/sprites/objects/items/bow_epic.png"]
+    ],
+    "size": [1, 1],
+    "collision": false,
+    "interactive": true,
+    "autoInteraction": true,
+    "itemType": "weapon",
+    "rarity": "epic",
+    "description": "Um arco épico.",
+    "value": 5
+  },
+  {
+    "id": "bow_legendary",
+    "name": "Arco Lendário",
+    "spritePaths": [
+      ["/sprites/objects/items/bow_legendary.png"]
+    ],
+    "size": [1, 1],
+    "collision": false,
+    "interactive": true,
+    "autoInteraction": true,
+    "itemType": "weapon",
+    "rarity": "legendary",
+    "description": "Um arco lendário.",
+    "value": 5
+  },
+  {
+    "id": "hammer_common",
+    "name": "Martelo Comum",
+    "spritePaths": [
+      ["/sprites/objects/items/hammer_common.png"]
+    ],
+    "size": [1, 1],
+    "collision": false,
+    "interactive": true,
+    "autoInteraction": true,
+    "itemType": "weapon",
+    "rarity": "common",
+    "description": "Um martelo básico.",
+    "value": 5
+  },
+  {
+    "id": "hammer_uncommon",
+    "name": "Martelo Incomum",
+    "spritePaths": [
+      ["/sprites/objects/items/hammer_uncommon.png"]
+    ],
+    "size": [1, 1],
+    "collision": false,
+    "interactive": true,
+    "autoInteraction": true,
+    "itemType": "weapon",
+    "rarity": "uncommon",
+    "description": "Um martelo incomum.",
+    "value": 5
+  },
+  {
+    "id": "hammer_rare",
+    "name": "Martelo Raro",
+    "spritePaths": [
+      ["/sprites/objects/items/hammer_rare.png"]
+    ],
+    "size": [1, 1],
+    "collision": false,
+    "interactive": true,
+    "autoInteraction": true,
+    "itemType": "weapon",
+    "rarity": "rare",
+    "description": "Um martelo raro.",
+    "value": 5
+  },
+  {
+    "id": "hammer_epic",
+    "name": "Martelo Épico",
+    "spritePaths": [
+      ["/sprites/objects/items/hammer_epic.png"]
+    ],
+    "size": [1, 1],
+    "collision": false,
+    "interactive": true,
+    "autoInteraction": true,
+    "itemType": "weapon",
+    "rarity": "epic",
+    "description": "Um martelo épico.",
+    "value": 5
+  },
+  {
+    "id": "hammer_legendary",
+    "name": "Martelo Lendário",
+    "spritePaths": [
+      ["/sprites/objects/items/hammer_legendary.png"]
+    ],
+    "size": [1, 1],
+    "collision": false,
+    "interactive": true,
+    "autoInteraction": true,
+    "itemType": "weapon",
+    "rarity": "legendary",
+    "description": "Um martelo lendário.",
+    "value": 5
+  },
+  {
+    "id": "ring_common",
+    "name": "Anel Comum",
+    "spritePaths": [
+      ["/sprites/objects/items/ring_common.png"]
+    ],
+    "size": [1, 1],
+    "collision": false,
+    "interactive": true,
+    "autoInteraction": true,
+    "itemType": "weapon",
+    "rarity": "common",
+    "description": "Um anel básico.",
+    "value": 5
+  },
+  {
+    "id": "ring_uncommon",
+    "name": "Anel Incomum",
+    "spritePaths": [
+      ["/sprites/objects/items/ring_uncommon.png"]
+    ],
+    "size": [1, 1],
+    "collision": false,
+    "interactive": true,
+    "autoInteraction": true,
+    "itemType": "weapon",
+    "rarity": "uncommon",
+    "description": "Um anel incomum.",
+    "value": 5
+  },
+  {
+    "id": "ring_rare",
+    "name": "Anel Raro",
+    "spritePaths": [
+      ["/sprites/objects/items/ring_rare.png"]
+    ],
+    "size": [1, 1],
+    "collision": false,
+    "interactive": true,
+    "autoInteraction": true,
+    "itemType": "weapon",
+    "rarity": "rare",
+    "description": "Um anel raro.",
+    "value": 5
+  },
+  {
+    "id": "ring_epic",
+    "name": "Anel Épico",
+    "spritePaths": [
+      ["/sprites/objects/items/ring_epic.png"]
+    ],
+    "size": [1, 1],
+    "collision": false,
+    "interactive": true,
+    "autoInteraction": true,
+    "itemType": "weapon",
+    "rarity": "epic",
+    "description": "Um anel épico.",
+    "value": 5
+  },
+  {
+    "id": "ring_legendary",
+    "name": "Anel Lendário",
+    "spritePaths": [
+      ["/sprites/objects/items/ring_legendary.png"]
+    ],
+    "size": [1, 1],
+    "collision": false,
+    "interactive": true,
+    "autoInteraction": true,
+    "itemType": "weapon",
+    "rarity": "legendary",
+    "description": "Um anel lendário.",
+    "value": 5
   }
 ]

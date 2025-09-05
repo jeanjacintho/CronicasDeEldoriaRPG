@@ -71,7 +71,6 @@ public class ObjectManager {
     private MapObject instantiateMapObject(MapTile raw) {
         ObjectSpriteLoader.ObjectDefinition objDef = objectSpriteLoader.getObjectDefinition(raw.id);
         if (objDef == null) {
-            System.err.println("DEBUG: Definição não encontrada para objeto: " + raw.id);
             return null;
         }
         
