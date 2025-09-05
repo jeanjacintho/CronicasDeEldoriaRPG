@@ -1,5 +1,8 @@
 package br.com.cronicasdeeldoria.entity.character.npc;
 
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -44,6 +47,13 @@ public class NpcFactory {
                 }
                 else if ("enemy".equals(type)) {
                   npcs.add(new WolfMonster(name, isStatic, dialog, x, y, skin, playerSize, interactive, autoInteraction));
+                }
+                else if ("merchant".equals(type)) {
+                    // Criar MerchantNpc com sistema de configuração
+                    List<MerchantNpc.ItemConfig> itemConfigs = parseItemConfigs(npcData);
+                    if (itemConfigs != null && !itemConfigs.isEmpty()) {
+                        npcs.add(new MerchantNpc(null, name, x, y, 0, "down", itemConfigs));
+                    }
                 } else {
                     npcs.add(new Npc(name, isStatic, dialog, x, y, skin, playerSize, interactive, autoInteraction));
                 }
@@ -103,5 +113,83 @@ public class NpcFactory {
         }
 
         return definitions;
+    }
+    
+    /**
+     * Carrega configurações de itens para comerciantes do arquivo JSON.
+     * @return Lista de ItemConfig.
+     */
+    public static List<MerchantNpc.ItemConfig> loadMerchantItemConfigs() {
+        List<MerchantNpc.ItemConfig> configs = new ArrayList<>();
+        
+        try {
+            InputStream is = NpcFactory.class.getResourceAsStream("/npcs.json");
+            if (is != null) {
+                Gson gson = new Gson();
+                JsonArray npcArray = gson.fromJson(new java.io.InputStreamReader(is), JsonArray.class);
+                
+                for (int i = 0; i < npcArray.size(); i++) {
+                    JsonObject npcJson = npcArray.get(i).getAsJsonObject();
+                    if (npcJson.has("itemProbabilities")) {
+                        JsonArray itemProbsArray = npcJson.getAsJsonArray("itemProbabilities");
+                        
+                        for (int j = 0; j < itemProbsArray.size(); j++) {
+                            JsonObject itemProbJson = itemProbsArray.get(j).getAsJsonObject();
+                            
+                            String itemId = itemProbJson.get("itemId").getAsString();
+                            int minQuantity = itemProbJson.get("minQuantity").getAsInt();
+                            int maxQuantity = itemProbJson.get("maxQuantity").getAsInt();
+                            double probability = itemProbJson.get("probability").getAsDouble();
+                            
+                            configs.add(new MerchantNpc.ItemConfig(itemId, minQuantity, maxQuantity, probability));
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Erro ao carregar configurações de comerciante: " + e.getMessage());
+        }
+        
+        return configs;
+    }
+    
+    /**
+     * Parseia as configurações de itens do JSON.
+     * @param npcData Dados do NPC.
+     * @return Lista de ItemConfig.
+     */
+    private static List<MerchantNpc.ItemConfig> parseItemConfigs(Map<String, Object> npcData) {
+        List<MerchantNpc.ItemConfig> configs = new ArrayList<>();
+        
+        try {
+            // Carregar o JSON novamente para acessar o array de configurações
+            Gson gson = new Gson();
+            String jsonContent = new String(Files.readAllBytes(
+                Paths.get("src/main/resources/npcs.json")));
+            
+            JsonArray npcArray = gson.fromJson(jsonContent, JsonArray.class);
+            
+            for (int i = 0; i < npcArray.size(); i++) {
+                JsonObject npcJson = npcArray.get(i).getAsJsonObject();
+                if (npcJson.has("itemProbabilities")) {
+                    JsonArray itemProbsArray = npcJson.getAsJsonArray("itemProbabilities");
+                    
+                    for (int j = 0; j < itemProbsArray.size(); j++) {
+                        JsonObject itemProbJson = itemProbsArray.get(j).getAsJsonObject();
+                        
+                        String itemId = itemProbJson.get("itemId").getAsString();
+                        int minQuantity = itemProbJson.get("minQuantity").getAsInt();
+                        int maxQuantity = itemProbJson.get("maxQuantity").getAsInt();
+                        double probability = itemProbJson.get("probability").getAsDouble();
+                        
+                        configs.add(new MerchantNpc.ItemConfig(itemId, minQuantity, maxQuantity, probability));
+                    }
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Erro ao parsear configurações de itens: " + e.getMessage());
+        }
+        
+        return configs;
     }
 }

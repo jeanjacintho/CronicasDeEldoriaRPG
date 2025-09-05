@@ -30,6 +30,9 @@ import java.util.ArrayList;
 
 import br.com.cronicasdeeldoria.entity.Entity;
 import br.com.cronicasdeeldoria.game.inventory.InventoryManager;
+import br.com.cronicasdeeldoria.game.merchant.MerchantManager;
+import br.com.cronicasdeeldoria.game.merchant.MerchantUI;
+import br.com.cronicasdeeldoria.entity.character.npc.MerchantNpc;
 /**
  * Painel principal do jogo, responsável pelo loop de atualização, renderização e gerenciamento dos elementos do jogo.
  */
@@ -57,12 +60,15 @@ public class GamePanel extends JPanel implements Runnable{
   private KeyboardMapper keyboardMapper;
   private InteractionManager interactionManager;
   private InventoryManager inventoryManager;
+  private MerchantManager merchantManager;
+  private MerchantUI merchantUI;
 
   // Sistema de batalha
   public int gameState;
   public final int playState = 1;
   public final int battleState = 2;
   public final int inventoryState = 3;
+  public final int merchantState = 4;
   public Npc battleMonster = null;
   public Battle battle;
 
@@ -146,7 +152,12 @@ public class GamePanel extends JPanel implements Runnable{
       case "archer": characterClassInstance = new Ranger(special); break;
       default: characterClassInstance = characterClass;
     }
+
     player = new Player(this, keyHandler, characterClassInstance, x, y, speed, direction, playerName, health, maxHealth, mana, maxMana, strength, agility, luck, armor);
+    
+    // Inicializar sistema de comerciante após a criação do player
+    this.merchantManager = new MerchantManager(inventoryManager, player.getPlayerMoney());
+    this.merchantUI = new MerchantUI(this);
   }
 
   public void setupGame() {
@@ -235,6 +246,9 @@ public class GamePanel extends JPanel implements Runnable{
 
       if (gameState == inventoryState) {
         updateInventory();
+      }
+      else if (gameState == merchantState) {
+        updateMerchant();
       }
     }
 
@@ -463,8 +477,14 @@ public class GamePanel extends JPanel implements Runnable{
           for (Npc npc : npcs) {
             if (!(npc instanceof WolfMonster)) {
                 if (isPlayerNearNpc(player, npc.getWorldX(), npc.getWorldY()) && npc.isInteractive()) {
-                    System.out.println("INTERAÇÃO COM NPC: " + npc.getName());
-                    npc.interact();
+                    // Verificar se é um comerciante
+                    if (npc instanceof MerchantNpc) {
+                        MerchantNpc merchant = (MerchantNpc) npc;
+                        merchantManager.openMerchant(merchant);
+                        gameState = merchantState;
+                    } else {
+                        npc.interact();
+                    }
                     return;
                 }
             }
@@ -587,6 +607,9 @@ public class GamePanel extends JPanel implements Runnable{
       } else if (gameState == inventoryState) {
         // Desenhar interface do inventário
         gameUI.drawInventoryUI(graphics2D, inventoryManager);
+      } else if (gameState == merchantState) {
+        // Desenhar interface do comerciante
+        merchantUI.draw(graphics2D, merchantManager);
       }
       graphics2D.dispose();
     }
@@ -633,6 +656,43 @@ public class GamePanel extends JPanel implements Runnable{
     if (keyHandler.inventoryPressed) {
       inventoryManager.toggleVisibility();
       gameState = playState;
+      keyHandler.inventoryPressed = false;
+    }
+  }
+
+  // Sistema de comerciante
+  private void updateMerchant() {
+    if (merchantManager == null) return;
+    
+    // Controles do comerciante
+    if (keyHandler.upPressed) {
+      merchantManager.moveUp();
+      keyHandler.upPressed = false;
+    }
+    if (keyHandler.downPressed) {
+      merchantManager.moveDown();
+      keyHandler.downPressed = false;
+    }
+    if (keyHandler.leftPressed) {
+      merchantManager.moveLeft();
+      keyHandler.leftPressed = false;
+    }
+    if (keyHandler.rightPressed) {
+      merchantManager.moveRight();
+      keyHandler.rightPressed = false;
+    }
+    
+    // ENTER para comprar/vender
+    if (keyHandler.actionPressed) {
+      merchantManager.executeAction();
+      keyHandler.actionPressed = false;
+    }
+    
+    // ESC ou I para fechar comerciante
+    if (keyHandler.escapeKeyPressed || keyHandler.inventoryPressed) {
+      merchantManager.closeMerchant();
+      gameState = playState;
+      keyHandler.escapeKeyPressed = false;
       keyHandler.inventoryPressed = false;
     }
   }
@@ -727,6 +787,10 @@ public class GamePanel extends JPanel implements Runnable{
 
     public InventoryManager getInventoryManager() {
       return inventoryManager;
+    }
+    
+    public MerchantManager getMerchantManager() {
+      return merchantManager;
     }
 
       /**

@@ -1,5 +1,13 @@
 package br.com.cronicasdeeldoria.game.inventory;
 
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.lang.reflect.Field;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+
 import br.com.cronicasdeeldoria.entity.item.Item;
 import br.com.cronicasdeeldoria.entity.item.ItemType;
 import br.com.cronicasdeeldoria.entity.item.ItemRarity;
@@ -10,6 +18,89 @@ import br.com.cronicasdeeldoria.entity.object.ObjectSpriteLoader;
  * Factory para criar itens a partir de objetos do mapa.
  */
 public class ItemFactory {
+    
+    /**
+     * Cria um item a partir do ID usando configurações do objects.json.
+     * Reutiliza a lógica existente do createItemFromMapObject.
+     * @param itemId ID do item.
+     * @return Item criado ou null se não encontrado.
+     */
+    public static Item createItem(String itemId) {
+        if (itemId == null) return null;
+        
+        // Buscar dados do item no objects.json
+        try {
+            InputStream is = ItemFactory.class.getResourceAsStream("/objects.json");
+            if (is != null) {
+                Gson gson = new Gson();
+                JsonArray objectsArray = gson.fromJson(new InputStreamReader(is), JsonArray.class);
+                
+                for (int i = 0; i < objectsArray.size(); i++) {
+                    JsonObject objectJson = objectsArray.get(i).getAsJsonObject();
+                    if (objectJson.has("id") && objectJson.get("id").getAsString().equals(itemId)) {
+                        // Criar MapObject temporário para reutilizar createItemFromMapObject
+                        MapObject tempMapObject = createTempMapObjectFromJson(objectJson);
+                        if (tempMapObject != null) {
+                            return createItemFromMapObject(tempMapObject, 48);
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Erro ao criar item " + itemId + " do objects.json: " + e.getMessage());
+        }
+        
+        return null;
+    }
+    
+    /**
+     * Cria um MapObject temporário a partir de dados JSON para reutilizar createItemFromMapObject.
+     * @param objectJson Objeto JSON do objects.json.
+     * @return MapObject temporário ou null se dados inválidos.
+     */
+    private static MapObject createTempMapObjectFromJson(JsonObject objectJson) {
+        try {
+            String id = objectJson.get("id").getAsString();
+            String name = objectJson.get("name").getAsString();
+            
+            // Criar MapObject temporário (posição 0,0 pois é para inventário)
+            MapObject mapObject = new MapObject(id, name, 0, 0, 1, 1, false, true, false, null, 48);
+            
+            // Criar ObjectDefinition com dados do JSON usando reflexão
+            ObjectSpriteLoader.ObjectDefinition def = new ObjectSpriteLoader.ObjectDefinition();
+            
+            if (objectJson.has("itemType")) {
+                Field itemTypeField = def.getClass().getDeclaredField("itemType");
+                itemTypeField.setAccessible(true);
+                itemTypeField.set(def, objectJson.get("itemType").getAsString());
+            }
+            
+            if (objectJson.has("rarity")) {
+                Field rarityField = def.getClass().getDeclaredField("rarity");
+                rarityField.setAccessible(true);
+                rarityField.set(def, objectJson.get("rarity").getAsString());
+            }
+            
+            if (objectJson.has("description")) {
+                Field descriptionField = def.getClass().getDeclaredField("description");
+                descriptionField.setAccessible(true);
+                descriptionField.set(def, objectJson.get("description").getAsString());
+            }
+            
+            if (objectJson.has("value")) {
+                Field valueField = def.getClass().getDeclaredField("value");
+                valueField.setAccessible(true);
+                valueField.set(def, objectJson.get("value").getAsString());
+            }
+            
+            mapObject.setObjectDefinition(def);
+            return mapObject;
+            
+        } catch (Exception e) {
+            System.err.println("Erro ao criar MapObject temporário do JSON: " + e.getMessage());
+            return null;
+        }
+    }
     
     /**
      * Cria um item a partir de um MapObject.

@@ -4,7 +4,15 @@ import br.com.cronicasdeeldoria.entity.character.Character;
 import br.com.cronicasdeeldoria.entity.character.classes.*;
 import br.com.cronicasdeeldoria.game.GamePanel;
 import br.com.cronicasdeeldoria.game.KeyHandler;
+
+import br.com.cronicasdeeldoria.entity.character.races.Breton;
+import br.com.cronicasdeeldoria.entity.character.races.Dwarf;
+import br.com.cronicasdeeldoria.entity.character.races.Mage;
+import br.com.cronicasdeeldoria.entity.character.races.Orc;
+import br.com.cronicasdeeldoria.entity.character.races.Race;
+import br.com.cronicasdeeldoria.game.money.PlayerMoney;
 import br.com.cronicasdeeldoria.entity.character.classes.Ranger;
+
 
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
@@ -20,6 +28,7 @@ public class Player extends Character {
   private int totalXp = 0;
   private int currentLevel = 1;
   private LevelManager levelManager;
+  private PlayerMoney playerMoney;
   GamePanel gamePanel;
   KeyHandler keyHandler;
   private int spriteCounter = 0;
@@ -51,6 +60,7 @@ public class Player extends Character {
     this.gamePanel = gamePanel;
     this.keyHandler = keyHandler;
     this.levelManager = LevelManager.getInstance();
+    this.playerMoney = new PlayerMoney(0); // Dinheiro inicial
     this.getPlayerImage();
 
     screenX = (gamePanel.getScreenWidth() - gamePanel.getPlayerSize()) / 2;
@@ -429,5 +439,21 @@ public class Player extends Character {
     int maxMana = getAttributeMaxMana();
     int newMana = Math.min(maxMana, currentMana + manaAmount);
     setAttributeMana(newMana);
+  }
+  
+  /**
+   * Retorna o sistema de dinheiro do jogador.
+   * @return PlayerMoney do jogador.
+   */
+  public PlayerMoney getPlayerMoney() {
+    return playerMoney;
+  }
+  
+  /**
+   * Define o sistema de dinheiro do jogador.
+   * @param playerMoney Novo sistema de dinheiro.
+   */
+  public void setPlayerMoney(PlayerMoney playerMoney) {
+    this.playerMoney = playerMoney;
   }
 }
