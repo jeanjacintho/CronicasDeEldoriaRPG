@@ -5,14 +5,8 @@ import br.com.cronicasdeeldoria.entity.character.classes.*;
 import br.com.cronicasdeeldoria.game.GamePanel;
 import br.com.cronicasdeeldoria.game.KeyHandler;
 
-import br.com.cronicasdeeldoria.entity.character.races.Breton;
-import br.com.cronicasdeeldoria.entity.character.races.Dwarf;
-import br.com.cronicasdeeldoria.entity.character.races.Mage;
-import br.com.cronicasdeeldoria.entity.character.races.Orc;
-import br.com.cronicasdeeldoria.entity.character.races.Race;
 import br.com.cronicasdeeldoria.game.money.PlayerMoney;
 import br.com.cronicasdeeldoria.entity.character.classes.Ranger;
-
 
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
