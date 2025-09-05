@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 import javax.imageio.ImageIO;
@@ -11,6 +13,7 @@ import javax.imageio.ImageIO;
 import java.util.ArrayList;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
+import java.util.Objects;
 
 import br.com.cronicasdeeldoria.entity.character.Character;
 import br.com.cronicasdeeldoria.entity.character.npc.Npc;
@@ -27,11 +30,11 @@ public class GameUI {
   GamePanel gamePanel;
   Font dogicaFont_40;
   Font dogicaFont_16;
-  private java.awt.image.BufferedImage heartFull;
-  private java.awt.image.BufferedImage heartThreeQuarters;
-  private java.awt.image.BufferedImage heartHalf;
-  private java.awt.image.BufferedImage heartQuarter;
-  private java.awt.image.BufferedImage heartEmpty;
+  private BufferedImage heartFull;
+  private BufferedImage heartThreeQuarters;
+  private BufferedImage heartHalf;
+  private BufferedImage heartQuarter;
+  private BufferedImage heartEmpty;
   private boolean showStatsWindow = false;
   private String centerMessage = "";
   private long centerMessageStartTime = 0;
@@ -383,6 +386,8 @@ public class GameUI {
     int tileSize = gamePanel.getTileSize();
     Player player = gamePanel.battle.getPlayer();
     Npc battleMonster = gamePanel.battle.getMonster();
+    BufferedImage healthPotionImg = null;
+    BufferedImage manaPotionImg = null;
 
     // Fundo de batalha
     g2.setColor(new Color(50, 50, 35));
@@ -396,65 +401,100 @@ public class GameUI {
       try {
         String spritePath = gamePanel.getNpcSpriteLoader().getFrontSprite(battleMonster.getSkin());
         if (spritePath != null) {
-          java.io.InputStream is = getClass().getResourceAsStream("/sprites/" + spritePath);
+          InputStream is = getClass().getResourceAsStream("/sprites/" + spritePath);
           if (is != null) {
-            monsterSkin = javax.imageio.ImageIO.read(is);
+            monsterSkin = ImageIO.read(is);
           }
         }
       } catch (Exception e) {
         System.err.println("Erro ao carregar sprite do monstro: " + e.getMessage());
         e.printStackTrace();
       }
-      
+
       if (monsterSkin != null) {
-        g2.drawImage(monsterSkin, monsterX, monsterY, tileSize * 2, tileSize * 2, null);
+        g2.drawImage(monsterSkin, monsterX, monsterY, tileSize * 3, tileSize * 3, null);
       }
     }
 
     // Desenhar o jogador (lado esquerdo, de costas)
     int playerX = screenWidth / 5;
-    int playerY = screenHeight / 2;
-    g2.drawImage(player.getUp(), playerX, playerY, tileSize * 2, tileSize * 2, null);
+    int playerY = screenHeight / 2 - tileSize;
+    g2.drawImage(player.getUp(), playerX, playerY, tileSize * 3, tileSize * 3, null);
 
     // Interface de batalha (painel inferior)
     g2.setColor(new Color(255, 255, 255, 200));
-    g2.fillRect(0, screenHeight - 100, screenWidth, 100);
+    g2.fillRect(0, screenHeight - 145, screenWidth, 150);
 
     // Opções de ação
     g2.setColor(Color.BLACK);
-    g2.setFont(new Font("Arial", Font.PLAIN, 16));
+    g2.setFont(new Font("Arial", Font.PLAIN, 24));
 
     if (gamePanel.battle.isWaitingForPlayerInput()) {
+      int potionIconSize = 25;
+      try {
+        healthPotionImg = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/sprites/objects/healthPotion-0002.png")));
+        manaPotionImg   = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/sprites/objects/manaPotion-0001.png")));
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+
       // Mostrar opções disponíveis
-      g2.drawString("Escolha sua ação:", 20, screenHeight - 75);
-      g2.drawString("(4) - Ataque Mágico", 20, screenHeight - 55);
-      g2.drawString("(3) - Ataque Básico", 20, screenHeight - 35);
-      g2.drawString("(2) - Defender", 200, screenHeight - 55);
-      g2.drawString("(1) - Tentar Fugir", 200, screenHeight - 35);
+
+      g2.drawString("Escolha sua ação:", 20, screenHeight - 115);
+      g2.drawString("(1) - " + player.getRace().getSpecialAbilityName(), 20, screenHeight - 75);
+      g2.drawString("(2) - Ataque Básico", 20, screenHeight - 35);
+      g2.drawString("(3) - Defender", 280, screenHeight - 75);
+      g2.drawString("(4) - Tentar Fugir", 280, screenHeight - 35);
+
+      g2.setColor(Color.BLACK);
+      if (healthPotionImg != null) {
+        g2.drawImage(healthPotionImg, 550, screenHeight - 97, potionIconSize - 5, potionIconSize, null);
+      }
+      g2.drawString("(6) - ", 500, screenHeight - 75);
+
+      if (manaPotionImg != null) {
+        g2.drawImage(manaPotionImg, 550, screenHeight - 55, potionIconSize - 5, potionIconSize , null);
+      }
+      g2.drawString("(7) - ", 500, screenHeight - 35);
 
       // Destacar opções indisponíveis
-      if (player.getAttributeMana() < 10) {
+      if (player.getAttributeMana() < 15) {
         g2.setColor(Color.GRAY);
-        g2.drawString("(3) - Ataque Mágico [Sem Mana]", 20, screenHeight - 35);
+        g2.drawString("(1) - " + player.getRace().getSpecialAbilityName(), 20, screenHeight - 75);
       }
-    } else {
-      // Mostrar turno atual
-      Character currentChar = gamePanel.battle.getCurrentCharacter();
-      g2.setColor(Color.BLUE);
-      g2.setFont(new Font("Arial", Font.BOLD, 18));
-      g2.drawString("Turno de: " + currentChar.getName(), 20, screenHeight - 50);
+      if (!player.canApplyBuff("ARMOR")) {
+        g2.setColor(Color.GRAY);
+        g2.drawString("(3) - Defender", 280, screenHeight - 75);
+      } else if (player.canApplyBuff("ARMOR")){
+        g2.setColor(Color.BLACK);
+        g2.drawString("(3) - Defender", 280, screenHeight - 75);
+      }
+      if (!player.canApplyBuff("STRENGTH")) {
+        g2.setColor(Color.GRAY);
+        g2.drawString("(1) - " + player.getRace().getSpecialAbilityName(), 20, screenHeight - 75);
+      } else if (player.canApplyBuff("STRENGTH")) {
+        g2.setColor(Color.BLACK);
+        g2.drawString("(1) - " + player.getRace().getSpecialAbilityName(), 20, screenHeight - 75);
+      }
     }
+//    else {
+//      // Mostrar turno atual
+//      Character currentChar = gamePanel.battle.getCurrentCharacter();
+//      g2.setColor(Color.BLUE);
+//      g2.setFont(new Font("Arial", Font.BOLD, 18));
+//      g2.drawString("Turno de: " + currentChar.getName(), 20, screenHeight - 50);
+//    }
 
     // Informações do monstro (canto superior direito)
     if (battleMonster != null) {
       // Nome do monstro
       g2.setColor(Color.WHITE);
       g2.setFont(new Font("Arial", Font.PLAIN, 16));
-      g2.drawString(battleMonster.getName(), screenWidth - 275, screenHeight - 525);
+      g2.drawString(battleMonster.getName(), screenWidth - 260, screenHeight - 505);
 
       // Barra de HP do monstro
-      int monsterHpBarX = screenWidth - 290;
-      int monsterHpBarY = screenHeight - 515;
+      int monsterHpBarX = screenWidth - 272;
+      int monsterHpBarY = screenHeight - 500;
       int barWidth = 115;
       int barHeight = 25;
 
@@ -499,8 +539,8 @@ public class GameUI {
     }
 
     // Informações do jogador (canto inferior esquerdo, perto do sprite)
-    int playerInfoX = screenWidth - 620;
-    int playerHpBarY = screenHeight - 185;
+    int playerInfoX = screenWidth - 605;
+    int playerHpBarY = screenHeight - 200;
     int barWidth = 115;
     int barHeight = 25;
 

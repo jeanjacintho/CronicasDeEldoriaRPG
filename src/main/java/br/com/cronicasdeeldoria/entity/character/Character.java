@@ -2,6 +2,10 @@ package br.com.cronicasdeeldoria.entity.character;
 
 import br.com.cronicasdeeldoria.entity.Entity;
 import br.com.cronicasdeeldoria.entity.character.races.Race;
+import br.com.cronicasdeeldoria.game.Buff;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Classe base para personagens jogáveis e NPCs, contendo atributos de raça e status.
@@ -17,6 +21,8 @@ public class Character extends Entity {
   private int attributeStamina;
   private int attributeStrength;
   private int attributeAgility;
+  private int attributeArmor;
+  private List<Buff> activeBuffs = new ArrayList<>();
 
   /**
    * Cria um novo personagem.
@@ -33,7 +39,7 @@ public class Character extends Entity {
    * @param attributeStrength Força.
    * @param attributeAgility Agilidade.
    */
-  public Character(int x, int y, int speed, String direction, String name, Race race, int attributeHealth, int attributeMaxHealth, int attributeMana, int attributeMaxMana, int attributeStrength, int attributeAgility) {
+  public Character(int x, int y, int speed, String direction, String name, Race race, int attributeHealth, int attributeMaxHealth, int attributeMana, int attributeMaxMana, int attributeStrength, int attributeAgility, int attributeArmor) {
     super(x, y, speed, direction, name);
     this.race = race;
     this.attributeHealth = attributeHealth;
@@ -42,6 +48,52 @@ public class Character extends Entity {
     this.attributeMaxMana = attributeMaxMana;
     this.attributeStrength = attributeStrength;
     this.attributeAgility = attributeAgility;
+    this.attributeArmor = attributeArmor;
+  }
+
+  public boolean canApplyBuff(String type) {
+    // até 2 buffs diferentes ativos
+    if (activeBuffs.size() >= 2) return false;
+
+    // impede reaplicar mesmo tipo de buff ativo ou em cooldown
+    for (Buff b : activeBuffs) {
+      if (b.getType().equals(type) && (b.isActive() || b.isOnCooldown())) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  public void applyBuff(Buff buff) {
+    if (canApplyBuff(buff.getType())) {
+      activeBuffs.add(buff);
+      System.out.println(getName() + " gained " + buff.getType() + " buff!");
+    } else {
+      System.out.println(getName() + " cannot apply " + buff.getType() + " buff right now.");
+    }
+  }
+
+  public void updateBuffs() {
+    activeBuffs.removeIf(b -> !b.isActive() && !b.isOnCooldown()); // limpa buffs que terminaram
+    for (Buff b : activeBuffs) {
+      b.decrementDuration(this);
+    }
+  }
+
+  public int getEffectiveArmor() {
+    int bonus = activeBuffs.stream()
+      .filter(b -> b.getType().equals("ARMOR") && b.isActive())
+      .mapToInt(Buff::getBonus)
+      .sum();
+    return attributeArmor + bonus;
+  }
+
+  public int getEffectiveStrength() {
+    int bonus = activeBuffs.stream()
+      .filter(b -> b.getType().equals("STRENGTH") && b.isActive())
+      .mapToInt(Buff::getBonus)
+      .sum();
+    return attributeStrength + bonus;
   }
 
   public Race getRace() {
@@ -120,5 +172,7 @@ public class Character extends Entity {
     this.attributeAgility = attributeAgility;
   }
 
+  public int getAttributeArmor() { return attributeArmor; }
 
+  public void setAttributeArmor(int attributeArmor) { this.attributeArmor = attributeArmor; }
 }

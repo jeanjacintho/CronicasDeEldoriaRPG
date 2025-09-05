@@ -49,8 +49,8 @@ public class Player extends Character {
    * @param agility Agilidade inicial.
    * @param luck Sorte inicial.
    */
-  public Player(GamePanel gamePanel, KeyHandler keyHandler, Race race, int x, int y, int speed, String direction, String name, int health, int maxHealth, int mana, int maxMana, int strength, int agility, int luck) {
-    super(x, y, speed, direction, name, race, health, maxHealth, mana, maxMana, strength, agility);
+  public Player(GamePanel gamePanel, KeyHandler keyHandler, Race race, int x, int y, int speed, String direction, String name, int health, int maxHealth, int mana, int maxMana, int strength, int agility, int luck, int armor) {
+    super(x, y, speed, direction, name, race, health, maxHealth, mana, maxMana, strength, agility, armor);
     this.luck = luck;
     this.gamePanel = gamePanel;
     this.keyHandler = keyHandler;

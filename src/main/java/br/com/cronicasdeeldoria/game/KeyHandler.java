@@ -8,7 +8,8 @@ import java.awt.event.KeyListener;
  */
 public class KeyHandler implements KeyListener {
     public boolean actionPressed, upPressed, downPressed, leftPressed, rightPressed, xPressed, zPressed, qPressed;
-    public boolean rPressed, fPressed, gPressed, hPressed, tPressed, magicPressed, attackPressed, defendPressed, escapePressed;
+    public boolean rPressed, fPressed, gPressed, hPressed, tPressed, specialPressed, attackPressed, defendPressed, escapePressed;
+    public boolean healthPressed, manaPressed;
     public boolean inventoryPressed, tabPressed;
 
     /**
@@ -44,10 +45,12 @@ public class KeyHandler implements KeyListener {
             case KeyEvent.VK_TAB: tabPressed = true; break;
 
             // Key de batalha
-            case KeyEvent.VK_4: magicPressed = true; break;
-            case KeyEvent.VK_3: attackPressed = true; break;
-            case KeyEvent.VK_2: defendPressed = true; break;
-            case KeyEvent.VK_1: escapePressed = true; break;
+            case KeyEvent.VK_1: specialPressed = true; break;
+            case KeyEvent.VK_2: attackPressed = true; break;
+            case KeyEvent.VK_3: defendPressed = true; break;
+            case KeyEvent.VK_4: escapePressed = true; break;
+            case KeyEvent.VK_6: healthPressed = true; break;
+            case KeyEvent.VK_7: manaPressed = true; break;
 
         }
     }
@@ -60,6 +63,7 @@ public class KeyHandler implements KeyListener {
     public void keyReleased(KeyEvent e) {
         int code = e.getKeyCode();
         switch (code) {
+
             case KeyEvent.VK_W: upPressed = false; break;
             case KeyEvent.VK_S: downPressed = false; break;
             case KeyEvent.VK_A: leftPressed = false; break;
@@ -76,10 +80,14 @@ public class KeyHandler implements KeyListener {
             case KeyEvent.VK_I: inventoryPressed = false; break;
             case KeyEvent.VK_TAB: tabPressed = false; break;
 
-          case KeyEvent.VK_4: magicPressed = false; break;
-          case KeyEvent.VK_3: attackPressed = false; break;
-          case KeyEvent.VK_2: defendPressed = false; break;
-          case KeyEvent.VK_1: escapePressed = false; break;
+
+          // Batalha
+          case KeyEvent.VK_1: specialPressed = false; break;
+          case KeyEvent.VK_2: attackPressed = false; break;
+          case KeyEvent.VK_3: defendPressed = false; break;
+          case KeyEvent.VK_4: escapePressed = false; break;
+          case KeyEvent.VK_6: healthPressed = false; break;
+          case KeyEvent.VK_7: manaPressed = false; break;
         }
     }
 }

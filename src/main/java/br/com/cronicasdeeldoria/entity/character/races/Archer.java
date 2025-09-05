@@ -1,10 +1,15 @@
 package br.com.cronicasdeeldoria.entity.character.races;
 
+import br.com.cronicasdeeldoria.entity.character.Character;
+import br.com.cronicasdeeldoria.game.Battle;
+
 /**
  * Representa a raça Archer, cujo atributo especial é destreza (dexterity).
  */
 public class Archer implements Race {
   private int dexterity;
+  private String specialAbilityName;
+  private String specialAbility;
 
   /**
    * Cria um Archer com destreza definida.
@@ -38,6 +43,34 @@ public class Archer implements Race {
   @Override
   public int getSpecialAttributeValue() {
     return dexterity;
+  }
+
+  @Override
+  public String getSpecialAbilityName() {
+    return "Flecha Certeira";
+  }
+
+  @Override
+  public boolean getSpecialAbility(Character attacker, Character target, int countTurn) {
+    int manaCost = 15;
+
+    // Variação de dano, mas ignora a armadura do alvo
+    int baseDamage = Math.max(1, attacker.getEffectiveStrength());
+    int variation = Math.max(1, (int)(baseDamage * 0.4)); // 40% variation
+    int finalDamage = baseDamage + (int)(Math.random() * variation * 2) - variation;
+
+    if (attacker.getAttributeMana() >= manaCost) {
+      attacker.setAttributeMana(attacker.getAttributeMana() - manaCost);
+      int damage = (int)((Math.max(1, finalDamage)) * 1.4); // 40% mais dano
+      int newHealth = Math.max(0, target.getAttributeHealth() - damage);
+      target.setAttributeHealth(newHealth);
+
+      System.out.println(attacker.getName() + " uses magic on " + target.getName() +
+        " causing " + damage + " Physical damage!");
+      System.out.println("-----------------------------");
+    }
+
+    return false;
   }
 
   public int getDexterity() {
