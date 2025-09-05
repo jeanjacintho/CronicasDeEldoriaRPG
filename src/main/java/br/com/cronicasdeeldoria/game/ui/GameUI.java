@@ -432,8 +432,8 @@ public class GameUI {
     if (gamePanel.battle.isWaitingForPlayerInput()) {
       int potionIconSize = 25;
       try {
-        healthPotionImg = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/sprites/objects/healthPotion-0002.png")));
-        manaPotionImg   = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/sprites/objects/manaPotion-0001.png")));
+        healthPotionImg = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/sprites/objects/items/health_potion.png")));
+        manaPotionImg   = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/sprites/objects/items/mana_potion.png")));
       } catch (IOException e) {
         e.printStackTrace();
       }
@@ -448,12 +448,12 @@ public class GameUI {
 
       g2.setColor(Color.BLACK);
       if (healthPotionImg != null) {
-        g2.drawImage(healthPotionImg, 550, screenHeight - 97, potionIconSize - 5, potionIconSize, null);
+        g2.drawImage(healthPotionImg, 550, screenHeight - 97, potionIconSize - 2, potionIconSize, null);
       }
       g2.drawString("(6) - ", 500, screenHeight - 75);
 
       if (manaPotionImg != null) {
-        g2.drawImage(manaPotionImg, 550, screenHeight - 55, potionIconSize - 5, potionIconSize , null);
+        g2.drawImage(manaPotionImg, 550, screenHeight - 55, potionIconSize - 2, potionIconSize , null);
       }
       g2.drawString("(7) - ", 500, screenHeight - 35);
 
