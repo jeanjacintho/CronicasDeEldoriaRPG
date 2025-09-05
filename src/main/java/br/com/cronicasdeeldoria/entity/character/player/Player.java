@@ -1,14 +1,10 @@
 package br.com.cronicasdeeldoria.entity.character.player;
 
 import br.com.cronicasdeeldoria.entity.character.Character;
+import br.com.cronicasdeeldoria.entity.character.races.*;
 import br.com.cronicasdeeldoria.game.GamePanel;
 import br.com.cronicasdeeldoria.game.KeyHandler;
-import br.com.cronicasdeeldoria.entity.character.races.Archer;
-import br.com.cronicasdeeldoria.entity.character.races.Breton;
-import br.com.cronicasdeeldoria.entity.character.races.Dwarf;
-import br.com.cronicasdeeldoria.entity.character.races.Mage;
-import br.com.cronicasdeeldoria.entity.character.races.Orc;
-import br.com.cronicasdeeldoria.entity.character.races.Race;
+import br.com.cronicasdeeldoria.entity.character.races.Ranger;
 
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
@@ -304,18 +300,18 @@ public class Player extends Character {
             );
             break;
           case "archer":
-            ((Archer) getRace()).setDexterity(
-              ((Archer) getRace()).getDexterity() + levelDef.dexterityBonus
+            ((Ranger) getRace()).setDexterity(
+              ((Ranger) getRace()).getDexterity() + levelDef.dexterityBonus
             );
             break;
           case "breton":
-            ((Breton) getRace()).setWillpower(
-              ((Breton) getRace()).getWillpower() + levelDef.willpowerBonus
+            ((Barbarian) getRace()).setWillpower(
+              ((Barbarian) getRace()).getWillpower() + levelDef.willpowerBonus
             );
             break;
           case "dwarf":
-            ((Dwarf) getRace()).setEndurance(
-              ((Dwarf) getRace()).getEndurance() + levelDef.enduranceBonus
+            ((Paladin) getRace()).setEndurance(
+              ((Paladin) getRace()).getEndurance() + levelDef.enduranceBonus
             );
             break;
           case "mage":

@@ -27,14 +27,10 @@ import javax.swing.ActionMap;
 import javax.swing.KeyStroke;
 import javax.swing.AbstractAction;
 
+import br.com.cronicasdeeldoria.entity.character.races.*;
 import br.com.cronicasdeeldoria.game.GamePanel;
 import br.com.cronicasdeeldoria.game.font.FontManager;
-import br.com.cronicasdeeldoria.entity.character.races.Race;
-import br.com.cronicasdeeldoria.entity.character.races.Archer;
-import br.com.cronicasdeeldoria.entity.character.races.Breton;
-import br.com.cronicasdeeldoria.entity.character.races.Dwarf;
-import br.com.cronicasdeeldoria.entity.character.races.Mage;
-import br.com.cronicasdeeldoria.entity.character.races.Orc;
+import br.com.cronicasdeeldoria.entity.character.races.Barbarian;
 
 public class CreatePlayerPanel extends JPanel implements ActionListener {
 
@@ -50,9 +46,9 @@ public class CreatePlayerPanel extends JPanel implements ActionListener {
   private JButton startGameButton;
   private JButton backButton;
 
-  private String selectedClass = "Breton";
+  private String selectedClass = "Barbarian";
   private JToggleButton[] classButtons;
-  private int selectedClassIndex = 1; // Breton é o padrão
+  private int selectedClassIndex = 1; // Barbarian é o padrão
   private JButton[] actionButtons;
   private int selectedActionIndex = 0;
   private boolean onClassSelection = true;
@@ -104,11 +100,11 @@ public class CreatePlayerPanel extends JPanel implements ActionListener {
 
       classGroup = new ButtonGroup();
 
-      JPanel archerPanel = createClassPanel("Archer");
+      JPanel archerPanel = createClassPanel("Ranger");
       archerButton = (JToggleButton) archerPanel.getComponent(0);
-      JPanel bretanPanel = createClassPanel("Breton");
+      JPanel bretanPanel = createClassPanel("Barbarian");
       bretonButton = (JToggleButton) bretanPanel.getComponent(0);
-      JPanel dwarfPanel = createClassPanel("Dwarf");
+      JPanel dwarfPanel = createClassPanel("Paladin");
       dwarfButton = (JToggleButton) dwarfPanel.getComponent(0);
       JPanel magePanel = createClassPanel("Mage");
       mageButton = (JToggleButton) magePanel.getComponent(0);
@@ -317,12 +313,12 @@ public class CreatePlayerPanel extends JPanel implements ActionListener {
       window.remove(this);
 
       Race race = switch (selectedClass) {
-          case "Archer" -> new Archer(10);
-          case "Breton" -> new Breton(15);
-          case "Dwarf" -> new Dwarf(20);
+          case "Ranger" -> new Ranger(10);
+          case "Barbarian" -> new Barbarian(15);
+          case "Paladin" -> new Paladin(20);
           case "Mage" -> new Mage(25);
           case "Orc" -> new Orc(30);
-          default -> new Breton(5);
+          default -> new Barbarian(5);
       };
 
       GamePanel gamePanel = new GamePanel(screenWidth, screenHeight, playerName, race, tileSize, maxScreenRow, maxScreenCol);

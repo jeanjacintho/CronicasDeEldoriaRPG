@@ -4,19 +4,19 @@ import br.com.cronicasdeeldoria.entity.character.Character;
 import br.com.cronicasdeeldoria.game.Battle;
 
 /**
- * Representa a raça Dwarf, cujo atributo especial é endurance.
+ * Representa a raça Paladin, cujo atributo especial é endurance.
  */
-public class Dwarf implements Race {
+public class Paladin implements Race {
   private int endurance;
   private String specialAbilityName;
   private String specialAbility;
 
 
   /**
-   * Cria um Dwarf com endurance definida.
-   * @param endurance Endurance do Dwarf.
+   * Cria um Paladin com endurance definida.
+   * @param endurance Endurance do Paladin.
    */
-  public Dwarf(int endurance) {
+  public Paladin(int endurance) {
     this.endurance = endurance;
   }
 
@@ -26,7 +26,7 @@ public class Dwarf implements Race {
    */
   @Override
   public String getRaceName() {
-    return "Dwarf";
+    return "Paladin";
   }
 
   /**

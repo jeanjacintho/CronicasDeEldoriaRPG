@@ -1,23 +1,22 @@
 package br.com.cronicasdeeldoria.entity.character.races;
 
 import br.com.cronicasdeeldoria.entity.character.Character;
-import br.com.cronicasdeeldoria.game.Battle;
 import br.com.cronicasdeeldoria.game.Buff;
 
 /**
- * Representa a raça Breton, cujo atributo especial é força de vontade (willpower).
+ * Representa a raça Barbarian, cujo atributo especial é força de vontade (willpower).
  */
-public class Breton implements Race {
+public class Barbarian implements Race {
   private int willpower;
   private String specialAbilityName;
   private String specialAbility;
 
 
   /**
-   * Cria um Breton com força de vontade definida.
+   * Cria um Barbarian com força de vontade definida.
    * @param willpower Força de vontade.
    */
-  public Breton(int willpower) {
+  public Barbarian(int willpower) {
     this.willpower = willpower;
   }
 
@@ -27,7 +26,7 @@ public class Breton implements Race {
    */
   @Override
   public String getRaceName() {
-    return "Breton";
+    return "Barbarian";
   }
 
   /**

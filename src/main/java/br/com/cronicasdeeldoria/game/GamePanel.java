@@ -11,12 +11,8 @@ import javax.swing.JPanel;
 import br.com.cronicasdeeldoria.entity.character.npc.SkeletonMonster;
 import br.com.cronicasdeeldoria.entity.character.npc.WolfMonster;
 import br.com.cronicasdeeldoria.entity.character.player.Player;
-import br.com.cronicasdeeldoria.entity.character.races.Archer;
-import br.com.cronicasdeeldoria.entity.character.races.Breton;
-import br.com.cronicasdeeldoria.entity.character.races.Dwarf;
-import br.com.cronicasdeeldoria.entity.character.races.Mage;
-import br.com.cronicasdeeldoria.entity.character.races.Orc;
-import br.com.cronicasdeeldoria.entity.character.races.Race;
+import br.com.cronicasdeeldoria.entity.character.races.*;
+import br.com.cronicasdeeldoria.entity.character.races.Barbarian;
 import br.com.cronicasdeeldoria.entity.object.MapObject;
 import br.com.cronicasdeeldoria.entity.object.ObjectManager;
 import br.com.cronicasdeeldoria.entity.object.ObjectSpriteLoader;
@@ -143,11 +139,11 @@ public class GamePanel extends JPanel implements Runnable{
     }
     Race raceInstance;
     switch (raceName) {
-      case "dwarf": raceInstance = new Dwarf(special); break;
+      case "dwarf": raceInstance = new Paladin(special); break;
       case "mage": raceInstance = new Mage(special); break;
       case "orc": raceInstance = new Orc(special); break;
-      case "breton": raceInstance = new Breton(special); break;
-      case "archer": raceInstance = new Archer(special); break;
+      case "breton": raceInstance = new Barbarian(special); break;
+      case "archer": raceInstance = new Ranger(special); break;
       default: raceInstance = race;
     }
     player = new Player(this, keyHandler, raceInstance, x, y, speed, direction, playerName, health, maxHealth, mana, maxMana, strength, agility, luck, armor);
@@ -222,7 +218,7 @@ public class GamePanel extends JPanel implements Runnable{
         if (!this.hasFocus()) {
           this.requestFocusInWindow();
         }
-        
+
         // Controle do inventário
         if (keyHandler.inventoryPressed) {
           inventoryManager.toggleVisibility();
@@ -236,7 +232,7 @@ public class GamePanel extends JPanel implements Runnable{
       if (gameState == battleState) {
         updateBattle();
       }
-      
+
       if (gameState == inventoryState) {
         updateInventory();
       }
@@ -598,7 +594,7 @@ public class GamePanel extends JPanel implements Runnable{
   // Sistema de inventário
   private void updateInventory() {
     if (inventoryManager == null) return;
-    
+
     // Controles do inventário
     if (keyHandler.upPressed) {
       inventoryManager.moveUp();
@@ -616,13 +612,13 @@ public class GamePanel extends JPanel implements Runnable{
       inventoryManager.moveRight();
       keyHandler.rightPressed = false;
     }
-    
+
     // TAB para alternar entre inventário e equipamento
     if (keyHandler.tabPressed) {
       inventoryManager.toggleMode();
       keyHandler.tabPressed = false;
     }
-    
+
     // ENTER para equipar/desequipar
     if (keyHandler.actionPressed) {
       if (inventoryManager.isInInventoryMode()) {
@@ -632,7 +628,7 @@ public class GamePanel extends JPanel implements Runnable{
       }
       keyHandler.actionPressed = false;
     }
-    
+
     // I para fechar inventário
     if (keyHandler.inventoryPressed) {
       inventoryManager.toggleVisibility();
@@ -728,7 +724,7 @@ public class GamePanel extends JPanel implements Runnable{
     public NpcSpriteLoader getNpcSpriteLoader() {
       return npcSpriteLoader;
     }
-    
+
     public InventoryManager getInventoryManager() {
       return inventoryManager;
     }
@@ -739,7 +735,7 @@ public class GamePanel extends JPanel implements Runnable{
   private void initializeGameComponents() {
     // Inicializar GameUI
     this.gameUI = new GameUI(this);
-    
+
     // Inicializar InventoryManager
     this.inventoryManager = new InventoryManager();
 

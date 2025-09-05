@@ -39,7 +39,7 @@ public class NpcFactory {
                 int x = npcTile.x * tileSize + (tileSize / 2) - (playerSize / 2);
                 int y = npcTile.y * tileSize + (tileSize / 2) - (playerSize / 2);
 
-                if ("warrior".equals(type)) {
+                if ("barbarian".equals(type)) {
                     npcs.add(new WarriorNpc(name, isStatic, dialog, x, y, skin, playerSize, interactive, autoInteraction));
                 }
                 else if ("enemy".equals(type)) {
@@ -64,7 +64,7 @@ public class NpcFactory {
         try {
             java.io.InputStream is = NpcFactory.class.getResourceAsStream("/npcs.json");
             if (is != null) {
-                
+
                 Gson gson = new Gson();
                 JsonArray jsonArray = gson.fromJson(new java.io.InputStreamReader(is), JsonArray.class);
 
@@ -78,13 +78,13 @@ public class NpcFactory {
                     npcData.put("dialog", npcJson.get("dialog").getAsString());
                     npcData.put("type", npcJson.get("type").getAsString());
                     npcData.put("skin", npcJson.get("skin").getAsString());
-                    
+
                     if (npcJson.has("interactive")) {
                         npcData.put("interactive", npcJson.get("interactive").getAsBoolean());
                     } else {
                         npcData.put("interactive", true);
                     }
-                    
+
                     if (npcJson.has("autoInteraction")) {
                         npcData.put("autoInteraction", npcJson.get("autoInteraction").getAsBoolean());
                     } else {

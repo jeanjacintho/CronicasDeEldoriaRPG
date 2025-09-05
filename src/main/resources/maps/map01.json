@@ -6331,7 +6331,7 @@
       "name": "Npcs",
       "tiles": [
         {
-          "id": "guerreiro",
+          "id": "barbarian",
           "x": 8,
           "y": 8
         },
@@ -6366,7 +6366,7 @@
           "y": 16
         },
         {
-          "id": "guerreiro",
+          "id": "barbarian",
           "x": 22,
           "y": 23
         }

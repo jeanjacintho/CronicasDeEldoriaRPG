@@ -1,21 +1,20 @@
 package br.com.cronicasdeeldoria.entity.character.races;
 
 import br.com.cronicasdeeldoria.entity.character.Character;
-import br.com.cronicasdeeldoria.game.Battle;
 
 /**
- * Representa a raça Archer, cujo atributo especial é destreza (dexterity).
+ * Representa a raça Ranger, cujo atributo especial é destreza (dexterity).
  */
-public class Archer implements Race {
+public class Ranger implements Race {
   private int dexterity;
   private String specialAbilityName;
   private String specialAbility;
 
   /**
-   * Cria um Archer com destreza definida.
-   * @param dexterity Destreza do Archer.
+   * Cria um Ranger com destreza definida.
+   * @param dexterity Destreza do Ranger.
    */
-  public Archer(int dexterity) {
+  public Ranger(int dexterity) {
     this.dexterity = dexterity;
   }
 
@@ -25,7 +24,7 @@ public class Archer implements Race {
    */
   @Override
   public String getRaceName() {
-    return "Archer";
+    return "Ranger";
   }
 
   /**
