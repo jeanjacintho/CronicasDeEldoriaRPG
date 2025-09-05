@@ -41,7 +41,7 @@ public class CreatePlayerPanel extends JPanel implements ActionListener {
   private final int maxScreenRow;
   private final int maxScreenCol;
   private JTextField nameField;
-  private JToggleButton archerButton, bretonButton, dwarfButton, mageButton, orcButton;
+  private JToggleButton rangerButton, barbarianButton, paladinButton, mageButton, orcButton;
   private ButtonGroup classGroup;
   private JButton startGameButton;
   private JButton backButton;
@@ -95,32 +95,33 @@ public class CreatePlayerPanel extends JPanel implements ActionListener {
       namePanel.add(nameField);
       centerPanel.add(namePanel, BorderLayout.NORTH);
 
-      JPanel classSelectionPanel = new JPanel(new GridLayout(1, 5, 15, 15));
+      JPanel classSelectionPanel = new JPanel(new GridLayout(1, 4, 15, 15));
       classSelectionPanel.setBorder(BorderFactory.createTitledBorder("Escolha uma classe"));
 
       classGroup = new ButtonGroup();
 
-      JPanel archerPanel = createClassPanel("Ranger");
-      archerButton = (JToggleButton) archerPanel.getComponent(0);
-      JPanel bretanPanel = createClassPanel("Barbarian");
-      bretonButton = (JToggleButton) bretanPanel.getComponent(0);
-      JPanel dwarfPanel = createClassPanel("Paladin");
-      dwarfButton = (JToggleButton) dwarfPanel.getComponent(0);
+      JPanel rangerPanel = createClassPanel("Ranger");
+      rangerButton = (JToggleButton) rangerPanel.getComponent(0);
+      JPanel barbarianPanel = createClassPanel("Barbarian");
+      barbarianButton = (JToggleButton) barbarianPanel.getComponent(0);
+      JPanel paladinPanel = createClassPanel("Paladin");
+      paladinButton = (JToggleButton) paladinPanel.getComponent(0);
       JPanel magePanel = createClassPanel("Mage");
       mageButton = (JToggleButton) magePanel.getComponent(0);
-      JPanel orcPanel = createClassPanel("Orc");
-      orcButton = (JToggleButton) orcPanel.getComponent(0);
+//      JPanel orcPanel = createClassPanel("Orc");
+//      orcButton = (JToggleButton) orcPanel.getComponent(0);
 
-      bretonButton.setSelected(true);
+      barbarianButton.setSelected(true);
 
-      classButtons = new JToggleButton[] { archerButton, bretonButton, dwarfButton, mageButton, orcButton };
+      //classButtons = new JToggleButton[] { archerButton, bretonButton, dwarfButton, mageButton, orcButton };
+      classButtons = new JToggleButton[] { rangerButton, barbarianButton, paladinButton, mageButton };
       setClassFocus(selectedClassIndex);
 
-      classSelectionPanel.add(archerPanel);
-      classSelectionPanel.add(bretanPanel);
-      classSelectionPanel.add(dwarfPanel);
+      classSelectionPanel.add(rangerPanel);
+      classSelectionPanel.add(barbarianPanel);
+      classSelectionPanel.add(paladinPanel);
       classSelectionPanel.add(magePanel);
-      classSelectionPanel.add(orcPanel);
+      //classSelectionPanel.add(orcPanel);
 
       centerPanel.add(classSelectionPanel, BorderLayout.CENTER);
       this.add(centerPanel, BorderLayout.CENTER);
@@ -239,7 +240,7 @@ public class CreatePlayerPanel extends JPanel implements ActionListener {
           var resource = getClass().getResourceAsStream(path);
           if (resource != null) {
               Image img = ImageIO.read(resource);
-              Image scaledImg = img.getScaledInstance(128, 128, Image.SCALE_SMOOTH);
+              Image scaledImg = img.getScaledInstance(192, 192, Image.SCALE_SMOOTH);
               button.setIcon(new ImageIcon(scaledImg));
           } else {
               System.err.println("Resource not found: " + path);
