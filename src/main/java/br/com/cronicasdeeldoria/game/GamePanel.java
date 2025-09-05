@@ -11,12 +11,8 @@ import javax.swing.JPanel;
 import br.com.cronicasdeeldoria.entity.character.npc.SkeletonMonster;
 import br.com.cronicasdeeldoria.entity.character.npc.WolfMonster;
 import br.com.cronicasdeeldoria.entity.character.player.Player;
-import br.com.cronicasdeeldoria.entity.character.races.Archer;
-import br.com.cronicasdeeldoria.entity.character.races.Breton;
-import br.com.cronicasdeeldoria.entity.character.races.Dwarf;
-import br.com.cronicasdeeldoria.entity.character.races.Mage;
-import br.com.cronicasdeeldoria.entity.character.races.Orc;
-import br.com.cronicasdeeldoria.entity.character.races.Race;
+import br.com.cronicasdeeldoria.entity.character.classes.*;
+import br.com.cronicasdeeldoria.entity.character.classes.Barbarian;
 import br.com.cronicasdeeldoria.entity.object.MapObject;
 import br.com.cronicasdeeldoria.entity.object.ObjectManager;
 import br.com.cronicasdeeldoria.entity.object.ObjectSpriteLoader;
@@ -86,12 +82,12 @@ public class GamePanel extends JPanel implements Runnable{
    * @param screenWidth Largura da tela.
    * @param screenHeight Altura da tela.
    * @param playerName Nome do jogador.
-   * @param race Raça do jogador.
+   * @param characterClass Raça do jogador.
    * @param tileSize Tamanho do tile.
    * @param maxScreenRow Máximo de linhas na tela.
    * @param maxScreenCol Máximo de colunas na tela.
    */
-  public GamePanel(int screenWidth, int screenHeight, String playerName, Race race, int tileSize, int maxScreenRow, int maxScreenCol) {
+  public GamePanel(int screenWidth, int screenHeight, String playerName, CharacterClass characterClass, int tileSize, int maxScreenRow, int maxScreenCol) {
     this.setPreferredSize(new Dimension(screenWidth, screenHeight));
     this.maxScreenRow = maxScreenRow;
     this.maxScreenCol = maxScreenCol;
@@ -105,7 +101,7 @@ public class GamePanel extends JPanel implements Runnable{
     gameState = playState;
 
     CharacterConfigLoader configLoader = CharacterConfigLoader.getInstance();
-    String raceName = race.getRaceName().toLowerCase();
+    String characterClassName = characterClass.getCharacterClassName().toLowerCase();
     int playerSize = getPlayerSize();
 
     this.tileManager = new TileManager(this);
@@ -116,47 +112,48 @@ public class GamePanel extends JPanel implements Runnable{
 
     int x = (maxWorldCol * tileSize) / 2 - (playerSize / 2);
     int y = (maxWorldRow * tileSize) / 2 - (playerSize / 2);
-    int speed = configLoader.getIntAttribute(raceName, "speed", 4);
-    String direction = configLoader.getStringAttribute(raceName, "direction", "down");
-    int health = configLoader.getIntAttribute(raceName, "health", 100);
+    int speed = configLoader.getIntAttribute(characterClassName, "speed", 4);
+    String direction = configLoader.getStringAttribute(characterClassName, "direction", "down");
+    int health = configLoader.getIntAttribute(characterClassName, "health", 100);
     int maxHealth = health;
-    int mana = configLoader.getIntAttribute(raceName, "mana", 100);
+    int mana = configLoader.getIntAttribute(characterClassName, "mana", 100);
     int maxMana = mana;
-    int strength = configLoader.getIntAttribute(raceName, "strength", 10);
-    int agility = configLoader.getIntAttribute(raceName, "agility", 10);
-    int luck = configLoader.getIntAttribute(raceName, "luck", 0);
-    int armor = configLoader.getIntAttribute(raceName, "armor", 0);
+    int strength = configLoader.getIntAttribute(characterClassName, "strength", 10);
+    int agility = configLoader.getIntAttribute(characterClassName, "agility", 10);
+    int luck = configLoader.getIntAttribute(characterClassName, "luck", 0);
+    int armor = configLoader.getIntAttribute(characterClassName, "armor", 0);
 
     int special = 0;
-    switch (raceName) {
-      case "dwarf":
-        special = configLoader.getIntAttribute(raceName, "endurance", 0);
+    switch (characterClassName) {
+      case "paladin":
+        special = configLoader.getIntAttribute(characterClassName, "endurance", 0);
         break;
       case "mage":
-        special = configLoader.getIntAttribute(raceName, "magicPower", 0);
+        special = configLoader.getIntAttribute(characterClassName, "magicPower", 0);
         break;
       case "orc":
-        special = configLoader.getIntAttribute(raceName, "rage", 0);
+        special = configLoader.getIntAttribute(characterClassName, "rage", 0);
         break;
-      case "breton":
-        special = configLoader.getIntAttribute(raceName, "willpower", 0);
+      case "barbarian":
+        special = configLoader.getIntAttribute(characterClassName, "willpower", 0);
         break;
-      case "archer":
-        special = configLoader.getIntAttribute(raceName, "dexterity", 0);
+      case "ranger":
+        special = configLoader.getIntAttribute(characterClassName, "dexterity", 0);
         break;
       default:
         special = 0;
     }
-    Race raceInstance;
-    switch (raceName) {
-      case "dwarf": raceInstance = new Dwarf(special); break;
-      case "mage": raceInstance = new Mage(special); break;
-      case "orc": raceInstance = new Orc(special); break;
-      case "breton": raceInstance = new Breton(special); break;
-      case "archer": raceInstance = new Archer(special); break;
-      default: raceInstance = race;
+    CharacterClass characterClassInstance;
+    switch (characterClassName) {
+      case "paladin": characterClassInstance = new Paladin(special); break;
+      case "mage": characterClassInstance = new Mage(special); break;
+      case "orc": characterClassInstance = new Orc(special); break;
+      case "barbarian": characterClassInstance = new Barbarian(special); break;
+      case "archer": characterClassInstance = new Ranger(special); break;
+      default: characterClassInstance = characterClass;
     }
-    player = new Player(this, keyHandler, raceInstance, x, y, speed, direction, playerName, health, maxHealth, mana, maxMana, strength, agility, luck, armor);
+
+    player = new Player(this, keyHandler, characterClassInstance, x, y, speed, direction, playerName, health, maxHealth, mana, maxMana, strength, agility, luck, armor);
     
     // Inicializar sistema de comerciante após a criação do player
     this.merchantManager = new MerchantManager(inventoryManager, player.getPlayerMoney());
@@ -232,7 +229,7 @@ public class GamePanel extends JPanel implements Runnable{
         if (!this.hasFocus()) {
           this.requestFocusInWindow();
         }
-        
+
         // Controle do inventário
         if (keyHandler.inventoryPressed) {
           inventoryManager.toggleVisibility();
@@ -246,7 +243,7 @@ public class GamePanel extends JPanel implements Runnable{
       if (gameState == battleState) {
         updateBattle();
       }
-      
+
       if (gameState == inventoryState) {
         updateInventory();
       }
@@ -620,7 +617,7 @@ public class GamePanel extends JPanel implements Runnable{
   // Sistema de inventário
   private void updateInventory() {
     if (inventoryManager == null) return;
-    
+
     // Controles do inventário
     if (keyHandler.upPressed) {
       inventoryManager.moveUp();
@@ -638,13 +635,13 @@ public class GamePanel extends JPanel implements Runnable{
       inventoryManager.moveRight();
       keyHandler.rightPressed = false;
     }
-    
+
     // TAB para alternar entre inventário e equipamento
     if (keyHandler.tabPressed) {
       inventoryManager.toggleMode();
       keyHandler.tabPressed = false;
     }
-    
+
     // ENTER para equipar/desequipar
     if (keyHandler.actionPressed) {
       if (inventoryManager.isInInventoryMode()) {
@@ -654,7 +651,7 @@ public class GamePanel extends JPanel implements Runnable{
       }
       keyHandler.actionPressed = false;
     }
-    
+
     // I para fechar inventário
     if (keyHandler.inventoryPressed) {
       inventoryManager.toggleVisibility();
@@ -787,7 +784,7 @@ public class GamePanel extends JPanel implements Runnable{
     public NpcSpriteLoader getNpcSpriteLoader() {
       return npcSpriteLoader;
     }
-    
+
     public InventoryManager getInventoryManager() {
       return inventoryManager;
     }
@@ -802,7 +799,7 @@ public class GamePanel extends JPanel implements Runnable{
   private void initializeGameComponents() {
     // Inicializar GameUI
     this.gameUI = new GameUI(this);
-    
+
     // Inicializar InventoryManager
     this.inventoryManager = new InventoryManager();
 

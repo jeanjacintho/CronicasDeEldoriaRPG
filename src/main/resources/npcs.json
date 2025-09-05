@@ -8,12 +8,12 @@
     "skin": "guardiao"
   },
   {
-    "id": "guerreiro",
+    "id": "barbarian",
     "name": "Guerreiro Contratável",
     "isStatic": true,
     "dialog": "Posso lutar ao seu lado por algumas moedas.",
-    "type": "warrior",
-    "skin": "guerreiro"
+    "type": "npc",
+    "skin": "barbarian"
   },
   {
     "id": "wolf",

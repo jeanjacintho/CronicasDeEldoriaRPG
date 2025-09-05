@@ -1,7 +1,7 @@
 [
   {
-    "id": "archer",
-    "name": "Arqueiro",
+    "id": "ranger",
+    "name": "Ranger",
     "speed": 4,
     "direction": "down",
     "health": 100,
@@ -13,8 +13,8 @@
     "luck": 0
   },
   {
-    "id": "breton",
-    "name": "Breton",
+    "id": "barbarian",
+    "name": "Barbarian",
     "speed": 4,
     "direction": "down",
     "health": 100,
@@ -26,8 +26,8 @@
     "luck": 0
   },
   {
-    "id": "dwarf",
-    "name": "Anão",
+    "id": "paladin",
+    "name": "Paladin",
     "speed": 3,
     "direction": "down",
     "health": 120,
@@ -40,7 +40,7 @@
   },
   {
     "id": "mage",
-    "name": "Mago",
+    "name": "Mage",
     "speed": 3,
     "direction": "down",
     "health": 80,

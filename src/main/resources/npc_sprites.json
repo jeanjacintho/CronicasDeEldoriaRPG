@@ -5,11 +5,11 @@
     "left": ["player/orc/orc_left.png", "player/orc/orc_left_walk1.png", "player/orc/orc_left_walk2.png"],
     "right": ["player/orc/orc_right.png", "player/orc/orc_right_walk1.png", "player/orc/orc_right_walk2.png"]
   },
-  "guerreiro": {
-    "down": ["player/breton/breton_front.png", "player/breton/breton_front_walk1.png", "player/breton/breton_front_walk2.png"],
-    "up": ["player/breton/breton_back.png", "player/breton/breton_back_walk1.png", "player/breton/breton_back_walk2.png"],
-    "left": ["player/breton/breton_left.png", "player/breton/breton_left_walk1.png", "player/breton/breton_left_walk2.png"],
-    "right": ["player/breton/breton_right.png", "player/breton/breton_right_walk1.png", "player/breton/breton_right_walk2.png"]
+  "barbarian": {
+    "down": ["player/barbarian/barbarian_front.png", "player/barbarian/barbarian_front_walk1.png", "player/barbarian/barbarian_front_walk2.png"],
+    "up": ["player/barbarian/barbarian_back.png", "player/barbarian/barbarian_back_walk1.png", "player/barbarian/barbarian_back_walk2.png"],
+    "left": ["player/barbarian/barbarian_left.png", "player/barbarian/barbarian_left_walk1.png", "player/barbarian/barbarian_left_walk2.png"],
+    "right": ["player/barbarian/barbarian_right.png", "player/barbarian/barbarian_right_walk1.png", "player/barbarian/barbarian_right_walk2.png"]
   },
   "wolfMonster": {
     "down": ["monster/wolf/wolf_front.png", "monster/wolf/wolf_front_walk1.png", "monster/wolf/wolf_front_walk2.png"],

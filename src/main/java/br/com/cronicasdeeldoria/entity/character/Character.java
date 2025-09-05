@@ -1,7 +1,7 @@
 package br.com.cronicasdeeldoria.entity.character;
 
 import br.com.cronicasdeeldoria.entity.Entity;
-import br.com.cronicasdeeldoria.entity.character.races.Race;
+import br.com.cronicasdeeldoria.entity.character.classes.CharacterClass;
 import br.com.cronicasdeeldoria.game.Buff;
 
 import java.util.ArrayList;
@@ -11,7 +11,7 @@ import java.util.List;
  * Classe base para personagens jogáveis e NPCs, contendo atributos de raça e status.
  */
 public class Character extends Entity {
-  private Race race;
+  private CharacterClass characterClass;
   private int attributeHealth;
   private int attributeMaxHealth;
   private int attributeMana;
@@ -31,7 +31,7 @@ public class Character extends Entity {
    * @param speed Velocidade do personagem.
    * @param direction Direção inicial.
    * @param name Nome do personagem.
-   * @param race Raça do personagem.
+   * @param characterClass Raça do personagem.
    * @param attributeHealth Vida.
    * @param attributeMaxHealth Vida máxima.
    * @param attributeMana Mana.
@@ -39,9 +39,9 @@ public class Character extends Entity {
    * @param attributeStrength Força.
    * @param attributeAgility Agilidade.
    */
-  public Character(int x, int y, int speed, String direction, String name, Race race, int attributeHealth, int attributeMaxHealth, int attributeMana, int attributeMaxMana, int attributeStrength, int attributeAgility, int attributeArmor) {
+  public Character(int x, int y, int speed, String direction, String name, CharacterClass characterClass, int attributeHealth, int attributeMaxHealth, int attributeMana, int attributeMaxMana, int attributeStrength, int attributeAgility, int attributeArmor) {
     super(x, y, speed, direction, name);
-    this.race = race;
+    this.characterClass = characterClass;
     this.attributeHealth = attributeHealth;
     this.attributeMaxHealth = attributeMaxHealth;
     this.attributeMana = attributeMana;
@@ -96,11 +96,11 @@ public class Character extends Entity {
     return attributeStrength + bonus;
   }
 
-  public Race getRace() {
-    return race;
+  public CharacterClass getCharacterClass() {
+    return characterClass;
   }
-  public void setRace(Race race) {
-    this.race = race;
+  public void setCharacterClass(CharacterClass characterClass) {
+    this.characterClass = characterClass;
   }
   public int getAttributeHealth() {
     return attributeHealth;
