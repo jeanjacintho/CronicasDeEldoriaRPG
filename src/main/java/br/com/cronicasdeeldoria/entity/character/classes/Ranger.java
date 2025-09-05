@@ -1,11 +1,11 @@
-package br.com.cronicasdeeldoria.entity.character.races;
+package br.com.cronicasdeeldoria.entity.character.classes;
 
 import br.com.cronicasdeeldoria.entity.character.Character;
 
 /**
  * Representa a raça Ranger, cujo atributo especial é destreza (dexterity).
  */
-public class Ranger implements Race {
+public class Ranger implements CharacterClass {
   private int dexterity;
   private String specialAbilityName;
   private String specialAbility;
@@ -23,7 +23,7 @@ public class Ranger implements Race {
    * @return Nome da raça.
    */
   @Override
-  public String getRaceName() {
+  public String getCharacterClassName() {
     return "Ranger";
   }
 

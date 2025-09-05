@@ -27,10 +27,10 @@ import javax.swing.ActionMap;
 import javax.swing.KeyStroke;
 import javax.swing.AbstractAction;
 
-import br.com.cronicasdeeldoria.entity.character.races.*;
+import br.com.cronicasdeeldoria.entity.character.classes.*;
 import br.com.cronicasdeeldoria.game.GamePanel;
 import br.com.cronicasdeeldoria.game.font.FontManager;
-import br.com.cronicasdeeldoria.entity.character.races.Barbarian;
+import br.com.cronicasdeeldoria.entity.character.classes.Barbarian;
 
 public class CreatePlayerPanel extends JPanel implements ActionListener {
 
@@ -312,7 +312,7 @@ public class CreatePlayerPanel extends JPanel implements ActionListener {
 
       window.remove(this);
 
-      Race race = switch (selectedClass) {
+      CharacterClass characterClass = switch (selectedClass) {
           case "Ranger" -> new Ranger(10);
           case "Barbarian" -> new Barbarian(15);
           case "Paladin" -> new Paladin(20);
@@ -321,7 +321,7 @@ public class CreatePlayerPanel extends JPanel implements ActionListener {
           default -> new Barbarian(5);
       };
 
-      GamePanel gamePanel = new GamePanel(screenWidth, screenHeight, playerName, race, tileSize, maxScreenRow, maxScreenCol);
+      GamePanel gamePanel = new GamePanel(screenWidth, screenHeight, playerName, characterClass, tileSize, maxScreenRow, maxScreenCol);
       window.add(gamePanel);
       gamePanel.startGameThread();
       gamePanel.setupGame();

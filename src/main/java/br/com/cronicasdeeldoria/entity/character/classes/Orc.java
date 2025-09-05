@@ -1,23 +1,23 @@
-package br.com.cronicasdeeldoria.entity.character.races;
+package br.com.cronicasdeeldoria.entity.character.classes;
 
 import br.com.cronicasdeeldoria.entity.character.Character;
 import br.com.cronicasdeeldoria.game.Battle;
 
 /**
- * Representa a raça Paladin, cujo atributo especial é endurance.
+ * Representa a raça Orc, cujo atributo especial é rage.
  */
-public class Paladin implements Race {
-  private int endurance;
+public class Orc implements CharacterClass {
+  private int rage;
   private String specialAbilityName;
   private String specialAbility;
 
 
   /**
-   * Cria um Paladin com endurance definida.
-   * @param endurance Endurance do Paladin.
+   * Cria um Orc com rage definido.
+   * @param rage Raiva do Orc.
    */
-  public Paladin(int endurance) {
-    this.endurance = endurance;
+  public Orc(int rage) {
+    this.rage = rage;
   }
 
   /**
@@ -25,8 +25,16 @@ public class Paladin implements Race {
    * @return Nome da raça.
    */
   @Override
-  public String getRaceName() {
-    return "Paladin";
+  public String getCharacterClassName() {
+    return "Orc";
+  }
+
+  public int getRage() {
+    return rage;
+  }
+
+  public void setRage(int rage) {
+    this.rage = rage;
   }
 
   /**
@@ -35,7 +43,7 @@ public class Paladin implements Race {
    */
   @Override
   public String getSpecialAttributeName() {
-    return "endurance";
+    return "rage";
   }
   /**
    * Retorna o valor do atributo especial.
@@ -43,34 +51,27 @@ public class Paladin implements Race {
    */
   @Override
   public int getSpecialAttributeValue() {
-    return endurance;
-  }
-
-  public int getEndurance() {
-    return endurance;
-  }
-
-  public void setEndurance(int endurance) {
-    this.endurance = endurance;
+    return rage;
   }
 
   @Override
   public String getSpecialAbilityName() {
-    return "Ataque Sagrado";
+    return "Golpe Duplo";
   }
 
   @Override
   public boolean getSpecialAbility(Character attacker, Character target, int countTurn) {
-    int manaCost = 15;
+    int manaCost = 10;
+
 
     if (attacker.getAttributeMana() >= manaCost) {
       attacker.setAttributeMana(attacker.getAttributeMana() - manaCost);
-      int damage = (int) (Battle.calculateDamage(attacker, target) * 2); // 100% mais dano
-      int newHealth = Math.max(0, target.getAttributeHealth() - damage);
+      int magicDamage = (int) (Battle.calculateDamage(attacker, target) * 1.3); // 30% mais dano
+      int newHealth = Math.max(0, target.getAttributeHealth() - magicDamage);
       target.setAttributeHealth(newHealth);
 
       // Cura o atacante com 60% do dano causado
-      int finalHeal = (int) (damage * 0.8);
+      int finalHeal = (int) (magicDamage * 0.6);
       int diffCurrentHpAndMaxHp = attacker.getAttributeMaxHealth() - attacker.getAttributeHealth();
 
       if (diffCurrentHpAndMaxHp > finalHeal) {
@@ -83,8 +84,8 @@ public class Paladin implements Race {
         System.out.println("-----------------------------");
       }
 
-      System.out.println(attacker.getName() + " uses Special Ability on " + target.getName() +
-        " causing " + damage + " Holy damage!");
+      System.out.println(attacker.getName() + " uses magic on " + target.getName() +
+        " causing " + magicDamage + " magic damage!");
       System.out.println("-----------------------------");
     }
     return false;

@@ -190,7 +190,7 @@ public class Battle {
   }
 
   private void defend(Character character) {
-    int bonus = (int)(character.getAttributeArmor() * 1.5);
+    int bonus = (int)(character.getAttributeArmor() * 1.3);
 
     // 50% de buff por 2 turnos defendendo e 3 de cooldown
     Buff armorBuff = new Buff("ARMOR", bonus, 2 * 2, 2 * 2); //
@@ -219,7 +219,7 @@ public class Battle {
   }
 
   private void specialAttack(Character attacker, Character target, int countTurn) {
-    System.out.println(attacker.getRace().getSpecialAbility(attacker, target, countTurn));
+    System.out.println(attacker.getCharacterClass().getSpecialAbility(attacker, target, countTurn));
   }
 
   // Health Potion

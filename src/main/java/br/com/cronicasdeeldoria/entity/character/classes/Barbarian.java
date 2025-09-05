@@ -1,4 +1,4 @@
-package br.com.cronicasdeeldoria.entity.character.races;
+package br.com.cronicasdeeldoria.entity.character.classes;
 
 import br.com.cronicasdeeldoria.entity.character.Character;
 import br.com.cronicasdeeldoria.game.Buff;
@@ -6,7 +6,7 @@ import br.com.cronicasdeeldoria.game.Buff;
 /**
  * Representa a raça Barbarian, cujo atributo especial é força de vontade (willpower).
  */
-public class Barbarian implements Race {
+public class Barbarian implements CharacterClass {
   private int willpower;
   private String specialAbilityName;
   private String specialAbility;
@@ -25,7 +25,7 @@ public class Barbarian implements Race {
    * @return Nome da raça.
    */
   @Override
-  public String getRaceName() {
+  public String getCharacterClassName() {
     return "Barbarian";
   }
 

@@ -54,7 +54,7 @@ public class GameUI {
     dogicaFont_16 = FontManager.getFont(16f);
 
     loadHeartImages();
-    
+
     // Inicializar InventoryUI
     this.inventoryUI = new InventoryUI(gamePanel);
   }
@@ -279,7 +279,7 @@ public class GameUI {
     graphics2D.drawString("Nome: " + player.getName(), x + 20, textY);
     textY += spacing;
 
-    graphics2D.drawString("Raça: " + player.getRace().getRaceName(), x + 20, textY);
+    graphics2D.drawString("Classe: " + player.getCharacterClass().getCharacterClassName(), x + 20, textY);
     textY += spacing;
 
     graphics2D.drawString("Nível: " + player.getCurrentLevel(), x + 20, textY);
@@ -308,8 +308,8 @@ public class GameUI {
     graphics2D.drawString("Sorte: " + player.getLuck(), x + 20, textY);
     textY += spacing;
 
-    String specialAttrName = player.getRace().getSpecialAttributeName();
-    int specialAttrValue = player.getRace().getSpecialAttributeValue();
+    String specialAttrName = player.getCharacterClass().getSpecialAttributeName();
+    int specialAttrValue = player.getCharacterClass().getSpecialAttributeValue();
 
     String translatedAttrName = switch (specialAttrName.toLowerCase()) {
       case "rage" -> "Raiva";
@@ -441,7 +441,7 @@ public class GameUI {
       // Mostrar opções disponíveis
 
       g2.drawString("Escolha sua ação:", 20, screenHeight - 115);
-      g2.drawString("(1) - " + player.getRace().getSpecialAbilityName(), 20, screenHeight - 75);
+      g2.drawString("(1) - " + player.getCharacterClass().getSpecialAbilityName(), 20, screenHeight - 75);
       g2.drawString("(2) - Ataque Básico", 20, screenHeight - 35);
       g2.drawString("(3) - Defender", 280, screenHeight - 75);
       g2.drawString("(4) - Tentar Fugir", 280, screenHeight - 35);
@@ -460,7 +460,7 @@ public class GameUI {
       // Destacar opções indisponíveis
       if (player.getAttributeMana() < 15) {
         g2.setColor(Color.GRAY);
-        g2.drawString("(1) - " + player.getRace().getSpecialAbilityName(), 20, screenHeight - 75);
+        g2.drawString("(1) - " + player.getCharacterClass().getSpecialAbilityName(), 20, screenHeight - 75);
       }
       if (!player.canApplyBuff("ARMOR")) {
         g2.setColor(Color.GRAY);
@@ -471,10 +471,10 @@ public class GameUI {
       }
       if (!player.canApplyBuff("STRENGTH")) {
         g2.setColor(Color.GRAY);
-        g2.drawString("(1) - " + player.getRace().getSpecialAbilityName(), 20, screenHeight - 75);
+        g2.drawString("(1) - " + player.getCharacterClass().getSpecialAbilityName(), 20, screenHeight - 75);
       } else if (player.canApplyBuff("STRENGTH")) {
         g2.setColor(Color.BLACK);
-        g2.drawString("(1) - " + player.getRace().getSpecialAbilityName(), 20, screenHeight - 75);
+        g2.drawString("(1) - " + player.getCharacterClass().getSpecialAbilityName(), 20, screenHeight - 75);
       }
     }
 //    else {
@@ -574,7 +574,7 @@ public class GameUI {
     g2.drawString("MP: " + player.getAttributeMana() + "/" + player.getAttributeMaxMana(),
       playerInfoX + 10, playerMpBarY + 18);
   }
-  
+
   /**
    * Desenha a interface do inventário.
    * @param g2 Contexto gráfico.

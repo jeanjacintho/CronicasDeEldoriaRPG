@@ -1,4 +1,4 @@
-package br.com.cronicasdeeldoria.entity.character.races;
+package br.com.cronicasdeeldoria.entity.character.classes;
 
 import br.com.cronicasdeeldoria.entity.character.Character;
 import br.com.cronicasdeeldoria.game.Battle;
@@ -6,7 +6,7 @@ import br.com.cronicasdeeldoria.game.Battle;
 /**
  * Representa a raça Mage, cujo atributo especial é magicPower.
  */
-public class Mage implements Race {
+public class Mage implements CharacterClass {
   private int magicPower;
   private String specialAbilityName;
   private String specialAbility;
@@ -25,7 +25,7 @@ public class Mage implements Race {
    * @return Nome da raça.
    */
   @Override
-  public String getRaceName() {
+  public String getCharacterClassName() {
     return "Mage";
   }
 
