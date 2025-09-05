@@ -69,7 +69,7 @@ public class Paladin implements CharacterClass {
       int newHealth = Math.max(0, target.getAttributeHealth() - damage);
       target.setAttributeHealth(newHealth);
 
-      // Cura o atacante com 60% do dano causado
+      // Cura o atacante com 80% do dano causado
       int finalHeal = (int) (damage * 0.8);
       int diffCurrentHpAndMaxHp = attacker.getAttributeMaxHealth() - attacker.getAttributeHealth();
 
