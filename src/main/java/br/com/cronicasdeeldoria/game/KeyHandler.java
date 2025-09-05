@@ -8,7 +8,7 @@ import java.awt.event.KeyListener;
  */
 public class KeyHandler implements KeyListener {
     public boolean actionPressed, upPressed, downPressed, leftPressed, rightPressed, xPressed, zPressed, qPressed;
-    public boolean rPressed, fPressed, gPressed, hPressed, tPressed, magicPressed, attackPressed, defendPressed, escapePressed, healthPressed, manaPressed;
+    public boolean rPressed, fPressed, gPressed, hPressed, tPressed, specialPressed, attackPressed, defendPressed, escapePressed, healthPressed, manaPressed;
 
     /**
      * Evento chamado quando uma tecla é digitada.
@@ -41,7 +41,7 @@ public class KeyHandler implements KeyListener {
             //case KeyEvent.VK_T: tPressed = true; break;
 
             // Key de batalha
-            case KeyEvent.VK_1: magicPressed = true; break;
+            case KeyEvent.VK_1: specialPressed = true; break;
             case KeyEvent.VK_2: attackPressed = true; break;
             case KeyEvent.VK_3: defendPressed = true; break;
             case KeyEvent.VK_4: escapePressed = true; break;
@@ -74,7 +74,7 @@ public class KeyHandler implements KeyListener {
           //case KeyEvent.VK_T: tPressed = false; break;
 
           // Batalha
-          case KeyEvent.VK_1: magicPressed = false; break;
+          case KeyEvent.VK_1: specialPressed = false; break;
           case KeyEvent.VK_2: attackPressed = false; break;
           case KeyEvent.VK_3: defendPressed = false; break;
           case KeyEvent.VK_4: escapePressed = false; break;

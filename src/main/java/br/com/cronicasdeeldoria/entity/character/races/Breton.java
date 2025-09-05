@@ -1,10 +1,17 @@
 package br.com.cronicasdeeldoria.entity.character.races;
 
+import br.com.cronicasdeeldoria.entity.character.Character;
+import br.com.cronicasdeeldoria.game.Battle;
+import br.com.cronicasdeeldoria.game.Buff;
+
 /**
  * Representa a raça Breton, cujo atributo especial é força de vontade (willpower).
  */
 public class Breton implements Race {
   private int willpower;
+  private String specialAbilityName;
+  private String specialAbility;
+
 
   /**
    * Cria um Breton com força de vontade definida.
@@ -44,5 +51,25 @@ public class Breton implements Race {
   }
   public void setWillpower(int willpower) {
     this.willpower = willpower;
+  }
+
+  @Override
+  public String getSpecialAbilityName() {
+    return "Furia de Batalha";
+  }
+
+  @Override
+  public boolean getSpecialAbility(Character attacker, Character target, int countTurn) {
+    int manaCost = 15;
+
+    if (attacker.getAttributeMana() >= manaCost) {
+      int bonus = (int)(attacker.getAttributeStrength() * 1.5);
+      attacker.setAttributeMana(attacker.getAttributeMana() - manaCost);
+
+      // 50% de buff por 2 turnos atacando e 4 de cooldown
+      Buff strBuff = new Buff("STRENGTH", bonus, 3 * 2, 3 * 2);
+      attacker.applyBuff(strBuff);
+    }
+    return false;
   }
 }
