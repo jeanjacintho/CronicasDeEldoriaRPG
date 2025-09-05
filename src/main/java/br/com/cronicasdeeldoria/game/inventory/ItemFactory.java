@@ -90,7 +90,7 @@ public class ItemFactory {
             if (objectJson.has("value")) {
                 Field valueField = def.getClass().getDeclaredField("value");
                 valueField.setAccessible(true);
-                valueField.set(def, objectJson.get("value").getAsString());
+                valueField.set(def, objectJson.get("value").getAsInt());
             }
             
             mapObject.setObjectDefinition(def);
