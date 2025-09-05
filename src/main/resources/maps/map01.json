@@ -6331,7 +6331,7 @@
       "name": "Npcs",
       "tiles": [
         {
-          "id": "guerreiro",
+          "id": "merchant",
           "x": 8,
           "y": 8
         },

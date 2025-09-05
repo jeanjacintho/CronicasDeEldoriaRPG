@@ -15,7 +15,6 @@ import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.util.Objects;
 
-import br.com.cronicasdeeldoria.entity.character.Character;
 import br.com.cronicasdeeldoria.entity.character.npc.Npc;
 import br.com.cronicasdeeldoria.entity.character.player.Player;
 import br.com.cronicasdeeldoria.game.GamePanel;
@@ -35,6 +34,7 @@ public class GameUI {
   private BufferedImage heartHalf;
   private BufferedImage heartQuarter;
   private BufferedImage heartEmpty;
+  private BufferedImage coinIcon;
   private boolean showStatsWindow = false;
   private String centerMessage = "";
   private long centerMessageStartTime = 0;
@@ -54,6 +54,7 @@ public class GameUI {
     dogicaFont_16 = FontManager.getFont(16f);
 
     loadHeartImages();
+    loadCoinIcon();
     
     // Inicializar InventoryUI
     this.inventoryUI = new InventoryUI(gamePanel);
@@ -105,6 +106,18 @@ public class GameUI {
       heartEmpty = ImageIO.read(getClass().getResourceAsStream("/ui/hearth-05.png"));
     } catch (Exception e) {
       System.err.println("Erro ao carregar imagens dos corações: " + e.getMessage());
+      e.printStackTrace();
+    }
+  }
+
+  /**
+   * Carrega o ícone da moeda.
+   */
+  private void loadCoinIcon() {
+    try {
+      coinIcon = ImageIO.read(getClass().getResourceAsStream("/ui/coin.png"));
+    } catch (Exception e) {
+      System.err.println("Erro ao carregar ícone da moeda: " + e.getMessage());
       e.printStackTrace();
     }
   }
@@ -179,13 +192,49 @@ public class GameUI {
     graphics2D.setFont(dogicaFont_16);
 
     int x = 20;
-    int y = 30;
+    int y = 15; // Movido mais para cima (era 20)
     int heartSize = 24;
 
     drawHearts(graphics2D, x, y, player.getAttributeHealth(), heartSize);
 
     graphics2D.setColor(Color.WHITE);
     graphics2D.drawString("Level " + player.getCurrentLevel(), x, y + heartSize + 15);
+    
+    // Desenhar dinheiro do jogador no canto superior direito
+    drawPlayerMoney(graphics2D);
+  }
+
+  /**
+   * Desenha o dinheiro do jogador no canto superior direito.
+   * @param graphics2D Contexto gráfico.
+   */
+  private void drawPlayerMoney(Graphics2D graphics2D) {
+    var player = gamePanel.getPlayer();
+    if (player == null) return;
+
+    graphics2D.setFont(dogicaFont_16);
+    
+    int screenWidth = gamePanel.getWidth();
+    int iconSize = 40;
+    int padding = 20;
+    
+    // Calcular posição no canto superior direito
+    String moneyText = player.getPlayerMoney().getMoneyDisplay();
+    FontMetrics fm = graphics2D.getFontMetrics();
+    int textWidth = fm.stringWidth(moneyText);
+    
+    int totalWidth = iconSize + 5 + textWidth; // ícone + espaçamento + texto
+    int x = screenWidth - totalWidth - padding;
+    int y = 15;
+    
+    // Desenhar ícone da moeda (centralizado com os corações)
+    if (coinIcon != null) {
+      graphics2D.drawImage(coinIcon, x, y, iconSize, iconSize, null);
+    }
+    
+    // Desenhar texto do dinheiro (melhor alinhado com o ícone)
+    graphics2D.setColor(Color.WHITE);
+    graphics2D.drawString(moneyText, x + iconSize + 5, y + iconSize/2 + 5);
   }
 
   /**

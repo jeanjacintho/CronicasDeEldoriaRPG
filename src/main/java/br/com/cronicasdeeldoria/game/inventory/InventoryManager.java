@@ -44,12 +44,15 @@ public class InventoryManager {
             for (int i = 0; i < TOTAL_INVENTORY_SLOTS; i++) {
                 Item existingItem = inventorySlots.get(i);
                 if (existingItem != null && item.canStackWith(existingItem)) {
+                    // Empilhar diretamente no item existente
                     int stacked = existingItem.stackItem(item);
+                    
                     if (stacked > 0) {
                         // Se o item foi completamente empilhado, retornar true
                         if (item.getStackSize() == 0) {
                             return true;
                         }
+                        // Se ainda há itens para empilhar, continuar com o próximo slot
                     }
                 }
             }

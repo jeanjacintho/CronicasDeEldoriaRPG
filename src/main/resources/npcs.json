@@ -34,5 +34,65 @@
     "dialog": "Lute comigo, verme!",
     "type": "enemy",
     "skin": "skeleton"
+  },
+  {
+    "id": "merchant",
+    "name": "Comerciante",
+    "isStatic": true,
+    "interactive": true,
+    "autoInteraction": false,
+    "dialog": "Bem-vindo à minha loja!",
+    "type": "merchant",
+    "skin": "guardiao",
+    "itemProbabilities": [
+      {
+        "itemId": "health_potion",
+        "minQuantity": 1,
+        "maxQuantity": 5,
+        "probability": 0.8
+      },
+      {
+        "itemId": "mana_potion",
+        "minQuantity": 1,
+        "maxQuantity": 4,
+        "probability": 0.7
+      },
+      {
+        "itemId": "sword_common",
+        "minQuantity": 1,
+        "maxQuantity": 2,
+        "probability": 0.6
+      },
+      {
+        "itemId": "sword_uncommon",
+        "minQuantity": 1,
+        "maxQuantity": 1,
+        "probability": 0.3
+      },
+      {
+        "itemId": "bow_common",
+        "minQuantity": 1,
+        "maxQuantity": 2,
+        "probability": 0.5
+      },
+      {
+        "itemId": "key_common",
+        "minQuantity": 1,
+        "maxQuantity": 3,
+        "probability": 0.4
+      },
+      {
+        "itemId": "key_legendary",
+        "minQuantity": 1,
+        "maxQuantity": 1,
+        "probability": 0.1
+      },
+      {
+        "itemId": "lamp",
+        "minQuantity": 1,
+        "maxQuantity": 2,
+        "probability": 0.6
+      }
+    ]
   }
 ]

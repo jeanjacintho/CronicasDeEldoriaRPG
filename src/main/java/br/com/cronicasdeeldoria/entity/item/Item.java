@@ -20,6 +20,30 @@ public class Item extends Entity {
     private ObjectSpriteLoader.ObjectDefinition objectDefinition;
     
     /**
+     * Construtor simples para criar um item de inventário (sem posição no mundo).
+     * @param itemId ID único do item.
+     * @param name Nome do item.
+     * @param itemType Tipo do item.
+     * @param rarity Raridade do item.
+     * @param description Descrição do item.
+     * @param value Valor em moedas.
+     * @param stackable Se o item pode ser empilhado.
+     */
+    public Item(String itemId, String name, ItemType itemType, ItemRarity rarity, 
+                String description, int value, boolean stackable) {
+        super(0, 0, 0, "none", name);
+        this.itemId = itemId;
+        this.itemType = itemType;
+        this.rarity = rarity;
+        this.description = description;
+        this.value = value;
+        this.stackable = stackable;
+        this.maxStackSize = stackable ? 99 : 1;
+        this.stackSize = 1;
+        this.objectDefinition = null;
+    }
+    
+    /**
      * Construtor para criar um item.
      * @param itemId ID único do item.
      * @param name Nome do item.
