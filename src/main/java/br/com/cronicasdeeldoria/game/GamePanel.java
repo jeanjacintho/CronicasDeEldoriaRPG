@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.ArrayList;
 
 import br.com.cronicasdeeldoria.entity.Entity;
+import br.com.cronicasdeeldoria.game.inventory.InventoryManager;
 /**
  * Painel principal do jogo, responsável pelo loop de atualização, renderização e gerenciamento dos elementos do jogo.
  */
@@ -54,16 +55,18 @@ public class GamePanel extends JPanel implements Runnable{
   private int maxScreenCol;
   private TileManager tileManager;
   private List<Npc> npcs = new ArrayList<>();
-  private br.com.cronicasdeeldoria.entity.character.npc.NpcSpriteLoader npcSpriteLoader;
-  private br.com.cronicasdeeldoria.entity.object.ObjectManager objectManager;
-  private br.com.cronicasdeeldoria.game.ui.GameUI gameUI;
+  private NpcSpriteLoader npcSpriteLoader;
+  private ObjectManager objectManager;
+  private GameUI gameUI;
   private KeyboardMapper keyboardMapper;
   private InteractionManager interactionManager;
+  private InventoryManager inventoryManager;
 
   // Sistema de batalha
   public int gameState;
   public final int playState = 1;
   public final int battleState = 2;
+  public final int inventoryState = 3;
   public Npc battleMonster = null;
   public Battle battle;
 
@@ -219,10 +222,23 @@ public class GamePanel extends JPanel implements Runnable{
         if (!this.hasFocus()) {
           this.requestFocusInWindow();
         }
+        
+        // Controle do inventário
+        if (keyHandler.inventoryPressed) {
+          inventoryManager.toggleVisibility();
+          if (inventoryManager.isVisible()) {
+            gameState = inventoryState;
+          }
+          keyHandler.inventoryPressed = false;
+        }
       }
 
       if (gameState == battleState) {
         updateBattle();
+      }
+      
+      if (gameState == inventoryState) {
+        updateInventory();
       }
     }
 
@@ -321,12 +337,11 @@ public class GamePanel extends JPanel implements Runnable{
         // Verificar interação com objetos
         if (objectManager != null) {
             for (MapObject obj : objectManager.getActiveObjects()) {
-                if (obj.isInteractive()) {
+                if (obj.isInteractive() && obj.isActive()) {
                     // Verificar auto-interação
                     if (obj.isAutoInteraction()) {
                         // Para objetos com auto-interação, verificar colisão real
                         if (isPlayerCollidingWithObject(player, obj)) {
-                            System.out.println("AUTO-INTERAÇÃO com objeto: " + obj.getName());
                             obj.interact(player);
                         }
                     } else {
@@ -463,7 +478,7 @@ public class GamePanel extends JPanel implements Runnable{
         // Verificar interação com objetos
         if (objectManager != null) {
             for (MapObject obj : objectManager.getActiveObjects()) {
-                if (obj.isInteractive()) {
+                if (obj.isInteractive() && obj.isActive()) {
                     boolean shouldInteract = false;
 
                     if (obj.isAutoInteraction()) {
@@ -536,11 +551,13 @@ public class GamePanel extends JPanel implements Runnable{
         // Renderizar teclas de interação para objetos
         if (objectManager != null && interactionManager != null) {
             for (MapObject obj : objectManager.getActiveObjects()) {
-                interactionManager.renderInteractionKeyForEntity(graphics2D,
-                    obj.getWorldX(), obj.getWorldY(),
-                    obj.getWorldX() - player.getWorldX() + player.getScreenX(),
-                    obj.getWorldY() - player.getWorldY() + player.getScreenY(),
-                    "object", tileSize);
+                if (obj.isActive()) {
+                    interactionManager.renderInteractionKeyForEntity(graphics2D,
+                        obj.getWorldX(), obj.getWorldY(),
+                        obj.getWorldX() - player.getWorldX() + player.getScreenX(),
+                        obj.getWorldY() - player.getWorldY() + player.getScreenY(),
+                        "object", tileSize);
+                }
             }
         }
 
@@ -571,9 +588,58 @@ public class GamePanel extends JPanel implements Runnable{
       } else if (gameState == battleState) {
         // Desenhar interface de batalha
         gameUI.drawBattleUI(graphics2D);
+      } else if (gameState == inventoryState) {
+        // Desenhar interface do inventário
+        gameUI.drawInventoryUI(graphics2D, inventoryManager);
       }
       graphics2D.dispose();
     }
+
+  // Sistema de inventário
+  private void updateInventory() {
+    if (inventoryManager == null) return;
+    
+    // Controles do inventário
+    if (keyHandler.upPressed) {
+      inventoryManager.moveUp();
+      keyHandler.upPressed = false;
+    }
+    if (keyHandler.downPressed) {
+      inventoryManager.moveDown();
+      keyHandler.downPressed = false;
+    }
+    if (keyHandler.leftPressed) {
+      inventoryManager.moveLeft();
+      keyHandler.leftPressed = false;
+    }
+    if (keyHandler.rightPressed) {
+      inventoryManager.moveRight();
+      keyHandler.rightPressed = false;
+    }
+    
+    // TAB para alternar entre inventário e equipamento
+    if (keyHandler.tabPressed) {
+      inventoryManager.toggleMode();
+      keyHandler.tabPressed = false;
+    }
+    
+    // ENTER para equipar/desequipar
+    if (keyHandler.actionPressed) {
+      if (inventoryManager.isInInventoryMode()) {
+        inventoryManager.equipSelectedItem();
+      } else {
+        inventoryManager.unequipSelectedItem();
+      }
+      keyHandler.actionPressed = false;
+    }
+    
+    // I para fechar inventário
+    if (keyHandler.inventoryPressed) {
+      inventoryManager.toggleVisibility();
+      gameState = playState;
+      keyHandler.inventoryPressed = false;
+    }
+  }
 
   // Batalha por turnos
   private void updateBattle() {
@@ -662,6 +728,10 @@ public class GamePanel extends JPanel implements Runnable{
     public NpcSpriteLoader getNpcSpriteLoader() {
       return npcSpriteLoader;
     }
+    
+    public InventoryManager getInventoryManager() {
+      return inventoryManager;
+    }
 
       /**
    * Inicializa componentes do jogo (NPCs e objetos).
@@ -669,6 +739,9 @@ public class GamePanel extends JPanel implements Runnable{
   private void initializeGameComponents() {
     // Inicializar GameUI
     this.gameUI = new GameUI(this);
+    
+    // Inicializar InventoryManager
+    this.inventoryManager = new InventoryManager();
 
     // Inicializar sistema de interação
     initializeInteractionSystem();

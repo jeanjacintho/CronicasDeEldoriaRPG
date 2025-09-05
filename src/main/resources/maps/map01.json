@@ -6377,14 +6377,63 @@
       "name": "Items",
       "tiles": [
         {
-          "id": "key",
+          "id": "health_potion",
+          "x": 17,
+          "y": 11
+        },
+        {
+          "id": "mana_potion",
+          "x": 18,
+          "y": 11
+        },
+        {
+          "id": "shield_common",
+          "x": 18,
+          "y": 11
+        },
+        {
+          "id": "lamp",
+          "x": 19,
+          "y": 11
+        },
+        {
+          "id": "hammer_common",
+          "x": 20,
+          "y": 11
+        },
+        {
+          "id": "bow_common",
+          "x": 21,
+          "y": 11
+        },
+        {
+          "id": "armor_common",
+          "x": 22,
+          "y": 11
+        },
+        {
+          "id": "axe_common",
+          "x": 23,
+          "y": 11
+        },
+        {
+          "id": "key_common",
           "x": 24,
           "y": 11
         },
         {
-          "id": "boots",
+          "id": "ring_common",
+          "x": 25,
+          "y": 11
+        },
+        {
+          "id": "boots_speed",
           "x": 15,
           "y": 16
+        },
+        {"id": "sword_common",
+          "x": 26,
+          "y": 11
         },
         {
           "id": "chest",
@@ -6392,7 +6441,7 @@
           "y": 18
         },
         {
-          "id": "key",
+          "id": "key_legendary",
           "x": 18,
           "y": 22
         }

@@ -8,7 +8,9 @@ import java.awt.event.KeyListener;
  */
 public class KeyHandler implements KeyListener {
     public boolean actionPressed, upPressed, downPressed, leftPressed, rightPressed, xPressed, zPressed, qPressed;
-    public boolean rPressed, fPressed, gPressed, hPressed, tPressed, specialPressed, attackPressed, defendPressed, escapePressed, healthPressed, manaPressed;
+    public boolean rPressed, fPressed, gPressed, hPressed, tPressed, specialPressed, attackPressed, defendPressed, escapePressed;
+    public boolean healthPressed, manaPressed;
+    public boolean inventoryPressed, tabPressed;
 
     /**
      * Evento chamado quando uma tecla é digitada.
@@ -39,6 +41,8 @@ public class KeyHandler implements KeyListener {
             case KeyEvent.VK_G: gPressed = true; break;
             case KeyEvent.VK_H: hPressed = true; break;
             //case KeyEvent.VK_T: tPressed = true; break;
+            case KeyEvent.VK_I: inventoryPressed = true; break;
+            case KeyEvent.VK_TAB: tabPressed = true; break;
 
             // Key de batalha
             case KeyEvent.VK_1: specialPressed = true; break;
@@ -59,19 +63,23 @@ public class KeyHandler implements KeyListener {
     public void keyReleased(KeyEvent e) {
         int code = e.getKeyCode();
         switch (code) {
-          case KeyEvent.VK_W: upPressed = false; break;
-          case KeyEvent.VK_S: downPressed = false; break;
-          case KeyEvent.VK_A: leftPressed = false; break;
-          case KeyEvent.VK_D: rightPressed = false; break;
-          case KeyEvent.VK_E: actionPressed = false; break;
-          case KeyEvent.VK_X: xPressed = false; break;
-          case KeyEvent.VK_Z: zPressed = false; break;
-          case KeyEvent.VK_Q: qPressed = false; break;
-          case KeyEvent.VK_R: rPressed = false; break;
-          case KeyEvent.VK_F: fPressed = false; break;
-          case KeyEvent.VK_G: gPressed = false; break;
-          case KeyEvent.VK_H: hPressed = false; break;
-          //case KeyEvent.VK_T: tPressed = false; break;
+
+            case KeyEvent.VK_W: upPressed = false; break;
+            case KeyEvent.VK_S: downPressed = false; break;
+            case KeyEvent.VK_A: leftPressed = false; break;
+            case KeyEvent.VK_D: rightPressed = false; break;
+            case KeyEvent.VK_E: actionPressed = false; break;
+            case KeyEvent.VK_X: xPressed = false; break;
+            case KeyEvent.VK_Z: zPressed = false; break;
+            case KeyEvent.VK_Q: qPressed = false; break;
+            case KeyEvent.VK_R: rPressed = false; break;
+            case KeyEvent.VK_F: fPressed = false; break;
+            case KeyEvent.VK_G: gPressed = false; break;
+            case KeyEvent.VK_H: hPressed = false; break;
+            //case KeyEvent.VK_T: tPressed = false; break;
+            case KeyEvent.VK_I: inventoryPressed = false; break;
+            case KeyEvent.VK_TAB: tabPressed = false; break;
+
 
           // Batalha
           case KeyEvent.VK_1: specialPressed = false; break;
