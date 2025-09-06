@@ -41,7 +41,7 @@ public class CreatePlayerPanel extends JPanel implements ActionListener {
   private final int maxScreenRow;
   private final int maxScreenCol;
   private JTextField nameField;
-  private JToggleButton rangerButton, barbarianButton, paladinButton, mageButton, orcButton;
+  private JToggleButton rangerButton, barbarianButton, paladinButton, mageButton;
   private ButtonGroup classGroup;
   private JButton startGameButton;
   private JButton backButton;
@@ -325,7 +325,6 @@ public class CreatePlayerPanel extends JPanel implements ActionListener {
       GamePanel gamePanel = new GamePanel(screenWidth, screenHeight, playerName, characterClass, tileSize, maxScreenRow, maxScreenCol);
       window.add(gamePanel);
       gamePanel.startGameThread();
-      gamePanel.setupGame();
       window.revalidate();
       window.repaint();
       gamePanel.requestFocusInWindow();

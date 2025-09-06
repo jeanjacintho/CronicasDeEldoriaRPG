@@ -14,6 +14,7 @@ public class Npc extends Character {
     protected String skin;
     protected boolean interactive;
     protected boolean autoInteraction;
+    protected int dialogId; // ID do diálogo inicial do NPC
     private int actionCounter = 0;
     private int actionInterval = 120;
     private int spriteCounter = 0;
@@ -39,6 +40,7 @@ public class Npc extends Character {
         this.skin = skin;
         this.interactive = interactive;
         this.autoInteraction = autoInteraction;
+        this.dialogId = 0; // Diálogo padrão
         int hitboxWidth = 32;
         int hitboxHeight = 36;
         int hitboxX = (playerSize - hitboxWidth) / 2;
@@ -47,7 +49,47 @@ public class Npc extends Character {
     }
 
     /**
-     * Interage com o NPC, exibindo seu diálogo.
+     * Cria um novo NPC com ID de diálogo específico.
+     * @param name Nome do NPC.
+     * @param isStatic Indica se o NPC é estático.
+     * @param dialog Diálogo do NPC.
+     * @param x Posição X.
+     * @param y Posição Y.
+     * @param skin Skin do NPC.
+     * @param playerSize Tamanho do jogador (para hitbox).
+     * @param interactive Indica se o NPC é interativo.
+     * @param autoInteraction Indica se a interação é automática.
+     * @param dialogId ID do diálogo inicial.
+     */
+    public Npc(String name, boolean isStatic, String dialog, int x, int y, String skin, int playerSize, boolean interactive, boolean autoInteraction, int dialogId) {
+        super(x, y, 1, "down", name, null, 50, 50, 0, 0, 12, 10, 6);
+        this.isStatic = isStatic;
+        this.dialog = dialog;
+        this.skin = skin;
+        this.interactive = interactive;
+        this.autoInteraction = autoInteraction;
+        this.dialogId = dialogId;
+        int hitboxWidth = 32;
+        int hitboxHeight = 36;
+        int hitboxX = (playerSize - hitboxWidth) / 2;
+        int hitboxY = playerSize / 2;
+        this.setHitbox(new java.awt.Rectangle(hitboxX, hitboxY, hitboxWidth, hitboxHeight));
+    }
+
+    /**
+     * Interage com o NPC, iniciando o diálogo.
+     * @param gamePanel Painel do jogo para acessar o DialogManager
+     */
+    public void interact(GamePanel gamePanel) {
+        if (interactive && gamePanel.getDialogManager() != null) {
+            if (dialogId > 0) {
+                gamePanel.getDialogManager().startDialog(dialogId);
+            }
+        }
+    }
+
+    /**
+     * Interage com o NPC, exibindo seu diálogo (método legado).
      */
     public void interact() {
         if (interactive) {
@@ -235,4 +277,6 @@ public class Npc extends Character {
     public void setStatic(boolean isStatic) { this.isStatic = isStatic; }
     public String getDialog() { return dialog; }
     public void setDialog(String dialog) { this.dialog = dialog; }
+    public int getDialogId() { return dialogId; }
+    public void setDialogId(int dialogId) { this.dialogId = dialogId; }
 }

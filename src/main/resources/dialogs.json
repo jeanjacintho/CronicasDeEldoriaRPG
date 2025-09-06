@@ -1,0 +1,396 @@
+[
+  {
+    "id": 1,
+    "speakerName": "Guardião",
+    "text": "Bem-vindo à vila de Eldoria! Eu sou o guardião desta região. Como posso ajudá-lo hoje?",
+    "portraitSprite": "guardiao",
+    "options": [
+      {
+        "text": "Você pode me contar sobre esta vila?",
+        "nextDialogId": 2
+      },
+      {
+        "text": "Há algum perigo por aqui?",
+        "nextDialogId": 3
+      },
+      {
+        "text": "Preciso de ajuda para minha jornada.",
+        "nextDialogId": 5
+      },
+      {
+        "text": "Obrigado pela informação.",
+        "nextDialogId": -1
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "speakerName": "Guardião",
+    "text": "Eldoria é uma vila pacífica, mas ultimamente temos tido problemas com criaturas selvagens nas florestas próximas. Os comerciantes estão com medo de viajar.",
+    "portraitSprite": "guardiao",
+    "options": [
+      {
+        "text": "Posso ajudar com essas criaturas?",
+        "nextDialogId": 4
+      },
+      {
+        "text": "Onde posso encontrar equipamentos?",
+        "nextDialogId": 5
+      },
+      {
+        "text": "Entendi. Obrigado.",
+        "nextDialogId": -1
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "speakerName": "Guardião",
+    "text": "Sim, há lobos selvagens e esqueletos amaldiçoados nas florestas. Eles atacam qualquer um que se aproxime. Seja cauteloso se decidir explorar.",
+    "portraitSprite": "guardiao",
+    "options": [
+      {
+        "text": "Como posso me preparar para enfrentá-los?",
+        "nextDialogId": 5
+      },
+      {
+        "text": "Obrigado pelo aviso.",
+        "nextDialogId": -1
+      }
+    ]
+  },
+  {
+    "id": 4,
+    "speakerName": "Guardião",
+    "text": "Que coragem! Se você conseguir eliminar essas ameaças, a vila ficará muito grata. Aqui está uma poção de cura para ajudá-lo em sua jornada.",
+    "portraitSprite": "guardiao",
+    "options": [
+      {
+        "text": "Obrigado! Farei o meu melhor.",
+        "nextDialogId": -1,
+        "actionType": "give_item",
+        "actionData": "health_potion"
+      }
+    ]
+  },
+  {
+    "id": 5,
+    "speakerName": "Guardião",
+    "text": "Visite o comerciante na praça central. Ele tem armas e armaduras que podem ajudá-lo. Também há poções de cura e mana disponíveis.",
+    "portraitSprite": "guardiao",
+    "options": [
+      {
+        "text": "Onde fica a praça central?",
+        "nextDialogId": 6
+      },
+      {
+        "text": "Obrigado pela informação.",
+        "nextDialogId": -1
+      }
+    ]
+  },
+  {
+    "id": 6,
+    "speakerName": "Guardião",
+    "text": "Continue seguindo este caminho e você encontrará a praça central. O comerciante está sempre lá, mesmo durante os ataques das criaturas.",
+    "portraitSprite": "guardiao",
+    "options": [
+      {
+        "text": "Perfeito! Vou até lá.",
+        "nextDialogId": -1
+      }
+    ]
+  },
+  {
+    "id": 10,
+    "speakerName": "Guerreiro Contratável",
+    "text": "Olá, aventureiro! Sou um guerreiro experiente e posso lutar ao seu lado... por um preço, é claro.",
+    "portraitSprite": "barbarian",
+    "options": [
+      {
+        "text": "Quanto você cobra pelos seus serviços?",
+        "nextDialogId": 11
+      },
+      {
+        "text": "Que tipo de ajuda você pode oferecer?",
+        "nextDialogId": 12
+      },
+      {
+        "text": "Não preciso de ajuda agora.",
+        "nextDialogId": -1
+      }
+    ]
+  },
+  {
+    "id": 11,
+    "speakerName": "Guerreiro Contratável",
+    "text": "Por 50 moedas, posso acompanhá-lo em uma batalha e aumentar significativamente suas chances de vitória. É um investimento que vale a pena!",
+    "portraitSprite": "barbarian",
+    "options": [
+      {
+        "text": "Aceito! Aqui estão suas 50 moedas.",
+        "nextDialogId": 13,
+        "actionType": "take_money",
+        "actionData": "50",
+        "requirementType": "money",
+        "requirementData": "50"
+      },
+      {
+        "text": "Muito caro para mim agora.",
+        "nextDialogId": -1
+      }
+    ]
+  },
+  {
+    "id": 12,
+    "speakerName": "Guerreiro Contratável",
+    "text": "Posso aumentar sua força de ataque em 50% durante uma batalha, além de absorver parte do dano que você receberia. Sou especialista em combate corpo a corpo.",
+    "portraitSprite": "barbarian",
+    "options": [
+      {
+        "text": "Interessante! Quanto custa?",
+        "nextDialogId": 11
+      },
+      {
+        "text": "Vou considerar sua oferta.",
+        "nextDialogId": -1
+      }
+    ]
+  },
+  {
+    "id": 13,
+    "speakerName": "Guerreiro Contratável",
+    "text": "Excelente! Você fez uma escolha sábia. Estarei pronto para lutar ao seu lado quando você precisar. Boa sorte em suas aventuras!",
+    "portraitSprite": "barbarian",
+    "options": [
+      {
+        "text": "Obrigado! Até logo.",
+        "nextDialogId": -1
+      }
+    ]
+  },
+  {
+    "id": 20,
+    "speakerName": "Comerciante",
+    "text": "Bem-vindo à minha loja! Tenho os melhores equipamentos e poções da região. O que posso fazer por você hoje?",
+    "portraitSprite": "guardiao",
+    "options": [
+      {
+        "text": "Quero ver suas mercadorias.",
+        "nextDialogId": 21,
+        "actionType": "open_merchant",
+        "actionData": ""
+      },
+      {
+        "text": "Você tem poções de cura?",
+        "nextDialogId": 22
+      },
+      {
+        "text": "Apenas olhando por enquanto.",
+        "nextDialogId": -1
+      }
+    ]
+  },
+  {
+    "id": 21,
+    "speakerName": "Comerciante",
+    "text": "Perfeito! Aqui estão todas as minhas mercadorias. Escolha com sabedoria!",
+    "portraitSprite": "guardiao",
+    "options": [
+      {
+        "text": "Obrigado!",
+        "nextDialogId": -1
+      }
+    ]
+  },
+  {
+    "id": 22,
+    "speakerName": "Comerciante",
+    "text": "Claro! Tenho poções de cura de diferentes qualidades. As básicas custam 10 moedas, mas também tenho versões mais potentes. Quer ver todas as opções?",
+    "portraitSprite": "guardiao",
+    "options": [
+      {
+        "text": "Sim, quero ver tudo!",
+        "nextDialogId": 21,
+        "actionType": "open_merchant",
+        "actionData": ""
+      },
+      {
+        "text": "Talvez mais tarde.",
+        "nextDialogId": -1
+      }
+    ]
+  },
+  {
+    "id": 5,
+    "speakerName": "Guardião",
+    "text": "Claro! Como guardião desta região, posso ajudá-lo com alguns suprimentos básicos. Aqui está uma poção de vida para sua jornada.",
+    "portraitSprite": "guardiao",
+    "options": [
+      {
+        "text": "Muito obrigado!",
+        "nextDialogId": 1,
+        "givesItem": true,
+        "itemId": "health_potion",
+        "itemQuantity": 2
+      },
+      {
+        "text": "Você tem mais alguma coisa?",
+        "nextDialogId": 6
+      }
+    ]
+  },
+  {
+    "id": 6,
+    "speakerName": "Guardião",
+    "text": "Infelizmente, só posso oferecer isso por enquanto. Mas se você ajudar nossa vila com as criaturas selvagens, posso recompensá-lo melhor!",
+    "portraitSprite": "guardiao",
+    "options": [
+      {
+        "text": "Entendi. Obrigado mesmo assim.",
+        "nextDialogId": 1,
+        "givesItem": true,
+        "itemId": "mana_potion",
+        "itemQuantity": 1
+      },
+      {
+        "text": "Voltarei quando precisar de mais ajuda.",
+        "nextDialogId": -1
+      }
+    ]
+  },
+  {
+    "id": 20,
+    "speakerName": "Comerciante",
+    "text": "Bem-vindo à minha loja! Tenho os melhores itens da região. Como posso ajudá-lo hoje?",
+    "portraitSprite": "guardiao",
+    "options": [
+      {
+        "text": "Gostaria de ver seus itens para compra.",
+        "nextDialogId": 21,
+        "actionType": "open_merchant",
+        "actionData": ""
+      },
+      {
+        "text": "Você compra itens também?",
+        "nextDialogId": 22
+      },
+      {
+        "text": "Apenas olhando por enquanto.",
+        "nextDialogId": 23
+      },
+      {
+        "text": "Até logo!",
+        "nextDialogId": -1
+      }
+    ]
+  },
+  {
+    "id": 21,
+    "speakerName": "Comerciante",
+    "text": "Perfeito! Aqui estão meus melhores produtos. Escolha com sabedoria!",
+    "portraitSprite": "guardiao",
+    "options": [
+      {
+        "text": "Voltar ao menu principal",
+        "nextDialogId": 20
+      }
+    ]
+  },
+  {
+    "id": 22,
+    "speakerName": "Comerciante",
+    "text": "Claro! Estou sempre interessado em comprar itens de qualidade. Traga-me qualquer item que você não precise e eu pagarei um preço justo.",
+    "portraitSprite": "guardiao",
+    "options": [
+      {
+        "text": "Ótimo! Vou trazer alguns itens.",
+        "nextDialogId": 20
+      },
+      {
+        "text": "Que tipos de itens você compra?",
+        "nextDialogId": 24
+      },
+      {
+        "text": "Voltar ao menu principal",
+        "nextDialogId": 20
+      }
+    ]
+  },
+  {
+    "id": 23,
+    "speakerName": "Comerciante",
+    "text": "Sem problemas! Fique à vontade para olhar. Se precisar de algo, é só me chamar!",
+    "portraitSprite": "guardiao",
+    "options": [
+      {
+        "text": "Obrigado pela hospitalidade.",
+        "nextDialogId": 20
+      },
+      {
+        "text": "Na verdade, vou dar uma olhada nos seus itens.",
+        "nextDialogId": 21,
+        "actionType": "open_merchant",
+        "actionData": ""
+      }
+    ]
+  },
+  {
+    "id": 24,
+    "speakerName": "Comerciante",
+    "text": "Compro praticamente tudo! Armas, armaduras, poções, chaves, joias... Qualquer item que tenha valor. Quanto mais raro, melhor o preço que ofereço!",
+    "portraitSprite": "guardiao",
+    "options": [
+      {
+        "text": "Entendi! Vou trazer alguns itens.",
+        "nextDialogId": 20
+      },
+      {
+        "text": "Voltar ao menu principal",
+        "nextDialogId": 20
+      }
+    ]
+  },
+  {
+    "id": 25,
+    "speakerName": "Mago Viajante",
+    "text": "Olá, aventureiro! Eu sou um mago viajante e posso te ajudar com teleportes mágicos. Para onde gostaria de ir?",
+    "portraitSprite": "mage",
+    "options": [
+      {
+        "text": "Me leve para a Vila de Eldoria",
+        "action": "teleport",
+        "actionData": "vila_eldoria:center",
+        "nextDialogId": -1
+      },
+      {
+        "text": "Me leve para a Casa do Aldeão",
+        "action": "teleport", 
+        "actionData": "casa_01:entrance",
+        "nextDialogId": -1
+      },
+      {
+        "text": "Me leve para a Floresta Encantada",
+        "action": "teleport",
+        "actionData": "forest:entrance", 
+        "nextDialogId": -1
+      },
+      {
+        "text": "Me teleporte para o centro da vila",
+        "action": "teleport",
+        "actionData": "272,272",
+        "nextDialogId": -1
+      },
+      {
+        "text": "Me teleporte para outro mapa",
+        "action": "teleport",
+        "actionData": "house01_map01,96,96",
+        "nextDialogId": -1
+      },
+      {
+        "text": "Não, obrigado",
+        "nextDialogId": -1
+      }
+    ]
+  }
+]

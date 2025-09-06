@@ -5,7 +5,10 @@
     "isStatic": false,
     "dialog": "Bem-vindo à vila!",
     "type": "npc",
-    "skin": "guardiao"
+    "skin": "guardiao",
+    "interactive": true,
+    "autoInteraction": false,
+    "dialogId": 1
   },
   {
     "id": "barbarian",
@@ -13,7 +16,10 @@
     "isStatic": true,
     "dialog": "Posso lutar ao seu lado por algumas moedas.",
     "type": "npc",
-    "skin": "barbarian"
+    "skin": "barbarian",
+    "interactive": true,
+    "autoInteraction": false,
+    "dialogId": 10
   },
   {
     "id": "wolf",
@@ -44,6 +50,7 @@
     "dialog": "Bem-vindo à minha loja!",
     "type": "merchant",
     "skin": "guardiao",
+    "dialogId": 20,
     "itemProbabilities": [
       {
         "itemId": "health_potion",
