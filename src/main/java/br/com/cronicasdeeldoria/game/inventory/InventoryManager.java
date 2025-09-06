@@ -13,24 +13,24 @@ public class InventoryManager {
     private static final int INVENTORY_COLUMNS = 5;
     private static final int INVENTORY_ROWS = 4;
     private static final int TOTAL_INVENTORY_SLOTS = INVENTORY_COLUMNS * INVENTORY_ROWS;
-    
+
     private final List<Item> inventorySlots;
     private final Equipment equipment;
     private boolean isVisible = false;
     private int selectedRow = 0;
     private int selectedColumn = 0;
     private boolean inInventoryMode = true; // true = inventário, false = equipamento
-    
+
     public InventoryManager() {
         this.inventorySlots = new ArrayList<>();
         this.equipment = new Equipment();
-        
+
         // Inicializar slots vazios
         for (int i = 0; i < TOTAL_INVENTORY_SLOTS; i++) {
             inventorySlots.add(null);
         }
     }
-    
+
     /**
      * Adiciona um item ao inventário.
      * @param item Item a ser adicionado.
@@ -38,7 +38,7 @@ public class InventoryManager {
      */
     public boolean addItem(Item item) {
         if (item == null) return false;
-        
+
         // Tentar empilhar com item existente se possível
         if (item.isStackable()) {
             for (int i = 0; i < TOTAL_INVENTORY_SLOTS; i++) {
@@ -57,7 +57,7 @@ public class InventoryManager {
                 }
             }
         }
-        
+
         // Se ainda há itens para adicionar (não foram todos empilhados)
         if (item.getStackSize() > 0) {
             // Procurar slot vazio
@@ -68,10 +68,10 @@ public class InventoryManager {
                 }
             }
         }
-        
+
         return false;
     }
-    
+
     /**
      * Remove um item do inventário.
      * @param slotIndex Índice do slot.
@@ -79,12 +79,12 @@ public class InventoryManager {
      */
     public Item removeItem(int slotIndex) {
         if (slotIndex < 0 || slotIndex >= TOTAL_INVENTORY_SLOTS) return null;
-        
+
         Item item = inventorySlots.get(slotIndex);
         inventorySlots.set(slotIndex, null);
         return item;
     }
-    
+
     /**
      * Obtém um item do inventário.
      * @param slotIndex Índice do slot.
@@ -94,7 +94,7 @@ public class InventoryManager {
         if (slotIndex < 0 || slotIndex >= TOTAL_INVENTORY_SLOTS) return null;
         return inventorySlots.get(slotIndex);
     }
-    
+
     /**
      * Obtém o item no slot selecionado.
      * @return Item selecionado ou null se vazio.
@@ -107,48 +107,48 @@ public class InventoryManager {
             return equipment.getSelectedItem();
         }
     }
-    
+
     /**
      * Equipa o item selecionado.
      * @return true se o item foi equipado com sucesso.
      */
     public boolean equipSelectedItem() {
         if (!inInventoryMode) return false;
-        
+
         Item selectedItem = getSelectedItem();
         if (selectedItem == null || !selectedItem.isEquipable()) {
             return false;
         }
-        
+
         // Determinar slot de equipamento baseado no tipo
         Equipment.EquipmentSlot slot = getEquipmentSlotForItem(selectedItem);
         if (slot == null) return false;
-        
+
         // Tentar equipar
         Item previousItem = equipment.equipItem(slot, selectedItem);
-        
+
         // Se havia item equipado, adicionar de volta ao inventário
         if (previousItem != null) {
             addItem(previousItem);
         }
-        
+
         // Remover item do inventário
         int slotIndex = selectedRow * INVENTORY_COLUMNS + selectedColumn;
         removeItem(slotIndex);
-        
+
         return true;
     }
-    
+
     /**
      * Desequipa o item selecionado do equipamento.
      * @return true se o item foi desequipado com sucesso.
      */
     public boolean unequipSelectedItem() {
         if (inInventoryMode) return false;
-        
+
         Item selectedItem = equipment.getSelectedItem();
         if (selectedItem == null) return false;
-        
+
         // Tentar adicionar ao inventário
         if (addItem(selectedItem)) {
             equipment.unequipItem(equipment.getSelectedEquipmentSlot());
@@ -157,13 +157,13 @@ public class InventoryManager {
             return false;
         }
     }
-    
+
     /**
      * Determina o slot de equipamento apropriado para um item.
      */
     private Equipment.EquipmentSlot getEquipmentSlotForItem(Item item) {
         ItemType itemType = item.getItemType();
-        
+
         return switch (itemType) {
             case WEAPON -> Equipment.EquipmentSlot.WEAPON;
             case ARMOR -> Equipment.EquipmentSlot.ARMOR;
@@ -172,7 +172,7 @@ public class InventoryManager {
             default -> null;
         };
     }
-    
+
     /**
      * Navega para cima.
      */
@@ -185,7 +185,7 @@ public class InventoryManager {
             equipment.moveUp();
         }
     }
-    
+
     /**
      * Navega para baixo.
      */
@@ -198,7 +198,7 @@ public class InventoryManager {
             equipment.moveDown();
         }
     }
-    
+
     /**
      * Navega para a esquerda.
      */
@@ -209,7 +209,7 @@ public class InventoryManager {
             }
         }
     }
-    
+
     /**
      * Navega para a direita.
      */
@@ -220,14 +220,14 @@ public class InventoryManager {
             }
         }
     }
-    
+
     /**
      * Alterna entre modo inventário e equipamento.
      */
     public void toggleMode() {
         inInventoryMode = !inInventoryMode;
     }
-    
+
     /**
      * Alterna a visibilidade do inventário.
      */
@@ -241,24 +241,81 @@ public class InventoryManager {
             inInventoryMode = true;
         }
     }
-    
+
+  /**
+   * Verifica se um item está no inventário pelo ID.
+   *
+   * @param itemId ID único do item (ex: "healing_potion")
+   * @return true se o item estiver no inventário, false caso contrário.
+   */
+  public boolean hasItemById(String itemId) {
+    for (Item item : inventorySlots) {
+      if (item != null && item.getItemId().equals(itemId)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
+   * Conta a quantidade total de um item específico no inventário.
+   *
+   * @param itemId ID único do item (ex: "healing_potion")
+   * @return Quantidade total encontrada (0 se não existir).
+   */
+  public int countItemById(String itemId) {
+    int total = 0;
+    for (Item item : inventorySlots) {
+      if (item != null && item.getItemId().equals(itemId)) {
+        total += item.getStackSize();
+      }
+    }
+    return total;
+  }
+
+  /**
+   * Consome uma unidade de um item específico no inventário.
+   *
+   * @param itemId ID do item (ex: "healing_potion")
+   * @return true se o item foi consumido com sucesso, false se não havia.
+   */
+  public boolean consumeItem(String itemId) {
+    for (int i = 0; i < TOTAL_INVENTORY_SLOTS; i++) {
+      Item item = inventorySlots.get(i);
+
+      if (item != null && item.getItemId().equals(itemId)) {
+        // Reduz o tamanho da pilha
+        int newStack = item.getStackSize() - 1;
+
+        if (newStack > 0) {
+          item.setStackSize(newStack);
+        } else {
+          // Se chegou a 0, remove o item do slot
+          inventorySlots.set(i, null);
+        }
+        return true;
+      }
+    }
+    return false; // não encontrou o item
+  }
+
     // Getters
     public boolean isVisible() { return isVisible; }
     public void setVisible(boolean visible) { this.isVisible = visible; }
-    
+
     public boolean isInInventoryMode() { return inInventoryMode; }
     public void setInInventoryMode(boolean inInventoryMode) { this.inInventoryMode = inInventoryMode; }
-    
+
     public int getSelectedRow() { return selectedRow; }
     public int getSelectedColumn() { return selectedColumn; }
-    
+
     public int getInventoryColumns() { return INVENTORY_COLUMNS; }
     public int getInventoryRows() { return INVENTORY_ROWS; }
     public int getTotalInventorySlots() { return TOTAL_INVENTORY_SLOTS; }
-    
+
     public List<Item> getInventorySlots() { return new ArrayList<>(inventorySlots); }
     public Equipment getEquipment() { return equipment; }
-    
+
     /**
      * Verifica se o inventário está cheio.
      */
@@ -268,7 +325,7 @@ public class InventoryManager {
         }
         return true;
     }
-    
+
     /**
      * Conta quantos slots do inventário estão ocupados.
      */
@@ -279,7 +336,7 @@ public class InventoryManager {
         }
         return count;
     }
-    
+
     /**
      * Limpa todo o inventário.
      */
@@ -288,7 +345,7 @@ public class InventoryManager {
             inventorySlots.set(i, null);
         }
     }
-    
+
     /**
      * Limpa todo o equipamento.
      */

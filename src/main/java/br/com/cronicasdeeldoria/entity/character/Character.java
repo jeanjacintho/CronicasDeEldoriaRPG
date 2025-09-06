@@ -51,6 +51,11 @@ public class Character extends Entity {
     this.attributeArmor = attributeArmor;
   }
 
+  public boolean hasActiveBuff(String type) {
+    return activeBuffs.stream()
+      .anyMatch(b -> b.getType().equals(type) && b.isActive());
+  }
+
   public boolean canApplyBuff(String type) {
     // até 2 buffs diferentes ativos
     if (activeBuffs.size() >= 2) return false;
@@ -175,4 +180,8 @@ public class Character extends Entity {
   public int getAttributeArmor() { return attributeArmor; }
 
   public void setAttributeArmor(int attributeArmor) { this.attributeArmor = attributeArmor; }
+
+  public List<Buff> getActiveBuffs() { return activeBuffs; }
+
+  public void setActiveBuffs(List<Buff> activeBuffs) { this.activeBuffs = activeBuffs; }
 }

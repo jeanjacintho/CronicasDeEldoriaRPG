@@ -75,7 +75,7 @@ public class Battle {
 
     switch (action) {
       case "ATTACK": attack(player, monster); break;
-      case "DEFEND": defend(player); break;
+      case "DEFEND":defend(player); break;
       case "FLEE":
         if (flee(player)) {
           gp.endBattle(false);

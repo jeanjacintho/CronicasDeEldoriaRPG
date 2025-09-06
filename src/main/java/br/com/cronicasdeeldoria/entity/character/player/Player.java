@@ -115,18 +115,10 @@ public class Player extends Character {
 
       if(isCollisionOn() == false) {
         switch (getDirection()) {
-          case "up":
-            setWorldY(getWorldY() - getSpeed());
-            break;
-            case "down":
-            setWorldY(getWorldY() + getSpeed());
-            break;
-          case "left":
-            setWorldX(getWorldX() - getSpeed());
-            break;
-          case "right":
-            setWorldX(getWorldX() + getSpeed());
-            break;
+          case "up": setWorldY(getWorldY() - getSpeed()); break;
+          case "down": setWorldY(getWorldY() + getSpeed()); break;
+          case "left": setWorldX(getWorldX() - getSpeed()); break;
+          case "right": setWorldX(getWorldX() + getSpeed()); break;
         }
       }
 
