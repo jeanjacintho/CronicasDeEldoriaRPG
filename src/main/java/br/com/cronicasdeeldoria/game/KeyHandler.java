@@ -10,7 +10,7 @@ public class KeyHandler implements KeyListener {
     public boolean actionPressed, upPressed, downPressed, leftPressed, rightPressed, xPressed, zPressed, qPressed;
     public boolean rPressed, fPressed, gPressed, hPressed, tPressed, specialPressed, attackPressed, defendPressed, escapePressed;
     public boolean healthPressed, manaPressed;
-    public boolean inventoryPressed, tabPressed, escapeKeyPressed;
+    public boolean inventoryPressed, tabPressed, escapeKeyPressed, testDialogPressed, testNpcsPressed;
 
     /**
      * Evento chamado quando uma tecla é digitada.
@@ -40,6 +40,8 @@ public class KeyHandler implements KeyListener {
             case KeyEvent.VK_F: fPressed = true; break;
             case KeyEvent.VK_G: gPressed = true; break;
             case KeyEvent.VK_H: hPressed = true; break;
+            case KeyEvent.VK_T: testDialogPressed = true; break;
+            case KeyEvent.VK_Y: testNpcsPressed = true; break;
             //case KeyEvent.VK_T: tPressed = true; break;
             case KeyEvent.VK_I: inventoryPressed = true; break;
             case KeyEvent.VK_TAB: tabPressed = true; break;
@@ -77,6 +79,8 @@ public class KeyHandler implements KeyListener {
             case KeyEvent.VK_F: fPressed = false; break;
             case KeyEvent.VK_G: gPressed = false; break;
             case KeyEvent.VK_H: hPressed = false; break;
+            case KeyEvent.VK_T: testDialogPressed = false; break;
+            case KeyEvent.VK_Y: testNpcsPressed = false; break;
             //case KeyEvent.VK_T: tPressed = false; break;
             case KeyEvent.VK_I: inventoryPressed = false; break;
             case KeyEvent.VK_TAB: tabPressed = false; break;

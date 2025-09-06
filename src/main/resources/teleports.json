@@ -1,0 +1,52 @@
+{
+  "teleports": {
+    "vila_eldoria": {
+      "map": "map01",
+      "name": "Vila de Eldoria",
+      "description": "A cidade principal do reino",
+      "spawnPoints": {
+        "center": [272, 272],
+        "entrance": [160, 400],
+        "shop": [200, 200],
+        "inn": [300, 300]
+      }
+    },
+    "casa_01": {
+      "map": "house01_map01", 
+      "name": "Casa do Aldeão",
+      "description": "Uma casa simples na vila",
+      "spawnPoints": {
+        "entrance": [96, 96],
+        "center": [80, 80],
+        "bed": [120, 120]
+      }
+    },
+    "dungeon_01": {
+      "map": "dungeon01",
+      "name": "Caverna dos Goblins",
+      "description": "Uma caverna perigosa",
+      "spawnPoints": {
+        "entrance": [160, 160],
+        "boss_room": [240, 240],
+        "treasure": [200, 200]
+      }
+    },
+    "forest": {
+      "map": "forest01",
+      "name": "Floresta Encantada",
+      "description": "Uma floresta misteriosa",
+      "spawnPoints": {
+        "entrance": [128, 128],
+        "clearing": [200, 200],
+        "ancient_tree": [300, 300]
+      }
+    }
+  },
+  "quickTeleports": {
+    "home": "vila_eldoria,center",
+    "shop": "vila_eldoria,shop", 
+    "house": "casa_01,entrance",
+    "dungeon": "dungeon_01,entrance",
+    "forest": "forest,entrance"
+  }
+}

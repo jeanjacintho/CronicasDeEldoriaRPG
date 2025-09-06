@@ -32,7 +32,8 @@ import br.com.cronicasdeeldoria.entity.Entity;
 import br.com.cronicasdeeldoria.game.inventory.InventoryManager;
 import br.com.cronicasdeeldoria.game.merchant.MerchantManager;
 import br.com.cronicasdeeldoria.game.merchant.MerchantUI;
-import br.com.cronicasdeeldoria.entity.character.npc.MerchantNpc;
+import br.com.cronicasdeeldoria.game.dialog.DialogManager;
+import br.com.cronicasdeeldoria.game.dialog.DialogUI;
 /**
  * Painel principal do jogo, responsável pelo loop de atualização, renderização e gerenciamento dos elementos do jogo.
  */
@@ -62,20 +63,23 @@ public class GamePanel extends JPanel implements Runnable{
   private InventoryManager inventoryManager;
   private MerchantManager merchantManager;
   private MerchantUI merchantUI;
+  private DialogManager dialogManager;
+  private DialogUI dialogUI;
 
-  // Sistema de batalha
+  // Estados do jogo
   public int gameState;
   public final int playState = 1;
   public final int battleState = 2;
   public final int inventoryState = 3;
   public final int merchantState = 4;
+  public final int dialogState = 5;
+
   public Npc battleMonster = null;
   public Battle battle;
 
   // Cooldown para evitar re-engajamento imediato
   private long lastBattleEndTime = 0;
   private final long BATTLE_COOLDOWN = 1000; // 1 segundo de cooldown
-
 
   /**
    * Inicializa o painel do jogo com as configurações fornecidas.
@@ -158,11 +162,42 @@ public class GamePanel extends JPanel implements Runnable{
     // Inicializar sistema de comerciante após a criação do player
     this.merchantManager = new MerchantManager(inventoryManager, player.getPlayerMoney());
     this.merchantUI = new MerchantUI(this);
+    
+    // Inicializar sistema de diálogo
+    this.dialogManager = new DialogManager(this, player);
+    this.dialogUI = new DialogUI(this);
   }
 
-  public void setupGame() {
-    // Garantir que começa no estado de jogo
-    gameState = playState;
+  /**
+   * Método de teste para forçar a abertura de um diálogo
+   */
+  public void testDialog() {
+    if (dialogManager != null) {
+      boolean success = dialogManager.startDialog(1);
+      if (success) {
+        gameState = dialogState;
+        System.out.println("TESTE: Diálogo forçado com sucesso!");
+      } else {
+        System.out.println("TESTE: Falha ao forçar diálogo!");
+      }
+    } else {
+      System.out.println("TESTE: DialogManager é null!");
+    }
+  }
+
+  /**
+   * Método de teste para verificar NPCs carregados
+   */
+  public void testNpcs() {
+    System.out.println("TESTE: Verificando NPCs carregados...");
+    if (npcs != null) {
+      System.out.println("Total de NPCs: " + npcs.size());
+      for (Npc npc : npcs) {
+        System.out.println("NPC: " + npc.getName() + " - dialogId: " + npc.getDialogId() + " - Interativo: " + npc.isInteractive());
+      }
+    } else {
+      System.out.println("TESTE: Lista de NPCs é null!");
+    }
   }
 
   /**
@@ -238,6 +273,18 @@ public class GamePanel extends JPanel implements Runnable{
           }
           keyHandler.inventoryPressed = false;
         }
+
+        // Controle de teste de diálogo
+        if (keyHandler.testDialogPressed) {
+          testDialog();
+          keyHandler.testDialogPressed = false;
+        }
+
+        // Controle de teste de NPCs
+        if (keyHandler.testNpcsPressed) {
+          testNpcs();
+          keyHandler.testNpcsPressed = false;
+        }
       }
 
       if (gameState == battleState) {
@@ -247,8 +294,13 @@ public class GamePanel extends JPanel implements Runnable{
       if (gameState == inventoryState) {
         updateInventory();
       }
-      else if (gameState == merchantState) {
+
+      if (gameState == merchantState) {
         updateMerchant();
+      }
+
+      if (gameState == dialogState) {
+        updateDialog();
       }
     }
 
@@ -407,7 +459,8 @@ public class GamePanel extends JPanel implements Runnable{
      * Verifica se o jogador está próximo de um NPC (2 tiles).
      */
     private boolean isPlayerNearNpc(Player player, int entityX, int entityY) {
-        return isPlayerNearEntity(player, entityX, entityY, 2);
+        boolean isNear = isPlayerNearEntity(player, entityX, entityY, 2);
+        return isNear;
     }
 
     /**
@@ -477,13 +530,9 @@ public class GamePanel extends JPanel implements Runnable{
           for (Npc npc : npcs) {
             if (!(npc instanceof WolfMonster)) {
                 if (isPlayerNearNpc(player, npc.getWorldX(), npc.getWorldY()) && npc.isInteractive()) {
-                    // Verificar se é um comerciante
-                    if (npc instanceof MerchantNpc) {
-                        MerchantNpc merchant = (MerchantNpc) npc;
-                        merchantManager.openMerchant(merchant);
-                        gameState = merchantState;
-                    } else {
-                        npc.interact();
+                    npc.interact(this);
+                    if (dialogManager != null && dialogManager.isDialogActive()) {
+                        gameState = dialogState;
                     }
                     return;
                 }
@@ -506,7 +555,6 @@ public class GamePanel extends JPanel implements Runnable{
                     }
 
                     if (shouldInteract) {
-                        System.out.println("INTERAÇÃO COM OBJETO: " + obj.getName() + " (" + obj.getObjectId() + ")");
                         obj.interact(player);
                         return;
                     }
@@ -523,7 +571,6 @@ public class GamePanel extends JPanel implements Runnable{
             if (teleportTile.interactive) {
                 // Teleporte interativo - verificar proximidade
                 if (isPlayerNearObject(player, teleportWorldX, teleportWorldY)) {
-                    System.out.println("INTERAÇÃO COM TELEPORTE: " + teleportTile.id);
                     performTeleport(teleportTile);
                     return;
                 }
@@ -610,6 +657,30 @@ public class GamePanel extends JPanel implements Runnable{
       } else if (gameState == merchantState) {
         // Desenhar interface do comerciante
         merchantUI.draw(graphics2D, merchantManager);
+      } else if (gameState == dialogState) {
+        // Desenha o jogo de fundo mesmo durante o diálogo
+        tileManager.draw(graphics2D);
+
+        // Renderizar objetos
+        if (objectManager != null) {
+          objectManager.drawObjects(graphics2D);
+        }
+
+        // Renderizar NPCs apenas se houver NPCs no mapa
+        if (npcs != null && !npcs.isEmpty()) {
+          for (Npc npc : npcs) {
+            npc.draw(graphics2D, npcSpriteLoader, tileSize, player, player.getScreenX(), player.getScreenY());
+          }
+        }
+
+        // Renderizar player
+        player.draw(graphics2D);
+
+        // Interface normal de jogo
+        gameUI.draw(graphics2D);
+
+        // Desenhar interface de diálogo por cima
+        dialogUI.draw(graphics2D, dialogManager);
       }
       graphics2D.dispose();
     }
@@ -697,6 +768,37 @@ public class GamePanel extends JPanel implements Runnable{
     }
   }
 
+  // Sistema de diálogo
+  private void updateDialog() {
+    if (dialogManager == null || !dialogManager.isDialogActive()) {
+      gameState = playState;
+      return;
+    }
+    
+    // Controles do diálogo
+    if (keyHandler.upPressed) {
+      dialogManager.selectPreviousOption();
+      keyHandler.upPressed = false;
+    }
+    if (keyHandler.downPressed) {
+      dialogManager.selectNextOption();
+      keyHandler.downPressed = false;
+    }
+    
+    // ENTER para confirmar seleção
+    if (keyHandler.actionPressed) {
+      dialogManager.confirmSelection();
+      keyHandler.actionPressed = false;
+    }
+    
+    // ESC para sair do diálogo
+    if (keyHandler.escapeKeyPressed) {
+      dialogManager.endDialog();
+      gameState = playState;
+      keyHandler.escapeKeyPressed = false;
+    }
+  }
+
   // Batalha por turnos
   private void updateBattle() {
     if (!battle.isInBattle()) return;
@@ -730,7 +832,6 @@ public class GamePanel extends JPanel implements Runnable{
   // Metodo para remover monstro derrotado do mapa
   private void removeMonsterFromMap(Npc monster) {
     npcs.remove(monster);
-    //System.out.println("Removed " + monster.getName() + " from the map");
   }
 
   public int getTileSize() {
@@ -791,6 +892,14 @@ public class GamePanel extends JPanel implements Runnable{
     
     public MerchantManager getMerchantManager() {
       return merchantManager;
+    }
+
+    public DialogManager getDialogManager() {
+      return dialogManager;
+    }
+
+    public DialogUI getDialogUI() {
+      return dialogUI;
     }
 
       /**
@@ -883,7 +992,6 @@ public class GamePanel extends JPanel implements Runnable{
         int teleportWorldY = teleportTile.y * tileSize;
 
         if (isPlayerCollidingWithTeleport(player, teleportWorldX, teleportWorldY)) {
-          System.out.println("TELEPORTE AUTOMÁTICO ativado!");
           performTeleport(teleportTile);
           return; // Sair após o primeiro teleporte
         }
@@ -926,7 +1034,6 @@ public class GamePanel extends JPanel implements Runnable{
    */
   private void performTeleport(MapTile teleportTile) {
     if (teleportTile.toMap != null && !teleportTile.toMap.isEmpty()) {
-      System.out.println("Teleportando para: " + teleportTile.toMap + " na posição (" + teleportTile.toX + ", " + teleportTile.toY + ")");
 
       // Carregar novo mapa
       loadMap(teleportTile.toMap);
@@ -953,8 +1060,6 @@ public class GamePanel extends JPanel implements Runnable{
         List<TileManager.MapTile> objectTiles = tileManager.getObjectTiles();
         this.objectManager = new ObjectManager(this, objectSpriteLoader, objectTiles);
       }
-
-      System.out.println("Mapa carregado: " + mapName);
     } catch (Exception e) {
       System.err.println("Erro ao carregar mapa: " + e.getMessage());
       e.printStackTrace();
