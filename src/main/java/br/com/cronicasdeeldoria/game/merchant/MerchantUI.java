@@ -35,10 +35,14 @@ public class MerchantUI {
     // Posições pré-calculadas dos slots para performance (será inicializado no construtor)
     private int[][] slotPositions;
     
-    // Cores
-    private final Color backgroundColor = new Color(0, 0, 0, 200);
-    private final Color borderColor = Color.WHITE;
-    private final Color selectedColor = Color.YELLOW;
+    // Cores do tema
+    private final Color backgroundColor = new Color(50, 40, 60, 250); // Fundo principal
+    private final Color textColor = Color.WHITE; // Texto branco
+    private final Color titleColor = Color.WHITE; // Título branco
+    private final Color borderColor = new Color(100, 80, 120, 200); // Borda roxa
+    private final Color shadowColor = new Color(0, 0, 0, 100); // Sombra da caixa
+    private final Color highlightColor = new Color(255, 255, 255, 120); // Destaque mais visível
+    private final Color selectedColor = new Color(255, 215, 0, 100); // Dourado com transparência
     private final Color availableColor = new Color(100, 255, 100, 100);
     private final Color unavailableColor = new Color(255, 100, 100, 100);
     private final Color moneyColor = new Color(255, 215, 0); // Cor dourada
@@ -47,8 +51,8 @@ public class MerchantUI {
     // Dimensões
     private static final int SLOT_SIZE = 48;
     private static final int SLOT_SPACING = 6;
-    private static final int ITEMS_PER_ROW = 5; // Alterado de 4 para 5
-    private static final int MAX_ROWS = 4; // Alterado de 3 para 4
+    private static final int ITEMS_PER_ROW = 5;
+    private static final int MAX_ROWS = 4;
     private static final int INVENTORY_WIDTH = ITEMS_PER_ROW * SLOT_SIZE + (ITEMS_PER_ROW - 1) * SLOT_SPACING;
     private static final int INVENTORY_HEIGHT = MAX_ROWS * SLOT_SIZE + (MAX_ROWS - 1) * SLOT_SPACING;
     private static final int PADDING = 20;
@@ -100,7 +104,7 @@ public class MerchantUI {
     }
     
     /**
-     * Renderiza a interface completa do comerciante com dois inventários.
+     * Renderiza a interface completa do comerciante
      * @param g2 Contexto gráfico.
      * @param merchantManager Gerenciador do comerciante.
      */
@@ -113,20 +117,30 @@ public class MerchantUI {
         int screenWidth = gamePanel.getWidth();
         int screenHeight = gamePanel.getHeight();
         
+        // Overlay semi-transparente
+        g2.setColor(new Color(0, 0, 0, 150));
+        g2.fillRect(0, 0, screenWidth, screenHeight);
+        
         // Calcular dimensões totais para dois inventários lado a lado
         int totalWidth = (INVENTORY_WIDTH * 2) + INVENTORY_SPACING + (PADDING * 2);
         int totalHeight = INVENTORY_HEIGHT + PADDING * 3 + 120; // Espaço extra para título e informações
+        int borderRadius = 15;
         
         int startX = (screenWidth - totalWidth) / 2;
         int startY = (screenHeight - totalHeight) / 2;
         
-        // Desenhar fundo
-        g2.setColor(backgroundColor);
-        g2.fillRect(startX, startY, totalWidth, totalHeight);
+        // Sombra da janela (mesmo estilo do pause overlay)
+        g2.setColor(shadowColor);
+        g2.fillRoundRect(startX + 4, startY + 4, totalWidth, totalHeight, borderRadius, borderRadius);
         
-        // Desenhar borda
+        // Fundo principal da janela
+        g2.setColor(backgroundColor);
+        g2.fillRoundRect(startX, startY, totalWidth, totalHeight, borderRadius, borderRadius);
+        
+        // Borda externa
         g2.setColor(borderColor);
-        g2.drawRect(startX, startY, totalWidth, totalHeight);
+        g2.setStroke(new BasicStroke(3));
+        g2.drawRoundRect(startX, startY, totalWidth, totalHeight, borderRadius, borderRadius);
         
         // Desenhar título
         drawTitle(g2, merchant, startX, startY, totalWidth);
@@ -150,10 +164,9 @@ public class MerchantUI {
     }
     
     /**
-     * Desenha o título da interface.
+     * Desenha o título da interface
      */
     private void drawTitle(Graphics2D g2, MerchantNpc merchant, int x, int y, int width) {
-        g2.setColor(Color.WHITE);
         g2.setFont(titleFont);
         
         String title = "COMÉRCIO - " + merchant.getMerchantName().toUpperCase();
@@ -161,7 +174,18 @@ public class MerchantUI {
         int titleX = x + (width - fm.stringWidth(title)) / 2;
         int titleY = y + 25;
         
+        // Sombra do título
+        g2.setColor(new Color(0, 0, 0, 150));
+        g2.drawString(title, titleX + 2, titleY + 2);
+        
+        // Título principal
+        g2.setColor(titleColor);
         g2.drawString(title, titleX, titleY);
+        
+        // Linha decorativa abaixo do título
+        g2.setColor(borderColor);
+        g2.setStroke(new BasicStroke(2));
+        g2.drawLine(titleX, titleY + 5, titleX + fm.stringWidth(title), titleY + 5);
     }
     
     /**
@@ -272,9 +296,15 @@ public class MerchantUI {
     }
     
     /**
-     * Desenha um slot de item.
+     * Desenha um slot de item
      */
     private void drawItemSlot(Graphics2D g2, int x, int y, boolean isSelected, boolean isAvailable, boolean isPlayerInventory) {
+        int slotBorderRadius = 8;
+        
+        // Sombra do slot
+        g2.setColor(new Color(0, 0, 0, 100));
+        g2.fillRoundRect(x + 1, y + 1, SLOT_SIZE, SLOT_SIZE, slotBorderRadius, slotBorderRadius);
+        
         // Fundo do slot baseado na disponibilidade e tipo
         if (isSelected) {
             g2.setColor(selectedColor);
@@ -285,11 +315,19 @@ public class MerchantUI {
         } else {
             g2.setColor(unavailableColor);
         }
-        g2.fillRect(x, y, SLOT_SIZE, SLOT_SIZE);
+        g2.fillRoundRect(x, y, SLOT_SIZE, SLOT_SIZE, slotBorderRadius, slotBorderRadius);
         
         // Borda do slot
-        g2.setColor(borderColor);
-        g2.drawRect(x, y, SLOT_SIZE, SLOT_SIZE);
+        g2.setColor(new Color(150, 150, 150));
+        g2.setStroke(new BasicStroke(1));
+        g2.drawRoundRect(x, y, SLOT_SIZE, SLOT_SIZE, slotBorderRadius, slotBorderRadius);
+        
+        // Destaque interno se selecionado
+        if (isSelected) {
+            g2.setColor(highlightColor);
+            g2.setStroke(new BasicStroke(1));
+            g2.drawRoundRect(x + 1, y + 1, SLOT_SIZE - 2, SLOT_SIZE - 2, slotBorderRadius - 1, slotBorderRadius - 1);
+        }
     }
     
     /**
@@ -390,7 +428,6 @@ public class MerchantUI {
         int selectedIndex = merchantManager.getSelectedItemIndex();
         boolean isPlayerInventory = merchantManager.isPlayerInventorySelected();
         
-        g2.setColor(Color.WHITE);
         g2.setFont(itemFont);
         
         int infoY = y + 20;
@@ -403,9 +440,10 @@ public class MerchantUI {
                 if (selectedIndex < items.size() && items.get(selectedIndex) != null) {
                     Item item = items.get(selectedIndex);
                     
-                    // Nome do item
-                    g2.setColor(Color.WHITE);
-                    g2.setFont(itemFont);
+                    // Nome do item com sombra
+                    g2.setColor(new Color(0, 0, 0, 100));
+                    g2.drawString(item.getName(), x + 11, infoY + 1);
+                    g2.setColor(textColor);
                     g2.drawString(item.getName(), x + 10, infoY);
                     infoY += 15;
                     

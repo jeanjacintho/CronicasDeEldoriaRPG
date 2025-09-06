@@ -257,6 +257,9 @@ public class Player extends Character {
     int oldLevel = currentLevel;
     totalXp += xp;
 
+    // Adicionar mensagem de XP ganho
+    gamePanel.getGameUI().addMessage("+" + xp + " XP recebido", null, 3000);
+
     // Recalcular nível baseado no XP total
     currentLevel = levelManager.calculateLevel(totalXp);
 

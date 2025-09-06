@@ -1,5 +1,6 @@
 package br.com.cronicasdeeldoria.game.ui;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
@@ -28,7 +29,13 @@ import br.com.cronicasdeeldoria.game.inventory.InventoryUI;
 public class GameUI {
   GamePanel gamePanel;
   Font dogicaFont_40;
+  Font dogicaFont_24;
+  Font dogicaFont_22;
+  Font dogicaFont_20;
+  Font dogicaFont_18;
   Font dogicaFont_16;
+  Font dogicaFont_14;
+  Font dogicaFont_12;
   private BufferedImage heartFull;
   private BufferedImage heartThreeQuarters;
   private BufferedImage heartHalf;
@@ -51,7 +58,13 @@ public class GameUI {
   public GameUI(GamePanel gamePanel) {
     this.gamePanel = gamePanel;
     dogicaFont_40 = FontManager.getFont(40f);
+    dogicaFont_24 = FontManager.getFont(24f);
+    dogicaFont_22 = FontManager.getFont(22f);
+    dogicaFont_20 = FontManager.getFont(20f);
+    dogicaFont_18 = FontManager.getFont(18f);
     dogicaFont_16 = FontManager.getFont(16f);
+    dogicaFont_14 = FontManager.getFont(14f);
+    dogicaFont_12 = FontManager.getFont(12f);
 
     loadHeartImages();
     loadCoinIcon();
@@ -155,17 +168,16 @@ public class GameUI {
   }
 
   /**
-   * Desenha as mensagens no canto inferior esquerdo.
+   * Desenha as mensagens no canto inferior esquerdo com sombra.
    * @param graphics2D Contexto gráfico.
    */
   private void drawMessages(Graphics2D graphics2D) {
-    graphics2D.setFont(dogicaFont_16);
-    graphics2D.setColor(Color.WHITE);
+    graphics2D.setFont(dogicaFont_14);
 
     int screenHeight = gamePanel.getHeight();
     int y = screenHeight - 50;
     int x = 20;
-    int spacing = 48;
+    int spacing = 30;
 
     messages.removeIf(Message::isExpired);
 
@@ -173,8 +185,21 @@ public class GameUI {
       Message msg = messages.get(i);
       if (msg.getImage() != null) {
         graphics2D.drawImage(msg.getImage(), x, y - 32, 32, 32, null);
+        
+        // Sombra do texto
+        graphics2D.setColor(new Color(0, 0, 0, 150));
+        graphics2D.drawString(msg.getText(), x + 41, y + 1);
+        
+        // Texto principal
+        graphics2D.setColor(Color.WHITE);
         graphics2D.drawString(msg.getText(), x + 40, y);
       } else {
+        // Sombra do texto
+        graphics2D.setColor(new Color(0, 0, 0, 150));
+        graphics2D.drawString(msg.getText(), x + 1, y + 1);
+        
+        // Texto principal
+        graphics2D.setColor(Color.WHITE);
         graphics2D.drawString(msg.getText(), x, y);
       }
       y -= spacing;
@@ -197,6 +222,11 @@ public class GameUI {
 
     drawHearts(graphics2D, x, y, player.getAttributeHealth(), heartSize);
 
+    // Sombra do texto de nível
+    graphics2D.setColor(new Color(0, 0, 0, 150));
+    graphics2D.drawString("Level " + player.getCurrentLevel(), x + 1, y + heartSize + 16);
+    
+    // Texto principal do nível
     graphics2D.setColor(Color.WHITE);
     graphics2D.drawString("Level " + player.getCurrentLevel(), x, y + heartSize + 15);
     
@@ -233,6 +263,11 @@ public class GameUI {
     }
     
     // Desenhar texto do dinheiro (melhor alinhado com o ícone)
+    // Sombra do texto
+    graphics2D.setColor(new Color(0, 0, 0, 150));
+    graphics2D.drawString(moneyText, x + iconSize + 6, y + iconSize/2 + 6);
+    
+    // Texto principal
     graphics2D.setColor(Color.WHITE);
     graphics2D.drawString(moneyText, x + iconSize + 5, y + iconSize/2 + 5);
   }
@@ -296,65 +331,103 @@ public class GameUI {
   }
 
   /**
-   * Desenha a janela de stats do jogador.
+   * Desenha a janela de stats do jogador
    * @param graphics2D Contexto gráfico.
    */
   private void drawStatsWindow(Graphics2D graphics2D) {
     var player = gamePanel.getPlayer();
     if (player == null) return;
 
+    // Overlay semi-transparente
+    graphics2D.setColor(new Color(0, 0, 0, 150));
+    graphics2D.fillRect(0, 0, gamePanel.getWidth(), gamePanel.getHeight());
+
+    // Cores do tema (mesmo estilo do pause overlay)
+    Color backgroundColor = new Color(50, 40, 60, 250); // Fundo principal
+    Color textColor = Color.WHITE; // Texto branco
+    Color titleColor = Color.WHITE; // Título branco
+    Color borderColor = new Color(100, 80, 120, 200); // Borda roxa
+    Color shadowColor = new Color(0, 0, 0, 100); // Sombra da caixa
+    Color textShadowColor = new Color(0, 0, 0, 150); // Sombra do texto
+    Color separatorColor = new Color(150, 150, 150); // Cinza para separadores
+
     graphics2D.setFont(dogicaFont_16);
 
-    int windowWidth = 300;
-    int windowHeight = 450;
+    int windowWidth = 350;
+    int windowHeight = 500;
     int x = (gamePanel.getWidth() - windowWidth) / 2;
     int y = (gamePanel.getHeight() - windowHeight) / 2;
+    int borderRadius = 20;
+    int padding = 25;
 
-    graphics2D.setColor(new Color(0, 0, 0, 200));
-    graphics2D.fillRect(x, y, windowWidth, windowHeight);
+    // Sombra da janela
+    graphics2D.setColor(shadowColor);
+    graphics2D.fillRoundRect(x + 4, y + 4, windowWidth, windowHeight, borderRadius, borderRadius);
+    
+    // Fundo principal da janela
+    graphics2D.setColor(backgroundColor);
+    graphics2D.fillRoundRect(x, y, windowWidth, windowHeight, borderRadius, borderRadius);
+    
+    // Borda da janela
+    graphics2D.setColor(borderColor);
+    graphics2D.setStroke(new BasicStroke(3));
+    graphics2D.drawRoundRect(x, y, windowWidth, windowHeight, borderRadius, borderRadius);
 
-    graphics2D.setColor(Color.WHITE);
-    graphics2D.drawRect(x, y, windowWidth, windowHeight);
+    // Título com sombra
+    graphics2D.setFont(FontManager.getFont(20f));
+    String title = "STATS DO JOGADOR";
+    graphics2D.setColor(textShadowColor);
+    graphics2D.drawString(title, x + padding + 2, y + 45 + 2);
+    graphics2D.setColor(titleColor);
+    graphics2D.drawString(title, x + padding, y + 45);
+    
+    // Linha decorativa abaixo do título
+    java.awt.FontMetrics fm = graphics2D.getFontMetrics();
+    int titleWidth = fm.stringWidth(title);
+    graphics2D.setColor(borderColor);
+    graphics2D.setStroke(new BasicStroke(2));
+    graphics2D.drawLine(x + padding, y + 50, x + padding + titleWidth, y + 50);
 
-    graphics2D.setColor(Color.YELLOW);
     graphics2D.setFont(dogicaFont_16);
-    graphics2D.drawString("STATS DO JOGADOR", x + 20, y + 40);
+    graphics2D.setColor(textColor);
 
-    graphics2D.setColor(Color.WHITE);
+    int textY = y + 85;
+    int spacing = 28;
 
-    int textY = y + 80;
-    int spacing = 25;
-
-    graphics2D.drawString("Nome: " + player.getName(), x + 20, textY);
+    // Informações básicas
+    drawStatLine(graphics2D, "Nome", player.getName(), x + padding, textY, textColor);
     textY += spacing;
 
-    graphics2D.drawString("Classe: " + player.getCharacterClass().getCharacterClassName(), x + 20, textY);
+    drawStatLine(graphics2D, "Classe", player.getCharacterClass().getCharacterClassName(), x + padding, textY, textColor);
     textY += spacing;
 
-    graphics2D.drawString("Nível: " + player.getCurrentLevel(), x + 20, textY);
+    drawStatLine(graphics2D, "Nível", String.valueOf(player.getCurrentLevel()), x + padding, textY, titleColor);
     textY += spacing;
 
-    graphics2D.drawString("XP Total: " + player.getTotalXp(), x + 20, textY);
+    drawStatLine(graphics2D, "XP Total", String.valueOf(player.getTotalXp()), x + padding, textY, textColor);
+    textY += spacing + 10;
+
+    // Separador
+    graphics2D.setColor(separatorColor);
+    graphics2D.setStroke(new BasicStroke(2));
+    graphics2D.drawLine(x + padding, textY, x + windowWidth - padding, textY);
     textY += spacing;
 
-    graphics2D.setColor(Color.GRAY);
-    graphics2D.drawLine(x + 20, textY, x + windowWidth - 20, textY);
+    // Atributos principais
+    graphics2D.setColor(textColor);
+    drawStatLine(graphics2D, "Vida", player.getAttributeHealth() + " / " + player.getAttributeMaxHealth(), x + padding, textY, textColor);
     textY += spacing;
 
-    graphics2D.setColor(Color.WHITE);
-    graphics2D.drawString("Vida: " + player.getAttributeHealth() + " / " + player.getAttributeMaxHealth(), x + 20, textY);
+    drawStatLine(graphics2D, "Mana", player.getAttributeMana() + " / " + player.getAttributeMaxMana(), x + padding, textY, textColor);
     textY += spacing;
 
-    graphics2D.drawString("Mana: " + player.getAttributeMana() + " / " + player.getAttributeMaxMana(), x + 20, textY);
+    drawStatLine(graphics2D, "Força", String.valueOf(player.getAttributeStrength()), x + padding, textY, textColor);
     textY += spacing;
 
-    graphics2D.drawString("Força: " + player.getAttributeStrength(), x + 20, textY);
+    drawStatLine(graphics2D, "Agilidade", String.valueOf(player.getAttributeAgility()), x + padding, textY, textColor);
     textY += spacing;
 
-    graphics2D.drawString("Agilidade: " + player.getAttributeAgility(), x + 20, textY);
-    textY += spacing;
-
-    graphics2D.drawString("Sorte: " + player.getLuck(), x + 20, textY);
+    drawStatLine(graphics2D, "Sorte", String.valueOf(player.getLuck()), x + padding, textY, textColor);
     textY += spacing;
 
     String specialAttrName = player.getCharacterClass().getSpecialAttributeName();
@@ -369,24 +442,56 @@ public class GameUI {
       default -> specialAttrName;
     };
 
-    graphics2D.setColor(Color.CYAN);
-    graphics2D.drawString(translatedAttrName + ": " + specialAttrValue, x + 20, textY);
+    drawStatLine(graphics2D, translatedAttrName, String.valueOf(specialAttrValue), x + padding, textY, new Color(100, 255, 255));
+    textY += spacing + 10;
+
+    // Separador
+    graphics2D.setColor(separatorColor);
+    graphics2D.setStroke(new java.awt.BasicStroke(2));
+    graphics2D.drawLine(x + padding, textY, x + windowWidth - padding, textY);
     textY += spacing;
 
-    graphics2D.setColor(Color.GRAY);
-    graphics2D.drawLine(x + 20, textY, x + windowWidth - 20, textY);
-    textY += spacing;
-
-    graphics2D.setColor(Color.WHITE);
-    graphics2D.drawString("Próximo nível: " + player.getXpForNextLevel() + " XP", x + 20, textY);
+    // Informações de XP
+    graphics2D.setColor(textColor);
+    drawStatLine(graphics2D, "Próximo nível", String.valueOf(player.getXpForNextLevel()) + " XP", x + padding, textY, textColor);
     textY += spacing;
 
     double xpProgress = player.getXpProgress() * 100;
-    graphics2D.drawString("Progresso: " + String.format("%.1f", xpProgress) + "%", x + 20, textY);
-    textY += spacing;
+    drawStatLine(graphics2D, "Progresso", String.format("%.1f", xpProgress) + "%", x + padding, textY, textColor);
+    textY += spacing + 20;
 
-    graphics2D.setColor(Color.YELLOW);
-    graphics2D.drawString("Pressione Q para fechar", x, textY + 20);
+    // Instrução para fechar
+    graphics2D.setFont(FontManager.getFont(14f));
+    String instructionText = "Pressione Q para fechar";
+    
+    // Sombra da instrução
+    graphics2D.setColor(new Color(0, 0, 0, 150));
+    graphics2D.drawString(instructionText, x + padding + 1, textY + 1);
+    
+    // Instrução principal
+    graphics2D.setColor(new Color(200, 200, 200));
+    graphics2D.drawString(instructionText, x + padding, textY);
+  }
+
+  /**
+   * Desenha uma linha de estatística com formatação consistente.
+   * @param g2 Contexto gráfico
+   * @param label Rótulo da estatística
+   * @param value Valor da estatística
+   * @param x Posição X
+   * @param y Posição Y
+   * @param color Cor do texto
+   */
+  private void drawStatLine(Graphics2D g2, String label, String value, int x, int y, Color color) {
+    String text = label + ": " + value;
+    
+    // Sombra do texto
+    g2.setColor(new Color(0, 0, 0, 150));
+    g2.drawString(text, x + 2, y + 2);
+    
+    // Texto principal
+    g2.setColor(color);
+    g2.drawString(text, x, y);
   }
 
   /**
@@ -413,17 +518,12 @@ public class GameUI {
     int x = (screenWidth - textWidth) / 2;
     int y = (screenHeight + textHeight) / 2;
 
-    graphics2D.setColor(new Color(0, 0, 0, 180));
-    int padding = 20;
-    graphics2D.fillRect(x - padding, y - textHeight - padding,
-                       textWidth + (padding * 2), textHeight + (padding * 2));
-
-    // Desenhar borda
+    // Sombra do texto central
+    graphics2D.setColor(new Color(0, 0, 0, 200));
+    graphics2D.drawString(centerMessage, x + 2, y + 2);
+    
+    // Texto principal (branco)
     graphics2D.setColor(Color.WHITE);
-    graphics2D.drawRect(x - padding, y - textHeight - padding,
-                       textWidth + (padding * 2), textHeight + (padding * 2));
-
-    graphics2D.setColor(Color.YELLOW);
     graphics2D.drawString(centerMessage, x, y);
   }
 
@@ -478,7 +578,7 @@ public class GameUI {
 
     // Opções de ação
     g2.setColor(Color.BLACK);
-    g2.setFont(new Font("Arial", Font.PLAIN, 24));
+    g2.setFont(dogicaFont_16);
 
     if (gamePanel.battle.isWaitingForPlayerInput()) {
       int potionIconSize = 35;
@@ -512,11 +612,11 @@ public class GameUI {
       g2.drawString("(7) - ", 500, screenHeight - 35);
 
       // Exibe a quantidade de poções no inventário
-      g2.setFont(new Font("Arial", Font.BOLD, 20));
+      g2.setFont(dogicaFont_18);
       g2.drawString(String.valueOf(amountOfPotionHp), 565, screenHeight - 70);
       g2.drawString(String.valueOf(amountOfPotionMp), 565, screenHeight - 30);
 
-      g2.setFont(new Font("Arial", Font.PLAIN, 24));
+      g2.setFont(dogicaFont_16);
       g2.setColor(Color.BLACK);
       // Destacar opções indisponíveis
       if (player.getAttributeMana() < 15) {
@@ -577,7 +677,7 @@ public class GameUI {
     if (battleMonster != null) {
       // Nome do monstro
       g2.setColor(Color.WHITE);
-      g2.setFont(new Font("Arial", Font.PLAIN, 16));
+      g2.setFont(dogicaFont_14);
       g2.drawString(battleMonster.getName(), screenWidth - 260, screenHeight - 505);
 
       // Barra de HP do monstro
@@ -600,6 +700,7 @@ public class GameUI {
       g2.drawRect(monsterHpBarX, monsterHpBarY, barWidth, barHeight);
 
       // Texto de HP
+      g2.setFont(dogicaFont_12);
       g2.drawString("HP: " + battleMonster.getAttributeHealth() + "/" +
         battleMonster.getAttributeMaxHealth(), monsterHpBarX + 15, monsterHpBarY + 18);
 
@@ -621,6 +722,7 @@ public class GameUI {
         g2.drawRect(monsterHpBarX, monsterMpBarY, barWidth, barHeight);
 
         // Texto de MP
+        g2.setFont(dogicaFont_12);
         g2.drawString("MP: " + battleMonster.getAttributeMana() + "/" +
           battleMonster.getAttributeMaxMana(), monsterHpBarX + 15, monsterMpBarY - 50);
       }
@@ -642,6 +744,7 @@ public class GameUI {
 
     g2.setColor(Color.BLACK);
     g2.drawRect(playerInfoX, playerHpBarY, barWidth, barHeight);
+    g2.setFont(dogicaFont_12);
     g2.drawString("HP: " + player.getAttributeHealth() + "/" + player.getAttributeMaxHealth(),
       playerInfoX + 10, playerHpBarY + 17);
 
@@ -659,6 +762,7 @@ public class GameUI {
     g2.drawRect(playerInfoX, playerMpBarY, barWidth, barHeight);
 
     g2.setColor(Color.WHITE);
+    g2.setFont(dogicaFont_12);
     g2.drawString("MP: " + player.getAttributeMana() + "/" + player.getAttributeMaxMana(),
       playerInfoX + 10, playerMpBarY + 18);
   }
