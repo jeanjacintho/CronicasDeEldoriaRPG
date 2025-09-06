@@ -388,6 +388,8 @@ public class GameUI {
     Npc battleMonster = gamePanel.battle.getMonster();
     BufferedImage healthPotionImg = null;
     BufferedImage manaPotionImg = null;
+    BufferedImage swordImg = null;
+    BufferedImage shieldImg = null;
 
     // Fundo de batalha
     g2.setColor(new Color(50, 50, 35));
@@ -486,14 +488,41 @@ public class GameUI {
         g2.setColor(Color.BLACK);
         g2.drawString("(1) - " + player.getCharacterClass().getSpecialAbilityName(), 20, screenHeight - 75);
       }
-    }
-//    else {
+      //    else {
 //      // Mostrar turno atual
 //      Character currentChar = gamePanel.battle.getCurrentCharacter();
 //      g2.setColor(Color.BLUE);
 //      g2.setFont(new Font("Arial", Font.BOLD, 18));
 //      g2.drawString("Turno de: " + currentChar.getName(), 20, screenHeight - 50);
 //    }
+
+      int buffIconSize = 35;
+      try {
+        swordImg = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/sprites/objects/items/sword_common.png")));
+        shieldImg   = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/sprites/objects/items/shield_common.png")));
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+
+      // Player buffs
+      if (player.hasActiveBuff("ARMOR")) {
+        if (shieldImg != null) {
+          g2.drawImage(shieldImg, 135, screenHeight - 300, buffIconSize, buffIconSize , null);
+        }
+      } else if (player.hasActiveBuff("STRENGTH")) {
+        if (swordImg != null) {
+          g2.drawImage(swordImg, 135, screenHeight - 270, buffIconSize, buffIconSize, null);
+        }
+      }
+
+      // Monster buff
+      if (battleMonster.hasActiveBuff("ARMOR")) {
+        if (swordImg != null) {
+          g2.drawImage(shieldImg, 610, screenHeight - 465, buffIconSize, buffIconSize, null);
+        }
+      }
+    }
+
 
     // Informações do monstro (canto superior direito)
     if (battleMonster != null) {
