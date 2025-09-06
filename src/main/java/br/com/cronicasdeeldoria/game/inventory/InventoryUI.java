@@ -17,11 +17,8 @@ public class InventoryUI {
     private final Font smallFont;
     private final ItemSpriteLoader spriteLoader;
     
-    // Cores
-    private final Color backgroundColor = new Color(0, 0, 0, 0);
-    private final Color borderColor = Color.WHITE;
-    private final Color selectedColor = Color.YELLOW;
-    private final Color emptySlotColor = new Color(100, 100, 100, 100);
+    // Cores do tema
+    private final Color titleColor = Color.WHITE; // Título branco
     
     // Dimensões
     private static final int SLOT_SIZE = 48;
@@ -41,7 +38,7 @@ public class InventoryUI {
     }
     
     /**
-     * Renderiza a interface completa do inventário.
+     * Renderiza a interface completa do inventário com estilo da box de diálogo.
      * @param g2 Contexto gráfico.
      * @param inventoryManager Gerenciador do inventário.
      */
@@ -51,20 +48,30 @@ public class InventoryUI {
         int screenWidth = gamePanel.getWidth();
         int screenHeight = gamePanel.getHeight();
         
+        // Overlay semi-transparente
+        g2.setColor(new Color(0, 0, 0, 150));
+        g2.fillRect(0, 0, screenWidth, screenHeight);
+        
         // Calcular posição central
         int totalWidth = INVENTORY_WIDTH + EQUIPMENT_WIDTH + PADDING * 3;
         int totalHeight = Math.max(INVENTORY_HEIGHT, EQUIPMENT_HEIGHT) + PADDING * 4;
+        int borderRadius = 15;
         
         int startX = (screenWidth - totalWidth) / 2;
-        int startY = (screenHeight - totalHeight) / 2;
+        int startY = (screenHeight - totalHeight) / 2 - 80; // Mover 80px para cima
         
-        // Desenhar fundo
-        g2.setColor(backgroundColor);
-        g2.fillRect(startX, startY, totalWidth, totalHeight);
+        // Sombra da janela
+        g2.setColor(new Color(0, 0, 0, 100));
+        g2.fillRoundRect(startX + 4, startY + 4, totalWidth, totalHeight, borderRadius, borderRadius);
         
-        // Desenhar borda
-        g2.setColor(borderColor);
-        g2.drawRect(startX, startY, totalWidth, totalHeight);
+        // Fundo principal da janela
+        g2.setColor(new Color(50, 40, 60, 250));
+        g2.fillRoundRect(startX, startY, totalWidth, totalHeight, borderRadius, borderRadius);
+        
+        // Borda externa
+        g2.setColor(new Color(100, 80, 120, 200));
+        g2.setStroke(new java.awt.BasicStroke(3));
+        g2.drawRoundRect(startX, startY, totalWidth, totalHeight, borderRadius, borderRadius);
         
         // Desenhar título
         drawTitle(g2, startX, startY, totalWidth);
@@ -81,21 +88,32 @@ public class InventoryUI {
         
         // Desenhar informações do item selecionado
         drawItemInfo(g2, inventoryManager, startX, startY + totalHeight - 60, totalWidth);
+        
     }
     
     /**
-     * Desenha o título da interface.
+     * Desenha o título da interface
      */
     private void drawTitle(Graphics2D g2, int x, int y, int width) {
-        g2.setColor(Color.WHITE);
         g2.setFont(titleFont);
         
         String title = "INVENTÁRIO";
         FontMetrics fm = g2.getFontMetrics();
         int titleX = x + (width - fm.stringWidth(title)) / 2;
-        int titleY = y + 25;
+        int titleY = y + 35;
         
+        // Sombra do título
+        g2.setColor(new Color(0, 0, 0, 150));
+        g2.drawString(title, titleX + 2, titleY + 2);
+        
+        // Título principal
+        g2.setColor(titleColor);
         g2.drawString(title, titleX, titleY);
+        
+        // Linha decorativa abaixo do título
+        g2.setColor(new Color(100, 80, 120, 200));
+        g2.setStroke(new java.awt.BasicStroke(2));
+        g2.drawLine(titleX, titleY + 5, titleX + fm.stringWidth(title), titleY + 5);
     }
     
     /**
@@ -151,20 +169,34 @@ public class InventoryUI {
     }
     
     /**
-     * Desenha um slot individual.
+     * Desenha um slot individual com estilo da box de diálogo.
      */
     private void drawSlot(Graphics2D g2, int x, int y, boolean isSelected) {
+        int slotBorderRadius = 8;
+        
+        // Sombra do slot
+        g2.setColor(new Color(0, 0, 0, 100));
+        g2.fillRoundRect(x + 1, y + 1, SLOT_SIZE, SLOT_SIZE, slotBorderRadius, slotBorderRadius);
+        
         // Fundo do slot
         if (isSelected) {
-            g2.setColor(selectedColor);
+            g2.setColor(new Color(255, 215, 0, 50)); // Dourado com transparência
         } else {
-            g2.setColor(emptySlotColor);
+            g2.setColor(new Color(50, 50, 70, 150)); // Cinza escuro com transparência
         }
-        g2.fillRect(x, y, SLOT_SIZE, SLOT_SIZE);
+        g2.fillRoundRect(x, y, SLOT_SIZE, SLOT_SIZE, slotBorderRadius, slotBorderRadius);
         
         // Borda do slot
-        g2.setColor(borderColor);
-        g2.drawRect(x, y, SLOT_SIZE, SLOT_SIZE);
+        g2.setColor(new Color(150, 150, 150));
+        g2.setStroke(new BasicStroke(1));
+        g2.drawRoundRect(x, y, SLOT_SIZE, SLOT_SIZE, slotBorderRadius, slotBorderRadius);
+        
+        // Destaque interno se selecionado
+        if (isSelected) {
+            g2.setColor(new Color(255, 255, 255, 120));
+            g2.setStroke(new java.awt.BasicStroke(1));
+            g2.drawRoundRect(x + 1, y + 1, SLOT_SIZE - 2, SLOT_SIZE - 2, slotBorderRadius - 1, slotBorderRadius - 1);
+        }
     }
     
     /**
@@ -210,32 +242,167 @@ public class InventoryUI {
     }
     
     /**
-     * Desenha informações do item selecionado.
+     * Desenha informações do item selecionado
      */
     private void drawItemInfo(Graphics2D g2, InventoryManager inventoryManager, int x, int y, int width) {
         Item selectedItem = inventoryManager.getSelectedItem();
         if (selectedItem == null) return;
         
-        g2.setColor(Color.WHITE);
-        g2.setFont(itemFont);
+        // Desenhar box de informações do item (sempre aparece)
+        drawItemInfoBox(g2, selectedItem, x, y + 150, width);
+    }
+    
+    /**
+     * Desenha uma box completa de informações do item
+     */
+    private void drawItemInfoBox(Graphics2D g2, Item item, int x, int y, int width) {
+    
+        // Calcular dimensões da box de informações
+        int padding = 15;
+        int borderRadius = 10;
+        int boxWidth = width - 20;
         
-        int infoY = y + 80;
+        // Calcular altura dinâmica baseada no conteúdo
+        int baseHeight = 100; // Altura base para nome, raridade e valor
+        int descriptionHeight = 0;
+        if (item.getDescription() != null && !item.getDescription().isEmpty()) {
+            // Calcular altura necessária para a descrição
+            String[] words = item.getDescription().split(" ");
+            StringBuilder currentLine = new StringBuilder();
+            int maxWidth = boxWidth - (padding * 2);
+            int lines = 1;
+            
+            for (String word : words) {
+                String testLine = currentLine.length() == 0 ? word : currentLine + " " + word;
+                FontMetrics textFm = g2.getFontMetrics(smallFont);
+                if (textFm.stringWidth(testLine) <= maxWidth) {
+                    currentLine = new StringBuilder(testLine);
+                } else {
+                    lines++;
+                    currentLine = new StringBuilder(word);
+                }
+            }
+            descriptionHeight = lines * 12 + 20; // 12px por linha + padding
+        }
+        
+        int boxHeight = baseHeight + descriptionHeight;
+        
+        int boxX = x + 10;
+        int boxY = y - 70;
+        
+        // Sombra da box de informações
+        g2.setColor(new Color(0, 0, 0, 100));
+        g2.fillRoundRect(boxX + 2, boxY + 2, boxWidth, boxHeight, borderRadius, borderRadius);
+        
+        // Fundo da box de informações
+        g2.setColor(new Color(50, 40, 60, 250)); // Mesmo estilo do pause overlay
+        g2.fillRoundRect(boxX, boxY, boxWidth, boxHeight, borderRadius, borderRadius);
+        
+        // Borda externa da box de informações
+        g2.setColor(new Color(100, 80, 120, 200));
+        g2.setStroke(new BasicStroke(3));
+        g2.drawRoundRect(boxX, boxY, boxWidth, boxHeight, borderRadius, borderRadius);
+        
+        // Título "INFORMAÇÕES DO ITEM"
+        g2.setFont(smallFont);
+        String titleText = "INFORMAÇÕES DO ITEM";
+        FontMetrics fm = g2.getFontMetrics();
+        int titleX = boxX + (boxWidth - fm.stringWidth(titleText)) / 2;
+        int titleY = boxY + 15;
+        
+        // Sombra do título
+        g2.setColor(new Color(0, 0, 0, 150));
+        g2.drawString(titleText, titleX + 2, titleY + 2);
+        
+        // Título principal
+        g2.setColor(Color.WHITE);
+        g2.drawString(titleText, titleX, titleY);
+        
+        // Linha decorativa abaixo do título
+        g2.setColor(new Color(100, 80, 120, 200));
+        g2.setStroke(new BasicStroke(2));
+        g2.drawLine(titleX, titleY + 3, titleX + fm.stringWidth(titleText), titleY + 3);
+        
+        int textY = titleY + 20;
         
         // Nome do item
-        g2.setColor(selectedItem.getRarity().getColor());
-        g2.drawString(selectedItem.getName(), x + 10, infoY);
+        g2.setFont(itemFont);
+        String nameText = item.getName();
+        g2.setColor(new Color(0, 0, 0, 150));
+        g2.drawString(nameText, boxX + padding + 2, textY + 2);
+        g2.setColor(item.getRarity().getColor());
+        g2.drawString(nameText, boxX + padding, textY);
+        textY += 15;
         
-        infoY += 15;
-        g2.drawString("Raridade: " + selectedItem.getRarity().getDisplayName(), x + 10, infoY);
+        // Raridade
+        g2.setFont(smallFont);
+        String rarityText = "Raridade: " + item.getRarity().getDisplayName();
+        g2.setColor(new Color(0, 0, 0, 150));
+        g2.drawString(rarityText, boxX + padding + 2, textY + 2);
+        g2.setColor(Color.WHITE);
+        g2.drawString(rarityText, boxX + padding, textY);
+        textY += 15;
+        
+        // Valor
+        String valueText = "Valor: " + item.getValue();
+        g2.setColor(new Color(0, 0, 0, 150));
+        g2.drawString(valueText, boxX + padding + 2, textY + 2);
+        g2.setColor(Color.WHITE);
+        g2.drawString(valueText, boxX + padding, textY);
+        textY += 15;
         
         // Descrição se houver
-        if (selectedItem.getDescription() != null && !selectedItem.getDescription().isEmpty()) {
-            infoY += 15;
-            g2.drawString(selectedItem.getDescription(), x + 10, infoY);
+        if (item.getDescription() != null && !item.getDescription().isEmpty()) {
+            textY += 5; // Espaçamento extra
+            
+            // Título da descrição
+            String descTitleText = "Descrição:";
+            g2.setColor(new Color(0, 0, 0, 150));
+            g2.drawString(descTitleText, boxX + padding + 2, textY + 2);
+            g2.setColor(Color.WHITE);
+            g2.drawString(descTitleText, boxX + padding, textY);
+            textY += 15;
+            
+            // Texto da descrição
+            String description = item.getDescription();
+            String[] words = description.split(" ");
+            StringBuilder currentLine = new StringBuilder();
+            int maxWidth = boxWidth - (padding * 2);
+            
+            for (String word : words) {
+                String testLine = currentLine.length() == 0 ? word : currentLine + " " + word;
+                FontMetrics textFm = g2.getFontMetrics();
+                if (textFm.stringWidth(testLine) <= maxWidth) {
+                    currentLine = new StringBuilder(testLine);
+                } else {
+                    if (currentLine.length() > 0) {
+                        // Sombra do texto
+                        g2.setColor(new Color(0, 0, 0, 150));
+                        g2.drawString(currentLine.toString(), boxX + padding + 2, textY + 2);
+                        // Texto principal
+                        g2.setColor(Color.WHITE);
+                        g2.drawString(currentLine.toString(), boxX + padding, textY);
+                        textY += 12;
+                        currentLine = new StringBuilder(word);
+                    } else {
+                        // Sombra do texto
+                        g2.setColor(new Color(0, 0, 0, 150));
+                        g2.drawString(word, boxX + padding + 2, textY + 2);
+                        // Texto principal
+                        g2.setColor(Color.WHITE);
+                        g2.drawString(word, boxX + padding, textY);
+                        textY += 12;
+                    }
+                }
+            }
+            if (currentLine.length() > 0) {
+                // Sombra do texto
+                g2.setColor(new Color(0, 0, 0, 150));
+                g2.drawString(currentLine.toString(), boxX + padding + 2, textY + 2);
+                // Texto principal
+                g2.setColor(Color.WHITE);
+                g2.drawString(currentLine.toString(), boxX + padding, textY);
+            }
         }
-
-        // Valor do item
-        infoY += 15;
-        g2.drawString("Valor: " + selectedItem.getValue(), x + 10, infoY);
-    }
+     }
 }

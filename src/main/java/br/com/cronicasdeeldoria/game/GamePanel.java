@@ -5,8 +5,8 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.awt.BasicStroke;
 
-import javax.sound.midi.Soundbank;
 import javax.swing.JPanel;
 
 import br.com.cronicasdeeldoria.entity.character.npc.SkeletonMonster;
@@ -19,6 +19,7 @@ import br.com.cronicasdeeldoria.entity.object.ObjectManager;
 import br.com.cronicasdeeldoria.entity.object.ObjectSpriteLoader;
 import br.com.cronicasdeeldoria.game.ui.GameUI;
 import br.com.cronicasdeeldoria.game.ui.KeyboardMapper;
+import br.com.cronicasdeeldoria.game.font.FontManager;
 import br.com.cronicasdeeldoria.game.ui.InteractionManager;
 import br.com.cronicasdeeldoria.entity.character.npc.Npc;
 import br.com.cronicasdeeldoria.entity.character.npc.NpcFactory;
@@ -28,6 +29,7 @@ import br.com.cronicasdeeldoria.tile.TileManager.MapTile;
 import br.com.cronicasdeeldoria.config.CharacterConfigLoader;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Map;
 
 import br.com.cronicasdeeldoria.entity.Entity;
 import br.com.cronicasdeeldoria.game.inventory.InventoryManager;
@@ -35,6 +37,7 @@ import br.com.cronicasdeeldoria.game.merchant.MerchantManager;
 import br.com.cronicasdeeldoria.game.merchant.MerchantUI;
 import br.com.cronicasdeeldoria.game.dialog.DialogManager;
 import br.com.cronicasdeeldoria.game.dialog.DialogUI;
+import br.com.cronicasdeeldoria.game.teleport.TeleportManager;
 /**
  * Painel principal do jogo, responsável pelo loop de atualização, renderização e gerenciamento dos elementos do jogo.
  */
@@ -66,6 +69,7 @@ public class GamePanel extends JPanel implements Runnable{
   private MerchantUI merchantUI;
   private DialogManager dialogManager;
   private DialogUI dialogUI;
+  private TeleportManager teleportManager;
 
   // Estados do jogo
   public int gameState;
@@ -74,6 +78,7 @@ public class GamePanel extends JPanel implements Runnable{
   public final int inventoryState = 3;
   public final int merchantState = 4;
   public final int dialogState = 5;
+  public final int pauseState = 6;
 
   public Npc battleMonster = null;
   public Battle battle;
@@ -167,6 +172,9 @@ public class GamePanel extends JPanel implements Runnable{
     // Inicializar sistema de diálogo
     this.dialogManager = new DialogManager(this, player);
     this.dialogUI = new DialogUI(this);
+    
+    // Inicializar sistema de teleporte
+    this.teleportManager = TeleportManager.getInstance();
   }
 
   /**
@@ -275,16 +283,10 @@ public class GamePanel extends JPanel implements Runnable{
           keyHandler.inventoryPressed = false;
         }
 
-        // Controle de teste de diálogo
-        if (keyHandler.testDialogPressed) {
-          testDialog();
-          keyHandler.testDialogPressed = false;
-        }
-
-        // Controle de teste de NPCs
-        if (keyHandler.testNpcsPressed) {
-          testNpcs();
-          keyHandler.testNpcsPressed = false;
+        // Controle de pausa
+        if (keyHandler.escapeKeyPressed) {
+          gameState = pauseState;
+          keyHandler.escapeKeyPressed = false;
         }
       }
 
@@ -302,6 +304,10 @@ public class GamePanel extends JPanel implements Runnable{
 
       if (gameState == dialogState) {
         updateDialog();
+      }
+
+      if (gameState == pauseState) {
+        updatePause();
       }
     }
 
@@ -563,17 +569,20 @@ public class GamePanel extends JPanel implements Runnable{
             }
         }
 
-        // Verificar interação com teleportes
+        // Verificar interação com teleportes (apenas os configurados no TeleportManager)
         List<MapTile> teleportTiles = tileManager.getTeleportTiles();
         for (MapTile teleportTile : teleportTiles) {
+            // Verificar se o teleporte está configurado no TeleportManager
+            if (teleportTile.id != null && teleportManager.hasTeleport(teleportTile.id)) {
             int teleportWorldX = teleportTile.x * tileSize;
             int teleportWorldY = teleportTile.y * tileSize;
 
             if (teleportTile.interactive) {
                 // Teleporte interativo - verificar proximidade
                 if (isPlayerNearObject(player, teleportWorldX, teleportWorldY)) {
-                    performTeleport(teleportTile);
+                        performInteractiveTeleport(teleportTile);
                     return;
+                    }
                 }
             }
         }
@@ -625,11 +634,13 @@ public class GamePanel extends JPanel implements Runnable{
             }
         }
 
-        // Renderizar teclas de interação para teleportes
+        // Renderizar teclas de interação para teleportes (apenas os configurados)
         if (interactionManager != null) {
             List<MapTile> teleportTiles = tileManager.getTeleportTiles();
             for (MapTile teleportTile : teleportTiles) {
-                if (teleportTile.interactive != null && teleportTile.interactive) {
+                // Verificar se o teleporte está configurado no TeleportManager e é interativo
+                if (teleportTile.interactive != null && teleportTile.interactive &&
+                    teleportTile.id != null && teleportManager.hasTeleport(teleportTile.id)) {
                     int teleportWorldX = teleportTile.x * tileSize;
                     int teleportWorldY = teleportTile.y * tileSize;
 
@@ -653,10 +664,52 @@ public class GamePanel extends JPanel implements Runnable{
         // Desenhar interface de batalha
         gameUI.drawBattleUI(graphics2D);
       } else if (gameState == inventoryState) {
-        // Desenhar interface do inventário
+        // Desenha o jogo de fundo mesmo durante o inventário (para transparência)
+        tileManager.draw(graphics2D);
+
+        // Renderizar objetos
+        if (objectManager != null) {
+          objectManager.drawObjects(graphics2D);
+        }
+
+        // Renderizar NPCs apenas se houver NPCs no mapa
+        if (npcs != null && !npcs.isEmpty()) {
+          for (Npc npc : npcs) {
+            npc.draw(graphics2D, npcSpriteLoader, tileSize, player, player.getScreenX(), player.getScreenY());
+          }
+        }
+
+        // Renderizar player
+        player.draw(graphics2D);
+
+        // Interface normal de jogo
+        gameUI.draw(graphics2D);
+
+        // Desenhar interface do inventário por cima (transparente)
         gameUI.drawInventoryUI(graphics2D, inventoryManager);
       } else if (gameState == merchantState) {
-        // Desenhar interface do comerciante
+        // Desenha o jogo de fundo mesmo durante o comerciante (para transparência)
+        tileManager.draw(graphics2D);
+
+        // Renderizar objetos
+        if (objectManager != null) {
+          objectManager.drawObjects(graphics2D);
+        }
+
+        // Renderizar NPCs apenas se houver NPCs no mapa
+        if (npcs != null && !npcs.isEmpty()) {
+          for (Npc npc : npcs) {
+            npc.draw(graphics2D, npcSpriteLoader, tileSize, player, player.getScreenX(), player.getScreenY());
+          }
+        }
+
+        // Renderizar player
+        player.draw(graphics2D);
+
+        // Interface normal de jogo
+        gameUI.draw(graphics2D);
+
+        // Desenhar interface do comerciante por cima (transparente)
         merchantUI.draw(graphics2D, merchantManager);
       } else if (gameState == dialogState) {
         // Desenha o jogo de fundo mesmo durante o diálogo
@@ -682,9 +735,92 @@ public class GamePanel extends JPanel implements Runnable{
 
         // Desenhar interface de diálogo por cima
         dialogUI.draw(graphics2D, dialogManager);
+      } else if (gameState == pauseState) {
+        // Desenha o jogo de fundo durante a pausa
+        tileManager.draw(graphics2D);
+
+        // Renderizar objetos
+        if (objectManager != null) {
+          objectManager.drawObjects(graphics2D);
+        }
+
+        // Renderizar NPCs apenas se houver NPCs no mapa
+        if (npcs != null && !npcs.isEmpty()) {
+          for (Npc npc : npcs) {
+            npc.draw(graphics2D, npcSpriteLoader, tileSize, player, player.getScreenX(), player.getScreenY());
+          }
+        }
+
+        // Renderizar player
+        player.draw(graphics2D);
+
+        // Interface normal de jogo
+        gameUI.draw(graphics2D);
+
+        // Desenhar overlay de pausa
+        drawPauseOverlay(graphics2D);
       }
       graphics2D.dispose();
     }
+
+  /**
+   * Desenha o overlay de pausa.
+   */
+  private void drawPauseOverlay(Graphics2D g2) {
+    // Overlay semi-transparente
+    g2.setColor(new Color(0, 0, 0, 150));
+    g2.fillRect(0, 0, getWidth(), getHeight());
+    
+    // Caixa de pausa centralizada
+    int boxWidth = 300;
+    int boxHeight = 150;
+    int boxX = (getWidth() - boxWidth) / 2;
+    int boxY = (getHeight() - boxHeight) / 2;
+    
+    // Sombra da caixa
+    g2.setColor(new Color(0, 0, 0, 100));
+    g2.fillRoundRect(boxX + 4, boxY + 4, boxWidth, boxHeight, 20, 20);
+    
+    // Caixa principal
+    g2.setColor(new Color(50, 40, 60, 250));
+    g2.fillRoundRect(boxX, boxY, boxWidth, boxHeight, 20, 20);
+    
+    // Borda da caixa
+    g2.setColor(new Color(100, 80, 120, 200));
+    g2.setStroke(new BasicStroke(3));
+    g2.drawRoundRect(boxX, boxY, boxWidth, boxHeight, 20, 20);
+    
+    // Texto "PAUSADO"
+    g2.setColor(Color.WHITE);
+    g2.setFont(FontManager.getFont(32f));
+    String pauseText = "PAUSADO";
+    int textWidth = g2.getFontMetrics().stringWidth(pauseText);
+    int textX = boxX + (boxWidth - textWidth) / 2;
+    int textY = boxY + 60;
+    
+    // Sombra do texto
+    g2.setColor(new Color(0, 0, 0, 150));
+    g2.drawString(pauseText, textX + 2, textY + 2);
+    
+    // Texto principal
+    g2.setColor(Color.WHITE);
+    g2.drawString(pauseText, textX, textY);
+    
+    // Instrução
+    g2.setFont(FontManager.getFont(16f));
+    String instructionText = "Pressione ESC para continuar";
+    int instructionWidth = g2.getFontMetrics().stringWidth(instructionText);
+    int instructionX = boxX + (boxWidth - instructionWidth) / 2;
+    int instructionY = boxY + 100;
+    
+    // Sombra da instrução
+    g2.setColor(new Color(0, 0, 0, 150));
+    g2.drawString(instructionText, instructionX + 1, instructionY + 1);
+    
+    // Instrução principal
+    g2.setColor(new Color(200, 200, 200));
+    g2.drawString(instructionText, instructionX, instructionY);
+  }
 
   // Sistema de inventário
   private void updateInventory() {
@@ -795,6 +931,15 @@ public class GamePanel extends JPanel implements Runnable{
     // ESC para sair do diálogo
     if (keyHandler.escapeKeyPressed) {
       dialogManager.endDialog();
+      gameState = playState;
+      keyHandler.escapeKeyPressed = false;
+    }
+  }
+
+  // Sistema de pausa
+  private void updatePause() {
+    // ESC para sair da pausa
+    if (keyHandler.escapeKeyPressed) {
       gameState = playState;
       keyHandler.escapeKeyPressed = false;
     }
@@ -927,6 +1072,76 @@ public class GamePanel extends JPanel implements Runnable{
     public DialogUI getDialogUI() {
       return dialogUI;
     }
+    
+    public TeleportManager getTeleportManager() {
+      return teleportManager;
+    }
+    
+    /**
+     * Executa um teleporte rápido usando o ID do quickTeleport.
+     * @param quickTeleportId ID do teleporte rápido
+     * @return true se o teleporte foi executado com sucesso
+     */
+    public boolean executeQuickTeleport(String quickTeleportId) {
+      try {
+        if (teleportManager.hasQuickTeleport(quickTeleportId)) {
+          String teleportString = teleportManager.getQuickTeleport(quickTeleportId);
+          executeTeleportString(teleportString, "Teleporte rápido executado!");
+          return true;
+        } else {
+          System.err.println("Teleporte rápido '" + quickTeleportId + "' não encontrado!");
+          return false;
+        }
+      } catch (Exception e) {
+        System.err.println("Erro ao executar teleporte rápido: " + e.getMessage());
+        e.printStackTrace();
+        return false;
+      }
+    }
+    
+    /**
+     * Executa uma string de teleporte no formato "mapa,x,y" ou "x,y".
+     * @param teleportString String de teleporte
+     * @param message Mensagem a ser exibida
+     */
+    public void executeTeleportString(String teleportString, String message) {
+      try {
+        String[] parts = teleportString.split(",");
+        
+        if (parts.length == 2) {
+          // Teleporte no mapa atual: "x,y"
+          int x = Integer.parseInt(parts[0].trim());
+          int y = Integer.parseInt(parts[1].trim());
+          player.setWorldX(x);
+          player.setWorldY(y);
+          gameUI.addMessage(message, null, 3000L);
+          
+        } else if (parts.length == 3) {
+          // Teleporte para outro mapa: "mapa,x,y"
+          String mapName = parts[0].trim();
+          int x = Integer.parseInt(parts[1].trim());
+          int y = Integer.parseInt(parts[2].trim());
+          
+          // Carregar novo mapa
+          loadMap(mapName);
+          
+          // Posicionar jogador na nova posição
+          player.setWorldX(x);
+          player.setWorldY(y);
+          
+          gameUI.addMessage(message, null, 3000L);
+          
+        } else {
+          System.err.println("Formato de teleporte inválido: " + teleportString);
+        }
+        
+      } catch (NumberFormatException e) {
+        System.err.println("Erro ao parsear coordenadas de teleporte: " + teleportString);
+      } catch (Exception e) {
+        System.err.println("Erro ao executar teleporte: " + e.getMessage());
+        e.printStackTrace();
+      }
+    }
 
       /**
    * Inicializa componentes do jogo (NPCs e objetos).
@@ -1007,19 +1222,32 @@ public class GamePanel extends JPanel implements Runnable{
   }
 
   /**
-   * Verifica teleportes automáticos independentemente do sistema de interação.
+   * Verifica teleportes automáticos usando apenas TeleportManager.
    */
   private void checkAutomaticTeleports() {
     List<MapTile> teleportTiles = tileManager.getTeleportTiles();
     for (MapTile teleportTile : teleportTiles) {
-      // Verificar apenas teleportes automáticos (não interativos)
-      if (teleportTile.interactive == null || !teleportTile.interactive) {
-        int teleportWorldX = teleportTile.x * tileSize;
-        int teleportWorldY = teleportTile.y * tileSize;
+      // Verificar apenas teleportes automáticos (não interativos) configurados no TeleportManager
+      if ((teleportTile.interactive == null || !teleportTile.interactive) && 
+          teleportTile.id != null) {
+        
+        String teleportId = teleportTile.id;
+        
+        // Verificar se o ID contém dois pontos (formato: "teleportId:spawnPoint")
+        if (teleportTile.id.contains(":")) {
+          String[] parts = teleportTile.id.split(":", 2);
+          teleportId = parts[0].trim();
+        }
+        
+        // Verificar se há configuração de teleporte no TeleportManager
+        if (teleportManager.hasTeleport(teleportId)) {
+          int teleportWorldX = teleportTile.x * tileSize;
+          int teleportWorldY = teleportTile.y * tileSize;
 
-        if (isPlayerCollidingWithTeleport(player, teleportWorldX, teleportWorldY)) {
-          performTeleport(teleportTile);
-          return; // Sair após o primeiro teleporte
+          if (isPlayerCollidingWithTeleport(player, teleportWorldX, teleportWorldY)) {
+            performTeleport(teleportTile);
+            return; // Sair após o primeiro teleporte
+          }
         }
       }
     }
@@ -1056,24 +1284,175 @@ public class GamePanel extends JPanel implements Runnable{
   }
 
   /**
-   * Executa o teleporte do jogador.
+   * Executa teleporte interativo usando apenas TeleportManager.
+   */
+  private void performInteractiveTeleport(MapTile teleportTile) {
+    try {
+      if (teleportTile.id != null) {
+        String teleportId = teleportTile.id;
+        String spawnPoint = null;
+        
+        // Verificar se o ID contém dois pontos (formato: "teleportId:spawnPoint")
+        if (teleportTile.id.contains(":")) {
+          String[] parts = teleportTile.id.split(":", 2);
+          teleportId = parts[0].trim();
+          spawnPoint = parts[1].trim();
+        }
+        
+        // Verificar se há configuração de teleporte no TeleportManager
+        if (teleportManager.hasTeleport(teleportId)) {
+          TeleportManager.TeleportConfig config = teleportManager.getTeleport(teleportId);
+          
+          // Se há múltiplos pontos de spawn e não foi especificado um, mostrar opções
+          if (config.spawnPoints.size() > 1 && spawnPoint == null) {
+            showTeleportOptions(config);
+          } else {
+            // Teleporte direto para o ponto especificado ou único ponto disponível
+            performTeleportToConfig(config, spawnPoint);
+          }
+          
+        } else {
+          System.err.println("Teleporte interativo inválido: ID '" + teleportId + "' não encontrado no TeleportManager");
+        }
+      }
+      
+    } catch (Exception e) {
+      System.err.println("Erro ao executar teleporte interativo: " + e.getMessage());
+      e.printStackTrace();
+    }
+  }
+  
+  /**
+   * Mostra opções de teleporte quando há múltiplos pontos de spawn.
+   */
+  private void showTeleportOptions(TeleportManager.TeleportConfig config) {
+    StringBuilder message = new StringBuilder();
+    message.append("Escolha o destino em ").append(config.name).append(":\n");
+    
+    int index = 1;
+    for (String spawnPoint : config.spawnPoints.keySet()) {
+      message.append(index).append(". ").append(spawnPoint).append("\n");
+      index++;
+    }
+    
+    gameUI.addMessage(message.toString(), null, 5000L);
+    
+    // Por enquanto, usar o primeiro ponto de spawn
+    // TODO: Falta implementar sistema de seleção mais avançado
+    performTeleportToConfig(config, config.spawnPoints.keySet().iterator().next());
+  }
+  
+  /**
+   * Executa teleporte para uma configuração específica.
+   */
+  private void performTeleportToConfig(TeleportManager.TeleportConfig config, String spawnPoint) {
+    try {
+      // Carregar novo mapa
+      loadMap(config.map);
+      
+      int[] coordinates;
+      if (spawnPoint != null) {
+        coordinates = config.getSpawnPoint(spawnPoint);
+      } else {
+        coordinates = config.getFirstSpawnPoint();
+      }
+      
+      if (coordinates != null && coordinates.length == 2) {
+        // Converter coordenadas de tile para pixels
+        int pixelX = coordinates[0] * tileSize;
+        int pixelY = coordinates[1] * tileSize;
+        player.setWorldX(pixelX);
+        player.setWorldY(pixelY);
+        gameUI.addMessage("Você foi teleportado para " + config.name + "!", null, 3000L);
+      } else {
+        System.err.println("Coordenadas de spawn inválidas para " + config.name);
+      }
+      
+    } catch (Exception e) {
+      System.err.println("Erro ao executar teleporte para configuração: " + e.getMessage());
+      e.printStackTrace();
+    }
+  }
+
+  /**
+   * Executa o teleporte do jogador usando apenas TeleportManager.
    */
   private void performTeleport(MapTile teleportTile) {
-    if (teleportTile.toMap != null && !teleportTile.toMap.isEmpty()) {
+    try {
+      System.out.println("=== PERFORM TELEPORT DEBUG ===");
+      System.out.println("Tile ID: " + teleportTile.id);
+      System.out.println("Tile X: " + teleportTile.x + ", Y: " + teleportTile.y);
+      
+      if (teleportTile.id != null) {
+        String teleportId = teleportTile.id;
+        String spawnPoint = null;
+        
+        // Verificar se o ID contém dois pontos (formato: "teleportId:spawnPoint")
+        if (teleportTile.id.contains(":")) {
+          String[] parts = teleportTile.id.split(":", 2);
+          teleportId = parts[0].trim();
+          spawnPoint = parts[1].trim();
+          System.out.println("Split - TeleportId: " + teleportId + ", SpawnPoint: " + spawnPoint);
+        }
+        
+        // Verificar se há configuração de teleporte no TeleportManager
+        System.out.println("Has teleport '" + teleportId + "': " + teleportManager.hasTeleport(teleportId));
+        if (teleportManager.hasTeleport(teleportId)) {
+          TeleportManager.TeleportConfig config = teleportManager.getTeleport(teleportId);
+          System.out.println("Config found: " + config.name + " -> " + config.map);
 
-      // Carregar novo mapa
-      loadMap(teleportTile.toMap);
-
-      // Posicionar jogador na nova posição
-      player.setWorldX(teleportTile.toX * tileSize);
-      player.setWorldY(teleportTile.toY * tileSize);
+          // Carregar novo mapa
+          loadMap(config.map);
+          
+          // Usar ponto de spawn específico ou primeiro disponível
+          int[] spawnCoords;
+          if (spawnPoint != null) {
+            spawnCoords = config.getSpawnPoint(spawnPoint);
+            System.out.println("Spawn point '" + spawnPoint + "' coords: " + 
+              (spawnCoords != null ? spawnCoords[0] + "," + spawnCoords[1] : "null"));
+            if (spawnCoords == null) {
+              System.err.println("Ponto de spawn '" + spawnPoint + "' não encontrado para " + config.name);
+              gameUI.addMessage("Ponto de spawn não encontrado!", null, 3000L);
+              return;
+            }
+          } else {
+            spawnCoords = config.getFirstSpawnPoint();
+            System.out.println("First spawn point coords: " + 
+              (spawnCoords != null ? spawnCoords[0] + "," + spawnCoords[1] : "null"));
+          }
+          
+          if (spawnCoords != null && spawnCoords.length == 2) {
+            // Converter coordenadas de tile para pixels
+            int pixelX = spawnCoords[0] * tileSize;
+            int pixelY = spawnCoords[1] * tileSize;
+            System.out.println("Teleporting to tile: " + spawnCoords[0] + "," + spawnCoords[1] + 
+              " (pixels: " + pixelX + "," + pixelY + ")");
+            player.setWorldX(pixelX);
+            player.setWorldY(pixelY);
+            gameUI.addMessage("Você foi teleportado para " + config.name + "!", null, 3000L);
+            System.out.println("Teleport completed successfully!");
+          } else {
+            System.err.println("Nenhum ponto de spawn válido encontrado para " + config.name);
+            gameUI.addMessage("Erro: pontos de spawn inválidos!", null, 3000L);
+          }
+          
+        } else {
+          System.err.println("Teleporte inválido: ID '" + teleportId + "' não encontrado no TeleportManager");
+          gameUI.addMessage("Teleporte não configurado!", null, 3000L);
+        }
+      }
+      
+    } catch (Exception e) {
+      System.err.println("Erro ao executar teleporte: " + e.getMessage());
+      e.printStackTrace();
+      gameUI.addMessage("Erro no teleporte!", null, 3000L);
     }
   }
 
   /**
    * Carrega um novo mapa.
    */
-  private void loadMap(String mapName) {
+  public void loadMap(String mapName) {
     try {
       String mapPath = "/maps/" + mapName + ".json";
       tileManager.loadMapJson(mapPath);

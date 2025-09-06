@@ -955,13 +955,10 @@
       "name": "Teleport",
       "tiles": [
         {
-          "id": "17_8",
+          "id": "vila_eldoria:center",
           "x": 6,
           "y": 11,
-          "interactive": false,
-          "toMap": "map01",
-          "toX": 18,
-          "toY": 10
+          "interactive": false
         }
       ],
       "collider": false

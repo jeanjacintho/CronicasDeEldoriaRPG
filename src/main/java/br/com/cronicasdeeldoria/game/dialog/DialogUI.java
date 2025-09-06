@@ -53,12 +53,12 @@ public class DialogUI {
         this.optionFont = FontManager.getFont(14f);
         
         // Cores do tema
-        this.backgroundColor = new Color(10, 10, 20, 250); // Preto mais escuro e opaco
-        this.textColor = new Color(220, 220, 255); // Branco azulado
-        this.selectedOptionColor = new Color(255, 215, 0); // Dourado
-        this.unselectedOptionColor = new Color(180, 180, 200); // Cinza claro
-        this.borderColor = new Color(100, 80, 120); // Roxo escuro
-        this.shadowColor = new Color(0, 0, 0, 200); // Sombra mais escura
+        this.backgroundColor = new Color(50, 40, 60, 250); // Fundo principal
+        this.textColor = Color.WHITE; // Texto branco
+        this.selectedOptionColor = Color.WHITE; // Opção selecionada branca
+        this.unselectedOptionColor = new Color(200, 200, 200); // Cinza claro
+        this.borderColor = new Color(100, 80, 120, 200); // Borda roxa
+        this.shadowColor = new Color(0, 0, 0, 100); // Sombra da caixa
         this.highlightColor = new Color(255, 255, 255, 120); // Destaque mais visível
 
         // Configurar dimensões
@@ -82,6 +82,10 @@ public class DialogUI {
 
         Dialog currentDialog = dialogManager.getCurrentDialog();
         if (currentDialog == null) return;
+
+        // Overlay semi-transparente
+        g2.setColor(new Color(0, 0, 0, 150));
+        g2.fillRect(0, 0, gamePanel.getWidth(), gamePanel.getHeight());
 
         // Atualizar dimensões se necessário
         updateDimensions();
@@ -118,11 +122,6 @@ public class DialogUI {
         g2.setColor(borderColor);
         g2.setStroke(new BasicStroke(3));
         g2.drawRoundRect(dialogBoxX, dialogBoxY, dialogBoxWidth, dialogBoxHeight, borderRadius, borderRadius);
-        
-        // Borda interna (destaque)
-        g2.setColor(highlightColor);
-        g2.setStroke(new BasicStroke(1));
-        g2.drawRoundRect(dialogBoxX + 2, dialogBoxY + 2, dialogBoxWidth - 4, dialogBoxHeight - 4, borderRadius - 2, borderRadius - 2);
         
         // Linha separadora entre texto e opções
         int separatorY = dialogBoxY + dialogBoxHeight - 120;

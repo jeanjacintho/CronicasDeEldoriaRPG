@@ -6478,13 +6478,10 @@
       "name": "Teleport",
       "tiles": [
         {
-          "id": "42_4",
+          "id": "casa_01",
           "x": 19,
           "y": 10,
-          "interactive": true,
-          "toMap": "house01_map01",
-          "toX": 6,
-          "toY": 9
+          "interactive": true
         }
       ],
       "collider": false

@@ -5,7 +5,7 @@
       "name": "Vila de Eldoria",
       "description": "A cidade principal do reino",
       "spawnPoints": {
-        "center": [272, 272],
+        "center": [17, 17],
         "entrance": [160, 400],
         "shop": [200, 200],
         "inn": [300, 300]
@@ -16,9 +16,9 @@
       "name": "Casa do Aldeão",
       "description": "Uma casa simples na vila",
       "spawnPoints": {
-        "entrance": [96, 96],
-        "center": [80, 80],
-        "bed": [120, 120]
+        "entrance": [6, 6],
+        "center": [5, 5],
+        "bed": [7, 7]
       }
     },
     "dungeon_01": {
