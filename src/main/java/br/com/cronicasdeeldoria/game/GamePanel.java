@@ -17,7 +17,6 @@ import br.com.cronicasdeeldoria.entity.character.classes.Barbarian;
 import br.com.cronicasdeeldoria.entity.object.MapObject;
 import br.com.cronicasdeeldoria.entity.object.ObjectManager;
 import br.com.cronicasdeeldoria.entity.object.ObjectSpriteLoader;
-import br.com.cronicasdeeldoria.game.inventory.Equipment;
 import br.com.cronicasdeeldoria.game.ui.GameUI;
 import br.com.cronicasdeeldoria.game.ui.KeyboardMapper;
 import br.com.cronicasdeeldoria.game.ui.InteractionManager;
@@ -643,7 +642,6 @@ public class GamePanel extends JPanel implements Runnable{
   private void updateBattle() {
     if (!battle.isInBattle()) return;
 
-
     // Processar apenas entrada do jogador quando for sua vez
     if (battle.isWaitingForPlayerInput()) {
       if (keyHandler.attackPressed) {
@@ -653,10 +651,10 @@ public class GamePanel extends JPanel implements Runnable{
       else if (keyHandler.defendPressed ) {
         if (player.canApplyBuff("ARMOR")) {
           battle.processPlayerAction("DEFEND");
-          keyHandler.defendPressed = false;
         } else {
-          System.out.println("ARMOR buff is already activate or in cooldown!");
+          System.out.println("ARMOR buff is activate or in cooldown!");
         }
+        keyHandler.defendPressed = false;
       }
       else if (keyHandler.escapePressed) {
         battle.processPlayerAction("FLEE");
@@ -665,30 +663,30 @@ public class GamePanel extends JPanel implements Runnable{
       else if (keyHandler.specialPressed) {
         if (player.canApplyBuff("STRENGTH")) {
           battle.processPlayerAction("SPECIAL");
-          keyHandler.specialPressed = false;
         } else {
-          System.out.println("STRENGTH buff is already activate or in cooldown! ");
+          System.out.println("STRENGTH buff is activate or in cooldown! ");
         }
+        keyHandler.specialPressed = false;
       }
       else if (keyHandler.healthPressed) {
         // Se vida atual menor que máxima e tem potion no inventário, pode ser potion
         if (player.getAttributeHealth() < player.getAttributeMaxHealth() && inventoryManager.hasItemById("health_potion")) {
           inventoryManager.consumeItem("health_potion");
           battle.processPlayerAction("HEALTH");
-          keyHandler.healthPressed = false;
         } else {
           System.out.println("You don't have health potion or your life is full");
         }
+        keyHandler.healthPressed = false;
       }
       else if (keyHandler.manaPressed ) {
         // Se mana atual menor que máxima e tem potion no inventário, pode ser potion
         if (player.getAttributeMana() < player.getAttributeMaxMana() && inventoryManager.hasItemById("mana_potion")) {
           inventoryManager.consumeItem("mana_potion");
           battle.processPlayerAction("MANA");
-          keyHandler.manaPressed = false;
         } else {
           System.out.println("You already have a maximum MANA or your mana is full");
         }
+        keyHandler.manaPressed = false;
       }
     }
 
