@@ -7,6 +7,7 @@ import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.imageio.ImageIO;
@@ -16,8 +17,10 @@ import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.util.Objects;
 
+import br.com.cronicasdeeldoria.entity.character.Character;
 import br.com.cronicasdeeldoria.entity.character.npc.Npc;
 import br.com.cronicasdeeldoria.entity.character.player.Player;
+import br.com.cronicasdeeldoria.game.FloatingText;
 import br.com.cronicasdeeldoria.game.GamePanel;
 import br.com.cronicasdeeldoria.game.font.FontManager;
 import br.com.cronicasdeeldoria.game.inventory.InventoryManager;
@@ -47,6 +50,7 @@ public class GameUI {
   private long centerMessageStartTime = 0;
   private long centerMessageDuration = 3000; // 3 segundos por padrão
   private boolean centerMessageVisible = false;
+  private List<FloatingText> floatingTexts = new ArrayList<>();
 
   private final List<Message> messages = new ArrayList<>();
   private InventoryUI inventoryUI;
@@ -185,11 +189,11 @@ public class GameUI {
       Message msg = messages.get(i);
       if (msg.getImage() != null) {
         graphics2D.drawImage(msg.getImage(), x, y - 32, 32, 32, null);
-        
+
         // Sombra do texto
         graphics2D.setColor(new Color(0, 0, 0, 150));
         graphics2D.drawString(msg.getText(), x + 41, y + 1);
-        
+
         // Texto principal
         graphics2D.setColor(Color.WHITE);
         graphics2D.drawString(msg.getText(), x + 40, y);
@@ -197,7 +201,7 @@ public class GameUI {
         // Sombra do texto
         graphics2D.setColor(new Color(0, 0, 0, 150));
         graphics2D.drawString(msg.getText(), x + 1, y + 1);
-        
+
         // Texto principal
         graphics2D.setColor(Color.WHITE);
         graphics2D.drawString(msg.getText(), x, y);
@@ -225,11 +229,11 @@ public class GameUI {
     // Sombra do texto de nível
     graphics2D.setColor(new Color(0, 0, 0, 150));
     graphics2D.drawString("Level " + player.getCurrentLevel(), x + 1, y + heartSize + 16);
-    
+
     // Texto principal do nível
     graphics2D.setColor(Color.WHITE);
     graphics2D.drawString("Level " + player.getCurrentLevel(), x, y + heartSize + 15);
-    
+
     // Desenhar dinheiro do jogador no canto superior direito
     drawPlayerMoney(graphics2D);
   }
@@ -243,30 +247,30 @@ public class GameUI {
     if (player == null) return;
 
     graphics2D.setFont(dogicaFont_16);
-    
+
     int screenWidth = gamePanel.getWidth();
     int iconSize = 40;
     int padding = 20;
-    
+
     // Calcular posição no canto superior direito
     String moneyText = player.getPlayerMoney().getMoneyDisplay();
     FontMetrics fm = graphics2D.getFontMetrics();
     int textWidth = fm.stringWidth(moneyText);
-    
+
     int totalWidth = iconSize + 5 + textWidth; // ícone + espaçamento + texto
     int x = screenWidth - totalWidth - padding;
     int y = 15;
-    
+
     // Desenhar ícone da moeda (centralizado com os corações)
     if (coinIcon != null) {
       graphics2D.drawImage(coinIcon, x, y, iconSize, iconSize, null);
     }
-    
+
     // Desenhar texto do dinheiro (melhor alinhado com o ícone)
     // Sombra do texto
     graphics2D.setColor(new Color(0, 0, 0, 150));
     graphics2D.drawString(moneyText, x + iconSize + 6, y + iconSize/2 + 6);
-    
+
     // Texto principal
     graphics2D.setColor(Color.WHITE);
     graphics2D.drawString(moneyText, x + iconSize + 5, y + iconSize/2 + 5);
@@ -363,11 +367,11 @@ public class GameUI {
     // Sombra da janela
     graphics2D.setColor(shadowColor);
     graphics2D.fillRoundRect(x + 4, y + 4, windowWidth, windowHeight, borderRadius, borderRadius);
-    
+
     // Fundo principal da janela
     graphics2D.setColor(backgroundColor);
     graphics2D.fillRoundRect(x, y, windowWidth, windowHeight, borderRadius, borderRadius);
-    
+
     // Borda da janela
     graphics2D.setColor(borderColor);
     graphics2D.setStroke(new BasicStroke(3));
@@ -380,7 +384,7 @@ public class GameUI {
     graphics2D.drawString(title, x + padding + 2, y + 45 + 2);
     graphics2D.setColor(titleColor);
     graphics2D.drawString(title, x + padding, y + 45);
-    
+
     // Linha decorativa abaixo do título
     java.awt.FontMetrics fm = graphics2D.getFontMetrics();
     int titleWidth = fm.stringWidth(title);
@@ -463,11 +467,11 @@ public class GameUI {
     // Instrução para fechar
     graphics2D.setFont(FontManager.getFont(14f));
     String instructionText = "Pressione Q para fechar";
-    
+
     // Sombra da instrução
     graphics2D.setColor(new Color(0, 0, 0, 150));
     graphics2D.drawString(instructionText, x + padding + 1, textY + 1);
-    
+
     // Instrução principal
     graphics2D.setColor(new Color(200, 200, 200));
     graphics2D.drawString(instructionText, x + padding, textY);
@@ -484,11 +488,11 @@ public class GameUI {
    */
   private void drawStatLine(Graphics2D g2, String label, String value, int x, int y, Color color) {
     String text = label + ": " + value;
-    
+
     // Sombra do texto
     g2.setColor(new Color(0, 0, 0, 150));
     g2.drawString(text, x + 2, y + 2);
-    
+
     // Texto principal
     g2.setColor(color);
     g2.drawString(text, x, y);
@@ -521,10 +525,40 @@ public class GameUI {
     // Sombra do texto central
     graphics2D.setColor(new Color(0, 0, 0, 200));
     graphics2D.drawString(centerMessage, x + 2, y + 2);
-    
+
     // Texto principal (branco)
     graphics2D.setColor(Color.WHITE);
     graphics2D.drawString(centerMessage, x, y);
+  }
+
+  public void showDamage(Character target, int damage) {
+    int offsetX = 130; // dano deslocado para direita do player
+    showFloatingText(target, "-" + damage, Color.RED, offsetX);
+  }
+
+  public void showHeal(Character target, int heal) {
+    int offsetX = 0; // vida aparece a esquerda do player
+    showFloatingText(target, "+" + heal, Color.GREEN, offsetX);
+  }
+
+  public void showMana(Character target, int mana) {
+    int offsetX = 0; //mana aparece a esquerda do player
+    showFloatingText(target, "+" + mana, Color.BLUE, offsetX);
+  }
+
+  public void showFloatingText(Character target, String text, Color color, int offsetX) {
+    int screenHeight = gamePanel.getHeight();
+    int x, y;
+
+    if (target instanceof Player) {
+      x = 145;
+      y = screenHeight - 290;
+    } else {
+      x = 495;
+      y = screenHeight - 465;
+    }
+
+    floatingTexts.add(new FloatingText(text, x + offsetX, y, color));
   }
 
   public void drawBattleUI(Graphics2D g2) {
@@ -589,8 +623,7 @@ public class GameUI {
         e.printStackTrace();
       }
 
-      // Mostrar opções disponíveis
-
+      // Mostrar ações disponíveis
       g2.drawString("Escolha sua ação:", 20, screenHeight - 115);
       g2.drawString("(1) - " + player.getCharacterClass().getSpecialAbilityName(), 20, screenHeight - 75);
       g2.drawString("(2) - Ataque Básico", 20, screenHeight - 35);
@@ -671,7 +704,6 @@ public class GameUI {
         }
       }
     }
-
 
     // Informações do monstro (canto superior direito)
     if (battleMonster != null) {
@@ -765,6 +797,48 @@ public class GameUI {
     g2.setFont(dogicaFont_12);
     g2.drawString("MP: " + player.getAttributeMana() + "/" + player.getAttributeMaxMana(),
       playerInfoX + 10, playerMpBarY + 18);
+
+    // Desenha o dano recebido no character
+    Iterator<FloatingText> it = floatingTexts.iterator();
+    while (it.hasNext()) {
+      FloatingText dt = it.next();
+
+      if (dt.isExpired()) {
+        it.remove();
+        continue;
+      }
+
+      g2.setColor(Color.RED);
+      g2.setFont(dogicaFont_16);
+      g2.drawString(dt.text, dt.x, dt.y);
+
+      // animação simples: o texto sobe
+      dt.y -= 1;
+    }
+    drawFloatingTexts(g2);
+  }
+
+  private void drawFloatingTexts(Graphics2D g2) {
+    Iterator<FloatingText> iterator = floatingTexts.iterator();
+    while (iterator.hasNext()) {
+      FloatingText text = iterator.next();
+
+      // Desenha sombra
+      g2.setColor(new Color(0, 0, 0,180 ));
+      g2.drawString(text.getText(), text.getX() + 1, text.getY() + 1);
+
+      // Desenha texto principal na cor correta
+      g2.setColor(text.getColor());
+      g2.drawString(text.getText(), text.getX(), text.getY());
+
+      // Atualiza posição (subindo aos poucos)
+      text.update();
+
+      // Remove se expirou
+      if (text.isExpired()) {
+        iterator.remove();
+      }
+    }
   }
 
   /**
@@ -777,4 +851,5 @@ public class GameUI {
       inventoryUI.draw(g2, inventoryManager);
     }
   }
+
 }

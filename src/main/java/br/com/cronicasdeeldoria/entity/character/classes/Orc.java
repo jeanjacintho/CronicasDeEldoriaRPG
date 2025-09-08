@@ -60,7 +60,7 @@ public class Orc implements CharacterClass {
   }
 
   @Override
-  public boolean getSpecialAbility(Character attacker, Character target, int countTurn) {
+  public void getSpecialAbility(Character attacker, Character target, int countTurn) {
     int manaCost = 10;
 
 
@@ -88,6 +88,5 @@ public class Orc implements CharacterClass {
         " causing " + magicDamage + " magic damage!");
       System.out.println("-----------------------------");
     }
-    return false;
   }
 }

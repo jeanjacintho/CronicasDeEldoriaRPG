@@ -50,7 +50,7 @@ public class Ranger implements CharacterClass {
   }
 
   @Override
-  public boolean getSpecialAbility(Character attacker, Character target, int countTurn) {
+  public void getSpecialAbility(Character attacker, Character target, int countTurn) {
     int manaCost = 15;
 
     // Variação de dano, mas ignora a armadura do alvo
@@ -69,7 +69,6 @@ public class Ranger implements CharacterClass {
       System.out.println("-----------------------------");
     }
 
-    return false;
   }
 
   public int getDexterity() {
