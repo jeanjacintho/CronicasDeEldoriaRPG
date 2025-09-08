@@ -1,6 +1,7 @@
 package br.com.cronicasdeeldoria.entity.character.classes;
 
 import br.com.cronicasdeeldoria.entity.character.Character;
+import br.com.cronicasdeeldoria.game.GamePanel;
 
 /**
  * Interface que representa uma raça de personagem, com nome e atributo especial.
@@ -30,8 +31,7 @@ public interface CharacterClass {
 
   /**
    * Retorna o efeito da habiliade especial.
-   *
-   * @return Efeito da habilide especial da raça.
    */
-  boolean getSpecialAbility(Character attacker, Character target, int countTurn);
+  void getSpecialAbility(Character attacker, Character target, int countTurn);
+
 }

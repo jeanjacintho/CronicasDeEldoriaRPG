@@ -2,21 +2,19 @@ package br.com.cronicasdeeldoria.entity.character.classes;
 
 import br.com.cronicasdeeldoria.entity.character.Character;
 import br.com.cronicasdeeldoria.game.Battle;
+import br.com.cronicasdeeldoria.game.GamePanel;
 
 /**
  * Representa a raça Paladin, cujo atributo especial é endurance.
  */
 public class Paladin implements CharacterClass {
   private int endurance;
-  private String specialAbilityName;
-  private String specialAbility;
-
 
   /**
    * Cria um Paladin com endurance definida.
    * @param endurance Endurance do Paladin.
    */
-  public Paladin(int endurance) {
+  public Paladin(int endurance ) {
     this.endurance = endurance;
   }
 
@@ -60,7 +58,11 @@ public class Paladin implements CharacterClass {
   }
 
   @Override
-  public boolean getSpecialAbility(Character attacker, Character target, int countTurn) {
+  public void getSpecialAbility(Character attacker, Character target, int countTurn) {
+    getSpecialAbility(attacker, target, countTurn, null);// chama versão com gp = null
+  }
+
+  public void getSpecialAbility(Character attacker, Character target, int countTurn, GamePanel gp) {
     int manaCost = 15;
 
     if (attacker.getAttributeMana() >= manaCost) {
@@ -68,6 +70,7 @@ public class Paladin implements CharacterClass {
       int damage = (int) (Battle.calculateDamage(attacker, target) * 2); // 100% mais dano
       int newHealth = Math.max(0, target.getAttributeHealth() - damage);
       target.setAttributeHealth(newHealth);
+      gp.getGameUI().showDamage(target, damage);
 
       // Cura o atacante com 80% do dano causado
       int finalHeal = (int) (damage * 0.8);
@@ -76,10 +79,12 @@ public class Paladin implements CharacterClass {
       if (diffCurrentHpAndMaxHp > finalHeal) {
         attacker.setAttributeHealth(attacker.getAttributeHealth() + finalHeal);
         System.out.println(attacker.getName() + " recuperou " + finalHeal + " de Vida");
+        gp.getGameUI().showHeal(attacker, finalHeal);
         System.out.println("-----------------------------");
       } else {
         attacker.setAttributeHealth(attacker.getAttributeHealth() + diffCurrentHpAndMaxHp);
         System.out.println(attacker.getName() + " recuperou " + diffCurrentHpAndMaxHp + " de Vida");
+        gp.getGameUI().showHeal(attacker, diffCurrentHpAndMaxHp);
         System.out.println("-----------------------------");
       }
 
@@ -87,6 +92,5 @@ public class Paladin implements CharacterClass {
         " causing " + damage + " Holy damage!");
       System.out.println("-----------------------------");
     }
-    return false;
   }
 }

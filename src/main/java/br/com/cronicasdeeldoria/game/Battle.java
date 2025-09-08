@@ -1,6 +1,7 @@
 package br.com.cronicasdeeldoria.game;
 
 import br.com.cronicasdeeldoria.entity.character.Character;
+import br.com.cronicasdeeldoria.entity.character.classes.Paladin;
 import br.com.cronicasdeeldoria.entity.character.player.Player;
 import br.com.cronicasdeeldoria.entity.character.npc.Npc;
 import java.util.ArrayList;
@@ -22,6 +23,7 @@ public class Battle {
     this.turnOrder = new ArrayList<>();
     this.inBattle = false;
     this.waitingForPlayerInput = false;
+
   }
 
   public void startBattle(Player player, Npc monster) {
@@ -108,7 +110,6 @@ public class Battle {
   private void processMonsterTurn() {
     if (!inBattle) return;
 
-
     Character currentCharacter = getCurrentCharacter();
     if (!(currentCharacter instanceof Npc)) return;
 
@@ -187,6 +188,8 @@ public class Battle {
 
     System.out.println(attacker.getName() + " attacks " + target.getName() + " causing " + damage + " damage!");
     System.out.println("-----------------------------");
+
+    gp.getGameUI().showDamage(target, damage);
   }
 
   private void defend(Character character) {
@@ -219,7 +222,12 @@ public class Battle {
   }
 
   private void specialAttack(Character attacker, Character target, int countTurn) {
-    System.out.println(attacker.getCharacterClass().getSpecialAbility(attacker, target, countTurn));
+    // Caso o paladin use o seu special attack, é necessário usar o gamePanel para monstrar a recuperação de vida na batalha
+    if (attacker.getCharacterClass() instanceof Paladin) {
+      ((Paladin) attacker.getCharacterClass()).getSpecialAbility(attacker, target, countTurn, gp);
+    } else {
+      attacker.getCharacterClass().getSpecialAbility(attacker, target, countTurn);
+    }
   }
 
   // Health Potion
@@ -238,6 +246,7 @@ public class Battle {
       System.out.println(character.getName() + " recuperou " + diffCurrentHpAndMaxHp + " de Vida");
       System.out.println("-----------------------------");
     }
+    gp.getGameUI().showHeal(character, finalHeal);
   }
 
   // Mana Potion
@@ -254,6 +263,7 @@ public class Battle {
       character.setAttributeMana(character.getAttributeMana() + diffCurrentMpAndMaxMp);
       System.out.println(character.getName() + " recuperou " + diffCurrentMpAndMaxMp + " de Mana");
     }
+    gp.getGameUI().showMana(character, finalManaRecover);
   }
 
   private void movePlayerAwayFromMonster() {

@@ -60,7 +60,7 @@ public class Mage implements CharacterClass {
   }
 
   @Override
-  public boolean getSpecialAbility(Character attacker, Character target, int countTurn) {
+  public void getSpecialAbility(Character attacker, Character target, int countTurn) {
     int manaCost = 15;
 
     if (attacker.getAttributeMana() >= manaCost) {
@@ -73,6 +73,5 @@ public class Mage implements CharacterClass {
         " causing " + magicDamage + " Fire damage!");
       System.out.println("-----------------------------");
     }
-    return false;
   }
 }

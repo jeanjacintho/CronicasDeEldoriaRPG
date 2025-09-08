@@ -58,7 +58,7 @@ public class Barbarian implements CharacterClass {
   }
 
   @Override
-  public boolean getSpecialAbility(Character attacker, Character target, int countTurn) {
+  public void getSpecialAbility(Character attacker, Character target, int countTurn) {
     int manaCost = 15;
 
     if (attacker.getAttributeMana() >= manaCost) {
@@ -69,6 +69,5 @@ public class Barbarian implements CharacterClass {
       Buff strBuff = new Buff("STRENGTH", bonus, 3 * 2, 3 * 2);
       attacker.applyBuff(strBuff);
     }
-    return false;
   }
 }
