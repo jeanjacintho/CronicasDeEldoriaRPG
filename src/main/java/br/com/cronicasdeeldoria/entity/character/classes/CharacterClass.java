@@ -32,6 +32,6 @@ public interface CharacterClass {
   /**
    * Retorna o efeito da habiliade especial.
    */
-  void getSpecialAbility(Character attacker, Character target, int countTurn);
+  void getSpecialAbility(Character attacker, Character target, int countTurn, GamePanel gp);
 
 }

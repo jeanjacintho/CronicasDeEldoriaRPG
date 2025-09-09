@@ -1,7 +1,9 @@
 package br.com.cronicasdeeldoria.game;
 
 import br.com.cronicasdeeldoria.entity.character.Character;
+import br.com.cronicasdeeldoria.entity.character.classes.Barbarian;
 import br.com.cronicasdeeldoria.entity.character.classes.Paladin;
+import br.com.cronicasdeeldoria.entity.character.classes.Ranger;
 import br.com.cronicasdeeldoria.entity.character.player.Player;
 import br.com.cronicasdeeldoria.entity.character.npc.Npc;
 import java.util.ArrayList;
@@ -195,7 +197,7 @@ public class Battle {
   private void defend(Character character) {
     int bonus = (int)(character.getAttributeArmor() * 1.3);
 
-    // 50% de buff por 2 turnos defendendo e 3 de cooldown
+    // 30% de buff por 2 turnos defendendo e 3 de cooldown
     Buff armorBuff = new Buff("ARMOR", bonus, 2 * 2, 2 * 2); //
     character.applyBuff(armorBuff);
   }
@@ -222,17 +224,12 @@ public class Battle {
   }
 
   private void specialAttack(Character attacker, Character target, int countTurn) {
-    // Caso o paladin use o seu special attack, é necessário usar o gamePanel para monstrar a recuperação de vida na batalha
-    if (attacker.getCharacterClass() instanceof Paladin) {
-      ((Paladin) attacker.getCharacterClass()).getSpecialAbility(attacker, target, countTurn, gp);
-    } else {
-      attacker.getCharacterClass().getSpecialAbility(attacker, target, countTurn);
-    }
+    attacker.getCharacterClass().getSpecialAbility(attacker, target, countTurn, gp);
   }
 
   // Health Potion
   private void healthPotion(Character character) {
-    int baseHeal = 25;
+    int baseHeal = 45;
     int variation = (int) (baseHeal * 0.4); // 40% de variação
     int finalHeal = baseHeal + (int)(Math.random() * variation * 2) - variation;
     int diffCurrentHpAndMaxHp = character.getAttributeMaxHealth() - character.getAttributeHealth();
@@ -251,7 +248,7 @@ public class Battle {
 
   // Mana Potion
   private void manaPotion(Character character) {
-    int baseManaRecover = 20;
+    int baseManaRecover = 30;
     int variation = (int) (baseManaRecover * 0.3); // 30% de variação
     int finalManaRecover = baseManaRecover + (int)(Math.random() * variation * 2) - variation;
     int diffCurrentMpAndMaxMp = character.getAttributeMaxMana() - character.getAttributeMana();

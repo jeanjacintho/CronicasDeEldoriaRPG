@@ -14,9 +14,12 @@ import br.com.cronicasdeeldoria.entity.character.npc.WolfMonster;
 import br.com.cronicasdeeldoria.entity.character.player.Player;
 import br.com.cronicasdeeldoria.entity.character.classes.*;
 import br.com.cronicasdeeldoria.entity.character.classes.Barbarian;
+import br.com.cronicasdeeldoria.entity.item.Item;
+import br.com.cronicasdeeldoria.entity.item.ItemType;
 import br.com.cronicasdeeldoria.entity.object.MapObject;
 import br.com.cronicasdeeldoria.entity.object.ObjectManager;
 import br.com.cronicasdeeldoria.entity.object.ObjectSpriteLoader;
+import br.com.cronicasdeeldoria.game.inventory.ItemFactory;
 import br.com.cronicasdeeldoria.game.ui.GameUI;
 import br.com.cronicasdeeldoria.game.ui.KeyboardMapper;
 import br.com.cronicasdeeldoria.game.font.FontManager;
@@ -332,13 +335,35 @@ public class GamePanel extends JPanel implements Runnable{
     if (playerWon) {
       System.out.println("Victory! You defeated " + battleMonster.getName());
 
+      LootTable lootTable = null;
       int xpReward = 0;
+
       if (battleMonster instanceof WolfMonster ) {
         xpReward = ((WolfMonster) battleMonster).getXpReward();
+        lootTable = new WolfLootTable();
       } else if (battleMonster instanceof SkeletonMonster) {
         xpReward = ((SkeletonMonster) battleMonster).getXpReward();
+        lootTable = new SkeletonLootTable();
       }
       player.gainXp(xpReward);
+
+      // Drop do monstro
+      if (lootTable != null) {
+        List<String> itemDrops = lootTable.getDrops();
+        if (!itemDrops.isEmpty()) {
+          for (String itemName : itemDrops) {
+            Item reward = ItemFactory.createItem(itemName);
+            boolean added = getInventoryManager().addItem(reward);
+            if (added) {
+              getGameUI().addMessage("Você recebeu: " + reward.getName(), null, 5000);
+            } else {
+              getGameUI().addMessage("Inventário cheio! Item perdido: " + reward.getName(), null, 5000);
+            }
+          }
+        } else {
+          getGameUI().addMessage("O monstro não deixou nenhum loot.", null, 5000);
+        }
+      }
 
       // Remover monstro derrotado do mapa
       removeMonsterFromMap(battleMonster);

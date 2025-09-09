@@ -2,6 +2,7 @@ package br.com.cronicasdeeldoria.entity.character.classes;
 
 import br.com.cronicasdeeldoria.entity.character.Character;
 import br.com.cronicasdeeldoria.game.Battle;
+import br.com.cronicasdeeldoria.game.GamePanel;
 
 /**
  * Representa a raça Orc, cujo atributo especial é rage.
@@ -60,7 +61,7 @@ public class Orc implements CharacterClass {
   }
 
   @Override
-  public void getSpecialAbility(Character attacker, Character target, int countTurn) {
+  public void getSpecialAbility(Character attacker, Character target, int countTurn, GamePanel gp) {
     int manaCost = 10;
 
 

@@ -1,6 +1,7 @@
 package br.com.cronicasdeeldoria.entity.character.classes;
 
 import br.com.cronicasdeeldoria.entity.character.Character;
+import br.com.cronicasdeeldoria.game.GamePanel;
 
 /**
  * Representa a raça Ranger, cujo atributo especial é destreza (dexterity).
@@ -50,7 +51,7 @@ public class Ranger implements CharacterClass {
   }
 
   @Override
-  public void getSpecialAbility(Character attacker, Character target, int countTurn) {
+  public void getSpecialAbility(Character attacker, Character target, int countTurn, GamePanel gp) {
     int manaCost = 15;
 
     // Variação de dano, mas ignora a armadura do alvo
@@ -60,15 +61,15 @@ public class Ranger implements CharacterClass {
 
     if (attacker.getAttributeMana() >= manaCost) {
       attacker.setAttributeMana(attacker.getAttributeMana() - manaCost);
-      int damage = (int)((Math.max(1, finalDamage)) * 1.4); // 40% mais dano
+      int damage = (int)((Math.max(1, finalDamage)) * 2);
       int newHealth = Math.max(0, target.getAttributeHealth() - damage);
       target.setAttributeHealth(newHealth);
+      gp.getGameUI().showDamage(target, damage);
 
-      System.out.println(attacker.getName() + " uses magic on " + target.getName() +
+      System.out.println(attacker.getName() + " uses Special Ability on " + target.getName() +
         " causing " + damage + " Physical damage!");
       System.out.println("-----------------------------");
     }
-
   }
 
   public int getDexterity() {
