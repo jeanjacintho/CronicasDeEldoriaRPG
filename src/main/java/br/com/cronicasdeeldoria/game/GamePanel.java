@@ -349,14 +349,16 @@ public class GamePanel extends JPanel implements Runnable{
 
       // Drop do monstro
       if (lootTable != null) {
-        String itemDrop = lootTable.getRandomDrop();
-        if (itemDrop != null) {
-          Item reward = ItemFactory.createItem(itemDrop);
-          boolean added = getInventoryManager().addItem(reward);
-          if (added) {
-            System.out.println("Você recebeu: " + reward.getName());
-          } else {
-            System.out.println("Inventário cheio! Item perdido.");
+        List<String> itemDrops = lootTable.getDrops();
+        if (!itemDrops.isEmpty()) {
+          for (String itemName : itemDrops) {
+            Item reward = ItemFactory.createItem(itemName);
+            boolean added = getInventoryManager().addItem(reward);
+            if (added) {
+              System.out.println("Você recebeu: " + reward.getName());
+            } else {
+              System.out.println("Inventário cheio! Item perdido: " + reward.getName());
+            }
           }
         } else {
           System.out.println("O monstro não deixou nenhum loot.");
