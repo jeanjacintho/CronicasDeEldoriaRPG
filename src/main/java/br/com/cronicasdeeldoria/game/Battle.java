@@ -232,7 +232,7 @@ public class Battle {
 
   // Health Potion
   private void healthPotion(Character character) {
-    int baseHeal = 25;
+    int baseHeal = 45;
     int variation = (int) (baseHeal * 0.4); // 40% de variação
     int finalHeal = baseHeal + (int)(Math.random() * variation * 2) - variation;
     int diffCurrentHpAndMaxHp = character.getAttributeMaxHealth() - character.getAttributeHealth();
@@ -251,7 +251,7 @@ public class Battle {
 
   // Mana Potion
   private void manaPotion(Character character) {
-    int baseManaRecover = 20;
+    int baseManaRecover = 25;
     int variation = (int) (baseManaRecover * 0.3); // 30% de variação
     int finalManaRecover = baseManaRecover + (int)(Math.random() * variation * 2) - variation;
     int diffCurrentMpAndMaxMp = character.getAttributeMaxMana() - character.getAttributeMana();

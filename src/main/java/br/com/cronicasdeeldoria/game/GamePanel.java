@@ -335,29 +335,36 @@ public class GamePanel extends JPanel implements Runnable{
     if (playerWon) {
       System.out.println("Victory! You defeated " + battleMonster.getName());
 
+      LootTable lootTable = null;
       int xpReward = 0;
+
       if (battleMonster instanceof WolfMonster ) {
         xpReward = ((WolfMonster) battleMonster).getXpReward();
+        lootTable = new WolfLootTable();
       } else if (battleMonster instanceof SkeletonMonster) {
         xpReward = ((SkeletonMonster) battleMonster).getXpReward();
+        lootTable = new SkeletonLootTable();
       }
       player.gainXp(xpReward);
 
-      // Remover monstro derrotado do mapa
-      removeMonsterFromMap(battleMonster);
-
-      // Criar um item de recompensa via ItemFactory
-      Item potion = ItemFactory.createItem("health_potion");
-
-      if (potion != null) {
-        boolean added = getInventoryManager().addItem(potion);
-        if (added) {
-          System.out.println("Você recebeu uma Poção de Cura!");
+      // Drop do monstro
+      if (lootTable != null) {
+        String itemDrop = lootTable.getRandomDrop();
+        if (itemDrop != null) {
+          Item reward = ItemFactory.createItem(itemDrop);
+          boolean added = getInventoryManager().addItem(reward);
+          if (added) {
+            System.out.println("Você recebeu: " + reward.getName());
+          } else {
+            System.out.println("Inventário cheio! Item perdido.");
+          }
         } else {
-          System.out.println("Inventário cheio! A poção foi perdida.");
+          System.out.println("O monstro não deixou nenhum loot.");
         }
       }
 
+      // Remover monstro derrotado do mapa
+      removeMonsterFromMap(battleMonster);
     } else {
       System.out.println("Defeat! You were defeated by " + battleMonster.getName());
       // Aplicar penalidade se necessário
