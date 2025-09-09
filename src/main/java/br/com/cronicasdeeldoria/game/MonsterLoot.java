@@ -36,8 +36,8 @@ class LootTable {
 
 class WolfLootTable extends LootTable {
   public WolfLootTable() {
-    addLoot("health_potion", 0.4);
-    addLoot("mana_potion", 0.35);
+    addLoot("health_potion", 0.6);
+    addLoot("mana_potion", 0.4);
     addLoot("shield_common", 0.05);
     addLoot("sword_common", 0.05);
     addLoot("hammer_common", 0.05);

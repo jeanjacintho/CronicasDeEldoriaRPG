@@ -355,13 +355,13 @@ public class GamePanel extends JPanel implements Runnable{
             Item reward = ItemFactory.createItem(itemName);
             boolean added = getInventoryManager().addItem(reward);
             if (added) {
-              System.out.println("Você recebeu: " + reward.getName());
+              getGameUI().addMessage("Você recebeu: " + reward.getName(), null, 5000);
             } else {
-              System.out.println("Inventário cheio! Item perdido: " + reward.getName());
+              getGameUI().addMessage("Inventário cheio! Item perdido: " + reward.getName(), null, 5000);
             }
           }
         } else {
-          System.out.println("O monstro não deixou nenhum loot.");
+          getGameUI().addMessage("O monstro não deixou nenhum loot.", null, 5000);
         }
       }
 

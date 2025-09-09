@@ -2,15 +2,13 @@ package br.com.cronicasdeeldoria.entity.character.classes;
 
 import br.com.cronicasdeeldoria.entity.character.Character;
 import br.com.cronicasdeeldoria.game.Battle;
+import br.com.cronicasdeeldoria.game.GamePanel;
 
 /**
  * Representa a raça Mage, cujo atributo especial é magicPower.
  */
 public class Mage implements CharacterClass {
   private int magicPower;
-  private String specialAbilityName;
-  private String specialAbility;
-
 
   /**
    * Cria um Mage com magicPower definido.
@@ -60,14 +58,15 @@ public class Mage implements CharacterClass {
   }
 
   @Override
-  public void getSpecialAbility(Character attacker, Character target, int countTurn) {
+  public void getSpecialAbility(Character attacker, Character target, int countTurn, GamePanel gp) {
     int manaCost = 15;
 
     if (attacker.getAttributeMana() >= manaCost) {
       attacker.setAttributeMana(attacker.getAttributeMana() - manaCost);
-      int magicDamage = (int) (Battle.calculateDamage(attacker, target) * 3); // 300% mais dano
+      int magicDamage = (int) (Battle.calculateDamage(attacker, target) * 4.5);
       int newHealth = Math.max(0, target.getAttributeHealth() - magicDamage);
       target.setAttributeHealth(newHealth);
+      gp.getGameUI().showDamage(target, magicDamage);
 
       System.out.println(attacker.getName() + " uses Special Ability on " + target.getName() +
         " causing " + magicDamage + " Fire damage!");

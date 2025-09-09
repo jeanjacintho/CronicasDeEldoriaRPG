@@ -2,6 +2,7 @@ package br.com.cronicasdeeldoria.entity.character.classes;
 
 import br.com.cronicasdeeldoria.entity.character.Character;
 import br.com.cronicasdeeldoria.game.Buff;
+import br.com.cronicasdeeldoria.game.GamePanel;
 
 /**
  * Representa a raça Barbarian, cujo atributo especial é força de vontade (willpower).
@@ -58,7 +59,7 @@ public class Barbarian implements CharacterClass {
   }
 
   @Override
-  public void getSpecialAbility(Character attacker, Character target, int countTurn) {
+  public void getSpecialAbility(Character attacker, Character target, int countTurn, GamePanel gp) {
     int manaCost = 15;
 
     if (attacker.getAttributeMana() >= manaCost) {

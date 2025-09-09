@@ -1,7 +1,9 @@
 package br.com.cronicasdeeldoria.game;
 
 import br.com.cronicasdeeldoria.entity.character.Character;
+import br.com.cronicasdeeldoria.entity.character.classes.Barbarian;
 import br.com.cronicasdeeldoria.entity.character.classes.Paladin;
+import br.com.cronicasdeeldoria.entity.character.classes.Ranger;
 import br.com.cronicasdeeldoria.entity.character.player.Player;
 import br.com.cronicasdeeldoria.entity.character.npc.Npc;
 import java.util.ArrayList;
@@ -222,12 +224,7 @@ public class Battle {
   }
 
   private void specialAttack(Character attacker, Character target, int countTurn) {
-    // Caso o paladin use o seu special attack, é necessário usar o gamePanel para monstrar a recuperação de vida na batalha
-    if (attacker.getCharacterClass() instanceof Paladin) {
-      ((Paladin) attacker.getCharacterClass()).getSpecialAbility(attacker, target, countTurn, gp);
-    } else {
-      attacker.getCharacterClass().getSpecialAbility(attacker, target, countTurn);
-    }
+    attacker.getCharacterClass().getSpecialAbility(attacker, target, countTurn, gp);
   }
 
   // Health Potion
@@ -251,7 +248,7 @@ public class Battle {
 
   // Mana Potion
   private void manaPotion(Character character) {
-    int baseManaRecover = 25;
+    int baseManaRecover = 30;
     int variation = (int) (baseManaRecover * 0.3); // 30% de variação
     int finalManaRecover = baseManaRecover + (int)(Math.random() * variation * 2) - variation;
     int diffCurrentMpAndMaxMp = character.getAttributeMaxMana() - character.getAttributeMana();

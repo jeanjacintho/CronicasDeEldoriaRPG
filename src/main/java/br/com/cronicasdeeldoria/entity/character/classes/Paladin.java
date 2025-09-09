@@ -57,11 +57,8 @@ public class Paladin implements CharacterClass {
     return "Ataque Sagrado";
   }
 
-  @Override
-  public void getSpecialAbility(Character attacker, Character target, int countTurn) {
-    getSpecialAbility(attacker, target, countTurn, null);// chama versão com gp = null
-  }
 
+  @Override
   public void getSpecialAbility(Character attacker, Character target, int countTurn, GamePanel gp) {
     int manaCost = 15;
 
