@@ -14,9 +14,12 @@ import br.com.cronicasdeeldoria.entity.character.npc.WolfMonster;
 import br.com.cronicasdeeldoria.entity.character.player.Player;
 import br.com.cronicasdeeldoria.entity.character.classes.*;
 import br.com.cronicasdeeldoria.entity.character.classes.Barbarian;
+import br.com.cronicasdeeldoria.entity.item.Item;
+import br.com.cronicasdeeldoria.entity.item.ItemType;
 import br.com.cronicasdeeldoria.entity.object.MapObject;
 import br.com.cronicasdeeldoria.entity.object.ObjectManager;
 import br.com.cronicasdeeldoria.entity.object.ObjectSpriteLoader;
+import br.com.cronicasdeeldoria.game.inventory.ItemFactory;
 import br.com.cronicasdeeldoria.game.ui.GameUI;
 import br.com.cronicasdeeldoria.game.ui.KeyboardMapper;
 import br.com.cronicasdeeldoria.game.font.FontManager;
@@ -342,6 +345,19 @@ public class GamePanel extends JPanel implements Runnable{
 
       // Remover monstro derrotado do mapa
       removeMonsterFromMap(battleMonster);
+
+      // Criar um item de recompensa via ItemFactory
+      Item potion = ItemFactory.createItem("health_potion");
+
+      if (potion != null) {
+        boolean added = getInventoryManager().addItem(potion);
+        if (added) {
+          System.out.println("Você recebeu uma Poção de Cura!");
+        } else {
+          System.out.println("Inventário cheio! A poção foi perdida.");
+        }
+      }
+
     } else {
       System.out.println("Defeat! You were defeated by " + battleMonster.getName());
       // Aplicar penalidade se necessário
