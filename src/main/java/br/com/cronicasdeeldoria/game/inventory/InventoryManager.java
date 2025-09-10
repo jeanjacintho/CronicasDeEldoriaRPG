@@ -46,7 +46,7 @@ public class InventoryManager {
                 if (existingItem != null && item.canStackWith(existingItem)) {
                     // Empilhar diretamente no item existente
                     int stacked = existingItem.stackItem(item);
-                    
+
                     if (stacked > 0) {
                         // Se o item foi completamente empilhado, retornar true
                         if (item.getStackSize() == 0) {
