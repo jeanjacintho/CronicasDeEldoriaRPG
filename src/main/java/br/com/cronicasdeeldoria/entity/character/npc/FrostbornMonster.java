@@ -1,7 +1,7 @@
 package br.com.cronicasdeeldoria.entity.character.npc;
 
-public class WolfMonster extends Npc {
-  private int xpReward = 50;
+public class FrostbornMonster extends Npc {
+  private int xpReward = 60;
   /**
    * Cria um novo WolfMonster.
    * @param name Nome do Monster.
@@ -14,7 +14,8 @@ public class WolfMonster extends Npc {
    * @param interactive Indica se o Monster é interativo.
    * @param autoInteraction Indica se a interação é automática.
    */
-  public WolfMonster(String name, boolean isStatic, String dialog, int x, int y, String skin, int playerSize, boolean interactive, boolean autoInteraction) {
+
+  public FrostbornMonster(String name, boolean isStatic, String dialog, int x, int y, String skin, int playerSize, boolean interactive, boolean autoInteraction) {
     super(name, isStatic, dialog, x, y, skin, playerSize, interactive, autoInteraction);
   }
 

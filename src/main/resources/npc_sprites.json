@@ -25,5 +25,17 @@
   },
   "supreme_mage": {
     "down": ["monster/supreme_mage/supreme_mage_front.png"]
+  },
+  "frostborn": {
+    "down": ["monster/frostborn/frostborn_front.png", "monster/frostborn/frostborn_front_walk1.png", "monster/frostborn/frostborn_front_walk2.png"],
+    "up": ["monster/frostborn/frostborn_back.png", "monster/frostborn/frostborn_back_walk1.png", "monster/frostborn/frostborn_back_walk2.png"],
+    "left": ["monster/frostborn/frostborn_left.png", "monster/frostborn/frostborn_left_walk1.png", "monster/frostborn/frostborn_left_walk2.png"],
+    "right": ["monster/frostborn/frostborn_right.png", "monster/frostborn/frostborn_right_walk1.png", "monster/frostborn/frostborn_right_walk2.png"]
+  },
+  "orc": {
+    "down": ["monster/orc/orc_front.png", "monster/orc/orc_front_walk1.png", "monster/orc/orc_front_walk2.png"],
+    "up": ["monster/orc/orc_back.png", "monster/orc/orc_back_walk1.png", "monster/orc/orc_back_walk2.png"],
+    "left": ["monster/orc/orc_left.png", "monster/orc/orc_left_walk1.png", "monster/orc/orc_left_walk2.png"],
+    "right": ["monster/orc/orc_right.png", "monster/orc/orc_right_walk1.png", "monster/orc/orc_right_walk2.png"]
   }
 }

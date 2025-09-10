@@ -22,7 +22,7 @@ class LootTable {
     loot.add(new MonsterLoot(itemName, chance));
   }
 
-  // Pode tropas 0 a vários itens
+  // Pode tropar 0 a vários itens
   public List<String> getDrops() {
     List<String> drops = new ArrayList<>();
     for (MonsterLoot entry : loot) {
@@ -36,7 +36,7 @@ class LootTable {
 
 class WolfLootTable extends LootTable {
   public WolfLootTable() {
-    addLoot("health_potion", 0.6);
+    addLoot("health_potion", 1);
     addLoot("mana_potion", 0.4);
     addLoot("shield_common", 0.05);
     addLoot("sword_common", 0.05);
@@ -51,8 +51,38 @@ class WolfLootTable extends LootTable {
 
 class SkeletonLootTable extends LootTable {
   public SkeletonLootTable() {
-    addLoot("health_potion", 0.4);
-    addLoot("mana_potion", 0.35);
+    addLoot("health_potion", 1);
+    addLoot("mana_potion", 0.4);
+    addLoot("shield_common", 0.05);
+    addLoot("sword_common", 0.05);
+    addLoot("hammer_common", 0.05);
+    addLoot("bow_common", 0.05);
+    addLoot("axe_common", 0.05);
+    addLoot("armor_common", 0.05);
+    addLoot("key_common", 0.01);
+    addLoot("boot_speed", 0.01);
+  }
+}
+
+class FrostbornLootTable extends LootTable {
+  public FrostbornLootTable() {
+    addLoot("health_potion", 1);
+    addLoot("mana_potion", 0.4);
+    addLoot("shield_common", 0.05);
+    addLoot("sword_common", 0.05);
+    addLoot("hammer_common", 0.05);
+    addLoot("bow_common", 0.05);
+    addLoot("axe_common", 0.05);
+    addLoot("armor_common", 0.05);
+    addLoot("key_common", 0.01);
+    addLoot("boot_speed", 0.01);
+  }
+}
+
+class OrcLootTable extends LootTable {
+  public OrcLootTable() {
+    addLoot("health_potion", 1);
+    addLoot("mana_potion", 0.6);
     addLoot("shield_common", 0.05);
     addLoot("sword_common", 0.05);
     addLoot("hammer_common", 0.05);

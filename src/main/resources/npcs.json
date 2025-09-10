@@ -42,6 +42,26 @@
     "skin": "skeleton"
   },
   {
+    "id": "frostborn",
+    "name": "Frostborn",
+    "isStatic": true,
+    "interactive": true,
+    "autoInteraction": true,
+    "dialog": "Lute comigo, verme!",
+    "type": "enemy",
+    "skin": "frostborn"
+  },
+  {
+    "id": "orc",
+    "name": "Orc",
+    "isStatic": true,
+    "interactive": true,
+    "autoInteraction": true,
+    "dialog": "Lute comigo, verme!",
+    "type": "enemy",
+    "skin": "orc"
+  },
+  {
     "id": "merchant",
     "name": "Comerciante",
     "isStatic": true,
