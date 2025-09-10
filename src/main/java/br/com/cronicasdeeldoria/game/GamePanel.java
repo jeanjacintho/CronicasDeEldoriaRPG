@@ -9,8 +9,7 @@ import java.awt.BasicStroke;
 
 import javax.swing.JPanel;
 
-import br.com.cronicasdeeldoria.entity.character.npc.SkeletonMonster;
-import br.com.cronicasdeeldoria.entity.character.npc.WolfMonster;
+import br.com.cronicasdeeldoria.entity.character.npc.*;
 import br.com.cronicasdeeldoria.entity.character.player.Player;
 import br.com.cronicasdeeldoria.entity.character.classes.*;
 import br.com.cronicasdeeldoria.entity.character.classes.Barbarian;
@@ -24,9 +23,6 @@ import br.com.cronicasdeeldoria.game.ui.GameUI;
 import br.com.cronicasdeeldoria.game.ui.KeyboardMapper;
 import br.com.cronicasdeeldoria.game.font.FontManager;
 import br.com.cronicasdeeldoria.game.ui.InteractionManager;
-import br.com.cronicasdeeldoria.entity.character.npc.Npc;
-import br.com.cronicasdeeldoria.entity.character.npc.NpcFactory;
-import br.com.cronicasdeeldoria.entity.character.npc.NpcSpriteLoader;
 import br.com.cronicasdeeldoria.tile.TileManager;
 import br.com.cronicasdeeldoria.tile.TileManager.MapTile;
 import br.com.cronicasdeeldoria.config.CharacterConfigLoader;
@@ -344,6 +340,12 @@ public class GamePanel extends JPanel implements Runnable{
       } else if (battleMonster instanceof SkeletonMonster) {
         xpReward = ((SkeletonMonster) battleMonster).getXpReward();
         lootTable = new SkeletonLootTable();
+      } else if (battleMonster instanceof FrostbornMonster) {
+        xpReward = ((FrostbornMonster) battleMonster).getXpReward();
+        lootTable = new FrostbornLootTable();
+      } else if (battleMonster instanceof OrcMonster) {
+        xpReward = ((OrcMonster) battleMonster).getXpReward();
+        lootTable = new OrcLootTable();
       }
       player.gainXp(xpReward);
 

@@ -54,7 +54,7 @@ public class Ranger implements CharacterClass {
   public void getSpecialAbility(Character attacker, Character target, int countTurn, GamePanel gp) {
     int manaCost = 15;
 
-    // Variação de dano, mas ignora a armadura do alvo
+    // Variação de dano e ignora armadura do alvo
     int baseDamage = Math.max(1, attacker.getEffectiveStrength());
     int variation = Math.max(1, (int)(baseDamage * 0.4)); // 40% variation
     int finalDamage = baseDamage + (int)(Math.random() * variation * 2) - variation;
