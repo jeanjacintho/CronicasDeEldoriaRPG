@@ -10,6 +10,8 @@ import com.google.gson.JsonObject;
 
 import br.com.cronicasdeeldoria.entity.item.Item;
 import br.com.cronicasdeeldoria.entity.item.ItemType;
+import br.com.cronicasdeeldoria.entity.item.MagicOrb;
+import br.com.cronicasdeeldoria.entity.item.QuestItem;
 import br.com.cronicasdeeldoria.entity.item.ItemRarity;
 import br.com.cronicasdeeldoria.entity.object.MapObject;
 import br.com.cronicasdeeldoria.entity.object.ObjectSpriteLoader;
@@ -111,8 +113,10 @@ public class ItemFactory {
     public static Item createItemFromMapObject(MapObject mapObject, int tileSize) {
         if (mapObject == null) return null;
         
+        
         // Verificar se o objeto tem propriedades de item
         String itemTypeStr = getObjectProperty(mapObject, "itemType");
+        
         if (itemTypeStr == null) return null;
         
         ItemType itemType = ItemType.fromString(itemTypeStr);
@@ -136,21 +140,55 @@ public class ItemFactory {
         boolean stackable = itemType == ItemType.KEY || itemType == ItemType.CONSUMABLE;
         int maxStackSize = stackable ? 99 : 1;
         
-        // Criar o item
-        Item item = new Item(
-            mapObject.getObjectId(),
-            mapObject.getName(),
-            mapObject.getWorldX(),
-            mapObject.getWorldY(),
-            itemType,
-            rarity,
-            description,
-            value,
-            stackable,
-            maxStackSize,
-            mapObject.getObjectDefinition(),
-            tileSize
-        );
+        // Verificar se é um item de quest
+        String questItemStr = getObjectProperty(mapObject, "questItem");
+        boolean isQuestItem = "true".equalsIgnoreCase(questItemStr);
+        
+        Item item;
+        
+        if (isQuestItem && itemType == ItemType.QUEST_ITEM) {
+            // Verificar se é uma orbe mágica específica
+            String orbType = getObjectProperty(mapObject, "orbType");
+            
+            if (orbType != null) {
+                // Criar MagicOrb
+                item = new MagicOrb(
+                    orbType,
+                    mapObject.getWorldX(),
+                    mapObject.getWorldY()
+                );
+            } else {
+                // Criar QuestItem genérico
+                item = new QuestItem(
+                    mapObject.getObjectId(),
+                    mapObject.getName(),
+                    mapObject.getWorldX(),
+                    mapObject.getWorldY(),
+                    itemType,
+                    rarity,
+                    description,
+                    value,
+                    stackable,
+                    "main_orb_quest"
+                );
+            }
+        } else {
+            // Criar Item comum
+            item = new Item(
+                mapObject.getObjectId(),
+                mapObject.getName(),
+                mapObject.getWorldX(),
+                mapObject.getWorldY(),
+                itemType,
+                rarity,
+                description,
+                value,
+                stackable,
+                maxStackSize,
+                mapObject.getObjectDefinition(),
+                tileSize
+            );
+        }
         
         return item;
     }

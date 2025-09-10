@@ -86,5 +86,9 @@ public class ObjectSpriteLoader {
         public String rarity;
         public String description;
         public int value;
+        
+        // Campos adicionais para quests
+        public String questItem;
+        public String orbType;
     }
 }

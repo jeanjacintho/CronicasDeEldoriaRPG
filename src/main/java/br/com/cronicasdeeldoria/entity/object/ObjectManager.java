@@ -2,6 +2,8 @@ package br.com.cronicasdeeldoria.entity.object;
 
 import br.com.cronicasdeeldoria.tile.TileManager.MapTile;
 import br.com.cronicasdeeldoria.game.GamePanel;
+import br.com.cronicasdeeldoria.game.quest.QuestManager;
+
 import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.List;
@@ -83,6 +85,24 @@ public class ObjectManager {
         // Verificar se o objeto tem auto-interação (padrão: false se não especificado)
         boolean autoInteraction = objDef.autoInteraction != null ? objDef.autoInteraction : false;
         
+        // Criar objetos especiais baseado no ID
+        if ("totem_central".equals(objDef.id)) {
+            TotemCentral totemCentral = new TotemCentral(x, y);
+            totemCentral.setGamePanel(gamePanel);
+            
+            // Definir a ObjectDefinition para que tenha acesso às sprites
+            totemCentral.setObjectDefinition(objDef);
+            
+            // Registrar no QuestManager
+            QuestManager questManager = QuestManager.getInstance();
+            if (questManager != null) {
+                questManager.setTotemCentral(totemCentral);
+            }
+            
+            return totemCentral;
+        }
+        
+        // Criar MapObject comum para outros objetos
         return new MapObject(
             objDef.id,
             objDef.name,

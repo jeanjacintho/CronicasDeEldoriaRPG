@@ -6488,7 +6488,7 @@
       "name": "Teleport",
       "tiles": [
         {
-          "id": "casa_01",
+          "id": "totem",
           "x": 19,
           "y": 10,
           "interactive": true

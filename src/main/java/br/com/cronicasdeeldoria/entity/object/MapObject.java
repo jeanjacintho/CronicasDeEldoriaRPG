@@ -3,6 +3,7 @@ package br.com.cronicasdeeldoria.entity.object;
 import br.com.cronicasdeeldoria.entity.Entity;
 import br.com.cronicasdeeldoria.entity.character.player.Player;
 import br.com.cronicasdeeldoria.entity.item.Item;
+import br.com.cronicasdeeldoria.entity.item.QuestItem;
 import br.com.cronicasdeeldoria.game.inventory.ItemFactory;
 
 import java.awt.Graphics2D;
@@ -161,6 +162,11 @@ public class MapObject extends Entity {
                 boolean added = (Boolean) addItemMethod.invoke(inventoryManager, item);
                 
                 if (added) {
+                    // Chamar onCollect se o item for um QuestItem
+                    if (item instanceof QuestItem) {
+                        ((QuestItem) item).onCollect();
+                    }
+                    
                     Method getGameUIMethod = gamePanel.getClass().getMethod("getGameUI");
                     Object gameUI = getGameUIMethod.invoke(gamePanel);
                     Method addMessageMethod = gameUI.getClass().getMethod("addMessage", String.class, java.awt.Image.class, long.class);

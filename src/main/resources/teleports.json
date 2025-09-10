@@ -40,6 +40,14 @@
         "clearing": [200, 200],
         "ancient_tree": [300, 300]
       }
+    },
+    "totem": {
+      "map": "totem",
+      "name": "Totem Central",
+      "description": "Um totem mágico",
+      "spawnPoints": {
+        "entrance": [12, 21]
+      }
     }
   },
   "quickTeleports": {
@@ -47,6 +55,8 @@
     "shop": "vila_eldoria,shop", 
     "house": "casa_01,entrance",
     "dungeon": "dungeon_01,entrance",
-    "forest": "forest,entrance"
+    "forest": "forest,entrance",
+    "totem": "totem,entrance"
+
   }
 }

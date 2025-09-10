@@ -729,5 +729,85 @@
     "rarity": "legendary",
     "description": "Um anel lendário.",
     "value": 5
+  },
+  {
+    "id": "orb_fire",
+    "name": "Orbe de Fogo",
+    "spritePaths": [
+      ["/sprites/objects/quest/orb_fire.png"]
+    ],
+    "size": [1, 1],
+    "collision": false,
+    "interactive": true,
+    "autoInteraction": true,
+    "itemType": "quest_item",
+    "rarity": "legendary",
+    "description": "Uma orbe mágica de fogo roubada pelo Mago Supremo.",
+    "value": 0,
+    "questItem": true,
+    "orbType": "fire"
+  },
+  {
+    "id": "orb_water",
+    "name": "Orbe de Água",
+    "spritePaths": [
+      ["/sprites/objects/quest/orb_water.png"]
+    ],
+    "size": [1, 1],
+    "collision": false,
+    "interactive": true,
+    "autoInteraction": true,
+    "itemType": "quest_item",
+    "rarity": "legendary",
+    "description": "Uma orbe mágica de água roubada pelo Mago Supremo.",
+    "value": 0,
+    "questItem": true,
+    "orbType": "water"
+  },
+  {
+    "id": "orb_earth",
+    "name": "Orbe de Terra",
+    "spritePaths": [
+      ["/sprites/objects/quest/orb_earth.png"]
+    ],
+    "size": [1, 1],
+    "collision": false,
+    "interactive": true,
+    "autoInteraction": true,
+    "itemType": "quest_item",
+    "rarity": "legendary",
+    "description": "Uma orbe mágica de terra roubada pelo Mago Supremo.",
+    "value": 0,
+    "questItem": true,
+    "orbType": "earth"
+  },
+  {
+    "id": "orb_air",
+    "name": "Orbe de Ar",
+    "spritePaths": [
+      ["/sprites/objects/quest/orb_air.png"]
+    ],
+    "size": [1, 1],
+    "collision": false,
+    "interactive": true,
+    "autoInteraction": true,
+    "itemType": "quest_item",
+    "rarity": "legendary",
+    "description": "Uma orbe mágica de ar roubada pelo Mago Supremo.",
+    "value": 0,
+    "questItem": true,
+    "orbType": "air"
+  },
+  {
+    "id": "totem_central",
+    "name": "Totem Central",
+    "spritePaths": [
+      ["/sprites/objects/quest/totem_central.png"]
+    ],
+    "size": [1, 1],
+    "collision": true,
+    "interactive": true,
+    "autoInteraction": false,
+    "description": "O antigo totem central onde as orbes mágicas devem ser depositadas."
   }
 ]
