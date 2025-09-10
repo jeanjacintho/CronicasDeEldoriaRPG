@@ -63,12 +63,12 @@ public class DialogManager {
 
             for (JsonElement dialogElement : dialogsArray) {
                 JsonObject dialogObj = dialogElement.getAsJsonObject();
-                
+
                 int id = dialogObj.get("id").getAsInt();
                 String speakerName = dialogObj.get("speakerName").getAsString();
                 String text = dialogObj.get("text").getAsString();
                 // Carrega o sprite do retrato do npc se existir
-                String portraitSprite = dialogObj.has("portraitSprite") ? 
+                String portraitSprite = dialogObj.has("portraitSprite") ?
                     dialogObj.get("portraitSprite").getAsString() : null;
 
                 Dialog dialog = new Dialog(id, speakerName, text, portraitSprite);
@@ -78,17 +78,17 @@ public class DialogManager {
                     JsonArray optionsArray = dialogObj.getAsJsonArray("options");
                     for (JsonElement optionElement : optionsArray) {
                         JsonObject optionObj = optionElement.getAsJsonObject();
-                        
+
                         String optionText = optionObj.get("text").getAsString();
-                        int nextDialogId = optionObj.has("nextDialogId") ? 
+                        int nextDialogId = optionObj.has("nextDialogId") ?
                             optionObj.get("nextDialogId").getAsInt() : -1;
-                        
+
                         DialogOption option = new DialogOption(optionText, nextDialogId);
 
                         // Adicionar ação se existir
                         if (optionObj.has("actionType")) {
                             String actionType = optionObj.get("actionType").getAsString();
-                            String actionData = optionObj.has("actionData") ? 
+                            String actionData = optionObj.has("actionData") ?
                                 optionObj.get("actionData").getAsString() : "";
                             option.setHasAction(true);
                             option.setActionType(actionType);
@@ -98,7 +98,7 @@ public class DialogManager {
                         // Adicionar requisitos se existirem
                         if (optionObj.has("requirementType")) {
                             String requirementType = optionObj.get("requirementType").getAsString();
-                            String requirementData = optionObj.has("requirementData") ? 
+                            String requirementData = optionObj.has("requirementData") ?
                                 optionObj.get("requirementData").getAsString() : "";
                             option.setRequirementType(requirementType);
                             option.setRequirementData(requirementData);
@@ -106,9 +106,9 @@ public class DialogManager {
 
                         // Adicionar campos de item se existirem
                         if (optionObj.has("givesItem") && optionObj.get("givesItem").getAsBoolean()) {
-                            String itemId = optionObj.has("itemId") ? 
+                            String itemId = optionObj.has("itemId") ?
                                 optionObj.get("itemId").getAsString() : "";
-                            int itemQuantity = optionObj.has("itemQuantity") ? 
+                            int itemQuantity = optionObj.has("itemQuantity") ?
                                 optionObj.get("itemQuantity").getAsInt() : 1;
                             option.setGivesItem(true);
                             option.setItemId(itemId);
@@ -147,10 +147,10 @@ public class DialogManager {
         this.currentDialog = dialog;
         this.isDialogActive = true;
         this.selectedOptionIndex = 0;
-        
+
         // Verificar disponibilidade das opções
         updateOptionAvailability();
-        
+
         return true;
     }
 
@@ -209,7 +209,7 @@ public class DialogManager {
         List<DialogOption> availableOptions = currentDialog.getAvailableOptions();
         if (availableOptions.isEmpty()) return;
 
-        selectedOptionIndex = selectedOptionIndex > 0 ? 
+        selectedOptionIndex = selectedOptionIndex > 0 ?
             selectedOptionIndex - 1 : availableOptions.size() - 1;
     }
 
@@ -247,7 +247,7 @@ public class DialogManager {
      * @param itemId ID do item
      * @param quantity Quantidade do item
      */
-    private void giveItemToPlayer(String itemId, int quantity) {
+    public void giveItemToPlayer(String itemId, int quantity) {
         try {
             // Criar item a partir do ID usando ItemFactory
             Item item = ItemFactory.createItem(itemId);
@@ -255,7 +255,7 @@ public class DialogManager {
                 System.err.println("Não foi possível criar item com ID: " + itemId);
                 return;
             }
-            
+
             // Definir quantidade se necessário
             if (quantity > 1) {
                 item.setStackSize(quantity);
@@ -284,20 +284,20 @@ public class DialogManager {
     private void performTeleportAction(String actionData) {
         try {
             TeleportManager teleportManager = TeleportManager.getInstance();
-            
+
             // Verificar se é um teleporte rápido
             if (teleportManager.hasQuickTeleport(actionData)) {
                 String teleportString = teleportManager.getQuickTeleport(actionData);
                 executeTeleportString(teleportString, "Teleporte rápido executado!");
                 return;
             }
-            
+
             // Verificar se é um teleporte configurado (formato: "teleportId:spawnPoint")
             if (actionData.contains(":")) {
                 String[] parts = actionData.split(":", 2);
                 String teleportId = parts[0].trim();
                 String spawnPoint = parts[1].trim();
-                
+
                 TeleportManager.TeleportConfig config = teleportManager.getTeleport(teleportId);
                 if (config != null) {
                     String teleportString = config.generateTeleportString(spawnPoint);
@@ -313,16 +313,16 @@ public class DialogManager {
                     return;
                 }
             }
-            
+
             // Teleporte direto por coordenadas
             executeTeleportString(actionData, "Você foi teleportado!");
-            
+
         } catch (Exception e) {
             System.err.println("Erro no teleporte: " + e.getMessage());
             gamePanel.getGameUI().addMessage("Erro no teleporte!", null, 3500L);
         }
     }
-    
+
     /**
      * Executa uma string de teleporte no formato "mapa,x,y" ou "x,y".
      * @param teleportString String de teleporte.
@@ -331,7 +331,7 @@ public class DialogManager {
     private void executeTeleportString(String teleportString, String message) {
         try {
             String[] parts = teleportString.split(",");
-            
+
             if (parts.length == 2) {
                 // Teleporte no mapa atual: "x,y"
                 int x = Integer.parseInt(parts[0].trim());
@@ -339,27 +339,27 @@ public class DialogManager {
                 player.setWorldX(x);
                 player.setWorldY(y);
                 gamePanel.getGameUI().addMessage(message, null, 3500L);
-                
+
             } else if (parts.length == 3) {
                 // Teleporte para outro mapa: "mapa,x,y"
                 String mapName = parts[0].trim();
                 int x = Integer.parseInt(parts[1].trim());
                 int y = Integer.parseInt(parts[2].trim());
-                
+
                 // Carregar novo mapa
                 loadMap(mapName);
-                
+
                 // Posicionar jogador na nova posição
                 player.setWorldX(x);
                 player.setWorldY(y);
-                
+
                 gamePanel.getGameUI().addMessage(message, null, 3500L);
-                
+
             } else {
                 System.err.println("Formato de teleporte inválido: " + teleportString);
                 gamePanel.getGameUI().addMessage("Erro no formato do teleporte!", null, 3500L);
             }
-            
+
         } catch (NumberFormatException e) {
             System.err.println("Erro ao parsear coordenadas de teleporte: " + teleportString);
             gamePanel.getGameUI().addMessage("Erro nas coordenadas do teleporte!", null, 3500L);
@@ -376,10 +376,10 @@ public class DialogManager {
             java.lang.reflect.Method loadMapMethod = gamePanel.getClass().getDeclaredMethod("loadMap", String.class);
             loadMapMethod.setAccessible(true);
             loadMapMethod.invoke(gamePanel, mapName);
-            
+
         } catch (Exception e) {
             System.err.println("Erro ao carregar mapa " + mapName + ": " + e.getMessage());
-            
+
             // Fallback: tentar carregar diretamente via TileManager
             try {
                 gamePanel.getTileManager().loadMapJson("/maps/" + mapName + ".json");
@@ -399,24 +399,24 @@ public class DialogManager {
      */
     private MerchantNpc findNearestMerchant() {
         if (gamePanel.getNpcs() == null) return null;
-        
+
         MerchantNpc nearestMerchant = null;
         double minDistance = Double.MAX_VALUE;
-        
+
         for (Npc npc : gamePanel.getNpcs()) {
             if (npc instanceof MerchantNpc) {
                 double distance = Math.sqrt(
-                    Math.pow(npc.getWorldX() - player.getWorldX(), 2) + 
+                    Math.pow(npc.getWorldX() - player.getWorldX(), 2) +
                     Math.pow(npc.getWorldY() - player.getWorldY(), 2)
                 );
-                
+
                 if (distance < minDistance) {
                     minDistance = distance;
                     nearestMerchant = (MerchantNpc) npc;
                 }
             }
         }
-        
+
         return nearestMerchant;
     }
 

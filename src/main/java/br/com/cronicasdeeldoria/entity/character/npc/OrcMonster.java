@@ -1,7 +1,7 @@
 package br.com.cronicasdeeldoria.entity.character.npc;
 
 public class OrcMonster extends Npc {
-  private int xpReward = 50;
+  private int xpReward = 45;
   /**
    * Cria um novo OrcMonster.
    * @param name Nome do Monster.

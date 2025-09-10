@@ -36,7 +36,7 @@ class LootTable {
 
 class WolfLootTable extends LootTable {
   public WolfLootTable() {
-    addLoot("health_potion", 0.6);
+    addLoot("health_potion", 1);
     addLoot("mana_potion", 0.4);
     addLoot("shield_common", 0.05);
     addLoot("sword_common", 0.05);
@@ -51,7 +51,7 @@ class WolfLootTable extends LootTable {
 
 class SkeletonLootTable extends LootTable {
   public SkeletonLootTable() {
-    addLoot("health_potion", 0.6);
+    addLoot("health_potion", 1);
     addLoot("mana_potion", 0.4);
     addLoot("shield_common", 0.05);
     addLoot("sword_common", 0.05);
@@ -66,7 +66,7 @@ class SkeletonLootTable extends LootTable {
 
 class FrostbornLootTable extends LootTable {
   public FrostbornLootTable() {
-    addLoot("health_potion", 0.6);
+    addLoot("health_potion", 1);
     addLoot("mana_potion", 0.4);
     addLoot("shield_common", 0.05);
     addLoot("sword_common", 0.05);
@@ -81,7 +81,7 @@ class FrostbornLootTable extends LootTable {
 
 class OrcLootTable extends LootTable {
   public OrcLootTable() {
-    addLoot("health_potion", 0.6);
+    addLoot("health_potion", 1);
     addLoot("mana_potion", 0.6);
     addLoot("shield_common", 0.05);
     addLoot("sword_common", 0.05);
