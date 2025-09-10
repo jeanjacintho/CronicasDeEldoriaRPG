@@ -101,5 +101,16 @@
         "probability": 0.6
       }
     ]
+  },
+  {
+    "id": "smart_old_man",
+    "name": "Sábio Ancião",
+    "isStatic": true,
+    "interactive": true,
+    "autoInteraction": false,
+    "dialog": "Olá, jovem! Sou o sábio ancião. O que deseja saber?",
+    "type": "npc",
+    "skin": "guardiao",
+    "dialogId": 30
   }
 ]

@@ -392,5 +392,51 @@
         "nextDialogId": -1
       }
     ]
+  },
+  {
+    "id": 30,
+    "speakerName": "Sábio Ancião",
+    "text": "Aventureiro! Tempos sombrios se aproximam. O Mago Supremo roubou as 4 orbes mágicas que mantêm o equilíbrio do mundo. Sem elas, a magia está se corrompendo e monstros mais poderosos estão surgindo.",
+    "portraitSprite": "mage",
+    "options": [
+      {
+        "text": "Como posso ajudar?",
+        "nextDialogId": 31
+      },
+      {
+        "text": "Isso não é problema meu.",
+        "nextDialogId": -1
+      }
+    ]
+  },
+  {
+    "id": 31,
+    "speakerName": "Sábio Ancião",
+    "text": "Você deve encontrar e coletar as 4 orbes: a Orbe de Fogo nas Montanhas Ardentes, a Orbe de Água nas Profundezas Aquáticas, a Orbe de Terra nas Cavernas Subterrâneas e a Orbe de Ar nos Picos Celestiais. Depois, leve todas ao Totem Central para despertar o Mago Supremo.",
+    "portraitSprite": "mage",
+    "options": [
+      {
+        "text": "Aceito esta missão!",
+        "nextDialogId": 32,
+        "actionType": "start_quest",
+        "actionData": "main_orb_quest"
+      },
+      {
+        "text": "Preciso pensar melhor.",
+        "nextDialogId": -1
+      }
+    ]
+  },
+  {
+    "id": 32,
+    "speakerName": "Sábio Ancião",
+    "text": "Excelente! Sua coragem será lembrada. As orbes estão espalhadas pelos quatro cantos do mundo. Use os portais mágicos para viajar entre os reinos. Boa sorte, aventureiro!",
+    "portraitSprite": "mage",
+    "options": [
+      {
+        "text": "Obrigado pela orientação!",
+        "nextDialogId": -1
+      }
+    ]
   }
 ]

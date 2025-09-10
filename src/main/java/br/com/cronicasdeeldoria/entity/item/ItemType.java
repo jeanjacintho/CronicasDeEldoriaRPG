@@ -9,7 +9,8 @@ public enum ItemType {
     LEFTHAND("Mão Esquerda", "lefthand"),
     BOOT("Bota", "boot"),
     KEY("Chave", "key"),
-    CONSUMABLE("Consumível", "consumable");
+    CONSUMABLE("Consumível", "consumable"),
+    QUEST_ITEM("Item de Quest", "quest_item");
     
     private final String displayName;
     private final String jsonValue;

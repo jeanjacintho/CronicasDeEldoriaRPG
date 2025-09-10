@@ -10,12 +10,12 @@ import java.awt.BasicStroke;
 import javax.swing.JPanel;
 
 import br.com.cronicasdeeldoria.entity.character.npc.SkeletonMonster;
+import br.com.cronicasdeeldoria.entity.character.npc.SupremeMage;
 import br.com.cronicasdeeldoria.entity.character.npc.WolfMonster;
 import br.com.cronicasdeeldoria.entity.character.player.Player;
 import br.com.cronicasdeeldoria.entity.character.classes.*;
 import br.com.cronicasdeeldoria.entity.character.classes.Barbarian;
 import br.com.cronicasdeeldoria.entity.item.Item;
-import br.com.cronicasdeeldoria.entity.item.ItemType;
 import br.com.cronicasdeeldoria.entity.object.MapObject;
 import br.com.cronicasdeeldoria.entity.object.ObjectManager;
 import br.com.cronicasdeeldoria.entity.object.ObjectSpriteLoader;
@@ -32,7 +32,6 @@ import br.com.cronicasdeeldoria.tile.TileManager.MapTile;
 import br.com.cronicasdeeldoria.config.CharacterConfigLoader;
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Map;
 
 import br.com.cronicasdeeldoria.entity.Entity;
 import br.com.cronicasdeeldoria.game.inventory.InventoryManager;
@@ -41,6 +40,7 @@ import br.com.cronicasdeeldoria.game.merchant.MerchantUI;
 import br.com.cronicasdeeldoria.game.dialog.DialogManager;
 import br.com.cronicasdeeldoria.game.dialog.DialogUI;
 import br.com.cronicasdeeldoria.game.teleport.TeleportManager;
+import br.com.cronicasdeeldoria.game.quest.QuestManager;
 /**
  * Painel principal do jogo, responsável pelo loop de atualização, renderização e gerenciamento dos elementos do jogo.
  */
@@ -73,6 +73,7 @@ public class GamePanel extends JPanel implements Runnable{
   private DialogManager dialogManager;
   private DialogUI dialogUI;
   private TeleportManager teleportManager;
+  private QuestManager questManager;
 
   // Estados do jogo
   public int gameState;
@@ -178,6 +179,10 @@ public class GamePanel extends JPanel implements Runnable{
 
     // Inicializar sistema de teleporte
     this.teleportManager = TeleportManager.getInstance();
+
+    // Inicializar sistema de quests
+    this.questManager = QuestManager.getInstance();
+    this.questManager.initialize(this);
   }
 
   /**
@@ -271,6 +276,9 @@ public class GamePanel extends JPanel implements Runnable{
 
         // Verificar teleportes automáticos
         checkAutomaticTeleports();
+
+        // Atualizar sistema de quests
+        updateQuests();
 
         // Verificar se o GamePanel perdeu o foco e restaurá-lo
         if (!this.hasFocus()) {
@@ -1098,9 +1106,57 @@ public class GamePanel extends JPanel implements Runnable{
       return dialogUI;
     }
 
-    public TeleportManager getTeleportManager() {
-      return teleportManager;
+  public TeleportManager getTeleportManager() {
+    return teleportManager;
+  }
+
+  /**
+   * Atualiza o sistema de quests.
+   */
+  private void updateQuests() {
+    if (questManager != null) {
+      // Verificar progresso das quests
+      questManager.updateQuestProgress();
+      
+      // Verificar se boss foi derrotado
+      if (questManager.isBossSpawned()) {
+        checkBossDefeat();
+      }
     }
+  }
+
+  /**
+   * Verifica se o boss final foi derrotado.
+   */
+  private void checkBossDefeat() {
+    if (npcs != null) {
+      for (Npc npc : npcs) {
+        if (npc instanceof SupremeMage && 
+            npc.getAttributeHealth() <= 0) {
+          questManager.onBossDefeated();
+          break;
+        }
+      }
+    }
+  }
+
+  /**
+   * Obtém o gerenciador de quests.
+   * @return QuestManager
+   */
+  public QuestManager getQuestManager() {
+    return questManager;
+  }
+
+  /**
+   * Adiciona um NPC à lista de NPCs do jogo.
+   * @param npc NPC a ser adicionado
+   */
+  public void addNpc(Npc npc) {
+    if (npcs != null) {
+      npcs.add(npc);
+    }
+  }
 
     /**
      * Executa um teleporte rápido usando o ID do quickTeleport.
@@ -1489,6 +1545,11 @@ public class GamePanel extends JPanel implements Runnable{
         ObjectSpriteLoader objectSpriteLoader = new ObjectSpriteLoader("/objects.json");
         List<TileManager.MapTile> objectTiles = tileManager.getObjectTiles();
         this.objectManager = new ObjectManager(this, objectSpriteLoader, objectTiles);
+      }
+      
+      // Notificar QuestManager sobre mudança de mapa
+      if (questManager != null) {
+        questManager.onPlayerEnterMap(mapName);
       }
     } catch (Exception e) {
       System.err.println("Erro ao carregar mapa: " + e.getMessage());

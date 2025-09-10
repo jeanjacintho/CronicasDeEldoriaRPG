@@ -20,6 +20,7 @@ import br.com.cronicasdeeldoria.entity.item.Item;
 import br.com.cronicasdeeldoria.game.inventory.ItemFactory;
 import br.com.cronicasdeeldoria.game.teleport.TeleportManager;
 import br.com.cronicasdeeldoria.game.GamePanel;
+import br.com.cronicasdeeldoria.game.quest.QuestManager;
 
 /**
  * Gerencia o sistema de diálogos do jogo, incluindo carregamento de diálogos
@@ -465,6 +466,9 @@ public class DialogManager {
             case "start_battle":
                 // Implementar início de batalha
                 break;
+            case "start_quest":
+                startQuest(actionData);
+                break;
             case "complete_quest":
                 // Implementar sistema de quests
                 break;
@@ -472,7 +476,23 @@ public class DialogManager {
     }
 
     /**
-     * Encerra o diálogo atual.
+     * Inicia uma quest específica.
+     * @param questId ID da quest a ser iniciada
+     */
+    private void startQuest(String questId) {
+        QuestManager questManager = QuestManager.getInstance();
+        if (questManager != null) {
+            questManager.startQuest(questId);
+            
+            if (gamePanel != null && gamePanel.getGameUI() != null) {
+                gamePanel.getGameUI().addMessage(
+                    "Nova quest iniciada: " + questManager.getQuest(questId).getTitle(), 
+                    null, 4000L);
+            }
+        }
+    }
+
+    /**
      */
     public void endDialog() {
         this.isDialogActive = false;

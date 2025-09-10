@@ -22,5 +22,8 @@
     "up": ["monster/skeleton/skeleton_back.png", "monster/skeleton/skeleton_back_walk1.png", "monster/skeleton/skeleton_back_walk2.png"],
     "left": ["monster/skeleton/skeleton_left.png", "monster/skeleton/skeleton_left_walk1.png", "monster/skeleton/skeleton_left_walk2.png"],
     "right": ["monster/skeleton/skeleton_right.png", "monster/skeleton/skeleton_right_walk1.png", "monster/skeleton/skeleton_right_walk2.png"]
+  },
+  "supreme_mage": {
+    "down": ["monster/supreme_mage/supreme_mage_front.png"]
   }
 }
