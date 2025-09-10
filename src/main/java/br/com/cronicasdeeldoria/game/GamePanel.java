@@ -402,7 +402,8 @@ public class GamePanel extends JPanel implements Runnable{
         if (npcs != null && !npcs.isEmpty()) {
           for (Npc npc : npcs) {
             // Verificar se é um monstro (usar distância de 5 tiles)
-            if (npc instanceof WolfMonster) {
+            if (npc instanceof WolfMonster || npc instanceof SkeletonMonster ||
+                npc instanceof FrostbornMonster || npc instanceof OrcMonster) {
                 if (isPlayerNearMonster(player, npc.getWorldX(), npc.getWorldY()) && npc.isInteractive()) {
 
                     // Verificar auto-interação

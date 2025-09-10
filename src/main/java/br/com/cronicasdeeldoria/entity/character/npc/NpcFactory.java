@@ -47,7 +47,6 @@ public class NpcFactory {
                 }
                 else if ("enemy".equals(type)) {
                   String monster = (String) npcData.get("id");
-                  System.out.println(monster);
                   switch (monster) {
                     case "skeleton":
                       npcs.add(new SkeletonMonster(name, isStatic, dialog, x, y, skin, playerSize, interactive, autoInteraction));
