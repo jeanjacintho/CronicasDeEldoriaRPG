@@ -43,10 +43,25 @@ public class NpcFactory {
                 int y = npcTile.y * tileSize + (tileSize / 2) - (playerSize / 2);
 
                 if ("barbarian".equals(type)) {
-                    npcs.add(new WarriorNpc(name, isStatic, dialog, x, y, skin, playerSize, interactive, autoInteraction, dialogId));
+                  npcs.add(new WarriorNpc(name, isStatic, dialog, x, y, skin, playerSize, interactive, autoInteraction, dialogId));
                 }
                 else if ("enemy".equals(type)) {
-                  npcs.add(new WolfMonster(name, isStatic, dialog, x, y, skin, playerSize, interactive, autoInteraction));
+                  String monster = (String) npcData.get("id");
+                  System.out.println(monster);
+                  switch (monster) {
+                    case "skeleton":
+                      npcs.add(new SkeletonMonster(name, isStatic, dialog, x, y, skin, playerSize, interactive, autoInteraction));
+                      break;
+                    case "wolf":
+                      npcs.add(new WolfMonster(name, isStatic, dialog, x, y, skin, playerSize, interactive, autoInteraction));
+                      break;
+                    case "frostborn":
+                      npcs.add(new FrostbornMonster(name, isStatic, dialog, x, y, skin, playerSize, interactive, autoInteraction));
+                      break;
+                    case "orc":
+                      npcs.add(new OrcMonster(name, isStatic, dialog, x, y, skin, playerSize, interactive, autoInteraction));
+                      break;
+                  }
                 }
                 else if ("merchant".equals(type)) {
                     // Criar MerchantNpc com sistema de configuração
@@ -121,33 +136,33 @@ public class NpcFactory {
 
         return definitions;
     }
-    
+
     /**
      * Carrega configurações de itens para comerciantes do arquivo JSON.
      * @return Lista de ItemConfig.
      */
     public static List<MerchantNpc.ItemConfig> loadMerchantItemConfigs() {
         List<MerchantNpc.ItemConfig> configs = new ArrayList<>();
-        
+
         try {
             InputStream is = NpcFactory.class.getResourceAsStream("/npcs.json");
             if (is != null) {
                 Gson gson = new Gson();
                 JsonArray npcArray = gson.fromJson(new InputStreamReader(is), JsonArray.class);
-                
+
                 for (int i = 0; i < npcArray.size(); i++) {
                     JsonObject npcJson = npcArray.get(i).getAsJsonObject();
                     if (npcJson.has("itemProbabilities")) {
                         JsonArray itemProbsArray = npcJson.getAsJsonArray("itemProbabilities");
-                        
+
                         for (int j = 0; j < itemProbsArray.size(); j++) {
                             JsonObject itemProbJson = itemProbsArray.get(j).getAsJsonObject();
-                            
+
                             String itemId = itemProbJson.get("itemId").getAsString();
                             int minQuantity = itemProbJson.get("minQuantity").getAsInt();
                             int maxQuantity = itemProbJson.get("maxQuantity").getAsInt();
                             double probability = itemProbJson.get("probability").getAsDouble();
-                            
+
                             configs.add(new MerchantNpc.ItemConfig(itemId, minQuantity, maxQuantity, probability));
                         }
                     }
@@ -156,7 +171,7 @@ public class NpcFactory {
         } catch (Exception e) {
             System.err.println("Erro ao carregar configurações de comerciante: " + e.getMessage());
         }
-        
+
         return configs;
     }
 }
