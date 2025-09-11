@@ -9,6 +9,7 @@ import java.awt.BasicStroke;
 
 import javax.swing.JPanel;
 
+import br.com.cronicasdeeldoria.entity.character.Character;
 import br.com.cronicasdeeldoria.entity.character.npc.*;
 
 import br.com.cronicasdeeldoria.entity.character.player.Player;
@@ -70,6 +71,7 @@ public class GamePanel extends JPanel implements Runnable{
   private DialogUI dialogUI;
   private TeleportManager teleportManager;
   private QuestManager questManager;
+  private String playerClassName;
 
   // Estados do jogo
   public int gameState;
@@ -92,7 +94,7 @@ public class GamePanel extends JPanel implements Runnable{
    * @param screenWidth Largura da tela.
    * @param screenHeight Altura da tela.
    * @param playerName Nome do jogador.
-   * @param characterClass Raça do jogador.
+   * @param characterClass Classe do jogador.
    * @param tileSize Tamanho do tile.
    * @param maxScreenRow Máximo de linhas na tela.
    * @param maxScreenCol Máximo de colunas na tela.
@@ -106,6 +108,7 @@ public class GamePanel extends JPanel implements Runnable{
     this.setDoubleBuffered(true);
     this.addKeyListener(keyHandler);
     this.setFocusable(true);
+    this.playerClassName = characterClass.getCharacterClassName();
 
     this.battle = new Battle(this);
     gameState = playState;
@@ -1114,7 +1117,7 @@ public class GamePanel extends JPanel implements Runnable{
     if (questManager != null) {
       // Verificar progresso das quests
       questManager.updateQuestProgress();
-      
+
       // Verificar se boss foi derrotado
       if (questManager.isBossSpawned()) {
         checkBossDefeat();
@@ -1128,7 +1131,7 @@ public class GamePanel extends JPanel implements Runnable{
   private void checkBossDefeat() {
     if (npcs != null) {
       for (Npc npc : npcs) {
-        if (npc instanceof SupremeMage && 
+        if (npc instanceof SupremeMage &&
             npc.getAttributeHealth() <= 0) {
           questManager.onBossDefeated();
           break;
@@ -1229,7 +1232,7 @@ public class GamePanel extends JPanel implements Runnable{
     this.gameUI = new GameUI(this);
 
     // Inicializar InventoryManager
-    this.inventoryManager = new InventoryManager();
+    this.inventoryManager = new InventoryManager(this.playerClassName);
 
     // Inicializar sistema de interação
     initializeInteractionSystem();
@@ -1543,7 +1546,7 @@ public class GamePanel extends JPanel implements Runnable{
         List<TileManager.MapTile> objectTiles = tileManager.getObjectTiles();
         this.objectManager = new ObjectManager(this, objectSpriteLoader, objectTiles);
       }
-      
+
       // Notificar QuestManager sobre mudança de mapa
       if (questManager != null) {
         questManager.onPlayerEnterMap(mapName);

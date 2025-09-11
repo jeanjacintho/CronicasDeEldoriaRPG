@@ -13,35 +13,36 @@ import com.google.gson.JsonObject;
 public class LevelManager {
     private static LevelManager instance;
     private List<LevelDefinition> levels;
-    
+
     private LevelManager() {
         loadLevels();
     }
-    
+
     public static LevelManager getInstance() {
         if (instance == null) {
             instance = new LevelManager();
         }
         return instance;
     }
-    
+
     private void loadLevels() {
         try {
             java.io.InputStream is = LevelManager.class.getResourceAsStream("/levels.json");
             if (is != null) {
                 Gson gson = new Gson();
                 JsonArray jsonArray = gson.fromJson(new java.io.InputStreamReader(is), JsonArray.class);
-                
+
                 levels = new ArrayList<>();
                 for (int i = 0; i < jsonArray.size(); i++) {
                     JsonObject levelJson = jsonArray.get(i).getAsJsonObject();
-                    
+
                     LevelDefinition level = new LevelDefinition();
                     level.level = levelJson.get("level").getAsInt();
                     level.xpRequired = levelJson.get("xpRequired").getAsInt();
                     level.healthBonus = levelJson.get("healthBonus").getAsInt();
                     level.manaBonus = levelJson.get("manaBonus").getAsInt();
                     level.strengthBonus = levelJson.get("strengthBonus").getAsInt();
+                    level.armorBonus = levelJson.get("armorBonus").getAsInt();
                     level.agilityBonus = levelJson.get("agilityBonus").getAsInt();
                     level.luckBonus = levelJson.get("luckBonus").getAsInt();
                     level.rageBonus = levelJson.get("rageBonus").getAsInt();
@@ -49,7 +50,7 @@ public class LevelManager {
                     level.willpowerBonus = levelJson.get("willpowerBonus").getAsInt();
                     level.enduranceBonus = levelJson.get("enduranceBonus").getAsInt();
                     level.magicPowerBonus = levelJson.get("magicPowerBonus").getAsInt();
-                    
+
                     levels.add(level);
                 }
             }
@@ -58,13 +59,13 @@ public class LevelManager {
             e.printStackTrace();
         }
     }
-    
+
     /**
      * Calcula o nível baseado no XP total.
      */
     public int calculateLevel(int totalXp) {
         int currentLevel = 1;
-        
+
         for (LevelDefinition level : levels) {
             if (totalXp >= level.xpRequired) {
                 currentLevel = level.level;
@@ -72,10 +73,10 @@ public class LevelManager {
                 break;
             }
         }
-        
+
         return currentLevel;
     }
-    
+
     /**
      * Calcula o XP necessário para o próximo nível.
      */
@@ -87,7 +88,7 @@ public class LevelManager {
         }
         return -1; // Nível máximo atingido
     }
-    
+
     /**
      * Retorna os bônus de atributos para um nível específico.
      */
@@ -99,7 +100,7 @@ public class LevelManager {
         }
         return null;
     }
-    
+
     /**
      * Retorna o XP necessário para o nível atual.
      */
@@ -111,30 +112,31 @@ public class LevelManager {
         }
         return 0;
     }
-    
+
     /**
      * Calcula o progresso do XP para o próximo nível (0.0 a 1.0).
      */
     public double getXpProgress(int currentXp, int currentLevel) {
         int xpForCurrent = getXpForCurrentLevel(currentLevel);
         int xpForNext = getXpForNextLevel(currentLevel);
-        
+
         if (xpForNext == -1) {
             return 1.0; // Nível máximo
         }
-        
+
         int xpInLevel = currentXp - xpForCurrent;
         int xpNeeded = xpForNext - xpForCurrent;
-        
+
         return (double) xpInLevel / xpNeeded;
     }
-    
+
       public static class LevelDefinition {
     public int level;
     public int xpRequired;
     public int healthBonus;
     public int manaBonus;
     public int strengthBonus;
+    public int armorBonus;
     public int agilityBonus;
     public int luckBonus;
     public int rageBonus;

@@ -431,7 +431,7 @@ public class GameUI {
     drawStatLine(graphics2D, "Agilidade", String.valueOf(player.getAttributeAgility()), x + padding, textY, textColor);
     textY += spacing;
 
-    drawStatLine(graphics2D, "Sorte", String.valueOf(player.getLuck()), x + padding, textY, textColor);
+    drawStatLine(graphics2D, "Armor", String.valueOf(player.getAttributeArmor()), x + padding, textY, textColor);
     textY += spacing;
 
     String specialAttrName = player.getCharacterClass().getSpecialAttributeName();
