@@ -354,6 +354,18 @@ public class GamePanel extends JPanel implements Runnable{
       } else if (battleMonster instanceof OrcMonster) {
         xpReward = ((OrcMonster) battleMonster).getXpReward();
         lootTable = new OrcLootTable();
+      } else if (battleMonster instanceof FrostbornBossMonster) {
+        xpReward = ((FrostbornBossMonster) battleMonster).getXpReward();
+        lootTable = new FrostbornBossLootTable();
+      } else if (battleMonster instanceof OrcBossMonster) {
+        xpReward = ((OrcBossMonster) battleMonster).getXpReward();
+        lootTable = new OrcBossLootTable();
+      } else if (battleMonster instanceof SkeletonBossMonster) {
+        xpReward = ((SkeletonBossMonster) battleMonster).getXpReward();
+        lootTable = new SkeletonBossLootTable();
+      } else if (battleMonster instanceof WolfBossMonster) {
+        xpReward = ((WolfBossMonster) battleMonster).getXpReward();
+        lootTable = new WolfBossLootTable();
       }
       player.gainXp(xpReward);
 
@@ -405,7 +417,9 @@ public class GamePanel extends JPanel implements Runnable{
           for (Npc npc : npcs) {
             // Verificar se é um monstro (usar distância de 5 tiles)
             if (npc instanceof WolfMonster || npc instanceof SkeletonMonster ||
-                npc instanceof FrostbornMonster || npc instanceof OrcMonster) {
+                npc instanceof FrostbornMonster || npc instanceof OrcMonster ||
+                npc instanceof FrostbornBossMonster || npc instanceof OrcBossMonster ||
+                npc instanceof SkeletonBossMonster || npc instanceof WolfBossMonster) {
                 if (isPlayerNearMonster(player, npc.getWorldX(), npc.getWorldY()) && npc.isInteractive()) {
 
                     // Verificar auto-interação
@@ -1114,7 +1128,7 @@ public class GamePanel extends JPanel implements Runnable{
     if (questManager != null) {
       // Verificar progresso das quests
       questManager.updateQuestProgress();
-      
+
       // Verificar se boss foi derrotado
       if (questManager.isBossSpawned()) {
         checkBossDefeat();
@@ -1128,7 +1142,7 @@ public class GamePanel extends JPanel implements Runnable{
   private void checkBossDefeat() {
     if (npcs != null) {
       for (Npc npc : npcs) {
-        if (npc instanceof SupremeMage && 
+        if (npc instanceof SupremeMage &&
             npc.getAttributeHealth() <= 0) {
           questManager.onBossDefeated();
           break;
@@ -1543,7 +1557,7 @@ public class GamePanel extends JPanel implements Runnable{
         List<TileManager.MapTile> objectTiles = tileManager.getObjectTiles();
         this.objectManager = new ObjectManager(this, objectSpriteLoader, objectTiles);
       }
-      
+
       // Notificar QuestManager sobre mudança de mapa
       if (questManager != null) {
         questManager.onPlayerEnterMap(mapName);
