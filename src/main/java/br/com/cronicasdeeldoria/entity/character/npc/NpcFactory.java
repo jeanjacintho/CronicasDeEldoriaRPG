@@ -60,6 +60,18 @@ public class NpcFactory {
                     case "orc":
                       npcs.add(new OrcMonster(name, isStatic, dialog, x, y, skin, playerSize, interactive, autoInteraction));
                       break;
+                    case "wolfboss":
+                      npcs.add(new WolfBossMonster(name, isStatic, dialog, x, y, skin, playerSize, interactive, autoInteraction));
+                      break;
+                    case "frostbornboss":
+                      npcs.add(new FrostbornBossMonster(name, isStatic, dialog, x, y, skin, playerSize, interactive, autoInteraction));
+                      break;
+                    case "skeletonboss":
+                      npcs.add(new SkeletonBossMonster(name, isStatic, dialog, x, y, skin, playerSize, interactive, autoInteraction));
+                      break;
+                    case "orcboss":
+                      npcs.add(new OrcBossMonster(name, isStatic, dialog, x, y, skin, playerSize, interactive, autoInteraction));
+                      break;
                     default:
                       npcs.add(new OrcMonster(name, isStatic, dialog, x, y, skin, playerSize, interactive, autoInteraction));
                       System.out.println("ID " + monster + " não encontrado, adicione o monstro no NpcFactory.");

@@ -16,20 +16,20 @@ public class TotemCentral extends MapObject {
     private int depositedOrbsCount;
     private boolean isActivated;
     private GamePanel gamePanel;
-    
+
     /**
      * Construtor para criar o Totem Central.
      * @param worldX Posição X no mundo
      * @param worldY Posição Y no mundo
      */
     public TotemCentral(int worldX, int worldY) {
-        super("totem_central", "Totem Central", worldX, worldY, 3, 3, 
+        super("totem_central", "Totem Central", worldX, worldY, 3, 3,
               true, true, false, null, 0);
-        
+
         this.depositedOrbsCount = 0;
         this.isActivated = false;
     }
-    
+
     /**
      * Define a referência ao GamePanel.
      * @param gamePanel Referência ao GamePanel
@@ -37,7 +37,7 @@ public class TotemCentral extends MapObject {
     public void setGamePanel(GamePanel gamePanel) {
         this.gamePanel = gamePanel;
     }
-    
+
     /**
      * Interage com o Totem Central.
      * Permite depositar orbes mágicas coletadas.
@@ -46,10 +46,10 @@ public class TotemCentral extends MapObject {
     @Override
     public void interact(Entity interactor) {
         if (!(interactor instanceof Player) || gamePanel == null) return;
-        
+
         QuestManager questManager = QuestManager.getInstance();
         List<MagicOrb> collectedOrbs = questManager.getCollectedOrbs();
-        
+
         if (collectedOrbs.isEmpty()) {
             if (gamePanel.getGameUI() != null) {
                 gamePanel.getGameUI().addMessage(
@@ -58,7 +58,7 @@ public class TotemCentral extends MapObject {
             }
             return;
         }
-        
+
         // Depositar orbes coletadas
         boolean anyDeposited = false;
         for (MagicOrb orb : new ArrayList<>(collectedOrbs)) {
@@ -67,12 +67,12 @@ public class TotemCentral extends MapObject {
                 anyDeposited = true;
             }
         }
-        
+
         if (anyDeposited && depositedOrbsCount == 4 && !isActivated) {
             activateTotem();
         }
     }
-    
+
     /**
      * Deposita uma orbe no totem.
      * @param orb Orbe a ser depositada
@@ -80,29 +80,29 @@ public class TotemCentral extends MapObject {
     private void depositOrb(MagicOrb orb) {
         orb.depositInTotem();
         depositedOrbsCount++;
-        
+
         if (gamePanel != null && gamePanel.getGameUI() != null) {
             gamePanel.getGameUI().addMessage(
                 "Orbe de " + orb.getOrbDisplayName() + " depositada! " +
                 "(" + depositedOrbsCount + "/4)", null, 4000L);
         }
     }
-    
+
     /**
      * Ativa o totem quando todas as orbes são depositadas.
      */
     private void activateTotem() {
         isActivated = true;
-        
+
         if (gamePanel != null && gamePanel.getGameUI() != null) {
             gamePanel.getGameUI().addMessage(
-                "O Totem Central está ativado! O Mago Supremo foi despertado!", 
+                "O Totem Central está ativado! O Mago Supremo foi despertado!",
                 null, 6000L);
         }
-        
+
         // O QuestManager já cuida do spawn do boss
     }
-    
+
     /**
      * Verifica se o totem está ativado.
      * @return true se todas as orbes foram depositadas
@@ -110,7 +110,7 @@ public class TotemCentral extends MapObject {
     public boolean isActivated() {
         return isActivated;
     }
-    
+
     /**
      * Obtém o número de orbes depositadas.
      * @return Número de orbes depositadas
@@ -118,7 +118,7 @@ public class TotemCentral extends MapObject {
     public int getDepositedOrbsCount() {
         return depositedOrbsCount;
     }
-    
+
     /**
      * Obtém o progresso do totem em porcentagem.
      * @return Porcentagem de orbes depositadas (0-100)
@@ -126,7 +126,7 @@ public class TotemCentral extends MapObject {
     public int getProgressPercentage() {
         return (depositedOrbsCount * 100) / 4;
     }
-    
+
     /**
      * Verifica se todas as orbes foram depositadas.
      * @return true se todas as 4 orbes foram depositadas
@@ -134,7 +134,7 @@ public class TotemCentral extends MapObject {
     public boolean isComplete() {
         return depositedOrbsCount >= 4;
     }
-    
+
     /**
      * Obtém uma descrição do estado atual do totem.
      * @return Descrição do estado

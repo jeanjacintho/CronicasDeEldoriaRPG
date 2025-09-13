@@ -6376,6 +6376,26 @@
           "y": 16
         },
         {
+          "id": "skeletonboss",
+          "x": 22,
+          "y": 16
+        },
+        {
+          "id": "wolfboss",
+          "x": 21,
+          "y": 16
+        },
+        {
+          "id": "orcboss",
+          "x": 20,
+          "y": 16
+        },
+        {
+          "id": "frostbornboss",
+          "x": 19,
+          "y": 16
+        },
+        {
           "id": "barbarian",
           "x": 22,
           "y": 23

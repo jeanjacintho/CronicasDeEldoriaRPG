@@ -24,38 +24,53 @@ import br.com.cronicasdeeldoria.entity.object.ObjectSpriteLoader;
  */
 public class ItemFactory {
 
-    /**
-     * Cria um item a partir do ID usando configurações do objects.json.
-     * Reutiliza a lógica existente do createItemFromMapObject.
-     * @param itemId ID do item.
-     * @return Item criado ou null se não encontrado.
-     */
+  /**
+   * Cria um item a partir do ID usando configurações do objects.json.
+   * Reutiliza a lógica existente do createItemFromMapObject.
+   * @param itemId ID do item.
+   * @return Item criado ou null se não encontrado.
+   */
     public static Item createItem(String itemId) {
-        if (itemId == null) return null;
+      if (itemId == null) return null;
 
-        // Buscar dados do item no objects.json
-        try {
-            InputStream is = ItemFactory.class.getResourceAsStream("/objects.json");
-            if (is != null) {
-                Gson gson = new Gson();
-                JsonArray objectsArray = gson.fromJson(new InputStreamReader(is), JsonArray.class);
+      // VERIFICAÇÃO ESPECIAL PARA ORBES MÁGICAS
+      if (itemId.startsWith("orb_")) {
+        String orbType = itemId.substring(4); // Remove "orb_"
+        return new MagicOrb(orbType); // Usar construtor sem coordenadas
+      }
 
-                for (int i = 0; i < objectsArray.size(); i++) {
-                    JsonObject objectJson = objectsArray.get(i).getAsJsonObject();
-                    if (objectJson.has("id") && objectJson.get("id").getAsString().equals(itemId)) {
-                        // Criar MapObject temporário para reutilizar createItemFromMapObject
-                        MapObject tempMapObject = createTempMapObjectFromJson(objectJson);
-                        if (tempMapObject != null) {
-                            return createItemFromMapObject(tempMapObject, 48);
-                        }
-                    }
-                }
+      // Buscar dados do item no objects.json
+      try {
+        InputStream is = ItemFactory.class.getResourceAsStream("/objects.json");
+        if (is != null) {
+          Gson gson = new Gson();
+          JsonArray objectsArray = gson.fromJson(new InputStreamReader(is), JsonArray.class);
+
+          for (int i = 0; i < objectsArray.size(); i++) {
+            JsonObject objectJson = objectsArray.get(i).getAsJsonObject();
+            if (objectJson.has("id") && objectJson.get("id").getAsString().equals(itemId)) {
+              // Criar MapObject temporário para reutilizar createItemFromMapObject
+              MapObject tempMapObject = createTempMapObjectFromJson(objectJson);
+              if (tempMapObject != null) {
+                return createItemFromMapObject(tempMapObject, 48);
+              }
             }
-        } catch (Exception e) {
-            System.err.println("Erro ao criar item " + itemId + " do objects.json: " + e.getMessage());
+          }
         }
+      } catch (Exception e) {
+        System.err.println("Erro ao criar item " + itemId + " do objects.json: " + e.getMessage());
+      }
 
-        return null;
+      return null;
+    }
+
+    /**
+     * Metodo específico para criar uma MagicOrb.
+     * @param orbType Tipo da orbe (fire, water, earth, air)
+     * @return MagicOrb criada
+     */
+    public static MagicOrb createMagicOrb(String orbType) {
+      return new MagicOrb(orbType);
     }
 
     /**
@@ -127,6 +142,7 @@ public class ItemFactory {
      */
     public static Item createItemFromMapObject(MapObject mapObject, int tileSize) {
         if (mapObject == null) return null;
+
 
         // Verificar se o objeto tem propriedades de item
         String itemTypeStr = getObjectProperty(mapObject, "itemType");
