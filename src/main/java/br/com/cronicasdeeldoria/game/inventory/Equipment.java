@@ -71,8 +71,10 @@ public class Equipment {
             return null;
         }
 
+        // Remove o item anterior e seus bonus
         Item previousItem = equippedItems[slot.getIndex()];
         equippedItems[slot.getIndex()] = item;
+        if (previousItem != null) removeItemBonuses(previousItem);
 
         // Aplica os bônus do item
         applyItemBonuses(item);

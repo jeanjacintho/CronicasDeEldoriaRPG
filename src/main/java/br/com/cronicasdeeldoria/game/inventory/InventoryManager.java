@@ -178,6 +178,7 @@ public class InventoryManager {
         System.out.println("Armadura: " + player.getAttributeArmor());
         System.out.println("Vida Máxima: " + player.getAttributeMaxHealth());
         System.out.println("Mana Máxima: " + player.getAttributeMaxMana());
+        //System.out.println("Speed: " + player.getAttrib());
 
         return true;
     }

@@ -116,10 +116,11 @@
     "description": "Uma espada básica.",
     "value": 5,
     "allowedClass": ["barbarian", "paladin"],
-    "strengthFromEquip": 5,
-    "armorFromEquip": 2,
-    "healthFromEquip": 15,
-    "manaFromEquip": 0
+    "strengthFromEquip": 3,
+    "armorFromEquip": 3,
+    "healthFromEquip": 20,
+    "manaFromEquip": 0,
+    "speedFromEquip": 0
   },
   {
     "id": "sword_rare",
@@ -135,7 +136,12 @@
     "rarity": "rare",
     "description": "Uma espada rara.",
     "value": 5,
-    "allowedClass": ["barbarian", "paladin"]
+    "allowedClass": ["barbarian", "paladin"],
+    "strengthFromEquip": 6,
+    "armorFromEquip": 6,
+    "healthFromEquip": 40,
+    "manaFromEquip": 0,
+    "speedFromEquip": 0
   },
   {
     "id": "sword_legendary",
@@ -151,7 +157,12 @@
     "rarity": "legendary",
     "description": "Uma espada lendária.",
     "value": 5,
-    "allowedClass": ["barbarian", "paladin"]
+    "allowedClass": ["barbarian", "paladin"],
+    "strengthFromEquip": 9,
+    "armorFromEquip": 9,
+    "healthFromEquip": 60,
+    "manaFromEquip": 0,
+    "speedFromEquip": 0
   },
   {
     "id": "shield_common",
@@ -168,10 +179,11 @@
     "description": "Um escudo básico.",
     "value": 5,
     "allowedClass": ["barbarian", "paladin", "mage"],
-    "strengthFromEquip": 7,
-    "armorFromEquip": 1,
-    "healthFromEquip": 1,
-    "manaFromEquip": 1
+    "strengthFromEquip": 0,
+    "armorFromEquip": 8,
+    "healthFromEquip": 30,
+    "manaFromEquip": 0,
+    "speedFromEquip": 0
   },
   {
     "id": "shield_legendary",
@@ -187,7 +199,12 @@
     "rarity": "legendary",
     "description": "Um escudo lendário.",
     "value": 5,
-    "allowedClass": ["barbarian", "paladin", "mage"]
+    "allowedClass": ["barbarian", "paladin", "mage"],
+    "strengthFromEquip": 0,
+    "armorFromEquip": 15,
+    "healthFromEquip": 60,
+    "manaFromEquip": 0,
+    "speedFromEquip": 0
   },
   {
     "id": "armor_common",
@@ -206,8 +223,9 @@
     "allowedClass": ["barbarian", "paladin", "mage", "ranger"],
     "strengthFromEquip": 0,
     "armorFromEquip": 5,
-    "healthFromEquip": 15,
-    "manaFromEquip": 0
+    "healthFromEquip": 20,
+    "manaFromEquip": 0,
+    "speedFromEquip": 0
   },
   {
     "id": "armor_rare",
@@ -223,7 +241,12 @@
     "rarity": "rare",
     "description": "Uma armadura rara.",
     "value": 5,
-    "allowedClass": ["barbarian", "paladin", "mage", "ranger"]
+    "allowedClass": ["barbarian", "paladin", "mage", "ranger"],
+    "strengthFromEquip": 0,
+    "armorFromEquip": 10,
+    "healthFromEquip": 60,
+    "manaFromEquip": 0,
+    "speedFromEquip": 0
   },
   {
     "id": "armor_legendary",
@@ -239,7 +262,12 @@
     "rarity": "legendary",
     "description": "Uma armadura lendária.",
     "value": 5,
-    "allowedClass": ["barbarian", "paladin", "mage", "ranger"]
+    "allowedClass": ["barbarian", "paladin", "mage", "ranger"],
+    "strengthFromEquip": 0,
+    "armorFromEquip": 15,
+    "healthFromEquip": 100,
+    "manaFromEquip": 0,
+    "speedFromEquip": 0
   },
   {
     "id": "axe_common",
@@ -257,9 +285,10 @@
     "value": 5,
     "allowedClass": ["barbarian", "paladin"],
     "strengthFromEquip": 4,
-    "armorFromEquip": 3,
-    "healthFromEquip": 15,
-    "manaFromEquip": 0
+    "armorFromEquip": 2,
+    "healthFromEquip": 20,
+    "manaFromEquip": 0,
+    "speedFromEquip": 0
   },
   {
     "id": "axe_rare",
@@ -275,7 +304,12 @@
     "rarity": "rare",
     "description": "Um machado raro.",
     "value": 5,
-    "allowedClass": ["barbarian", "paladin"]
+    "allowedClass": ["barbarian", "paladin"],
+    "strengthFromEquip": 8,
+    "armorFromEquip": 4,
+    "healthFromEquip": 40,
+    "manaFromEquip": 0,
+    "speedFromEquip": 0
   },
   {
     "id": "axe_legendary",
@@ -291,7 +325,12 @@
     "rarity": "legendary",
     "description": "Um machado lendário.",
     "value": 5,
-    "allowedClass": ["barbarian", "paladin"]
+    "allowedClass": ["barbarian", "paladin"],
+    "strengthFromEquip": 12,
+    "armorFromEquip": 6,
+    "healthFromEquip": 40,
+    "manaFromEquip": 0,
+    "speedFromEquip": 0
   },
   {
     "id": "bow_common",
@@ -308,10 +347,11 @@
     "description": "Um arco básico.",
     "value": 5,
     "allowedClass": ["ranger"],
-    "strengthFromEquip": 8,
-    "armorFromEquip": 1,
-    "healthFromEquip": 2,
-    "manaFromEquip": 1
+    "strengthFromEquip": 6,
+    "armorFromEquip": 0,
+    "healthFromEquip": 10,
+    "manaFromEquip": 10,
+    "speedFromEquip": 0
   },
   {
     "id": "bow_rare",
@@ -327,7 +367,12 @@
     "rarity": "rare",
     "description": "Um arco raro.",
     "value": 5,
-    "allowedClass": ["ranger"]
+    "allowedClass": ["ranger"],
+    "strengthFromEquip": 12,
+    "armorFromEquip": 0,
+    "healthFromEquip": 20,
+    "manaFromEquip": 20,
+    "speedFromEquip": 0
   },
   {
     "id": "bow_legendary",
@@ -343,59 +388,12 @@
     "rarity": "legendary",
     "description": "Um arco lendário.",
     "value": 5,
-    "allowedClass": ["ranger"]
-  },
-  {
-    "id": "axe_common",
-    "name": "Machado Comum",
-    "spritePaths": [
-      ["/sprites/objects/items/axe_common.png"]
-    ],
-    "size": [1, 1],
-    "collision": false,
-    "interactive": true,
-    "autoInteraction": true,
-    "itemType": "weapon",
-    "rarity": "common",
-    "description": "Um machado básico.",
-    "value": 5,
-    "allowedClass": ["barbarian", "paladin"],
-    "strengthFromEquip": 5,
-    "armorFromEquip": 2,
-    "healthFromEquip": 15,
-    "manaFromEquip": 0
-  },
-  {
-    "id": "axe_rare",
-    "name": "Machado Raro",
-    "spritePaths": [
-      ["/sprites/objects/items/axe_rare.png"]
-    ],
-    "size": [1, 1],
-    "collision": false,
-    "interactive": true,
-    "autoInteraction": true,
-    "itemType": "weapon",
-    "rarity": "rare",
-    "description": "Um machado raro.",
-    "value": 5,
-    "allowedClass": ["barbarian", "paladin"]
-  },
-  {
-    "id": "axe_legendary",
-    "name": "Machado Lendário",
-    "spritePaths": [
-      ["/sprites/objects/items/axe_legendary.png"]
-    ],
-    "size": [1, 1],
-    "collision": false,
-    "interactive": true,
-    "autoInteraction": true,
-    "itemType": "weapon",
-    "rarity": "legendary",
-    "description": "Um machado lendário.",
-    "value": 5,
-    "allowedClass": ["barbarian", "paladin"]
+    "allowedClass": ["ranger"],
+    "strengthFromEquip": 18,
+    "armorFromEquip": 0,
+    "healthFromEquip": 30,
+    "manaFromEquip": 30,
+    "speedFromEquip": 0
   },
   {
     "id": "hammer_common",
@@ -413,9 +411,10 @@
     "value": 5,
     "allowedClass": ["barbarian", "paladin"],
     "strengthFromEquip": 5,
-    "armorFromEquip": 2,
-    "healthFromEquip": 15,
-    "manaFromEquip": 0
+    "armorFromEquip": 1,
+    "healthFromEquip": 20,
+    "manaFromEquip": 0,
+    "speedFromEquip": 0
   },
   {
     "id": "hammer_rare",
@@ -431,7 +430,12 @@
     "rarity": "rare",
     "description": "Um martelo raro.",
     "value": 5,
-    "allowedClass": ["barbarian", "paladin"]
+    "allowedClass": ["barbarian", "paladin"],
+    "strengthFromEquip": 10,
+    "armorFromEquip": 2,
+    "healthFromEquip": 40,
+    "manaFromEquip": 0,
+    "speedFromEquip": 0
   },
   {
     "id": "hammer_legendary",
@@ -447,7 +451,12 @@
     "rarity": "legendary",
     "description": "Um martelo lendário.",
     "value": 5,
-    "allowedClass": ["barbarian", "paladin"]
+    "allowedClass": ["barbarian", "paladin"],
+    "strengthFromEquip": 15,
+    "armorFromEquip": 3,
+    "healthFromEquip": 60,
+    "manaFromEquip": 0,
+    "speedFromEquip": 0
   },
   {
     "id": "ring_common",
@@ -467,7 +476,8 @@
     "strengthFromEquip": 5,
     "armorFromEquip": 2,
     "healthFromEquip": 10,
-    "manaFromEquip": 30
+    "manaFromEquip": 30,
+    "speedFromEquip": 0
   },
   {
     "id": "ring_rare",
@@ -483,7 +493,12 @@
     "rarity": "rare",
     "description": "Um anel raro.",
     "value": 5,
-    "allowedClass": ["mage"]
+    "allowedClass": ["mage"],
+    "strengthFromEquip": 10,
+    "armorFromEquip": 4,
+    "healthFromEquip": 20,
+    "manaFromEquip": 60,
+    "speedFromEquip": 0
   },
   {
     "id": "ring_legendary",
@@ -499,7 +514,12 @@
     "rarity": "legendary",
     "description": "Um anel lendário.",
     "value": 5,
-    "allowedClass": ["mage"]
+    "allowedClass": ["mage"],
+    "strengthFromEquip": 15,
+    "armorFromEquip": 6,
+    "healthFromEquip": 30,
+    "manaFromEquip": 90,
+    "speedFromEquip": 0
   },
   {
     "id": "orb_fire",
