@@ -127,6 +127,27 @@ public class ItemFactory {
               }
               classField.set(def, allowedClass);
             }
+            // Atributos dos equipamentos
+            if (objectJson.has("strengthFromEquip")) {
+              Field valueField = def.getClass().getDeclaredField("strengthFromEquip");
+              valueField.setAccessible(true);
+              valueField.set(def, objectJson.get("strengthFromEquip").getAsInt());
+            }
+            if (objectJson.has("armorFromEquip")) {
+              Field valueField = def.getClass().getDeclaredField("armorFromEquip");
+              valueField.setAccessible(true);
+              valueField.set(def, objectJson.get("armorFromEquip").getAsInt());
+            }
+            if (objectJson.has("healthFromEquip")) {
+              Field valueField = def.getClass().getDeclaredField("healthFromEquip");
+              valueField.setAccessible(true);
+              valueField.set(def, objectJson.get("healthFromEquip").getAsInt());
+            }
+            if (objectJson.has("manaFromEquip")) {
+              Field valueField = def.getClass().getDeclaredField("manaFromEquip");
+              valueField.setAccessible(true);
+              valueField.set(def, objectJson.get("manaFromEquip").getAsInt());
+            }
 
             mapObject.setObjectDefinition(def);
             return mapObject;
@@ -135,27 +156,6 @@ public class ItemFactory {
             System.err.println("Erro ao criar MapObject temporário do JSON: " + e.getMessage());
             return null;
         }
-    }
-
-    /**
-     * Mapeia nomes de atributos do JSON para o enum AttributeType
-     */
-    private static AttributeType mapJsonAttributeToEnum(String jsonAttribute) {
-      return switch (jsonAttribute.toLowerCase()) {
-        case "strength" -> AttributeType.STRENGTH;
-        case "defense", "defence" -> AttributeType.DEFENSE;
-        case "health", "hp" -> AttributeType.HEALTH;
-        case "max_health", "maxhealth", "max_hp" -> AttributeType.MAX_HEALTH;
-        case "mana", "mp" -> AttributeType.MANA;
-        case "max_mana", "maxmana", "max_mp" -> AttributeType.MAX_MANA;
-        case "agility", "agi" -> AttributeType.AGILITY;
-        case "armor", "armour" -> AttributeType.ARMOR;
-        case "stamina", "sta" -> AttributeType.STAMINA;
-        default -> {
-          System.err.println("Atributo JSON não reconhecido: " + jsonAttribute);
-          yield null;
-        }
-      };
     }
 
     /**
@@ -188,6 +188,39 @@ public class ItemFactory {
             value = Integer.parseInt(valueStr);
         } catch (NumberFormatException e) {
             // Valor padrão
+        }
+
+        String strengthFromEquipString = getObjectProperty(mapObject, "strengthFromEquip");
+        int strengthFromEquip = 0;
+        try {
+          assert strengthFromEquipString != null;
+          strengthFromEquip = Integer.parseInt(strengthFromEquipString);
+        } catch (NumberFormatException e) {
+          // Valor padrão
+        }
+
+        String armorFromEquipString = getObjectProperty(mapObject, "armorFromEquip");
+        int armorFromEquip = 0;
+        try {
+          armorFromEquip = Integer.parseInt(armorFromEquipString);
+        } catch (NumberFormatException e) {
+          // Valor padrão
+        }
+
+        String healthFromEquipString = getObjectProperty(mapObject, "healthFromEquip");
+        int healthFromEquip = 0;
+        try {
+          healthFromEquip = Integer.parseInt(healthFromEquipString);
+        } catch (NumberFormatException e) {
+          // Valor padrão
+        }
+
+        String manaFromEquipString = getObjectProperty(mapObject, "manaFromEquip");
+        int manaFromEquip = 0;
+        try {
+          manaFromEquip = Integer.parseInt(manaFromEquipString);
+        } catch (NumberFormatException e) {
+          // Valor padrão
         }
 
         // Determinar se o item é empilhável baseado no tipo
@@ -244,32 +277,13 @@ public class ItemFactory {
                 maxStackSize,
                 mapObject.getObjectDefinition(),
                 tileSize,
-                allowedClass
+                allowedClass,
+                strengthFromEquip,
+                armorFromEquip,
+                healthFromEquip,
+                manaFromEquip
             );
         }
-
-//        // Aplicar bônus do JSON (se existirem)
-//        ObjectSpriteLoader.ObjectDefinition def = mapObject.getObjectDefinition();
-//        try {
-//          Field bonusField = def.getClass().getDeclaredField("bonusAttributes");
-//          bonusField.setAccessible(true);
-//          Object valueBonus = bonusField.get(def);
-//
-//          if (valueBonus instanceof Map<?, ?> rawMap) {
-//            Map<AttributeType, Integer> bonusAttributes = new HashMap<>();
-//            for (Map.Entry<?, ?> entry : rawMap.entrySet()) {
-//              try {
-//                AttributeType type = AttributeType.valueOf(entry.getKey().toString().toUpperCase());
-//                bonusAttributes.put(type, (Integer) entry.getValue());
-//              } catch (IllegalArgumentException e) {
-//                System.err.println("Atributo inválido no JSON: " + entry.getKey());
-//              }
-//            }
-//            item.setBonusAttributes(bonusAttributes);
-//          }
-//        } catch (NoSuchFieldException | IllegalAccessException ignore) {
-//          // não tinha bonusAttributes nesse item
-//        }
 
       return item;
     }

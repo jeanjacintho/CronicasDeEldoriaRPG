@@ -2,6 +2,7 @@ package br.com.cronicasdeeldoria.entity.character;
 
 import br.com.cronicasdeeldoria.entity.Entity;
 import br.com.cronicasdeeldoria.entity.character.classes.CharacterClass;
+import br.com.cronicasdeeldoria.entity.character.player.Player;
 import br.com.cronicasdeeldoria.game.Buff;
 import br.com.cronicasdeeldoria.entity.item.Item;
 import br.com.cronicasdeeldoria.entity.character.AttributeType;
@@ -53,6 +54,7 @@ public class Character extends Entity {
     this.attributeStrength = attributeStrength;
     this.attributeAgility = attributeAgility;
     this.attributeArmor = attributeArmor;
+    //this.equipment = new Equipment( this);
   }
 
   public boolean hasActiveBuff(String type) {

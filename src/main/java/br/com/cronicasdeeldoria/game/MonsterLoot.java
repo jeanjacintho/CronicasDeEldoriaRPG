@@ -115,14 +115,14 @@ class WolfBossLootTable extends LootTable {
     addLoot("orb_fire", 1);
     addLoot("health_potion", 1);
     addLoot("mana_potion", 0.6);
-    addLoot("shield_common", 0.05);
-    addLoot("sword_common", 0.05);
-    addLoot("hammer_common", 0.05);
-    addLoot("bow_common", 0.05);
-    addLoot("axe_common", 0.05);
-    addLoot("armor_common", 0.05);
+    addLoot("shield_common", 1);
+    addLoot("sword_common", 1);
+    addLoot("hammer_common", 1);
+    addLoot("bow_common", 1);
+    addLoot("axe_common", 1);
+    addLoot("armor_common", 1);
     addLoot("key_common", 0.01);
-    addLoot("boot_speed", 0.01);
+    addLoot("boot_speed", 1);
   }
 }
 

@@ -79,7 +79,7 @@ public class Player extends Character {
    */
   public void initializeEquipment() {
     if (this.getEquipment() == null) {
-      this.setEquipment(new Equipment());
+      this.setEquipment(new Equipment(this));
     }
   }
 
@@ -333,18 +333,6 @@ public class Player extends Character {
       }
     }
   }
-  /**
-   * Mostra todos os atributos efetivos do jogador no console
-   */
-//  public void showCurrentAttributes() {
-//    System.out.println("\n=== STATUS ATUAL DO JOGADOR ===");
-//    for (AttributeType type : AttributeType.values()) {
-//      int effectiveValue = this.getEffectiveAttribute(type);
-//      System.out.println(type.name() + ": " + effectiveValue);
-//    }
-//    System.out.println("===============================\n");
-//  }
-
   /**
    * Retorna o XP total do jogador.
    */

@@ -28,7 +28,7 @@ public class InventoryManager {
 
   public InventoryManager(String playerClassName, Player player) {
         this.inventorySlots = new ArrayList<>();
-        this.equipment = new Equipment();
+        this.equipment = new Equipment(player);
         this.playerClassName = playerClassName;
         this.player = player;
 
@@ -154,7 +154,7 @@ public class InventoryManager {
         Equipment.EquipmentSlot slot = getEquipmentSlotForItem(selectedItem);
         if (slot == null) return false;
 
-        // Tentar equipar
+        // Tentar equipar - agora o Equipment já aplica os bônus automaticamente
         Item previousItem = equipment.equipItem(slot, selectedItem);
 
         // Se havia item equipado, adicionar de volta ao inventário
@@ -171,6 +171,13 @@ public class InventoryManager {
 //        for (AttributeType type : AttributeType.values()) {
 //          System.out.println(type.name() + " = " + player.getEffectiveAttribute(type));
 //        }
+
+        // Debug: mostrar atributos atualizados
+        System.out.println("Atributos após equipar " + selectedItem.getName() + ":");
+        System.out.println("Força: " + player.getAttributeStrength());
+        System.out.println("Armadura: " + player.getAttributeArmor());
+        System.out.println("Vida Máxima: " + player.getAttributeMaxHealth());
+        System.out.println("Mana Máxima: " + player.getAttributeMaxMana());
 
         return true;
     }
@@ -382,12 +389,20 @@ public class InventoryManager {
         }
     }
 
-    /**
-     * Limpa todo o equipamento.
-     */
-    public void clearEquipment() {
-        for (int i = 0; i < equipment.getTotalSlots(); i++) {
-            equipment.unequipItem(Equipment.EquipmentSlot.fromIndex(i));
+  /**
+   * Limpa todo o equipamento e retorna os itens ao inventário.
+   */
+  public void clearEquipment() {
+    for (int i = 0; i < equipment.getTotalSlots(); i++) {
+      Equipment.EquipmentSlot slot = Equipment.EquipmentSlot.fromIndex(i);
+      Item equippedItem = equipment.getEquippedItem(slot);
+
+      if (equippedItem != null) {
+        // Tenta adicionar ao inventário
+        if (addItem(equippedItem)) {
+          equipment.unequipItem(slot);
         }
+      }
     }
+  }
 }

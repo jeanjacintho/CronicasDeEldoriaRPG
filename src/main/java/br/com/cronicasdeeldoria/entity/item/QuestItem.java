@@ -29,7 +29,7 @@ public class QuestItem extends Item {
                      ItemType itemType, ItemRarity rarity, String description,
                      int value, boolean stackable, String questId) {
         super(itemId, name, worldX, worldY, itemType, rarity, description,
-              value, stackable, 1, null, 0, null);
+              value, stackable, 1, null, 0, null, 0, 0, 0, 0);
         this.isQuestItem = true;
         this.questId = questId;
     }

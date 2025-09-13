@@ -89,6 +89,10 @@ public class ObjectSpriteLoader {
         public String description;
         public int value;
         public List<String> allowedClass;
+        public int strengthFromEquip;
+        public int armorFromEquip;
+        public int healthFromEquip;
+        public int manaFromEquip;
         //public Map<AttributeType, Integer> bonusAttributes = new HashMap<>();
 
       // Campos adicionais para quests

@@ -116,12 +116,10 @@
     "description": "Uma espada básica.",
     "value": 5,
     "allowedClass": ["barbarian", "paladin"],
-    "bonusAttributes": {
-      "strength": 5,
-      "defense": 2,
-      "hp": 15,
-      "mana": 30
-    }
+    "strengthFromEquip": 5,
+    "armorFromEquip": 2,
+    "healthFromEquip": 15,
+    "manaFromEquip": 0
   },
   {
     "id": "sword_rare",
@@ -169,7 +167,11 @@
     "rarity": "common",
     "description": "Um escudo básico.",
     "value": 5,
-    "allowedClass": ["barbarian", "paladin", "mage"]
+    "allowedClass": ["barbarian", "paladin", "mage"],
+    "strengthFromEquip": 7,
+    "armorFromEquip": 1,
+    "healthFromEquip": 1,
+    "manaFromEquip": 1
   },
   {
     "id": "shield_legendary",
@@ -201,7 +203,11 @@
     "rarity": "common",
     "description": "Uma armadura básica.",
     "value": 5,
-    "allowedClass": ["barbarian", "paladin", "mage", "ranger"]
+    "allowedClass": ["barbarian", "paladin", "mage", "ranger"],
+    "strengthFromEquip": 0,
+    "armorFromEquip": 5,
+    "healthFromEquip": 15,
+    "manaFromEquip": 0
   },
   {
     "id": "armor_rare",
@@ -249,7 +255,11 @@
     "rarity": "common",
     "description": "Um machado básico.",
     "value": 5,
-    "allowedClass": ["barbarian", "paladin"]
+    "allowedClass": ["barbarian", "paladin"],
+    "strengthFromEquip": 4,
+    "armorFromEquip": 3,
+    "healthFromEquip": 15,
+    "manaFromEquip": 0
   },
   {
     "id": "axe_rare",
@@ -297,7 +307,11 @@
     "rarity": "common",
     "description": "Um arco básico.",
     "value": 5,
-    "allowedClass": ["ranger"]
+    "allowedClass": ["ranger"],
+    "strengthFromEquip": 8,
+    "armorFromEquip": 1,
+    "healthFromEquip": 2,
+    "manaFromEquip": 1
   },
   {
     "id": "bow_rare",
@@ -345,7 +359,11 @@
     "rarity": "common",
     "description": "Um machado básico.",
     "value": 5,
-    "allowedClass": ["barbarian", "paladin"]
+    "allowedClass": ["barbarian", "paladin"],
+    "strengthFromEquip": 5,
+    "armorFromEquip": 2,
+    "healthFromEquip": 15,
+    "manaFromEquip": 0
   },
   {
     "id": "axe_rare",
@@ -393,7 +411,11 @@
     "rarity": "common",
     "description": "Um martelo básico.",
     "value": 5,
-    "allowedClass": ["barbarian", "paladin"]
+    "allowedClass": ["barbarian", "paladin"],
+    "strengthFromEquip": 5,
+    "armorFromEquip": 2,
+    "healthFromEquip": 15,
+    "manaFromEquip": 0
   },
   {
     "id": "hammer_rare",
@@ -441,7 +463,11 @@
     "rarity": "common",
     "description": "Um anel básico.",
     "value": 5,
-    "allowedClass": ["mage"]
+    "allowedClass": ["mage"],
+    "strengthFromEquip": 5,
+    "armorFromEquip": 2,
+    "healthFromEquip": 10,
+    "manaFromEquip": 30
   },
   {
     "id": "ring_rare",

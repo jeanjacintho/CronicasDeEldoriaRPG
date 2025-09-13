@@ -22,6 +22,10 @@ public class Item extends Entity {
   private int maxStackSize;
   private ObjectSpriteLoader.ObjectDefinition objectDefinition;
   private List<String> allowedClass;
+  private int strengthFromEquip;
+  private int armorFromEquip;
+  private int healthFromEquip;
+  private int manaFromEquip;
 
   /**
    * Construtor simples para criar um item de inventário (sem posição no mundo).
@@ -64,10 +68,10 @@ public class Item extends Entity {
    * @param objectDefinition Definição visual do objeto.
    * @param tileSize         Tamanho do tile.
    */
-  public Item(String itemId, String name, int worldX, int worldY,
-              ItemType itemType, ItemRarity rarity, String description,
-              int value, boolean stackable, int maxStackSize,
-              ObjectSpriteLoader.ObjectDefinition objectDefinition, int tileSize, List<String> allowedClass) {
+  public Item(String itemId, String name, int worldX, int worldY, ItemType itemType,
+              ItemRarity rarity, String description, int value, boolean stackable, int maxStackSize,
+              ObjectSpriteLoader.ObjectDefinition objectDefinition, int tileSize, List<String> allowedClass,
+              int strengthFromEquip, int armorFromEquip, int healthFromEquip, int manaFromEquip ) {
     super(worldX, worldY, 0, "none", name);
     this.itemId = itemId;
     this.itemType = itemType;
@@ -79,6 +83,10 @@ public class Item extends Entity {
     this.stackSize = 1;
     this.objectDefinition = objectDefinition;
     this.allowedClass = allowedClass != null ? new ArrayList<>(allowedClass) : null;
+    this.strengthFromEquip = strengthFromEquip;
+    this.armorFromEquip = armorFromEquip;
+    this.healthFromEquip = healthFromEquip;
+    this.manaFromEquip = manaFromEquip;
 
     // Configurar hitbox para itens (1x1 tile)
     this.setHitbox(new Rectangle(0, 0, tileSize, tileSize));
@@ -158,7 +166,7 @@ public class Item extends Entity {
   }
 
   public boolean canBeEquippedBy(String playerClass) {
-    // se o campo estiver vazio ou null, qualquer classe pode
+    // se o campo estiver vazio ou null, qualquer classe pode usar
     return allowedClass == null || allowedClass.isEmpty() || allowedClass.contains(playerClass.toLowerCase());
   }
 
@@ -168,6 +176,38 @@ public class Item extends Entity {
 
   public void setAllowedClass(List<String> allowedClass) {
     this.allowedClass = allowedClass;
+  }
+
+  public int getManaFromEquip() {
+    return manaFromEquip;
+  }
+
+  public void setManaFromEquip(int manaFromEquip) {
+    this.manaFromEquip = manaFromEquip;
+  }
+
+  public int getHealthFromEquip() {
+    return healthFromEquip;
+  }
+
+  public void setHealthFromEquip(int healthFromEquip) {
+    this.healthFromEquip = healthFromEquip;
+  }
+
+  public int getArmorFromEquip() {
+    return armorFromEquip;
+  }
+
+  public void setArmorFromEquip(int armorFromEquip) {
+    this.armorFromEquip = armorFromEquip;
+  }
+
+  public int getStrengthFromEquip() {
+    return strengthFromEquip;
+  }
+
+  public void setStrengthFromEquip(int strengthFromEquip) {
+    this.strengthFromEquip = strengthFromEquip;
   }
 
   /**
@@ -225,9 +265,9 @@ public class Item extends Entity {
    * @return Nova instância do item.
    */
   public Item copy() {
-    Item copy = new Item(itemId, getName(), getWorldX(), getWorldY(),
-      itemType, rarity, description, value,
-      stackable, maxStackSize, objectDefinition, 16, allowedClass);
+    Item copy = new Item(itemId, getName(), getWorldX(), getWorldY(), itemType, rarity, description, value,
+      stackable, maxStackSize, objectDefinition, 16, allowedClass, strengthFromEquip, armorFromEquip,
+      healthFromEquip, manaFromEquip  );
     copy.setStackSize(stackSize);
     return copy;
   }
