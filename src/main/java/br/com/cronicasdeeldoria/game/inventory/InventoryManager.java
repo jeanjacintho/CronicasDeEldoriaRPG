@@ -139,11 +139,11 @@ public class InventoryManager {
             return false;
         }
 
-        // NOVA VERIFICAÇÃO: Verificar se o jogador pode equipar o item
+        // Verificar se o jogador pode equipar o item
         if (!canPlayerEquipItem(selectedItem)) {
           String playerClass = playerClassName;
           String allowedClasses = selectedItem.getAllowedClass() != null ? String.join(", ", selectedItem.getAllowedClass()) : "nenhuma";
-          System.out.printf("Classe %s não pode equipar o item da classe %s", playerClass,allowedClasses );
+          System.out.printf("Classe %s não pode equipar o item da classe %s%n", playerClass,allowedClasses );
           return false;
         }
 
