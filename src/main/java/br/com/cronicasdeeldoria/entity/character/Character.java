@@ -89,43 +89,20 @@ public class Character extends Entity {
     }
   }
 
-  // Novo metodo genérico para pegar atributo final
-  public int getEffectiveAttribute(AttributeType type) {
-    int baseValue = switch (type) {
-      case STRENGTH -> attributeStrength;
-      case DEFENSE -> attributeDefence;
-      case HEALTH -> attributeHealth;
-      case MAX_HEALTH -> 0;
-      case MANA -> attributeMana;
-      case AGILITY -> attributeAgility;
-      case ARMOR -> attributeArmor;
-      case STAMINA -> attributeStamina;
-      case MAX_MANA -> 0;
-    };
-
-    // Buffs ativos
-    int buffBonus = activeBuffs.stream()
-      .filter(b -> b.getType().equals(type.name()) && b.isActive())
+  public int getEffectiveArmor() {
+    int bonus = activeBuffs.stream()
+      .filter(b -> b.getType().equals("ARMOR") && b.isActive())
       .mapToInt(Buff::getBonus)
       .sum();
+    return attributeArmor + bonus;
+  }
 
-    // Bônus de equipamentos
-    int equipmentBonus = 0;
-    if (equipment != null) {
-      for (Item item : equipment.getAllEquippedItems()) {
-        if (item != null) {
-          equipmentBonus += item.getBonus(type);
-
-
-          // Debug: mostrar bônus de cada item (opcional, remova se não quiser)
-          if (equipmentBonus > 0) {
-            System.out.println("  Item '" + item.getItemId() + "' dá +" + equipmentBonus + " em " + type.name());
-          }
-        }
-      }
-    }
-
-    return baseValue + buffBonus + equipmentBonus;
+  public int getEffectiveStrength() {
+    int bonus = activeBuffs.stream()
+      .filter(b -> b.getType().equals("STRENGTH") && b.isActive())
+      .mapToInt(Buff::getBonus)
+      .sum();
+    return attributeStrength + bonus;
   }
 
   public CharacterClass getCharacterClass() {

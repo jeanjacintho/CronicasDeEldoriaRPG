@@ -1,16 +1,20 @@
 package br.com.cronicasdeeldoria.entity.character.player;
 
+import br.com.cronicasdeeldoria.entity.character.AttributeType;
 import br.com.cronicasdeeldoria.entity.character.Character;
 import br.com.cronicasdeeldoria.entity.character.classes.*;
+import br.com.cronicasdeeldoria.entity.item.Item;
 import br.com.cronicasdeeldoria.game.GamePanel;
 import br.com.cronicasdeeldoria.game.KeyHandler;
 
+import br.com.cronicasdeeldoria.game.inventory.Equipment;
 import br.com.cronicasdeeldoria.game.money.PlayerMoney;
 import br.com.cronicasdeeldoria.entity.character.classes.Ranger;
 
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
+import java.util.List;
 
 import javax.imageio.ImageIO;
 
@@ -66,6 +70,17 @@ public class Player extends Character {
     int hitboxX = (playerSize - hitboxWidth) / 2;
     int hitboxY = playerSize / 2;
     setHitbox(new Rectangle(hitboxX, hitboxY, hitboxWidth, hitboxHeight));
+
+    this.initializeEquipment();
+  }
+
+  /**
+   * Inicializa o equipamento do jogador
+   */
+  public void initializeEquipment() {
+    if (this.getEquipment() == null) {
+      this.setEquipment(new Equipment());
+    }
   }
 
   /**
@@ -318,8 +333,17 @@ public class Player extends Character {
       }
     }
   }
-
-
+  /**
+   * Mostra todos os atributos efetivos do jogador no console
+   */
+//  public void showCurrentAttributes() {
+//    System.out.println("\n=== STATUS ATUAL DO JOGADOR ===");
+//    for (AttributeType type : AttributeType.values()) {
+//      int effectiveValue = this.getEffectiveAttribute(type);
+//      System.out.println(type.name() + ": " + effectiveValue);
+//    }
+//    System.out.println("===============================\n");
+//  }
 
   /**
    * Retorna o XP total do jogador.

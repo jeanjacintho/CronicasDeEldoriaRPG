@@ -124,21 +124,6 @@
     }
   },
   {
-    "id": "sword_uncommon",
-    "name": "Espada Incomum",
-    "spritePaths": [
-      ["/sprites/objects/items/sword_uncommon.png"]
-    ],
-    "size": [1, 1],
-    "collision": false,
-    "interactive": true,
-    "autoInteraction": true,
-    "itemType": "weapon",
-    "rarity": "uncommon",
-    "description": "Uma espada incomum.",
-    "value": 5
-  },
-  {
     "id": "sword_rare",
     "name": "Espada Rara",
     "spritePaths": [

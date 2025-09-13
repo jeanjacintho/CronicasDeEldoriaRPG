@@ -116,35 +116,17 @@ public class ItemFactory {
                 valueField.set(def, objectJson.get("value").getAsInt());
             }
 
-          if (objectJson.has("allowedClass")) {
-            Field classField = def.getClass().getDeclaredField("allowedClass");
-            classField.setAccessible(true);
+            if (objectJson.has("allowedClass")) {
+              Field classField = def.getClass().getDeclaredField("allowedClass");
+              classField.setAccessible(true);
 
-            List<String> allowedClass = new ArrayList<>();
-            JsonArray classArray = objectJson.getAsJsonArray("allowedClass");
-            for (JsonElement element : classArray) {
-              allowedClass.add(element.getAsString().toLowerCase());
-            }
-            classField.set(def, allowedClass);
-          }
-
-          if (objectJson.has("bonusAttributes")) {
-            JsonObject bonusJson = objectJson.getAsJsonObject("bonusAttributes");
-            Map<AttributeType, Integer> bonusAttributes = new HashMap<>();
-
-            for (String key : bonusJson.keySet()) {
-              try {
-                AttributeType type = AttributeType.valueOf(key.toUpperCase()); // converte para enum
-                bonusAttributes.put(type, bonusJson.get(key).getAsInt());
-              } catch (IllegalArgumentException e) {
-                System.err.println("Atributo inválido no JSON: " + key);
+              List<String> allowedClass = new ArrayList<>();
+              JsonArray classArray = objectJson.getAsJsonArray("allowedClass");
+              for (JsonElement element : classArray) {
+                allowedClass.add(element.getAsString().toLowerCase());
               }
+              classField.set(def, allowedClass);
             }
-
-            Field bonusField = def.getClass().getDeclaredField("bonusAttributes");
-            bonusField.setAccessible(true);
-            bonusField.set(def, bonusAttributes);
-          }
 
             mapObject.setObjectDefinition(def);
             return mapObject;
@@ -153,6 +135,27 @@ public class ItemFactory {
             System.err.println("Erro ao criar MapObject temporário do JSON: " + e.getMessage());
             return null;
         }
+    }
+
+    /**
+     * Mapeia nomes de atributos do JSON para o enum AttributeType
+     */
+    private static AttributeType mapJsonAttributeToEnum(String jsonAttribute) {
+      return switch (jsonAttribute.toLowerCase()) {
+        case "strength" -> AttributeType.STRENGTH;
+        case "defense", "defence" -> AttributeType.DEFENSE;
+        case "health", "hp" -> AttributeType.HEALTH;
+        case "max_health", "maxhealth", "max_hp" -> AttributeType.MAX_HEALTH;
+        case "mana", "mp" -> AttributeType.MANA;
+        case "max_mana", "maxmana", "max_mp" -> AttributeType.MAX_MANA;
+        case "agility", "agi" -> AttributeType.AGILITY;
+        case "armor", "armour" -> AttributeType.ARMOR;
+        case "stamina", "sta" -> AttributeType.STAMINA;
+        default -> {
+          System.err.println("Atributo JSON não reconhecido: " + jsonAttribute);
+          yield null;
+        }
+      };
     }
 
     /**
@@ -245,30 +248,28 @@ public class ItemFactory {
             );
         }
 
-        // Aplicar bônus do JSON (se existirem)
-        ObjectSpriteLoader.ObjectDefinition def = mapObject.getObjectDefinition();
-        try {
-          Field bonusField = def.getClass().getDeclaredField("bonusAttributes");
-          bonusField.setAccessible(true);
-          Object valueBonus = bonusField.get(def);
-
-          if (valueBonus instanceof Map<?, ?> rawMap) {
-            Map<AttributeType, Integer> bonusAttributes = new HashMap<>();
-            for (Map.Entry<?, ?> entry : rawMap.entrySet()) {
-              try {
-                AttributeType type = AttributeType.valueOf(entry.getKey().toString().toUpperCase());
-                bonusAttributes.put(type, (Integer) entry.getValue());
-              } catch (IllegalArgumentException e) {
-                System.err.println("Atributo inválido no JSON: " + entry.getKey());
-              }
-            }
-            item.setBonusAttributes(bonusAttributes);
-          }
-        } catch (NoSuchFieldException ignore) {
-          // não tinha bonusAttributes nesse item
-        } catch (IllegalAccessException e) {
-          throw new RuntimeException(e);
-        }
+//        // Aplicar bônus do JSON (se existirem)
+//        ObjectSpriteLoader.ObjectDefinition def = mapObject.getObjectDefinition();
+//        try {
+//          Field bonusField = def.getClass().getDeclaredField("bonusAttributes");
+//          bonusField.setAccessible(true);
+//          Object valueBonus = bonusField.get(def);
+//
+//          if (valueBonus instanceof Map<?, ?> rawMap) {
+//            Map<AttributeType, Integer> bonusAttributes = new HashMap<>();
+//            for (Map.Entry<?, ?> entry : rawMap.entrySet()) {
+//              try {
+//                AttributeType type = AttributeType.valueOf(entry.getKey().toString().toUpperCase());
+//                bonusAttributes.put(type, (Integer) entry.getValue());
+//              } catch (IllegalArgumentException e) {
+//                System.err.println("Atributo inválido no JSON: " + entry.getKey());
+//              }
+//            }
+//            item.setBonusAttributes(bonusAttributes);
+//          }
+//        } catch (NoSuchFieldException | IllegalAccessException ignore) {
+//          // não tinha bonusAttributes nesse item
+//        }
 
       return item;
     }

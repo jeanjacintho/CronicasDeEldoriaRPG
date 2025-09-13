@@ -167,7 +167,7 @@ public class GamePanel extends JPanel implements Runnable{
 
     player = new Player(this, keyHandler, characterClassInstance, x, y, speed, direction, playerName, health, maxHealth, mana, maxMana, strength, agility, luck, armor);
 
-    initializeGameComponents();
+    initializeGameComponents(player);
     // Inicializar sistema de comerciante após a criação do player
     this.merchantManager = new MerchantManager(inventoryManager, player.getPlayerMoney());
     this.merchantUI = new MerchantUI(this);
@@ -1241,12 +1241,12 @@ public class GamePanel extends JPanel implements Runnable{
       /**
    * Inicializa componentes do jogo (NPCs e objetos).
    */
-  private void initializeGameComponents() {
+  private void initializeGameComponents(Player player) {
     // Inicializar GameUI
     this.gameUI = new GameUI(this);
 
     // Inicializar InventoryManager
-    this.inventoryManager = new InventoryManager(this.playerClassName);
+    this.inventoryManager = new InventoryManager(this.playerClassName, player);
 
     // Inicializar sistema de interação
     initializeInteractionSystem();

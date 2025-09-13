@@ -24,11 +24,13 @@ public class InventoryManager {
     private int selectedColumn = 0;
     private boolean inInventoryMode = true; // true = inventário, false = equipamento
     private String playerClassName;
+    private Player player;
 
-  public InventoryManager(String playerClassName) {
+  public InventoryManager(String playerClassName, Player player) {
         this.inventorySlots = new ArrayList<>();
         this.equipment = new Equipment();
         this.playerClassName = playerClassName;
+        this.player = player;
 
     // Inicializar slots vazios
         for (int i = 0; i < TOTAL_INVENTORY_SLOTS; i++) {
@@ -159,17 +161,16 @@ public class InventoryManager {
         if (previousItem != null) {
             // Quando o item for desequipado, remove o bonus
             addItem(previousItem);
-            System.out.println("Desequipou o item: " + previousItem.getItemId());
         }
 
         // Remover item do inventário
         int slotIndex = selectedRow * INVENTORY_COLUMNS + selectedColumn;
         removeItem(slotIndex);
 
-      System.out.println("Atributos do jogador após equipar:");
-      for (AttributeType type : AttributeType.values()) {
-        //System.out.println(type.name() + " = " + Player.getEffectiveAttribute(type));
-      }
+//        System.out.println("Atributos do jogador após equipar:");
+//        for (AttributeType type : AttributeType.values()) {
+//          System.out.println(type.name() + " = " + player.getEffectiveAttribute(type));
+//        }
 
         return true;
     }

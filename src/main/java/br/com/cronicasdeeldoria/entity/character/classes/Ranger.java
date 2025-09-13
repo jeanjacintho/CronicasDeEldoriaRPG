@@ -56,7 +56,7 @@ public class Ranger implements CharacterClass {
     int manaCost = 15;
 
     // Variação de dano e ignora armadura do alvo
-    int baseDamage = Math.max(1, attacker.getEffectiveAttribute(AttributeType.STRENGTH));
+    int baseDamage = Math.max(1, attacker.getEffectiveStrength());
     int variation = Math.max(1, (int)(baseDamage * 0.4)); // 40% variation
     int finalDamage = baseDamage + (int)(Math.random() * variation * 2) - variation;
 
