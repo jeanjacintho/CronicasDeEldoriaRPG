@@ -3,6 +3,9 @@ package br.com.cronicasdeeldoria.entity.item;
 import br.com.cronicasdeeldoria.entity.Entity;
 import br.com.cronicasdeeldoria.entity.object.ObjectSpriteLoader;
 import java.awt.Rectangle;
+import br.com.cronicasdeeldoria.entity.character.AttributeType;
+import java.util.EnumMap;
+import java.util.Map;
 
 /**
  * Classe que representa um item do jogo, herdando de Entity.
@@ -18,6 +21,7 @@ public class Item extends Entity {
     private int stackSize;
     private int maxStackSize;
     private ObjectSpriteLoader.ObjectDefinition objectDefinition;
+    private Map<AttributeType, Integer> bonusAttributes = new EnumMap<>(AttributeType.class);
 
     /**
      * Construtor simples para criar um item de inventário (sem posição no mundo).
@@ -78,6 +82,7 @@ public class Item extends Entity {
         this.setCollisionOn(false); // Itens não têm colisão por padrão
     }
 
+
     public String getItemId() { return itemId; }
     public void setItemId(String itemId) { this.itemId = itemId; }
 
@@ -107,6 +112,13 @@ public class Item extends Entity {
     public ObjectSpriteLoader.ObjectDefinition getObjectDefinition() { return objectDefinition; }
     public void setObjectDefinition(ObjectSpriteLoader.ObjectDefinition objectDefinition) {
         this.objectDefinition = objectDefinition;
+    }
+
+    public Map<AttributeType, Integer> getBonusAttributes() { return bonusAttributes; }
+    public void setBonusAttributes(Map<AttributeType, Integer> bonusAttributes) { this.bonusAttributes = bonusAttributes; }
+
+    // Atalho para pegar o bônus de um atributo
+    public int getBonus(AttributeType type) { return bonusAttributes.getOrDefault(type, 0);
     }
 
     /**

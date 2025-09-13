@@ -1,10 +1,13 @@
 package br.com.cronicasdeeldoria.game.inventory;
 
+import br.com.cronicasdeeldoria.entity.character.AttributeType;
+import br.com.cronicasdeeldoria.entity.character.player.Player;
 import br.com.cronicasdeeldoria.entity.item.Item;
 import br.com.cronicasdeeldoria.entity.item.ItemType;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Gerencia o inventário e sistema de equipamento do jogador.
@@ -31,7 +34,7 @@ public class InventoryManager {
         }
     }
 
-    /**
+  /**
      * Adiciona um item ao inventário.
      * @param item Item a ser adicionado.
      * @return true se o item foi adicionado com sucesso.
@@ -115,10 +118,12 @@ public class InventoryManager {
     public boolean equipSelectedItem() {
         if (!inInventoryMode) return false;
 
+
         Item selectedItem = getSelectedItem();
         if (selectedItem == null || !selectedItem.isEquipable()) {
-            return false;
+          return false;
         }
+        System.out.println("-------------Equipando o item: " +selectedItem.getItemId());
 
         // Determinar slot de equipamento baseado no tipo
         Equipment.EquipmentSlot slot = getEquipmentSlotForItem(selectedItem);
@@ -129,12 +134,19 @@ public class InventoryManager {
 
         // Se havia item equipado, adicionar de volta ao inventário
         if (previousItem != null) {
+            // Quando o item for desequipado, remove o bonus
             addItem(previousItem);
+            System.out.println("Desequipou o item: " + previousItem.getItemId());
         }
 
         // Remover item do inventário
         int slotIndex = selectedRow * INVENTORY_COLUMNS + selectedColumn;
         removeItem(slotIndex);
+
+      System.out.println("Atributos do jogador após equipar:");
+      for (AttributeType type : AttributeType.values()) {
+        //System.out.println(type.name() + " = " + Player.getEffectiveAttribute(type));
+      }
 
         return true;
     }

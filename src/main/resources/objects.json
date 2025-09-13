@@ -113,7 +113,13 @@
     "itemType": "weapon",
     "rarity": "common",
     "description": "Uma espada básica.",
-    "value": 5
+    "value": 5,
+    "bonusAttributes": {
+      "strength": 5,
+      "defense": 2,
+      "hp": 15,
+      "mana": 30
+    }
   },
   {
     "id": "sword_uncommon",

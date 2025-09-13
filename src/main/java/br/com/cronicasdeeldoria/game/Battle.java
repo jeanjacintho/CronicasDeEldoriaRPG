@@ -1,5 +1,6 @@
 package br.com.cronicasdeeldoria.game;
 
+import br.com.cronicasdeeldoria.entity.character.AttributeType;
 import br.com.cronicasdeeldoria.entity.character.Character;
 import br.com.cronicasdeeldoria.entity.character.classes.Barbarian;
 import br.com.cronicasdeeldoria.entity.character.classes.Paladin;
@@ -176,7 +177,7 @@ public class Battle {
   }
 
   public static int calculateDamage(Character attacker, Character target) {
-    int baseDamage = Math.max(1, attacker.getEffectiveStrength() - (target.getEffectiveArmor() / 2));
+    int baseDamage = Math.max(1, attacker.getEffectiveAttribute(AttributeType.STRENGTH) - (target.getEffectiveAttribute(AttributeType.DEFENSE) / 2));
     int variation = Math.max(1, (int)(baseDamage * 0.4)); // 40% variation
     int finalDamage = baseDamage + (int)(Math.random() * variation * 2) - variation;
 

@@ -3,7 +3,10 @@ package br.com.cronicasdeeldoria.game.inventory;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Field;
+import java.util.HashMap;
+import java.util.Map;
 
+import br.com.cronicasdeeldoria.entity.character.AttributeType;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -110,6 +113,24 @@ public class ItemFactory {
                 valueField.set(def, objectJson.get("value").getAsInt());
             }
 
+            if (objectJson.has("bonusAttributes")) {
+              JsonObject bonusJson = objectJson.getAsJsonObject("bonusAttributes");
+              Map<AttributeType, Integer> bonusAttributes = new HashMap<>();
+
+              for (String key : bonusJson.keySet()) {
+                try {
+                  AttributeType type = AttributeType.valueOf(key.toUpperCase()); // converte para enum
+                  bonusAttributes.put(type, bonusJson.get(key).getAsInt());
+                } catch (IllegalArgumentException e) {
+                  System.err.println("Atributo inválido no JSON: " + key);
+                }
+              }
+
+              Field bonusField = def.getClass().getDeclaredField("bonusAttributes");
+              bonusField.setAccessible(true);
+              bonusField.set(def, bonusAttributes);
+            }
+
             mapObject.setObjectDefinition(def);
             return mapObject;
 
@@ -127,7 +148,6 @@ public class ItemFactory {
      */
     public static Item createItemFromMapObject(MapObject mapObject, int tileSize) {
         if (mapObject == null) return null;
-
 
         // Verificar se o objeto tem propriedades de item
         String itemTypeStr = getObjectProperty(mapObject, "itemType");
@@ -205,7 +225,32 @@ public class ItemFactory {
             );
         }
 
-        return item;
+        // Aplicar bônus do JSON (se existirem)
+        ObjectSpriteLoader.ObjectDefinition def = mapObject.getObjectDefinition();
+        try {
+          Field bonusField = def.getClass().getDeclaredField("bonusAttributes");
+          bonusField.setAccessible(true);
+          Object valueBonus = bonusField.get(def);
+
+          if (valueBonus instanceof Map<?, ?> rawMap) {
+            Map<AttributeType, Integer> bonusAttributes = new HashMap<>();
+            for (Map.Entry<?, ?> entry : rawMap.entrySet()) {
+              try {
+                AttributeType type = AttributeType.valueOf(entry.getKey().toString().toUpperCase());
+                bonusAttributes.put(type, (Integer) entry.getValue());
+              } catch (IllegalArgumentException e) {
+                System.err.println("Atributo inválido no JSON: " + entry.getKey());
+              }
+            }
+            item.setBonusAttributes(bonusAttributes);
+          }
+        } catch (NoSuchFieldException ignore) {
+          // não tinha bonusAttributes nesse item
+        } catch (IllegalAccessException e) {
+          throw new RuntimeException(e);
+        }
+
+      return item;
     }
 
     /**

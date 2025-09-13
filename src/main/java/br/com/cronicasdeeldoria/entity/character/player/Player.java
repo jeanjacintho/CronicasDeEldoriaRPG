@@ -293,22 +293,17 @@ public class Player extends Character {
 
         String raceName = getCharacterClass().getCharacterClassName().toLowerCase();
         switch (raceName) {
-          case "orc":
-            ((Orc) getCharacterClass()).setRage(
-              ((Orc) getCharacterClass()).getRage() + levelDef.rageBonus
-            );
-            break;
-          case "archer":
+          case "ranger":
             ((Ranger) getCharacterClass()).setDexterity(
               ((Ranger) getCharacterClass()).getDexterity() + levelDef.dexterityBonus
             );
             break;
-          case "breton":
+          case "barbarian":
             ((Barbarian) getCharacterClass()).setWillpower(
               ((Barbarian) getCharacterClass()).getWillpower() + levelDef.willpowerBonus
             );
             break;
-          case "dwarf":
+          case "paladin":
             ((Paladin) getCharacterClass()).setEndurance(
               ((Paladin) getCharacterClass()).getEndurance() + levelDef.enduranceBonus
             );
@@ -322,6 +317,8 @@ public class Player extends Character {
       }
     }
   }
+
+
 
   /**
    * Retorna o XP total do jogador.
@@ -429,7 +426,7 @@ public class Player extends Character {
     int newMana = Math.min(maxMana, currentMana + manaAmount);
     setAttributeMana(newMana);
   }
-  
+
   /**
    * Retorna o sistema de dinheiro do jogador.
    * @return PlayerMoney do jogador.
@@ -437,7 +434,7 @@ public class Player extends Character {
   public PlayerMoney getPlayerMoney() {
     return playerMoney;
   }
-  
+
   /**
    * Define o sistema de dinheiro do jogador.
    * @param playerMoney Novo sistema de dinheiro.
