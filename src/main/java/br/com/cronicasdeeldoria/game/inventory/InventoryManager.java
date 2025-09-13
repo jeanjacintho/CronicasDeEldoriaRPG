@@ -23,12 +23,14 @@ public class InventoryManager {
     private int selectedRow = 0;
     private int selectedColumn = 0;
     private boolean inInventoryMode = true; // true = inventário, false = equipamento
+    private String playerClassName;
 
-    public InventoryManager() {
+  public InventoryManager(String playerClassName) {
         this.inventorySlots = new ArrayList<>();
         this.equipment = new Equipment();
+        this.playerClassName = playerClassName;
 
-        // Inicializar slots vazios
+    // Inicializar slots vazios
         for (int i = 0; i < TOTAL_INVENTORY_SLOTS; i++) {
             inventorySlots.add(null);
         }
@@ -112,18 +114,39 @@ public class InventoryManager {
     }
 
     /**
+     * Verifica se o jogador pode equipar um item.
+     * @param item Item a ser verificado.
+     * @return true se o jogador pode equipar o item.
+     */
+    public boolean canPlayerEquipItem(Item item) {
+      if (item == null || !item.isEquipable()) {
+        return false;
+      }
+
+      // Verificar se o jogador tem a classe necessária
+      String playerClass = playerClassName;
+      return item.canBeEquippedBy(playerClass);
+    }
+
+    /**
      * Equipa o item selecionado.
      * @return true se o item foi equipado com sucesso.
      */
     public boolean equipSelectedItem() {
         if (!inInventoryMode) return false;
 
-
         Item selectedItem = getSelectedItem();
         if (selectedItem == null || !selectedItem.isEquipable()) {
           return false;
         }
-        System.out.println("-------------Equipando o item: " +selectedItem.getItemId());
+
+        // Verificar se o jogador pode equipar o item
+        if (!canPlayerEquipItem(selectedItem)) {
+          String playerClass = playerClassName;
+          String allowedClasses = selectedItem.getAllowedClass() != null ? String.join(", ", selectedItem.getAllowedClass()) : "nenhuma";
+          System.out.printf("Classe %s não pode equipar o item da classe %s%n", playerClass,allowedClasses );
+          return false;
+        }
 
         // Determinar slot de equipamento baseado no tipo
         Equipment.EquipmentSlot slot = getEquipmentSlotForItem(selectedItem);

@@ -2,6 +2,8 @@ package br.com.cronicasdeeldoria.entity.item;
 
 import br.com.cronicasdeeldoria.game.quest.QuestManager;
 
+import java.util.List;
+
 /**
  * Item especial usado em quests.
  * Herda de Item e adiciona funcionalidades específicas para quests.
@@ -27,7 +29,7 @@ public class QuestItem extends Item {
                      ItemType itemType, ItemRarity rarity, String description,
                      int value, boolean stackable, String questId) {
         super(itemId, name, worldX, worldY, itemType, rarity, description,
-              value, stackable, 1, null, 0);
+              value, stackable, 1, null, 0, null);
         this.isQuestItem = true;
         this.questId = questId;
     }

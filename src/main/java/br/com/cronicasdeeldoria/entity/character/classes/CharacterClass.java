@@ -4,28 +4,28 @@ import br.com.cronicasdeeldoria.entity.character.Character;
 import br.com.cronicasdeeldoria.game.GamePanel;
 
 /**
- * Interface que representa uma raça de personagem, com nome e atributo especial.
+ * Interface que representa uma classe de personagem, com nome e atributo especial.
  */
 public interface CharacterClass {
   /**
-   * Retorna o nome da raça.
-   * @return Nome da raça.
+   * Retorna o nome da classe.
+   * @return Nome da classe.
    */
   String getCharacterClassName();
   /**
-   * Retorna o nome do atributo especial da raça.
+   * Retorna o nome do atributo especial da classe.
    * @return Nome do atributo especial.
    */
   String getSpecialAttributeName();
   /**
-   * Retorna o valor do atributo especial da raça.
+   * Retorna o valor do atributo especial da classe.
    * @return Valor do atributo especial.
    */
   int getSpecialAttributeValue();
 
   /**
-   * Retorna o nome da habilide especial da raça.
-   * @return Nome da habilide especial da raça.
+   * Retorna o nome da habilide especial da classe.
+   * @return Nome da habilide especial da classe.
    */
   String getSpecialAbilityName();
 

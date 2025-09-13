@@ -31,7 +31,7 @@ public class ObjectSpriteLoader {
         if (is == null) {
             throw new Exception("Arquivo não encontrado: " + jsonPath);
         }
-        
+
         java.util.Scanner scanner = new java.util.Scanner(is);
         scanner.useDelimiter("\\A");
         String json = scanner.hasNext() ? scanner.next() : "";
@@ -40,7 +40,7 @@ public class ObjectSpriteLoader {
         Gson gson = new Gson();
         TypeToken<List<ObjectDefinition>> token = new TypeToken<List<ObjectDefinition>>(){};
         List<ObjectDefinition> objects = gson.fromJson(json, token.getType());
-        
+
         if (objects != null) {
             for (ObjectDefinition objDef : objects) {
                 if (objDef != null && objDef.id != null) {
@@ -80,14 +80,15 @@ public class ObjectSpriteLoader {
         public Boolean autoInteraction; // null significa usar padrão (false)
         public int[] size;
         public List<List<String>> spritePaths;
-        
+
         // Campos adicionais para itens
         public String itemType;
         public String rarity;
         public String description;
         public int value;
-        
-        // Campos adicionais para quests
+        public List<String> allowedClass;
+
+      // Campos adicionais para quests
         public String questItem;
         public String orbType;
     }

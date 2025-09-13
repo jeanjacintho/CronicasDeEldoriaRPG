@@ -3,12 +3,15 @@ package br.com.cronicasdeeldoria.game.inventory;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
 
 import br.com.cronicasdeeldoria.entity.character.AttributeType;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import br.com.cronicasdeeldoria.entity.item.Item;
@@ -113,23 +116,35 @@ public class ItemFactory {
                 valueField.set(def, objectJson.get("value").getAsInt());
             }
 
-            if (objectJson.has("bonusAttributes")) {
-              JsonObject bonusJson = objectJson.getAsJsonObject("bonusAttributes");
-              Map<AttributeType, Integer> bonusAttributes = new HashMap<>();
+          if (objectJson.has("allowedClass")) {
+            Field classField = def.getClass().getDeclaredField("allowedClass");
+            classField.setAccessible(true);
 
-              for (String key : bonusJson.keySet()) {
-                try {
-                  AttributeType type = AttributeType.valueOf(key.toUpperCase()); // converte para enum
-                  bonusAttributes.put(type, bonusJson.get(key).getAsInt());
-                } catch (IllegalArgumentException e) {
-                  System.err.println("Atributo inválido no JSON: " + key);
-                }
-              }
-
-              Field bonusField = def.getClass().getDeclaredField("bonusAttributes");
-              bonusField.setAccessible(true);
-              bonusField.set(def, bonusAttributes);
+            List<String> allowedClass = new ArrayList<>();
+            JsonArray classArray = objectJson.getAsJsonArray("allowedClass");
+            for (JsonElement element : classArray) {
+              allowedClass.add(element.getAsString().toLowerCase());
             }
+            classField.set(def, allowedClass);
+          }
+
+          if (objectJson.has("bonusAttributes")) {
+            JsonObject bonusJson = objectJson.getAsJsonObject("bonusAttributes");
+            Map<AttributeType, Integer> bonusAttributes = new HashMap<>();
+
+            for (String key : bonusJson.keySet()) {
+              try {
+                AttributeType type = AttributeType.valueOf(key.toUpperCase()); // converte para enum
+                bonusAttributes.put(type, bonusJson.get(key).getAsInt());
+              } catch (IllegalArgumentException e) {
+                System.err.println("Atributo inválido no JSON: " + key);
+              }
+            }
+
+            Field bonusField = def.getClass().getDeclaredField("bonusAttributes");
+            bonusField.setAccessible(true);
+            bonusField.set(def, bonusAttributes);
+          }
 
             mapObject.setObjectDefinition(def);
             return mapObject;
@@ -148,6 +163,7 @@ public class ItemFactory {
      */
     public static Item createItemFromMapObject(MapObject mapObject, int tileSize) {
         if (mapObject == null) return null;
+
 
         // Verificar se o objeto tem propriedades de item
         String itemTypeStr = getObjectProperty(mapObject, "itemType");
@@ -174,6 +190,9 @@ public class ItemFactory {
         // Determinar se o item é empilhável baseado no tipo
         boolean stackable = itemType == ItemType.KEY || itemType == ItemType.CONSUMABLE;
         int maxStackSize = stackable ? 99 : 1;
+
+        // Obter classes permitidas do ObjectDefinition
+        List<String> allowedClass = getObjectPropertyList(mapObject);
 
         // Verificar se é um item de quest
         String questItemStr = getObjectProperty(mapObject, "questItem");
@@ -221,7 +240,8 @@ public class ItemFactory {
                 stackable,
                 maxStackSize,
                 mapObject.getObjectDefinition(),
-                tileSize
+                tileSize,
+                allowedClass
             );
         }
 
@@ -287,4 +307,25 @@ public class ItemFactory {
             return null;
         }
     }
+  /**
+   * Obtém uma propriedade do tipo List de um objeto do ObjectDefinition.
+   */
+  @SuppressWarnings("unchecked")
+  private static List<String> getObjectPropertyList(MapObject mapObject) {
+    try {
+      ObjectSpriteLoader.ObjectDefinition def = mapObject.getObjectDefinition();
+      if (def == null) return null;
+
+      java.lang.reflect.Field field = def.getClass().getDeclaredField("allowedClass");
+      field.setAccessible(true);
+      Object value = field.get(def);
+
+      if (value instanceof List) {
+        return (List<String>) value;
+      }
+      return null;
+    } catch (Exception e) {
+      return null;
+    }
+  }
 }

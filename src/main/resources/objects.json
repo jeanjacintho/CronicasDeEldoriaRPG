@@ -23,7 +23,8 @@
     "itemType": "boot",
     "rarity": "common",
     "description": "Botas básicas de couro que aumentam a velocidade.",
-    "value": 10
+    "value": 10,
+    "allowedClass": ["barbarian", "paladin", "ranger", "mage"]
   },
   {
     "id": "lamp",
@@ -114,6 +115,7 @@
     "rarity": "common",
     "description": "Uma espada básica.",
     "value": 5,
+    "allowedClass": ["barbarian", "paladin"],
     "bonusAttributes": {
       "strength": 5,
       "defense": 2,
@@ -149,22 +151,8 @@
     "itemType": "weapon",
     "rarity": "rare",
     "description": "Uma espada rara.",
-    "value": 5
-  },
-  {
-    "id": "sword_epic",
-    "name": "Espada Épica",
-    "spritePaths": [
-      ["/sprites/objects/items/sword_epic.png"]
-    ],
-    "size": [1, 1],
-    "collision": false,
-    "interactive": true,
-    "autoInteraction": true,
-    "itemType": "weapon",
-    "rarity": "epic",
-    "description": "Uma espada épica.",
-    "value": 5
+    "value": 5,
+    "allowedClass": ["barbarian", "paladin"]
   },
   {
     "id": "sword_legendary",
@@ -179,7 +167,8 @@
     "itemType": "weapon",
     "rarity": "legendary",
     "description": "Uma espada lendária.",
-    "value": 5
+    "value": 5,
+    "allowedClass": ["barbarian", "paladin"]
   },
   {
     "id": "shield_common",
@@ -194,7 +183,8 @@
     "itemType": "lefthand",
     "rarity": "common",
     "description": "Um escudo básico.",
-    "value": 5
+    "value": 5,
+    "allowedClass": ["barbarian", "paladin", "mage"]
   },
   {
     "id": "shield_legendary",
@@ -209,7 +199,8 @@
     "itemType": "lefthand",
     "rarity": "legendary",
     "description": "Um escudo lendário.",
-    "value": 5
+    "value": 5,
+    "allowedClass": ["barbarian", "paladin", "mage"]
   },
   {
     "id": "armor_common",
@@ -224,22 +215,8 @@
     "itemType": "armor",
     "rarity": "common",
     "description": "Uma armadura básica.",
-    "value": 5
-  },
-  {
-    "id": "armor_uncommon",
-    "name": "Armadura Incomum",
-    "spritePaths": [
-      ["/sprites/objects/items/armor_uncommon.png"]
-    ],
-    "size": [1, 1],
-    "collision": false,
-    "interactive": true,
-    "autoInteraction": true,
-    "itemType": "armor",
-    "rarity": "uncommon",
-    "description": "Uma armadura incomum.",
-    "value": 5
+    "value": 5,
+    "allowedClass": ["barbarian", "paladin", "mage", "ranger"]
   },
   {
     "id": "armor_rare",
@@ -254,22 +231,8 @@
     "itemType": "armor",
     "rarity": "rare",
     "description": "Uma armadura rara.",
-    "value": 5
-  },
-  {
-    "id": "armor_epic",
-    "name": "Armadura Épica",
-    "spritePaths": [
-      ["/sprites/objects/items/armor_epic.png"]
-    ],
-    "size": [1, 1],
-    "collision": false,
-    "interactive": true,
-    "autoInteraction": true,
-    "itemType": "armor",
-    "rarity": "epic",
-    "description": "Uma armadura épica.",
-    "value": 5
+    "value": 5,
+    "allowedClass": ["barbarian", "paladin", "mage", "ranger"]
   },
   {
     "id": "armor_legendary",
@@ -284,7 +247,8 @@
     "itemType": "armor",
     "rarity": "legendary",
     "description": "Uma armadura lendária.",
-    "value": 5
+    "value": 5,
+    "allowedClass": ["barbarian", "paladin", "mage", "ranger"]
   },
   {
     "id": "axe_common",
@@ -299,22 +263,8 @@
     "itemType": "weapon",
     "rarity": "common",
     "description": "Um machado básico.",
-    "value": 5
-  },
-  {
-    "id": "axe_uncommon",
-    "name": "Machado Incomum",
-    "spritePaths": [
-      ["/sprites/objects/items/axe_uncommon.png"]
-    ],
-    "size": [1, 1],
-    "collision": false,
-    "interactive": true,
-    "autoInteraction": true,
-    "itemType": "weapon",
-    "rarity": "uncommon",
-    "description": "Um machado incomum.",
-    "value": 5
+    "value": 5,
+    "allowedClass": ["barbarian", "paladin"]
   },
   {
     "id": "axe_rare",
@@ -329,22 +279,8 @@
     "itemType": "weapon",
     "rarity": "rare",
     "description": "Um machado raro.",
-    "value": 5
-  },
-  {
-    "id": "axe_epic",
-    "name": "Machado Épico",
-    "spritePaths": [
-      ["/sprites/objects/items/axe_epic.png"]
-    ],
-    "size": [1, 1],
-    "collision": false,
-    "interactive": true,
-    "autoInteraction": true,
-    "itemType": "weapon",
-    "rarity": "epic",
-    "description": "Um machado épico.",
-    "value": 5
+    "value": 5,
+    "allowedClass": ["barbarian", "paladin"]
   },
   {
     "id": "axe_legendary",
@@ -359,7 +295,8 @@
     "itemType": "weapon",
     "rarity": "legendary",
     "description": "Um machado lendário.",
-    "value": 5
+    "value": 5,
+    "allowedClass": ["barbarian", "paladin"]
   },
   {
     "id": "bow_common",
@@ -374,22 +311,8 @@
     "itemType": "weapon",
     "rarity": "common",
     "description": "Um arco básico.",
-    "value": 5
-  },
-  {
-    "id": "bow_uncommon",
-    "name": "Arco Incomum",
-    "spritePaths": [
-      ["/sprites/objects/items/bow_uncommon.png"]
-    ],
-    "size": [1, 1],
-    "collision": false,
-    "interactive": true,
-    "autoInteraction": true,
-    "itemType": "weapon",
-    "rarity": "uncommon",
-    "description": "Um arco incomum.",
-    "value": 5
+    "value": 5,
+    "allowedClass": ["ranger"]
   },
   {
     "id": "bow_rare",
@@ -404,22 +327,8 @@
     "itemType": "weapon",
     "rarity": "rare",
     "description": "Um arco raro.",
-    "value": 5
-  },
-  {
-    "id": "bow_epic",
-    "name": "Arco Épico",
-    "spritePaths": [
-      ["/sprites/objects/items/bow_epic.png"]
-    ],
-    "size": [1, 1],
-    "collision": false,
-    "interactive": true,
-    "autoInteraction": true,
-    "itemType": "weapon",
-    "rarity": "epic",
-    "description": "Um arco épico.",
-    "value": 5
+    "value": 5,
+    "allowedClass": ["ranger"]
   },
   {
     "id": "bow_legendary",
@@ -434,7 +343,8 @@
     "itemType": "weapon",
     "rarity": "legendary",
     "description": "Um arco lendário.",
-    "value": 5
+    "value": 5,
+    "allowedClass": ["ranger"]
   },
   {
     "id": "axe_common",
@@ -449,22 +359,8 @@
     "itemType": "weapon",
     "rarity": "common",
     "description": "Um machado básico.",
-    "value": 5
-  },
-  {
-    "id": "axe_uncommon",
-    "name": "Machado Incomum",
-    "spritePaths": [
-      ["/sprites/objects/items/axe_uncommon.png"]
-    ],
-    "size": [1, 1],
-    "collision": false,
-    "interactive": true,
-    "autoInteraction": true,
-    "itemType": "weapon",
-    "rarity": "uncommon",
-    "description": "Um machado incomum.",
-    "value": 5
+    "value": 5,
+    "allowedClass": ["barbarian", "paladin"]
   },
   {
     "id": "axe_rare",
@@ -479,22 +375,8 @@
     "itemType": "weapon",
     "rarity": "rare",
     "description": "Um machado raro.",
-    "value": 5
-  },
-  {
-    "id": "axe_epic",
-    "name": "Machado Épico",
-    "spritePaths": [
-      ["/sprites/objects/items/axe_epic.png"]
-    ],
-    "size": [1, 1],
-    "collision": false,
-    "interactive": true,
-    "autoInteraction": true,
-    "itemType": "weapon",
-    "rarity": "epic",
-    "description": "Um machado épico.",
-    "value": 5
+    "value": 5,
+    "allowedClass": ["barbarian", "paladin"]
   },
   {
     "id": "axe_legendary",
@@ -509,82 +391,8 @@
     "itemType": "weapon",
     "rarity": "legendary",
     "description": "Um machado lendário.",
-    "value": 5
-  },
-  {
-    "id": "bow_common",
-    "name": "Arco Comum",
-    "spritePaths": [
-      ["/sprites/objects/items/bow_common.png"]
-    ],
-    "size": [1, 1],
-    "collision": false,
-    "interactive": true,
-    "autoInteraction": true,
-    "itemType": "weapon",
-    "rarity": "common",
-    "description": "Um arco básico.",
-    "value": 5
-  },
-  {
-    "id": "bow_uncommon",
-    "name": "Arco Incomum",
-    "spritePaths": [
-      ["/sprites/objects/items/bow_uncommon.png"]
-    ],
-    "size": [1, 1],
-    "collision": false,
-    "interactive": true,
-    "autoInteraction": true,
-    "itemType": "weapon",
-    "rarity": "uncommon",
-    "description": "Um arco incomum.",
-    "value": 5
-  },
-  {
-    "id": "bow_rare",
-    "name": "Arco Raro",
-    "spritePaths": [
-      ["/sprites/objects/items/bow_rare.png"]
-    ],
-    "size": [1, 1],
-    "collision": false,
-    "interactive": true,
-    "autoInteraction": true,
-    "itemType": "weapon",
-    "rarity": "rare",
-    "description": "Um arco raro.",
-    "value": 5
-  },
-  {
-    "id": "bow_epic",
-    "name": "Arco Épico",
-    "spritePaths": [
-      ["/sprites/objects/items/bow_epic.png"]
-    ],
-    "size": [1, 1],
-    "collision": false,
-    "interactive": true,
-    "autoInteraction": true,
-    "itemType": "weapon",
-    "rarity": "epic",
-    "description": "Um arco épico.",
-    "value": 5
-  },
-  {
-    "id": "bow_legendary",
-    "name": "Arco Lendário",
-    "spritePaths": [
-      ["/sprites/objects/items/bow_legendary.png"]
-    ],
-    "size": [1, 1],
-    "collision": false,
-    "interactive": true,
-    "autoInteraction": true,
-    "itemType": "weapon",
-    "rarity": "legendary",
-    "description": "Um arco lendário.",
-    "value": 5
+    "value": 5,
+    "allowedClass": ["barbarian", "paladin"]
   },
   {
     "id": "hammer_common",
@@ -599,22 +407,8 @@
     "itemType": "weapon",
     "rarity": "common",
     "description": "Um martelo básico.",
-    "value": 5
-  },
-  {
-    "id": "hammer_uncommon",
-    "name": "Martelo Incomum",
-    "spritePaths": [
-      ["/sprites/objects/items/hammer_uncommon.png"]
-    ],
-    "size": [1, 1],
-    "collision": false,
-    "interactive": true,
-    "autoInteraction": true,
-    "itemType": "weapon",
-    "rarity": "uncommon",
-    "description": "Um martelo incomum.",
-    "value": 5
+    "value": 5,
+    "allowedClass": ["barbarian", "paladin"]
   },
   {
     "id": "hammer_rare",
@@ -629,22 +423,8 @@
     "itemType": "weapon",
     "rarity": "rare",
     "description": "Um martelo raro.",
-    "value": 5
-  },
-  {
-    "id": "hammer_epic",
-    "name": "Martelo Épico",
-    "spritePaths": [
-      ["/sprites/objects/items/hammer_epic.png"]
-    ],
-    "size": [1, 1],
-    "collision": false,
-    "interactive": true,
-    "autoInteraction": true,
-    "itemType": "weapon",
-    "rarity": "epic",
-    "description": "Um martelo épico.",
-    "value": 5
+    "value": 5,
+    "allowedClass": ["barbarian", "paladin"]
   },
   {
     "id": "hammer_legendary",
@@ -659,7 +439,8 @@
     "itemType": "weapon",
     "rarity": "legendary",
     "description": "Um martelo lendário.",
-    "value": 5
+    "value": 5,
+    "allowedClass": ["barbarian", "paladin"]
   },
   {
     "id": "ring_common",
@@ -674,22 +455,8 @@
     "itemType": "weapon",
     "rarity": "common",
     "description": "Um anel básico.",
-    "value": 5
-  },
-  {
-    "id": "ring_uncommon",
-    "name": "Anel Incomum",
-    "spritePaths": [
-      ["/sprites/objects/items/ring_uncommon.png"]
-    ],
-    "size": [1, 1],
-    "collision": false,
-    "interactive": true,
-    "autoInteraction": true,
-    "itemType": "weapon",
-    "rarity": "uncommon",
-    "description": "Um anel incomum.",
-    "value": 5
+    "value": 5,
+    "allowedClass": ["mage"]
   },
   {
     "id": "ring_rare",
@@ -704,22 +471,8 @@
     "itemType": "weapon",
     "rarity": "rare",
     "description": "Um anel raro.",
-    "value": 5
-  },
-  {
-    "id": "ring_epic",
-    "name": "Anel Épico",
-    "spritePaths": [
-      ["/sprites/objects/items/ring_epic.png"]
-    ],
-    "size": [1, 1],
-    "collision": false,
-    "interactive": true,
-    "autoInteraction": true,
-    "itemType": "weapon",
-    "rarity": "epic",
-    "description": "Um anel épico.",
-    "value": 5
+    "value": 5,
+    "allowedClass": ["mage"]
   },
   {
     "id": "ring_legendary",
@@ -734,7 +487,8 @@
     "itemType": "weapon",
     "rarity": "legendary",
     "description": "Um anel lendário.",
-    "value": 5
+    "value": 5,
+    "allowedClass": ["mage"]
   },
   {
     "id": "orb_fire",

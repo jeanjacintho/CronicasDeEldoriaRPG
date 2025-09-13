@@ -6,6 +6,8 @@ import java.awt.Rectangle;
 import br.com.cronicasdeeldoria.entity.character.AttributeType;
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Classe que representa um item do jogo, herdando de Entity.
@@ -22,6 +24,7 @@ public class Item extends Entity {
     private int maxStackSize;
     private ObjectSpriteLoader.ObjectDefinition objectDefinition;
     private Map<AttributeType, Integer> bonusAttributes = new EnumMap<>(AttributeType.class);
+    private List<String> allowedClass;
 
     /**
      * Construtor simples para criar um item de inventário (sem posição no mundo).
@@ -65,7 +68,7 @@ public class Item extends Entity {
     public Item(String itemId, String name, int worldX, int worldY,
                 ItemType itemType, ItemRarity rarity, String description,
                 int value, boolean stackable, int maxStackSize,
-                ObjectSpriteLoader.ObjectDefinition objectDefinition, int tileSize) {
+                ObjectSpriteLoader.ObjectDefinition objectDefinition, int tileSize, List<String> allowedClass) {
         super(worldX, worldY, 0, "none", name);
         this.itemId = itemId;
         this.itemType = itemType;
@@ -76,12 +79,12 @@ public class Item extends Entity {
         this.maxStackSize = maxStackSize;
         this.stackSize = 1;
         this.objectDefinition = objectDefinition;
+        this.allowedClass = allowedClass != null ? new ArrayList<>(allowedClass) : null;
 
         // Configurar hitbox para itens (1x1 tile)
         this.setHitbox(new Rectangle(0, 0, tileSize, tileSize));
         this.setCollisionOn(false); // Itens não têm colisão por padrão
     }
-
 
     public String getItemId() { return itemId; }
     public void setItemId(String itemId) { this.itemId = itemId; }
@@ -121,61 +124,74 @@ public class Item extends Entity {
     public int getBonus(AttributeType type) { return bonusAttributes.getOrDefault(type, 0);
     }
 
-    /**
-     * Verifica se o item pode ser equipado.
-     * @return true se o item é equipável.
-     */
-    public boolean isEquipable() {
-        return itemType != null && itemType.isEquipable();
+    public boolean canBeEquippedBy(String playerClass) {
+      // se o campo estiver vazio ou null, qualquer classe pode
+      return allowedClass == null || allowedClass.isEmpty() || allowedClass.contains(playerClass.toLowerCase());
     }
 
-    /**
-     * Verifica se o item pode ser empilhado com outro item.
-     * @param otherItem Outro item para comparação.
-     * @return true se os itens podem ser empilhados.
-     */
-    public boolean canStackWith(Item otherItem) {
-        if (otherItem == null || !stackable || !otherItem.isStackable()) {
-            return false;
-        }
-
-        // Verificar se são o mesmo tipo de item (mesmo ID)
-        if (!itemId.equals(otherItem.getItemId())) {
-            return false;
-        }
-
-        // Verificar se há espaço para empilhar
-        return stackSize < maxStackSize;
+    public List<String> getAllowedClass() {
+      return allowedClass;
     }
 
-    /**
-     * Tenta empilhar outro item neste item.
-     * @param otherItem Item a ser empilhado.
-     * @return Quantidade que foi empilhada.
-     */
-    public int stackItem(Item otherItem) {
-        if (!canStackWith(otherItem)) {
-            return 0;
-        }
+    public void setAllowedClass(List<String> allowedClass) {
+      this.allowedClass = allowedClass;
+  }
 
-        int availableSpace = maxStackSize - stackSize;
-        int toStack = Math.min(availableSpace, otherItem.getStackSize());
+  /**
+   * Verifica se o item pode ser equipado.
+   * @return true se o item é equipável.
+   */
+  public boolean isEquipable() {
+    return itemType != null && itemType.isEquipable();
+  }
 
-        stackSize += toStack;
-        otherItem.setStackSize(otherItem.getStackSize() - toStack);
-
-        return toStack;
+  /**
+   * Verifica se o item pode ser empilhado com outro item.
+   * @param otherItem Outro item para comparação.
+   * @return true se os itens podem ser empilhados.
+   */
+  public boolean canStackWith(Item otherItem) {
+    if (otherItem == null || !stackable || !otherItem.isStackable()) {
+      return false;
     }
 
-    /**
-     * Cria uma cópia do item.
-     * @return Nova instância do item.
-     */
-    public Item copy() {
-        Item copy = new Item(itemId, getName(), getWorldX(), getWorldY(),
-                           itemType, rarity, description, value,
-                           stackable, maxStackSize, objectDefinition, 16);
-        copy.setStackSize(stackSize);
-        return copy;
+    // Verificar se são o mesmo tipo de item (mesmo ID)
+    if (!itemId.equals(otherItem.getItemId())) {
+      return false;
     }
+
+    // Verificar se há espaço para empilhar
+    return stackSize < maxStackSize;
+  }
+
+  /**
+   * Tenta empilhar outro item neste item.
+   * @param otherItem Item a ser empilhado.
+   * @return Quantidade que foi empilhada.
+   */
+  public int stackItem(Item otherItem) {
+    if (!canStackWith(otherItem)) {
+      return 0;
+    }
+
+    int availableSpace = maxStackSize - stackSize;
+    int toStack = Math.min(availableSpace, otherItem.getStackSize());
+
+    stackSize += toStack;
+    otherItem.setStackSize(otherItem.getStackSize() - toStack);
+
+    return toStack;
+  }
+
+  /**
+   * Cria uma cópia do item.
+   * @return Nova instância do item.
+   */
+  public Item copy() {
+    Item copy = new Item(itemId, getName(), getWorldX(), getWorldY(),
+                       itemType, rarity, description, value,
+                       stackable, maxStackSize, objectDefinition, 16, allowedClass);
+    copy.setStackSize(stackSize);
+    return copy;
+  }
 }

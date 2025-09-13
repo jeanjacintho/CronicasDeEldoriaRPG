@@ -288,6 +288,7 @@ public class Player extends Character {
         setAttributeMaxMana(getAttributeMaxMana() + levelDef.manaBonus);
 
         setAttributeStrength(getAttributeStrength() + levelDef.strengthBonus);
+        setAttributeArmor(getAttributeArmor() + levelDef.armorBonus);
         setAttributeAgility(getAttributeAgility() + levelDef.agilityBonus);
         setLuck(getLuck() + levelDef.luckBonus);
 
