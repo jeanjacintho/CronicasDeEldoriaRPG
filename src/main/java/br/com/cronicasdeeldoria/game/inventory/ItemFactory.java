@@ -3,9 +3,12 @@ package br.com.cronicasdeeldoria.game.inventory;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import br.com.cronicasdeeldoria.entity.item.Item;
@@ -110,6 +113,18 @@ public class ItemFactory {
                 valueField.set(def, objectJson.get("value").getAsInt());
             }
 
+          if (objectJson.has("allowedClass")) {
+            Field classField = def.getClass().getDeclaredField("allowedClass");
+            classField.setAccessible(true);
+
+            List<String> allowedClass = new ArrayList<>();
+            JsonArray classArray = objectJson.getAsJsonArray("allowedClass");
+            for (JsonElement element : classArray) {
+              allowedClass.add(element.getAsString().toLowerCase());
+            }
+            classField.set(def, allowedClass);
+          }
+
             mapObject.setObjectDefinition(def);
             return mapObject;
 
@@ -154,6 +169,9 @@ public class ItemFactory {
         // Determinar se o item é empilhável baseado no tipo
         boolean stackable = itemType == ItemType.KEY || itemType == ItemType.CONSUMABLE;
         int maxStackSize = stackable ? 99 : 1;
+
+        // Obter classes permitidas do ObjectDefinition
+        List<String> allowedClass = getObjectPropertyList(mapObject);
 
         // Verificar se é um item de quest
         String questItemStr = getObjectProperty(mapObject, "questItem");
@@ -201,7 +219,8 @@ public class ItemFactory {
                 stackable,
                 maxStackSize,
                 mapObject.getObjectDefinition(),
-                tileSize
+                tileSize,
+                allowedClass
             );
         }
 
@@ -242,4 +261,25 @@ public class ItemFactory {
             return null;
         }
     }
+  /**
+   * Obtém uma propriedade do tipo List de um objeto do ObjectDefinition.
+   */
+  @SuppressWarnings("unchecked")
+  private static List<String> getObjectPropertyList(MapObject mapObject) {
+    try {
+      ObjectSpriteLoader.ObjectDefinition def = mapObject.getObjectDefinition();
+      if (def == null) return null;
+
+      java.lang.reflect.Field field = def.getClass().getDeclaredField("allowedClass");
+      field.setAccessible(true);
+      Object value = field.get(def);
+
+      if (value instanceof List) {
+        return (List<String>) value;
+      }
+      return null;
+    } catch (Exception e) {
+      return null;
+    }
+  }
 }

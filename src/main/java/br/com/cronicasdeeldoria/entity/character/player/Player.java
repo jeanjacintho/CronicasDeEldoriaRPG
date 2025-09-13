@@ -288,6 +288,7 @@ public class Player extends Character {
         setAttributeMaxMana(getAttributeMaxMana() + levelDef.manaBonus);
 
         setAttributeStrength(getAttributeStrength() + levelDef.strengthBonus);
+        setAttributeArmor(getAttributeArmor() + levelDef.armorBonus);
         setAttributeAgility(getAttributeAgility() + levelDef.agilityBonus);
         setLuck(getLuck() + levelDef.luckBonus);
 
@@ -429,7 +430,7 @@ public class Player extends Character {
     int newMana = Math.min(maxMana, currentMana + manaAmount);
     setAttributeMana(newMana);
   }
-  
+
   /**
    * Retorna o sistema de dinheiro do jogador.
    * @return PlayerMoney do jogador.
@@ -437,7 +438,7 @@ public class Player extends Character {
   public PlayerMoney getPlayerMoney() {
     return playerMoney;
   }
-  
+
   /**
    * Define o sistema de dinheiro do jogador.
    * @param playerMoney Novo sistema de dinheiro.
