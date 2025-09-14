@@ -5,7 +5,10 @@ import java.io.InputStreamReader;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
+import br.com.cronicasdeeldoria.entity.character.AttributeType;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -113,17 +116,38 @@ public class ItemFactory {
                 valueField.set(def, objectJson.get("value").getAsInt());
             }
 
-          if (objectJson.has("allowedClass")) {
-            Field classField = def.getClass().getDeclaredField("allowedClass");
-            classField.setAccessible(true);
+            if (objectJson.has("allowedClass")) {
+              Field classField = def.getClass().getDeclaredField("allowedClass");
+              classField.setAccessible(true);
 
-            List<String> allowedClass = new ArrayList<>();
-            JsonArray classArray = objectJson.getAsJsonArray("allowedClass");
-            for (JsonElement element : classArray) {
-              allowedClass.add(element.getAsString().toLowerCase());
+              List<String> allowedClass = new ArrayList<>();
+              JsonArray classArray = objectJson.getAsJsonArray("allowedClass");
+              for (JsonElement element : classArray) {
+                allowedClass.add(element.getAsString().toLowerCase());
+              }
+              classField.set(def, allowedClass);
             }
-            classField.set(def, allowedClass);
-          }
+            // Atributos dos equipamentos
+            if (objectJson.has("strengthFromEquip")) {
+              Field valueField = def.getClass().getDeclaredField("strengthFromEquip");
+              valueField.setAccessible(true);
+              valueField.set(def, objectJson.get("strengthFromEquip").getAsInt());
+            }
+            if (objectJson.has("armorFromEquip")) {
+              Field valueField = def.getClass().getDeclaredField("armorFromEquip");
+              valueField.setAccessible(true);
+              valueField.set(def, objectJson.get("armorFromEquip").getAsInt());
+            }
+            if (objectJson.has("healthFromEquip")) {
+              Field valueField = def.getClass().getDeclaredField("healthFromEquip");
+              valueField.setAccessible(true);
+              valueField.set(def, objectJson.get("healthFromEquip").getAsInt());
+            }
+            if (objectJson.has("manaFromEquip")) {
+              Field valueField = def.getClass().getDeclaredField("manaFromEquip");
+              valueField.setAccessible(true);
+              valueField.set(def, objectJson.get("manaFromEquip").getAsInt());
+            }
 
             mapObject.setObjectDefinition(def);
             return mapObject;
@@ -164,6 +188,39 @@ public class ItemFactory {
             value = Integer.parseInt(valueStr);
         } catch (NumberFormatException e) {
             // Valor padrão
+        }
+
+        String strengthFromEquipString = getObjectProperty(mapObject, "strengthFromEquip");
+        int strengthFromEquip = 0;
+        try {
+          assert strengthFromEquipString != null;
+          strengthFromEquip = Integer.parseInt(strengthFromEquipString);
+        } catch (NumberFormatException e) {
+          // Valor padrão
+        }
+
+        String armorFromEquipString = getObjectProperty(mapObject, "armorFromEquip");
+        int armorFromEquip = 0;
+        try {
+          armorFromEquip = Integer.parseInt(armorFromEquipString);
+        } catch (NumberFormatException e) {
+          // Valor padrão
+        }
+
+        String healthFromEquipString = getObjectProperty(mapObject, "healthFromEquip");
+        int healthFromEquip = 0;
+        try {
+          healthFromEquip = Integer.parseInt(healthFromEquipString);
+        } catch (NumberFormatException e) {
+          // Valor padrão
+        }
+
+        String manaFromEquipString = getObjectProperty(mapObject, "manaFromEquip");
+        int manaFromEquip = 0;
+        try {
+          manaFromEquip = Integer.parseInt(manaFromEquipString);
+        } catch (NumberFormatException e) {
+          // Valor padrão
         }
 
         // Determinar se o item é empilhável baseado no tipo
@@ -220,11 +277,15 @@ public class ItemFactory {
                 maxStackSize,
                 mapObject.getObjectDefinition(),
                 tileSize,
-                allowedClass
+                allowedClass,
+                strengthFromEquip,
+                armorFromEquip,
+                healthFromEquip,
+                manaFromEquip
             );
         }
 
-        return item;
+      return item;
     }
 
     /**

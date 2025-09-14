@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.io.IOException;
 
+import br.com.cronicasdeeldoria.entity.character.AttributeType;
 import br.com.cronicasdeeldoria.entity.item.ItemType;
 import br.com.cronicasdeeldoria.entity.item.QuestItem;
 import com.google.gson.Gson;

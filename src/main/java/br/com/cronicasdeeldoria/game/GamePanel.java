@@ -29,6 +29,7 @@ import br.com.cronicasdeeldoria.tile.TileManager.MapTile;
 import br.com.cronicasdeeldoria.config.CharacterConfigLoader;
 import java.util.List;
 import java.util.ArrayList;
+import br.com.cronicasdeeldoria.entity.character.Character;
 
 import br.com.cronicasdeeldoria.entity.Entity;
 import br.com.cronicasdeeldoria.game.inventory.InventoryManager;
@@ -121,8 +122,6 @@ public class GamePanel extends JPanel implements Runnable{
     this.maxWorldCol = tileManager.getMapWidth();
     this.maxWorldRow = tileManager.getMapHeight();
 
-    initializeGameComponents();
-
     int x = (maxWorldCol * tileSize) / 2 - (playerSize / 2);
     int y = (maxWorldRow * tileSize) / 2 - (playerSize / 2);
     int speed = configLoader.getIntAttribute(characterClassName, "speed", 4);
@@ -168,6 +167,7 @@ public class GamePanel extends JPanel implements Runnable{
 
     player = new Player(this, keyHandler, characterClassInstance, x, y, speed, direction, playerName, health, maxHealth, mana, maxMana, strength, agility, luck, armor);
 
+    initializeGameComponents(player);
     // Inicializar sistema de comerciante após a criação do player
     this.merchantManager = new MerchantManager(inventoryManager, player.getPlayerMoney());
     this.merchantUI = new MerchantUI(this);
@@ -1241,12 +1241,12 @@ public class GamePanel extends JPanel implements Runnable{
       /**
    * Inicializa componentes do jogo (NPCs e objetos).
    */
-  private void initializeGameComponents() {
+  private void initializeGameComponents(Player player) {
     // Inicializar GameUI
     this.gameUI = new GameUI(this);
 
     // Inicializar InventoryManager
-    this.inventoryManager = new InventoryManager(this.playerClassName);
+    this.inventoryManager = new InventoryManager(this.playerClassName, player);
 
     // Inicializar sistema de interação
     initializeInteractionSystem();

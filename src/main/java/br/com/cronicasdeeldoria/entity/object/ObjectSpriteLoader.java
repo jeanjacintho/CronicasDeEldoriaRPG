@@ -3,6 +3,8 @@ package br.com.cronicasdeeldoria.entity.object;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import br.com.cronicasdeeldoria.entity.character.AttributeType;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -87,6 +89,11 @@ public class ObjectSpriteLoader {
         public String description;
         public int value;
         public List<String> allowedClass;
+        public int strengthFromEquip;
+        public int armorFromEquip;
+        public int healthFromEquip;
+        public int manaFromEquip;
+        //public Map<AttributeType, Integer> bonusAttributes = new HashMap<>();
 
       // Campos adicionais para quests
         public String questItem;
