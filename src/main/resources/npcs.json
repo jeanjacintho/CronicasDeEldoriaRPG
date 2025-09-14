@@ -34,7 +34,7 @@
   {
     "id": "skeleton",
     "name": "Skeleton",
-    "isStatic": true,
+    "isStatic": false,
     "interactive": true,
     "autoInteraction": true,
     "dialog": "Lute comigo, verme!",

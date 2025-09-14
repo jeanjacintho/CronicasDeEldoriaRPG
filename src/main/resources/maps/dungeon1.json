@@ -16898,6 +16898,101 @@
           "id": "1_20",
           "x": 19,
           "y": 32
+        },
+        {
+          "id": "skeleton",
+          "x": 12,
+          "y": 54
+        },
+        {
+          "id": "skeleton",
+          "x": 10,
+          "y": 51
+        },
+        {
+          "id": "skeleton",
+          "x": 7,
+          "y": 52
+        },
+        {
+          "id": "skeleton",
+          "x": 19,
+          "y": 54
+        },
+        {
+          "id": "skeleton",
+          "x": 24,
+          "y": 55
+        },
+        {
+          "id": "skeleton",
+          "x": 24,
+          "y": 48
+        },
+        {
+          "id": "skeleton",
+          "x": 26,
+          "y": 36
+        },
+        {
+          "id": "skeleton",
+          "x": 22,
+          "y": 34
+        },
+        {
+          "id": "skeleton",
+          "x": 13,
+          "y": 35
+        },
+        {
+          "id": "skeleton",
+          "x": 23,
+          "y": 23
+        },
+        {
+          "id": "skeleton",
+          "x": 18,
+          "y": 17
+        },
+        {
+          "id": "skeleton",
+          "x": 5,
+          "y": 33
+        },
+        {
+          "id": "skeleton",
+          "x": 12,
+          "y": 25
+        },
+        {
+          "id": "skeleton",
+          "x": 13,
+          "y": 13
+        },
+        {
+          "id": "skeleton",
+          "x": 8,
+          "y": 17
+        },
+        {
+          "id": "skeleton",
+          "x": 5,
+          "y": 13
+        },
+        {
+          "id": "skeleton",
+          "x": 24,
+          "y": 12
+        },
+        {
+          "id": "skeleton",
+          "x": 18,
+          "y": 8
+        },
+        {
+          "id": "skeletonboss",
+          "x": 17,
+          "y": 3
         }
       ],
       "collider": false
