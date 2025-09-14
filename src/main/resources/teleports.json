@@ -25,7 +25,8 @@
         "entrance": [9, 60],
         "exit_player_house": [23, 42],
         "forest_entrance_city": [12, 62],
-        "forest_entrance_dungeon2": [52, 31]
+        "forest_entrance_dungeon2": [52, 31],
+        "forest_entrance_dungeon4": [51, 50]
       }
     },
     "dungeon1": {
@@ -49,9 +50,7 @@
       "name": "Caverna dos Goblins",
       "description": "Uma caverna perigosa",
       "spawnPoints": {
-        "entrance": [0, 0],
-        "boss_room": [240, 240],
-        "treasure": [200, 200]
+        "entrance": [27, 19]
       }
     },
     "dungeon4": {
@@ -59,9 +58,7 @@
       "name": "Caverna dos Goblins",
       "description": "Uma caverna perigosa",
       "spawnPoints": {
-        "entrance": [160, 160],
-        "boss_room": [240, 240],
-        "treasure": [200, 200]
+        "entrance": [4, 19]
       }
     },
     "bakery": {
@@ -134,10 +131,16 @@
     },
     "city_to_dungeon1": {
       "map": "city_to_dungeon1",
-      "name": "Cidade para Dungeon 1",
-      "description": "Uma cidade para o dungeon 1",
       "spawnPoints": {
-        "entrance": [1, 13]
+        "entrance": [1, 13],
+        "city_entrance_dungeon1": [17, 3]
+      }
+    },
+    "city_to_dungeon3": {
+      "map": "city_to_dungeon3",
+      "spawnPoints": {
+        "entrance": [16, 2],
+        "city_entrance_dungeon3": [3, 9]
       }
     },
     "city": {
@@ -145,9 +148,10 @@
       "name": "Cidade de Eldoria",
       "description": "A cidade principal do reino",
       "spawnPoints": {
-        "entrance": [160, 160],
+        "entrance": [34, 4],
         "city_entrance_forest": [4, 34],
-        "city_entrance_dungeon1": [54, 34]
+        "city_entrance_dungeon1": [54, 34],
+        "city_entrance_dungeon3": [31, 50]
       }
     }
   },
