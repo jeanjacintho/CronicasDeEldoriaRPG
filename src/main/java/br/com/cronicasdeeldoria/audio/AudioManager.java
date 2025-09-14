@@ -79,6 +79,7 @@ public class AudioManager {
         // Música de batalha - usando configuração do JSON
         contextMusic.put(AudioContext.BATTLE_NORMAL, configLoader.getMusicFile("battle_normal"));
         contextMusic.put(AudioContext.BATTLE_BOSS, configLoader.getMusicFile("battle_boss"));
+        contextMusic.put(AudioContext.BATTLE_FINAL_BOSS, configLoader.getMusicFile("battle_final_boss"));
         contextMusic.put(AudioContext.BATTLE_MINIBOSS, configLoader.getMusicFile("battle_miniboss"));
         
         // Contextos especiais - usando configuração do JSON
