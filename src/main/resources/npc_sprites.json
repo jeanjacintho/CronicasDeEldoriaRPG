@@ -39,10 +39,10 @@
     "right": ["monster/orc/orc_right.png", "monster/orc/orc_right_walk1.png", "monster/orc/orc_right_walk2.png"]
   },
   "wolfboss": {
-    "down": ["monster/miniBosses/frostbornBoss_front.png"]
+    "down": ["monster/miniBosses/wolfBoss_front.png"]
   },
   "frostbornboss": {
-    "down": ["monster/miniBosses/wolfBoss_front.png"]
+    "down": ["monster/miniBosses/frostbornBoss_front.png"]
   },
   "skeletonboss": {
     "down": ["monster/miniBosses/skeletonBoss_front.png"]
