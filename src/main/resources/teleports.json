@@ -11,18 +11,51 @@
         "inn": [300, 300]
       }
     },
-    "casa_01": {
-      "map": "house01_map01", 
-      "name": "Casa do Aldeão",
-      "description": "Uma casa simples na vila",
+    "player_house": {
+      "map": "houses/player_house",
       "spawnPoints": {
-        "entrance": [6, 6],
-        "center": [5, 5],
-        "bed": [7, 7]
+        "entrance": [6, 5]
       }
     },
-    "dungeon_01": {
-      "map": "dungeon01",
+    "forest": {
+      "map": "forest",
+      "name": "Floresta de Eldoria",
+      "description": "A floresta principal do reino",
+      "spawnPoints": {
+        "entrance": [9, 60],
+        "exit_player_house": [23, 42],
+        "forest_entrance_city": [12, 62],
+        "forest_entrance_dungeon2": [52, 31]
+      }
+    },
+    "dungeon1": {
+      "map": "dungeon1",
+      "name": "Caverna dos Goblins",
+      "description": "Uma caverna perigosa",
+      "spawnPoints": {
+        "entrance": [9, 60]
+      }
+    },
+    "dungeon2": {
+      "map": "dungeon2",
+      "name": "Caverna dos Goblins",
+      "description": "Uma caverna perigosa",
+      "spawnPoints": {
+        "entrance": [7, 30]
+      }
+    },
+    "dungeon3": {
+      "map": "dungeon3",
+      "name": "Caverna dos Goblins",
+      "description": "Uma caverna perigosa",
+      "spawnPoints": {
+        "entrance": [0, 0],
+        "boss_room": [240, 240],
+        "treasure": [200, 200]
+      }
+    },
+    "dungeon4": {
+      "map": "dungeon4",
       "name": "Caverna dos Goblins",
       "description": "Uma caverna perigosa",
       "spawnPoints": {
@@ -31,14 +64,64 @@
         "treasure": [200, 200]
       }
     },
-    "forest": {
-      "map": "forest01",
-      "name": "Floresta Encantada",
-      "description": "Uma floresta misteriosa",
+    "bakery": {
+      "map": "bakery",
+      "name": "Padaria",
+      "description": "Uma padaria",
       "spawnPoints": {
-        "entrance": [128, 128],
-        "clearing": [200, 200],
-        "ancient_tree": [300, 300]
+        "entrance": [160, 160],
+        "boss_room": [240, 240],
+        "treasure": [200, 200]
+      }
+    },
+    "house_01": {
+      "map": "house01",
+      "name": "Casa do Aldeão",
+      "description": "Uma casa simples na vila",
+      "spawnPoints": {
+        "entrance": [160, 160],
+        "boss_room": [240, 240],
+        "treasure": [200, 200]
+      }
+    },
+    "house_02": {
+      "map": "house02",
+      "name": "Casa do Aldeão",
+      "description": "Uma casa simples na vila",
+      "spawnPoints": {
+        "entrance": [160, 160],
+        "boss_room": [240, 240],
+        "treasure": [200, 200]
+      }
+    },
+    "house_03": {
+      "map": "house03",
+      "name": "Casa do Aldeão",
+      "description": "Uma casa simples na vila",
+      "spawnPoints": {
+        "entrance": [160, 160],
+        "boss_room": [240, 240],
+        "treasure": [200, 200]
+      }
+    },
+    "library_base": {
+      "map": "library_base",
+      "name": "Biblioteca",
+      "description": "Uma biblioteca",
+      "spawnPoints": {
+        "entrance": [160, 160],
+        "boss_room": [240, 240],
+        "treasure": [200, 200]
+      }
+    },
+    "library_ancian_room": {
+      "map": "library_ancian_room",
+      "name": "Sala do Ancião",
+      "description": "Uma sala do anciana",
+      "spawnPoints": {
+        "entrance": [160, 160],
+        "boss_room": [240, 240],
+        "treasure": [200, 200]
       }
     },
     "totem": {
@@ -47,6 +130,24 @@
       "description": "Um totem mágico",
       "spawnPoints": {
         "entrance": [12, 21]
+      }
+    },
+    "city_to_dungeon1": {
+      "map": "city_to_dungeon1",
+      "name": "Cidade para Dungeon 1",
+      "description": "Uma cidade para o dungeon 1",
+      "spawnPoints": {
+        "entrance": [1, 13]
+      }
+    },
+    "city": {
+      "map": "city",
+      "name": "Cidade de Eldoria",
+      "description": "A cidade principal do reino",
+      "spawnPoints": {
+        "entrance": [160, 160],
+        "city_entrance_forest": [4, 34],
+        "city_entrance_dungeon1": [54, 34]
       }
     }
   },

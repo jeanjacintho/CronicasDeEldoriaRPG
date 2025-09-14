@@ -25,7 +25,7 @@ public class TileManager {
     public TileManager(GamePanel gamePanel) {
         this.gamePanel = gamePanel;
         loadTilesFromJson();
-        loadMapJson("/maps/map01.json");
+        loadMapJson("/maps/houses/player_house.json");
     }
 
     private void loadTilesFromJson() {
