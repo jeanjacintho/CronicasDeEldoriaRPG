@@ -58,8 +58,8 @@ public class ObjectSpriteLoader {
     public ObjectDefinition getObjectDefinition(String objectId) {
         ObjectDefinition def = objectDefinitions.get(objectId);
         if (def == null) {
-            System.err.println("DEBUG: Objeto não encontrado no ObjectSpriteLoader: " + objectId);
-            System.err.println("DEBUG: Objetos disponíveis: " + objectDefinitions.keySet());
+            //System.err.println("DEBUG: Objeto não encontrado no ObjectSpriteLoader: " + objectId);
+            //System.err.println("DEBUG: Objetos disponíveis: " + objectDefinitions.keySet());
         }
         return def;
     }

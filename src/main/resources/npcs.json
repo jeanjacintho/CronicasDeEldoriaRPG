@@ -24,7 +24,7 @@
   {
     "id": "wolf",
     "name": "White Wolf",
-    "isStatic": true,
+    "isStatic": false,
     "interactive": true,
     "autoInteraction": true,
     "dialog": "Lute comigo, verme!",
@@ -34,7 +34,7 @@
   {
     "id": "skeleton",
     "name": "Skeleton",
-    "isStatic": true,
+    "isStatic": false,
     "interactive": true,
     "autoInteraction": true,
     "dialog": "Lute comigo, verme!",
@@ -44,7 +44,7 @@
   {
     "id": "frostborn",
     "name": "Frostborn",
-    "isStatic": true,
+    "isStatic": false,
     "interactive": true,
     "autoInteraction": true,
     "dialog": "Lute comigo, verme!",
@@ -54,7 +54,7 @@
   {
     "id": "orc",
     "name": "Orc",
-    "isStatic": true,
+    "isStatic": false,
     "interactive": true,
     "autoInteraction": true,
     "dialog": "Lute comigo, verme!",
