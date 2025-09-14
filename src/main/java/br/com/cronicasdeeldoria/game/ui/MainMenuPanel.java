@@ -14,6 +14,9 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+import br.com.cronicasdeeldoria.audio.AudioManager;
+import br.com.cronicasdeeldoria.audio.AudioContext;
+
 /**
  * Painel do menu principal do jogo, com opções para iniciar, carregar ou sair.
  */
@@ -29,6 +32,7 @@ public class MainMenuPanel extends JPanel implements ActionListener {
   final int maxScreenCol;
   final int tileSize;
   private JFrame window;
+  private AudioManager audioManager;
 
   /**
    * Cria o painel do menu principal.
@@ -51,6 +55,10 @@ public class MainMenuPanel extends JPanel implements ActionListener {
       this.tileSize = tileSize;
 
       this.setLayout(new GridLayout(3, 1, 10, 10));
+
+      // Inicializar sistema de áudio
+      this.audioManager = AudioManager.getInstance();
+      audioManager.changeContext(AudioContext.MENU);
 
       newGame = new JButton("NOVO JOGO");
       loadGame = new JButton("CARREGAR JOGO");
@@ -116,6 +124,11 @@ public class MainMenuPanel extends JPanel implements ActionListener {
    */
   @Override
   public void actionPerformed(ActionEvent e) {
+      // Reproduzir efeito sonoro de clique
+      if (audioManager != null) {
+          audioManager.playSoundEffect("button_click");
+      }
+      
       if (e.getSource() == newGame) {
           window.remove(this);
           CreatePlayerPanel createPlayerPanel = new CreatePlayerPanel(window, screenWidth, screenHeight, tileSize, maxScreenRow, maxScreenCol);
