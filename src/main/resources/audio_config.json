@@ -48,16 +48,22 @@
           "fade_duration": 2000
         },
         "battle_normal": {
-          "file": "/audio/music/battle_normal.wav",
+          "file": "/audio/music/05 - Battle 1.wav",
           "volume": 0.8,
           "loop": true,
           "fade_duration": 1500
         },
         "battle_boss": {
-          "file": "/audio/music/battle_boss.wav",
+          "file": "/audio/music/09 - Battle 2.wav",
           "volume": 0.9,
           "loop": true,
           "fade_duration": 1000
+        },
+        "battle_final_boss": {
+          "file": "/audio/music/17 - Decisive Battle 2 - The Calamity.wav",
+          "volume": 1.0,
+          "loop": true,
+          "fade_duration": 500
         },
         "battle_miniboss": {
           "file": "/audio/music/battle_miniboss.wav",

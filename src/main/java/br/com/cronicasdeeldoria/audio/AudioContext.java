@@ -21,6 +21,7 @@ public enum AudioContext {
     BATTLE_NORMAL("Batalha Normal", "Música de batalha contra inimigos comuns"),
     BATTLE_BOSS("Batalha Boss", "Música épica de batalha contra boss"),
     BATTLE_MINIBOSS("Batalha Mini-Boss", "Música de batalha contra mini-boss"),
+    BATTLE_FINAL_BOSS("Batalha Boss Final", "Música épica definitiva contra o boss final"),
     
     // Contextos especiais
     MENU("Menu", "Música do menu principal"),
@@ -48,7 +49,7 @@ public enum AudioContext {
      * Determina se este contexto é de batalha.
      */
     public boolean isBattleContext() {
-        return this == BATTLE_NORMAL || this == BATTLE_BOSS || this == BATTLE_MINIBOSS;
+        return this == BATTLE_NORMAL || this == BATTLE_BOSS || this == BATTLE_MINIBOSS || this == BATTLE_FINAL_BOSS;
     }
     
     /**
@@ -148,9 +149,15 @@ public enum AudioContext {
         
         String lowerNpcName = npcName.toLowerCase();
         
+        // Verificar se é o boss final (Supreme Mage)
+        if (lowerNpcName.contains("supreme mage") || lowerNpcName.contains("supreme_mage") ||
+            lowerNpcName.contains("mago supremo") || lowerNpcName.contains("supremo") ||
+            lowerNpcName.contains("final boss") || lowerNpcName.contains("boss final")) {
+            return BATTLE_FINAL_BOSS;
+        }
+        
         // Verificar se é um boss conhecido
-        if (lowerNpcName.contains("supreme") || lowerNpcName.contains("supremo") ||
-            lowerNpcName.contains("dragon") || lowerNpcName.contains("dragão") ||
+        if (lowerNpcName.contains("dragon") || lowerNpcName.contains("dragão") ||
             lowerNpcName.contains("lich") || lowerNpcName.contains("lich") ||
             lowerNpcName.contains("demon") || lowerNpcName.contains("demônio")) {
             return BATTLE_BOSS;
@@ -163,6 +170,16 @@ public enum AudioContext {
             return BATTLE_MINIBOSS;
         }
         
+        // Verificar se é um boss específico do jogo (incluindo todos os boss monsters)
+        if (lowerNpcName.contains("boss") || lowerNpcName.contains("chefe") ||
+            lowerNpcName.contains("wolf boss") || lowerNpcName.contains("skeleton boss") ||
+            lowerNpcName.contains("frostborn boss") || lowerNpcName.contains("orc boss") ||
+            lowerNpcName.contains("wolfboss") || lowerNpcName.contains("skeletonboss") ||
+            lowerNpcName.contains("frostbornboss") || lowerNpcName.contains("orcboss")) {
+            return BATTLE_BOSS;
+        }
+        
+        // Todos os outros inimigos (wolf, skeleton, frostborn, orc) são batalhas normais
         return BATTLE_NORMAL;
     }
 }
