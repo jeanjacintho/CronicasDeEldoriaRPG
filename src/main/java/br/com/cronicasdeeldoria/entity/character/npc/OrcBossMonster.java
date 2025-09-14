@@ -16,10 +16,10 @@ public class OrcBossMonster extends Npc {
    */
   public OrcBossMonster(String name, boolean isStatic, String dialog, int x, int y, String skin, int playerSize, boolean interactive, boolean autoInteraction) {
     super(name, isStatic, dialog, x, y, skin, playerSize, interactive, autoInteraction);
-    setAttributeHealth(5);
+    setAttributeHealth(150);
     setAttributeMaxHealth(150);
-    setAttributeStrength(25);
-    setAttributeDefence(15);
+    setAttributeStrength(30);
+    setAttributeDefence(20);
     setAttributeAgility(15);
   }
 

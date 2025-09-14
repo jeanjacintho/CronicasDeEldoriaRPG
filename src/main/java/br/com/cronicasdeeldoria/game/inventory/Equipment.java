@@ -121,10 +121,6 @@ public class Equipment {
      * Aplica os bônus de um item aos atributos do personagem.
      */
     private void applyItemBonuses(Item item) {
-      System.out.println("----------Aplica bonus do item de str----------" + item.getStrengthFromEquip());
-      System.out.println("----------Aplica bonus do item de armor----------" + item.getArmorFromEquip());
-      System.out.println("----------Aplica bonus do item de hp----------" + item.getHealthFromEquip());
-      System.out.println("----------Aplica bonus do item de mana----------" + item.getManaFromEquip());
       player.setAttributeStrength(player.getAttributeStrength() + item.getStrengthFromEquip());
       player.setAttributeArmor(player.getAttributeArmor() + item.getArmorFromEquip());
       player.setAttributeMaxHealth(player.getAttributeMaxHealth() + item.getHealthFromEquip());
