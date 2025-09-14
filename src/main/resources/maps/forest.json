@@ -28728,37 +28728,37 @@
           "interactive": true
         },
         {
-          "id": "dungeon1:entrance",
+          "id": "dungeon4:entrance",
           "x": 53,
           "y": 50
         },
         {
-          "id": "dungeon1:entrance",
+          "id": "dungeon4:entrance",
           "x": 53,
           "y": 51
         },
         {
-          "id": "dungeon1:entrance",
+          "id": "dungeon4:entrance",
           "x": 53,
           "y": 52
         },
         {
-          "id": "dungeon1:entrance",
+          "id": "dungeon4:entrance",
           "x": 53,
           "y": 53
         },
         {
-          "id": "city:city_entrance_forest",
+          "id": "city:entrance",
           "x": 11,
           "y": 63
         },
         {
-          "id": "city:city_entrance_forest",
+          "id": "city:entrance",
           "x": 12,
           "y": 63
         },
         {
-          "id": "city_entrance_forest",
+          "id": "city:entrance",
           "x": 13,
           "y": 63
         }

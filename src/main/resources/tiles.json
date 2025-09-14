@@ -12505,6 +12505,168 @@
       "x": 9,
       "y": 7,
       "collision": false
+    },
+    {
+      "id": "1_20",
+      "x": 1,
+      "y": 20,
+      "collision": false
+    },
+    {
+      "id": "14_31",
+      "x": 14,
+      "y": 31,
+      "collision": false
+    },
+    {
+      "id": "18_27",
+      "x": 18,
+      "y": 27,
+      "collision": false
+    },
+    {
+      "id": "18_28",
+      "x": 18,
+      "y": 28,
+      "collision": false
+    },
+    {
+      "id": "18_29",
+      "x": 18,
+      "y": 29,
+      "collision": false
+    },
+    {
+      "id": "18_30",
+      "x": 18,
+      "y": 30,
+      "collision": false
+    },
+    {
+      "id": "19_27",
+      "x": 19,
+      "y": 27,
+      "collision": false
+    },
+    {
+      "id": "19_28",
+      "x": 19,
+      "y": 28,
+      "collision": false
+    },
+    {
+      "id": "19_29",
+      "x": 19,
+      "y": 29,
+      "collision": false
+    },
+    {
+      "id": "19_30",
+      "x": 19,
+      "y": 30,
+      "collision": false
+    },
+    {
+      "id": "20_27",
+      "x": 20,
+      "y": 27,
+      "collision": false
+    },
+    {
+      "id": "20_28",
+      "x": 20,
+      "y": 28,
+      "collision": false
+    },
+    {
+      "id": "20_29",
+      "x": 20,
+      "y": 29,
+      "collision": false
+    },
+    {
+      "id": "20_30",
+      "x": 20,
+      "y": 30,
+      "collision": false
+    },
+    {
+      "id": "21_27",
+      "x": 21,
+      "y": 27,
+      "collision": false
+    },
+    {
+      "id": "21_28",
+      "x": 21,
+      "y": 28,
+      "collision": false
+    },
+    {
+      "id": "21_29",
+      "x": 21,
+      "y": 29,
+      "collision": false
+    },
+    {
+      "id": "21_30",
+      "x": 21,
+      "y": 30,
+      "collision": false
+    },
+    {
+      "id": "22_27",
+      "x": 22,
+      "y": 27,
+      "collision": false
+    },
+    {
+      "id": "22_28",
+      "x": 22,
+      "y": 28,
+      "collision": false
+    },
+    {
+      "id": "22_29",
+      "x": 22,
+      "y": 29,
+      "collision": false
+    },
+    {
+      "id": "22_30",
+      "x": 22,
+      "y": 30,
+      "collision": false
+    },
+    {
+      "id": "24_42",
+      "x": 24,
+      "y": 42,
+      "collision": false
+    },
+    {
+      "id": "24_43",
+      "x": 24,
+      "y": 43,
+      "collision": false
+    },
+    {
+      "id": "25_42",
+      "x": 25,
+      "y": 42,
+      "collision": false
+    },
+    {
+      "id": "25_43",
+      "x": 25,
+      "y": 43,
+      "collision": false
+    },
+    {
+      "id": "26_42",
+      "x": 26,
+      "y": 42,
+      "collision": false
     }
   ]
 }
