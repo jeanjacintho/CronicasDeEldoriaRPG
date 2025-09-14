@@ -1,0 +1,276 @@
+{
+  "audio_config": {
+    "version": "1.0",
+    "description": "Configuração de áudio para Crônicas de Eldoria RPG",
+    
+    "music": {
+      "contexts": {
+        "player_house": {
+          "file": "/audio/music/20 - The Journey.wav",
+          "volume": 0.6,
+          "loop": true,
+          "fade_duration": 2000
+        },
+        "city": {
+          "file": "/audio/music/03 - Definitely Our Town.wav",
+          "volume": 0.6,
+          "loop": true,
+          "fade_duration": 2000
+        },
+        "forest": {
+          "file": "/audio/music/19 - Where The Winds Roam.wav",
+          "volume": 0.6,
+          "loop": true,
+          "fade_duration": 2000
+        },
+        "dungeon1": {
+          "file": "/audio/music/10 - Lost Shrine.wav",
+          "volume": 0.7,
+          "loop": true,
+          "fade_duration": 2000
+        },
+        "dungeon2": {
+          "file": "/audio/music/04 - Silent Forest.wav",
+          "volume": 0.7,
+          "loop": true,
+          "fade_duration": 2000
+        },
+        "dungeon3": {
+          "file": "/audio/music/12 - Frozen Abyss.wav",
+          "volume": 0.7,
+          "loop": true,
+          "fade_duration": 2000
+        },
+        "dungeon4": {
+          "file": "/audio/music/01 - Falling Apart (Prologue).wav",
+          "volume": 0.7,
+          "loop": true,
+          "fade_duration": 2000
+        },
+        "battle_normal": {
+          "file": "/audio/music/battle_normal.wav",
+          "volume": 0.8,
+          "loop": true,
+          "fade_duration": 1500
+        },
+        "battle_boss": {
+          "file": "/audio/music/battle_boss.wav",
+          "volume": 0.9,
+          "loop": true,
+          "fade_duration": 1000
+        },
+        "battle_miniboss": {
+          "file": "/audio/music/battle_miniboss.wav",
+          "volume": 0.8,
+          "loop": true,
+          "fade_duration": 1500
+        },
+        "menu": {
+          "file": "/audio/music/02 - Title Theme.wav",
+          "volume": 0.5,
+          "loop": true,
+          "fade_duration": 3000
+        },
+        "victory": {
+          "file": "/audio/music/victory.wav",
+          "volume": 0.7,
+          "loop": false,
+          "fade_duration": 1000
+        },
+        "defeat": {
+          "file": "/audio/music/defeat.wav",
+          "volume": 0.6,
+          "loop": false,
+          "fade_duration": 1000
+        }
+      }
+    },
+    
+    "sound_effects": {
+      "ui": {
+        "button_click": {
+          "file": "/audio/sfx/button_click.wav",
+          "volume": 0.8,
+          "max_concurrent": 3
+        },
+        "menu_open": {
+          "file": "/audio/sfx/menu_open.wav",
+          "volume": 0.7,
+          "max_concurrent": 1
+        },
+        "menu_close": {
+          "file": "/audio/sfx/menu_close.wav",
+          "volume": 0.7,
+          "max_concurrent": 1
+        }
+      },
+      
+      "interaction": {
+        "item_pickup": {
+          "file": "/audio/sfx/item_pickup.wav",
+          "volume": 0.8,
+          "max_concurrent": 5
+        },
+        "door_open": {
+          "file": "/audio/sfx/door_open.wav",
+          "volume": 0.7,
+          "max_concurrent": 2
+        },
+        "door_close": {
+          "file": "/audio/sfx/door_close.wav",
+          "volume": 0.7,
+          "max_concurrent": 2
+        },
+        "chest_open": {
+          "file": "/audio/sfx/chest_open.wav",
+          "volume": 0.8,
+          "max_concurrent": 2
+        },
+        "teleport": {
+          "file": "/audio/sfx/teleport.wav",
+          "volume": 0.9,
+          "max_concurrent": 1
+        }
+      },
+      
+      "battle": {
+        "battle_start": {
+          "file": "/audio/sfx/battle_start.wav",
+          "volume": 0.9,
+          "max_concurrent": 1
+        },
+        "battle_end": {
+          "file": "/audio/sfx/battle_end.wav",
+          "volume": 0.8,
+          "max_concurrent": 1
+        },
+        "attack_hit": {
+          "file": "/audio/sfx/attack_hit.wav",
+          "volume": 0.8,
+          "max_concurrent": 3
+        },
+        "attack_miss": {
+          "file": "/audio/sfx/attack_miss.wav",
+          "volume": 0.6,
+          "max_concurrent": 2
+        },
+        "spell_cast": {
+          "file": "/audio/sfx/spell_cast.wav",
+          "volume": 0.8,
+          "max_concurrent": 2
+        },
+        "damage_taken": {
+          "file": "/audio/sfx/damage_taken.wav",
+          "volume": 0.7,
+          "max_concurrent": 2
+        },
+        "healing": {
+          "file": "/audio/sfx/healing.wav",
+          "volume": 0.7,
+          "max_concurrent": 2
+        }
+      },
+      
+      "character": {
+        "level_up": {
+          "file": "/audio/sfx/level_up.wav",
+          "volume": 0.9,
+          "max_concurrent": 1
+        },
+        "stat_increase": {
+          "file": "/audio/sfx/stat_increase.wav",
+          "volume": 0.7,
+          "max_concurrent": 2
+        },
+        "skill_learned": {
+          "file": "/audio/sfx/skill_learned.wav",
+          "volume": 0.8,
+          "max_concurrent": 1
+        }
+      },
+      
+      "quest": {
+        "quest_start": {
+          "file": "/audio/sfx/quest_start.wav",
+          "volume": 0.8,
+          "max_concurrent": 1
+        },
+        "quest_progress": {
+          "file": "/audio/sfx/quest_progress.wav",
+          "volume": 0.7,
+          "max_concurrent": 1
+        },
+        "quest_complete": {
+          "file": "/audio/sfx/quest_complete.wav",
+          "volume": 0.9,
+          "max_concurrent": 1
+        }
+      },
+      
+      "notification": {
+        "notification": {
+          "file": "/audio/sfx/notification.wav",
+          "volume": 0.6,
+          "max_concurrent": 3
+        },
+        "error": {
+          "file": "/audio/sfx/error.wav",
+          "volume": 0.7,
+          "max_concurrent": 2
+        },
+        "warning": {
+          "file": "/audio/sfx/warning.wav",
+          "volume": 0.8,
+          "max_concurrent": 1
+        }
+      }
+    },
+    
+    "settings": {
+      "master_volume": 0.7,
+      "music_volume": 0.6,
+      "sfx_volume": 0.8,
+      "max_concurrent_sfx": 10,
+      "fade_duration_ms": 2000,
+      "audio_format": {
+        "sample_rate": 44100,
+        "channels": 2,
+        "bit_depth": 16
+      }
+    },
+    
+    "map_audio_mapping": {
+      "city": "city",
+      "forest": "forest",
+      "dungeon1": "dungeon",
+      "dungeon2": "dungeon",
+      "dungeon3": "dungeon",
+      "dungeon4": "dungeon",
+      "cave": "cave",
+      "castle": "castle",
+      "totem": "city",
+      "player_house": "player_house",
+      "houses/player_house": "player_house",
+      "houses/bakery": "city",
+      "houses/house01": "city",
+      "houses/house02": "city",
+      "houses/house03": "city",
+      "houses/library_ancian_room": "city",
+      "houses/library_base": "city",
+      "houses/smith_house": "city"
+    },
+    
+    "enemy_audio_mapping": {
+      "boss_keywords": [
+        "supreme", "supremo", "dragon", "dragão", "lich", "demon", "demônio",
+        "final", "ultimate", "supreme_mage", "mago_supremo"
+      ],
+      "miniboss_keywords": [
+        "elite", "guardian", "guardião", "captain", "capitão", "mini", "elite"
+      ],
+      "normal_enemies": [
+        "wolf", "skeleton", "orc", "frostborn", "goblin", "spider"
+      ]
+    }
+  }
+}

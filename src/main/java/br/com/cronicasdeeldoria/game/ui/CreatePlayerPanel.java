@@ -27,14 +27,21 @@ import javax.swing.ActionMap;
 import javax.swing.KeyStroke;
 import javax.swing.AbstractAction;
 
-import br.com.cronicasdeeldoria.entity.character.classes.*;
+import br.com.cronicasdeeldoria.audio.AudioManager;
+import br.com.cronicasdeeldoria.audio.AudioContext;
+import br.com.cronicasdeeldoria.entity.character.classes.Barbarian;
+import br.com.cronicasdeeldoria.entity.character.classes.Ranger;
+import br.com.cronicasdeeldoria.entity.character.classes.Paladin;
+import br.com.cronicasdeeldoria.entity.character.classes.Mage;
+import br.com.cronicasdeeldoria.entity.character.classes.Orc;
+import br.com.cronicasdeeldoria.entity.character.classes.CharacterClass;
 import br.com.cronicasdeeldoria.game.GamePanel;
 import br.com.cronicasdeeldoria.game.font.FontManager;
-import br.com.cronicasdeeldoria.entity.character.classes.Barbarian;
 
 public class CreatePlayerPanel extends JPanel implements ActionListener {
 
   private final JFrame window;
+  private AudioManager audioManager;
   private final int screenWidth;
   private final int screenHeight;
   private final int tileSize;
@@ -64,6 +71,10 @@ public class CreatePlayerPanel extends JPanel implements ActionListener {
       this.setPreferredSize(new Dimension(screenWidth, screenHeight));
       this.setLayout(new BorderLayout(20, 20));
       this.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+
+      // Inicializar sistema de áudio
+      this.audioManager = AudioManager.getInstance();
+      audioManager.changeContext(AudioContext.MENU);
 
       JLabel titleLabel = new JLabel("Crie seu personagem", SwingConstants.CENTER);
       titleLabel.setFont(FontManager.getFont(24f));
@@ -290,6 +301,11 @@ public class CreatePlayerPanel extends JPanel implements ActionListener {
   @Override
   public void actionPerformed(ActionEvent e) {
       String command = e.getActionCommand();
+
+      // Reproduzir efeito sonoro de clique
+      if (audioManager != null) {
+          audioManager.playSoundEffect("button_click");
+      }
 
       switch (command) {
           case "INICIAR JOGO":

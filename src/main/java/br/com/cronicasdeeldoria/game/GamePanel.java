@@ -9,17 +9,14 @@ import java.awt.BasicStroke;
 
 import javax.swing.JPanel;
 
-import br.com.cronicasdeeldoria.entity.character.Character;
 import br.com.cronicasdeeldoria.entity.character.npc.*;
 
 import br.com.cronicasdeeldoria.entity.character.player.Player;
 import br.com.cronicasdeeldoria.entity.character.classes.*;
 import br.com.cronicasdeeldoria.entity.character.classes.Barbarian;
-import br.com.cronicasdeeldoria.entity.item.Item;
 import br.com.cronicasdeeldoria.entity.object.MapObject;
 import br.com.cronicasdeeldoria.entity.object.ObjectManager;
 import br.com.cronicasdeeldoria.entity.object.ObjectSpriteLoader;
-import br.com.cronicasdeeldoria.game.inventory.ItemFactory;
 import br.com.cronicasdeeldoria.game.ui.GameUI;
 import br.com.cronicasdeeldoria.game.ui.KeyboardMapper;
 import br.com.cronicasdeeldoria.game.font.FontManager;
@@ -29,7 +26,6 @@ import br.com.cronicasdeeldoria.tile.TileManager.MapTile;
 import br.com.cronicasdeeldoria.config.CharacterConfigLoader;
 import java.util.List;
 import java.util.ArrayList;
-import br.com.cronicasdeeldoria.entity.character.Character;
 
 import br.com.cronicasdeeldoria.entity.Entity;
 import br.com.cronicasdeeldoria.game.inventory.InventoryManager;
@@ -39,6 +35,8 @@ import br.com.cronicasdeeldoria.game.dialog.DialogManager;
 import br.com.cronicasdeeldoria.game.dialog.DialogUI;
 import br.com.cronicasdeeldoria.game.teleport.TeleportManager;
 import br.com.cronicasdeeldoria.game.quest.QuestManager;
+import br.com.cronicasdeeldoria.audio.AudioManager;
+import br.com.cronicasdeeldoria.audio.AudioContext;
 /**
  * Painel principal do jogo, responsável pelo loop de atualização, renderização e gerenciamento dos elementos do jogo.
  */
@@ -72,7 +70,9 @@ public class GamePanel extends JPanel implements Runnable{
   private DialogUI dialogUI;
   private TeleportManager teleportManager;
   private QuestManager questManager;
+  private AudioManager audioManager;
   private String playerClassName;
+  private String currentMapName;
 
   // Estados do jogo
   public int gameState;
@@ -182,6 +182,14 @@ public class GamePanel extends JPanel implements Runnable{
     // Inicializar sistema de quests
     this.questManager = QuestManager.getInstance();
     this.questManager.initialize(this);
+    
+    // Inicializar sistema de áudio
+    this.audioManager = AudioManager.getInstance();
+    this.currentMapName = "houses/player_house"; // Mapa inicial padrão
+    
+    // Configurar contexto inicial de áudio
+    AudioContext initialContext = AudioContext.fromMapName(currentMapName);
+    audioManager.changeContext(initialContext);
   }
 
   /**
@@ -331,10 +339,26 @@ public class GamePanel extends JPanel implements Runnable{
 
       // Mudar para estado de batalha
       gameState = battleState;
+      
+      // Atualizar contexto de áudio para batalha
+      updateAudioContextForBattle(monster);
 
       System.out.println("Entered battle state with " + monster.getName());
     } else {
       System.out.println("Cannot start battle: target is not a monster");
+    }
+  }
+  
+  /**
+   * Atualiza o contexto de áudio baseado no tipo de inimigo na batalha.
+   */
+  private void updateAudioContextForBattle(Npc monster) {
+    if (audioManager != null) {
+      AudioContext battleContext = AudioContext.fromNpcName(monster.getName());
+      audioManager.changeContext(battleContext);
+      
+      // Reproduzir efeito sonoro de início de batalha
+      audioManager.playSoundEffect("battle_start");
     }
   }
 
@@ -397,6 +421,99 @@ public class GamePanel extends JPanel implements Runnable{
     gameState = playState;
     battleMonster = null;
     lastBattleEndTime = System.currentTimeMillis();
+    
+    // Restaurar contexto de áudio do mapa após batalha
+    restoreMapAudioContext();
+  }
+  
+  /**
+   * Restaura o contexto de áudio do mapa após o fim da batalha.
+   */
+  private void restoreMapAudioContext() {
+    if (audioManager != null && currentMapName != null) {
+      AudioContext mapContext = AudioContext.fromMapName(currentMapName);
+      audioManager.changeContext(mapContext);
+      
+      // Reproduzir efeito sonoro de fim de batalha
+      audioManager.playSoundEffect("battle_end");
+    }
+  }
+  
+  /**
+   * Obtém o gerenciador de áudio.
+   * @return AudioManager
+   */
+  public AudioManager getAudioManager() {
+    return audioManager;
+  }
+  
+  /**
+   * Reproduz efeito sonoro de interação com objeto.
+   */
+  public void playInteractionSound(String interactionType) {
+    if (audioManager != null) {
+      switch (interactionType.toLowerCase()) {
+        case "door":
+          audioManager.playSoundEffect("door_open");
+          break;
+        case "chest":
+          audioManager.playSoundEffect("item_pickup");
+          break;
+        case "teleport":
+          audioManager.playSoundEffect("teleport");
+          break;
+        case "button":
+          audioManager.playSoundEffect("button_click");
+          break;
+        default:
+          audioManager.playSoundEffect("notification");
+          break;
+      }
+    }
+  }
+  
+  /**
+   * Reproduz efeito sonoro de progresso de quest.
+   */
+  public void playQuestProgressSound() {
+    if (audioManager != null) {
+      audioManager.playSoundEffect("quest_complete");
+    }
+  }
+  
+  /**
+   * Reproduz efeito sonoro de level up.
+   */
+  public void playLevelUpSound() {
+    if (audioManager != null) {
+      audioManager.playSoundEffect("level_up");
+    }
+  }
+  
+  /**
+   * Método de teste para verificar o sistema de áudio.
+   */
+  public void testAudioSystem() {
+    System.out.println("=== TESTING AUDIO SYSTEM ===");
+    
+    if (audioManager == null) {
+      System.out.println("ERROR: AudioManager is null!");
+      return;
+    }
+    
+    System.out.println("AudioManager instance: " + audioManager);
+    System.out.println("Current context: " + audioManager.getCurrentContext());
+    System.out.println("Music enabled: " + audioManager.isMusicEnabled());
+    System.out.println("Muted: " + audioManager.isMuted());
+    System.out.println("Master volume: " + audioManager.getMasterVolume());
+    System.out.println("Music volume: " + audioManager.getMusicVolume());
+    
+    // Testar mudança para floresta
+    System.out.println("Testing forest context...");
+    AudioContext forestContext = AudioContext.FOREST;
+    audioManager.changeContext(forestContext);
+    
+    System.out.println("=== END TESTING AUDIO SYSTEM ===");
   }
 
   /**
@@ -1565,9 +1682,42 @@ public class GamePanel extends JPanel implements Runnable{
       if (questManager != null) {
         questManager.onPlayerEnterMap(mapName);
       }
+      
+      // Atualizar contexto de áudio baseado no novo mapa
+      updateAudioContextForMap(mapName);
+      
     } catch (Exception e) {
       System.err.println("Erro ao carregar mapa: " + e.getMessage());
       e.printStackTrace();
     }
+  }
+  
+  /**
+   * Atualiza o contexto de áudio baseado no mapa atual.
+   */
+  private void updateAudioContextForMap(String mapName) {
+    System.out.println("=== AUDIO DEBUG ===");
+    System.out.println("Current map name: " + mapName);
+    System.out.println("Previous map name: " + currentMapName);
+    
+    if (audioManager != null && !mapName.equals(currentMapName)) {
+      currentMapName = mapName;
+      AudioContext newContext = AudioContext.fromMapName(mapName);
+      
+      System.out.println("New audio context: " + newContext);
+      System.out.println("Context display name: " + newContext.getDisplayName());
+      
+      audioManager.changeContext(newContext);
+      
+      // Reproduzir efeito sonoro de mudança de mapa
+      audioManager.playSoundEffect("teleport");
+      
+      System.out.println("Audio context changed successfully");
+    } else if (audioManager == null) {
+      System.out.println("ERROR: AudioManager is null!");
+    } else {
+      System.out.println("Map name unchanged, no audio context change needed");
+    }
+    System.out.println("=== END AUDIO DEBUG ===");
   }
 }
