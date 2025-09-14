@@ -172,6 +172,16 @@ public class Player extends Character {
       keyHandler.qPressed = false;
     }
 
+    // Debug - mostrar posição em tiles (tecla P)
+    if (keyHandler.debugPressed) {
+      int tileX = getWorldX() / gamePanel.getTileSize();
+      int tileY = getWorldY() / gamePanel.getTileSize();
+      String debugMessage = String.format("Posição: Tile(%d, %d) | Pixel(%d, %d)", 
+                                        tileX, tileY, getWorldX(), getWorldY());
+      gamePanel.getGameUI().addMessage(debugMessage, null, 5000); // 5 segundos
+      keyHandler.debugPressed = false;
+    }
+
     // Teste de dano (tecla R)
     if (keyHandler.rPressed) {
       takeDamage(20);
