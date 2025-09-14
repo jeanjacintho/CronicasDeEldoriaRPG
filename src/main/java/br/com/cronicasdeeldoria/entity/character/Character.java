@@ -2,7 +2,11 @@ package br.com.cronicasdeeldoria.entity.character;
 
 import br.com.cronicasdeeldoria.entity.Entity;
 import br.com.cronicasdeeldoria.entity.character.classes.CharacterClass;
+import br.com.cronicasdeeldoria.entity.character.player.Player;
 import br.com.cronicasdeeldoria.game.Buff;
+import br.com.cronicasdeeldoria.entity.item.Item;
+import br.com.cronicasdeeldoria.entity.character.AttributeType;
+import br.com.cronicasdeeldoria.game.inventory.Equipment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +27,7 @@ public class Character extends Entity {
   private int attributeAgility;
   private int attributeArmor;
   private List<Buff> activeBuffs = new ArrayList<>();
+  private Equipment equipment;
 
   /**
    * Cria um novo personagem.
@@ -49,6 +54,7 @@ public class Character extends Entity {
     this.attributeStrength = attributeStrength;
     this.attributeAgility = attributeAgility;
     this.attributeArmor = attributeArmor;
+    //this.equipment = new Equipment( this);
   }
 
   public boolean hasActiveBuff(String type) {
@@ -184,4 +190,7 @@ public class Character extends Entity {
   public List<Buff> getActiveBuffs() { return activeBuffs; }
 
   public void setActiveBuffs(List<Buff> activeBuffs) { this.activeBuffs = activeBuffs; }
+
+  public void setEquipment(Equipment equipment) { this.equipment = equipment; }
+  public Equipment getEquipment() { return equipment; }
 }

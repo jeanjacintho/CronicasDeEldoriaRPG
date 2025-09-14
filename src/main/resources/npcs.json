@@ -62,6 +62,46 @@
     "skin": "orc"
   },
   {
+    "id": "orcboss",
+    "name": "Orc Boss",
+    "isStatic": true,
+    "interactive": true,
+    "autoInteraction": true,
+    "dialog": "Lute comigo, verme!",
+    "type": "enemy",
+    "skin": "orcboss"
+  },
+  {
+    "id": "frostbornboss",
+    "name": "Frostborn Boss",
+    "isStatic": true,
+    "interactive": true,
+    "autoInteraction": true,
+    "dialog": "Lute comigo, verme!",
+    "type": "enemy",
+    "skin": "frostbornboss"
+  },
+  {
+    "id": "wolfboss",
+    "name": "Wolf Boss",
+    "isStatic": true,
+    "interactive": true,
+    "autoInteraction": true,
+    "dialog": "Lute comigo, verme!",
+    "type": "enemy",
+    "skin": "wolfboss"
+  },
+  {
+    "id": "skeletonboss",
+    "name": "Skeleton Boss",
+    "isStatic": true,
+    "interactive": true,
+    "autoInteraction": true,
+    "dialog": "Lute comigo, verme!",
+    "type": "enemy",
+    "skin": "skeletonboss"
+  },
+  {
     "id": "merchant",
     "name": "Comerciante",
     "isStatic": true,

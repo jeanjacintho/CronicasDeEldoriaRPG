@@ -1,10 +1,13 @@
 package br.com.cronicasdeeldoria.game.inventory;
 
+import br.com.cronicasdeeldoria.entity.character.AttributeType;
+import br.com.cronicasdeeldoria.entity.character.player.Player;
 import br.com.cronicasdeeldoria.entity.item.Item;
 import br.com.cronicasdeeldoria.entity.item.ItemType;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Gerencia o inventário e sistema de equipamento do jogador.
@@ -20,18 +23,22 @@ public class InventoryManager {
     private int selectedRow = 0;
     private int selectedColumn = 0;
     private boolean inInventoryMode = true; // true = inventário, false = equipamento
+    private String playerClassName;
+    private Player player;
 
-    public InventoryManager() {
+  public InventoryManager(String playerClassName, Player player) {
         this.inventorySlots = new ArrayList<>();
-        this.equipment = new Equipment();
+        this.equipment = new Equipment(player);
+        this.playerClassName = playerClassName;
+        this.player = player;
 
-        // Inicializar slots vazios
+    // Inicializar slots vazios
         for (int i = 0; i < TOTAL_INVENTORY_SLOTS; i++) {
             inventorySlots.add(null);
         }
     }
 
-    /**
+  /**
      * Adiciona um item ao inventário.
      * @param item Item a ser adicionado.
      * @return true se o item foi adicionado com sucesso.
@@ -109,6 +116,21 @@ public class InventoryManager {
     }
 
     /**
+     * Verifica se o jogador pode equipar um item.
+     * @param item Item a ser verificado.
+     * @return true se o jogador pode equipar o item.
+     */
+    public boolean canPlayerEquipItem(Item item) {
+      if (item == null || !item.isEquipable()) {
+        return false;
+      }
+
+      // Verificar se o jogador tem a classe necessária
+      String playerClass = playerClassName;
+      return item.canBeEquippedBy(playerClass);
+    }
+
+    /**
      * Equipa o item selecionado.
      * @return true se o item foi equipado com sucesso.
      */
@@ -117,24 +139,46 @@ public class InventoryManager {
 
         Item selectedItem = getSelectedItem();
         if (selectedItem == null || !selectedItem.isEquipable()) {
-            return false;
+          return false;
+        }
+
+        // Verificar se o jogador pode equipar o item
+        if (!canPlayerEquipItem(selectedItem)) {
+          String playerClass = playerClassName;
+          String allowedClasses = selectedItem.getAllowedClass() != null ? String.join(", ", selectedItem.getAllowedClass()) : "nenhuma";
+          System.out.printf("Classe %s não pode equipar o item da classe %s%n", playerClass,allowedClasses );
+          return false;
         }
 
         // Determinar slot de equipamento baseado no tipo
         Equipment.EquipmentSlot slot = getEquipmentSlotForItem(selectedItem);
         if (slot == null) return false;
 
-        // Tentar equipar
+        // Tentar equipar - agora o Equipment já aplica os bônus automaticamente
         Item previousItem = equipment.equipItem(slot, selectedItem);
 
         // Se havia item equipado, adicionar de volta ao inventário
         if (previousItem != null) {
+            // Quando o item for desequipado, remove o bonus
             addItem(previousItem);
         }
 
         // Remover item do inventário
         int slotIndex = selectedRow * INVENTORY_COLUMNS + selectedColumn;
         removeItem(slotIndex);
+
+//        System.out.println("Atributos do jogador após equipar:");
+//        for (AttributeType type : AttributeType.values()) {
+//          System.out.println(type.name() + " = " + player.getEffectiveAttribute(type));
+//        }
+
+        // Debug: mostrar atributos atualizados
+        System.out.println("Atributos após equipar " + selectedItem.getName() + ":");
+        System.out.println("Força: " + player.getAttributeStrength());
+        System.out.println("Armadura: " + player.getAttributeArmor());
+        System.out.println("Vida Máxima: " + player.getAttributeMaxHealth());
+        System.out.println("Mana Máxima: " + player.getAttributeMaxMana());
+        //System.out.println("Speed: " + player.getAttrib());
 
         return true;
     }
@@ -346,12 +390,20 @@ public class InventoryManager {
         }
     }
 
-    /**
-     * Limpa todo o equipamento.
-     */
-    public void clearEquipment() {
-        for (int i = 0; i < equipment.getTotalSlots(); i++) {
-            equipment.unequipItem(Equipment.EquipmentSlot.fromIndex(i));
+  /**
+   * Limpa todo o equipamento e retorna os itens ao inventário.
+   */
+  public void clearEquipment() {
+    for (int i = 0; i < equipment.getTotalSlots(); i++) {
+      Equipment.EquipmentSlot slot = Equipment.EquipmentSlot.fromIndex(i);
+      Item equippedItem = equipment.getEquippedItem(slot);
+
+      if (equippedItem != null) {
+        // Tenta adicionar ao inventário
+        if (addItem(equippedItem)) {
+          equipment.unequipItem(slot);
         }
+      }
     }
+  }
 }

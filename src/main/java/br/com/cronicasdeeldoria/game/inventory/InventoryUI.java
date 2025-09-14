@@ -16,10 +16,10 @@ public class InventoryUI {
     private final Font itemFont;
     private final Font smallFont;
     private final ItemSpriteLoader spriteLoader;
-    
+
     // Cores do tema
     private final Color titleColor = Color.WHITE; // Título branco
-    
+
     // Dimensões
     private static final int SLOT_SIZE = 48;
     private static final int SLOT_SPACING = 4;
@@ -28,7 +28,7 @@ public class InventoryUI {
     private static final int EQUIPMENT_WIDTH = SLOT_SIZE;
     private static final int EQUIPMENT_HEIGHT = 4 * SLOT_SIZE + 3 * SLOT_SPACING;
     private static final int PADDING = 20;
-    
+
     public InventoryUI(GamePanel gamePanel) {
         this.gamePanel = gamePanel;
         this.titleFont = FontManager.getFont(20f);
@@ -36,7 +36,7 @@ public class InventoryUI {
         this.smallFont = FontManager.getFont(12f);
         this.spriteLoader = ItemSpriteLoader.getInstance();
     }
-    
+
     /**
      * Renderiza a interface completa do inventário com estilo da box de diálogo.
      * @param g2 Contexto gráfico.
@@ -44,78 +44,78 @@ public class InventoryUI {
      */
     public void draw(Graphics2D g2, InventoryManager inventoryManager) {
         if (!inventoryManager.isVisible()) return;
-        
+
         int screenWidth = gamePanel.getWidth();
         int screenHeight = gamePanel.getHeight();
-        
+
         // Overlay semi-transparente
         g2.setColor(new Color(0, 0, 0, 150));
         g2.fillRect(0, 0, screenWidth, screenHeight);
-        
+
         // Calcular posição central
         int totalWidth = INVENTORY_WIDTH + EQUIPMENT_WIDTH + PADDING * 3;
         int totalHeight = Math.max(INVENTORY_HEIGHT, EQUIPMENT_HEIGHT) + PADDING * 4;
         int borderRadius = 15;
-        
+
         int startX = (screenWidth - totalWidth) / 2;
         int startY = (screenHeight - totalHeight) / 2 - 80; // Mover 80px para cima
-        
+
         // Sombra da janela
         g2.setColor(new Color(0, 0, 0, 100));
         g2.fillRoundRect(startX + 4, startY + 4, totalWidth, totalHeight, borderRadius, borderRadius);
-        
+
         // Fundo principal da janela
         g2.setColor(new Color(50, 40, 60, 250));
         g2.fillRoundRect(startX, startY, totalWidth, totalHeight, borderRadius, borderRadius);
-        
+
         // Borda externa
         g2.setColor(new Color(100, 80, 120, 200));
         g2.setStroke(new java.awt.BasicStroke(3));
         g2.drawRoundRect(startX, startY, totalWidth, totalHeight, borderRadius, borderRadius);
-        
+
         // Desenhar título
         drawTitle(g2, startX, startY, totalWidth);
-        
+
         // Desenhar inventário
         int inventoryX = startX + PADDING;
         int inventoryY = startY + PADDING + 30;
         drawInventory(g2, inventoryManager, inventoryX, inventoryY);
-        
+
         // Desenhar equipamento
         int equipmentX = inventoryX + INVENTORY_WIDTH + PADDING;
         int equipmentY = inventoryY;
         drawEquipment(g2, inventoryManager, equipmentX, equipmentY);
-        
+
         // Desenhar informações do item selecionado
         drawItemInfo(g2, inventoryManager, startX, startY + totalHeight - 60, totalWidth);
-        
+
     }
-    
+
     /**
      * Desenha o título da interface
      */
     private void drawTitle(Graphics2D g2, int x, int y, int width) {
         g2.setFont(titleFont);
-        
+
         String title = "INVENTÁRIO";
         FontMetrics fm = g2.getFontMetrics();
         int titleX = x + (width - fm.stringWidth(title)) / 2;
         int titleY = y + 35;
-        
+
         // Sombra do título
         g2.setColor(new Color(0, 0, 0, 150));
         g2.drawString(title, titleX + 2, titleY + 2);
-        
+
         // Título principal
         g2.setColor(titleColor);
         g2.drawString(title, titleX, titleY);
-        
+
         // Linha decorativa abaixo do título
         g2.setColor(new Color(100, 80, 120, 200));
         g2.setStroke(new java.awt.BasicStroke(2));
         g2.drawLine(titleX, titleY + 5, titleX + fm.stringWidth(title), titleY + 5);
     }
-    
+
     /**
      * Desenha o grid do inventário.
      */
@@ -125,14 +125,14 @@ public class InventoryUI {
             for (int col = 0; col < inventoryManager.getInventoryColumns(); col++) {
                 int slotX = startX + col * (SLOT_SIZE + SLOT_SPACING);
                 int slotY = startY + row * (SLOT_SIZE + SLOT_SPACING);
-                
+
                 // Verificar se é o slot selecionado
-                boolean isSelected = inventoryManager.isInInventoryMode() && 
-                                   inventoryManager.getSelectedRow() == row && 
+                boolean isSelected = inventoryManager.isInInventoryMode() &&
+                                   inventoryManager.getSelectedRow() == row &&
                                    inventoryManager.getSelectedColumn() == col;
-                
+
                 drawSlot(g2, slotX, slotY, isSelected);
-                
+
                 // Desenhar item se houver
                 int slotIndex = row * inventoryManager.getInventoryColumns() + col;
                 Item item = inventoryManager.getItem(slotIndex);
@@ -142,24 +142,24 @@ public class InventoryUI {
             }
         }
     }
-    
+
     /**
      * Desenha o equipamento.
      */
     private void drawEquipment(Graphics2D g2, InventoryManager inventoryManager, int startX, int startY) {
         Equipment equipment = inventoryManager.getEquipment();
-        
+
         // Desenhar slots de equipamento
         for (int i = 0; i < equipment.getTotalSlots(); i++) {
             int slotX = startX;
             int slotY = startY + i * (SLOT_SIZE + SLOT_SPACING);
-            
+
             // Verificar se é o slot selecionado
-            boolean isSelected = !inventoryManager.isInInventoryMode() && 
+            boolean isSelected = !inventoryManager.isInInventoryMode() &&
                                equipment.getSelectedSlot() == i;
-            
+
             drawSlot(g2, slotX, slotY, isSelected);
-            
+
             // Desenhar item se houver
             Item item = equipment.getEquippedItem(i);
             if (item != null) {
@@ -167,17 +167,17 @@ public class InventoryUI {
             }
         }
     }
-    
+
     /**
      * Desenha um slot individual com estilo da box de diálogo.
      */
     private void drawSlot(Graphics2D g2, int x, int y, boolean isSelected) {
         int slotBorderRadius = 8;
-        
+
         // Sombra do slot
         g2.setColor(new Color(0, 0, 0, 100));
         g2.fillRoundRect(x + 1, y + 1, SLOT_SIZE, SLOT_SIZE, slotBorderRadius, slotBorderRadius);
-        
+
         // Fundo do slot
         if (isSelected) {
             g2.setColor(new Color(255, 215, 0, 50)); // Dourado com transparência
@@ -185,12 +185,12 @@ public class InventoryUI {
             g2.setColor(new Color(50, 50, 70, 150)); // Cinza escuro com transparência
         }
         g2.fillRoundRect(x, y, SLOT_SIZE, SLOT_SIZE, slotBorderRadius, slotBorderRadius);
-        
+
         // Borda do slot
         g2.setColor(new Color(150, 150, 150));
         g2.setStroke(new BasicStroke(1));
         g2.drawRoundRect(x, y, SLOT_SIZE, SLOT_SIZE, slotBorderRadius, slotBorderRadius);
-        
+
         // Destaque interno se selecionado
         if (isSelected) {
             g2.setColor(new Color(255, 255, 255, 120));
@@ -198,14 +198,14 @@ public class InventoryUI {
             g2.drawRoundRect(x + 1, y + 1, SLOT_SIZE - 2, SLOT_SIZE - 2, slotBorderRadius - 1, slotBorderRadius - 1);
         }
     }
-    
+
     /**
      * Desenha um item dentro de um slot.
      */
     private void drawItemInSlot(Graphics2D g2, Item item, int slotX, int slotY) {
         // Tentar carregar a imagem do item
         BufferedImage itemSprite = spriteLoader.getItemSprite(item.getItemId());
-        
+
         if (itemSprite != null) {
             // Desenhar a imagem do item
             g2.drawImage(itemSprite, slotX + 4, slotY + 4, SLOT_SIZE - 8, SLOT_SIZE - 8, null);
@@ -214,22 +214,22 @@ public class InventoryUI {
             Color itemColor = item.getRarity().getColor();
             g2.setColor(itemColor);
             g2.fillRect(slotX + 4, slotY + 4, SLOT_SIZE - 8, SLOT_SIZE - 8);
-            
+
             // Desenhar borda do item
             g2.setColor(Color.WHITE);
             g2.drawRect(slotX + 4, slotY + 4, SLOT_SIZE - 8, SLOT_SIZE - 8);
         }
-        
+
         // Desenhar borda da raridade
         g2.setColor(item.getRarity().getColor());
         g2.drawRect(slotX + 2, slotY + 2, SLOT_SIZE - 4, SLOT_SIZE - 4);
-        
+
         // Se for um item empilhável com quantidade > 1, mostrar número
         if (item.isStackable() && item.getStackSize() > 1) {
             // Fundo para o texto
             g2.setColor(new Color(0, 0, 0, 150));
             g2.fillRect(slotX + SLOT_SIZE - 16, slotY + SLOT_SIZE - 16, 14, 14);
-            
+
             // Texto da quantidade
             g2.setColor(Color.WHITE);
             g2.setFont(smallFont);
@@ -240,28 +240,28 @@ public class InventoryUI {
             g2.drawString(stackText, textX, textY);
         }
     }
-    
+
     /**
      * Desenha informações do item selecionado
      */
     private void drawItemInfo(Graphics2D g2, InventoryManager inventoryManager, int x, int y, int width) {
         Item selectedItem = inventoryManager.getSelectedItem();
         if (selectedItem == null) return;
-        
+
         // Desenhar box de informações do item (sempre aparece)
         drawItemInfoBox(g2, selectedItem, x, y + 150, width);
     }
-    
+
     /**
      * Desenha uma box completa de informações do item
      */
     private void drawItemInfoBox(Graphics2D g2, Item item, int x, int y, int width) {
-    
+
         // Calcular dimensões da box de informações
         int padding = 15;
         int borderRadius = 10;
         int boxWidth = width - 20;
-        
+
         // Calcular altura dinâmica baseada no conteúdo
         int baseHeight = 100; // Altura base para nome, raridade e valor
         int descriptionHeight = 0;
@@ -271,7 +271,7 @@ public class InventoryUI {
             StringBuilder currentLine = new StringBuilder();
             int maxWidth = boxWidth - (padding * 2);
             int lines = 1;
-            
+
             for (String word : words) {
                 String testLine = currentLine.length() == 0 ? word : currentLine + " " + word;
                 FontMetrics textFm = g2.getFontMetrics(smallFont);
@@ -284,47 +284,47 @@ public class InventoryUI {
             }
             descriptionHeight = lines * 12 + 20; // 12px por linha + padding
         }
-        
+
         int boxHeight = baseHeight + descriptionHeight;
-        
+
         int boxX = x + 10;
         int boxY = y - 70;
-        
+
         // Sombra da box de informações
         g2.setColor(new Color(0, 0, 0, 100));
         g2.fillRoundRect(boxX + 2, boxY + 2, boxWidth, boxHeight, borderRadius, borderRadius);
-        
+
         // Fundo da box de informações
         g2.setColor(new Color(50, 40, 60, 250)); // Mesmo estilo do pause overlay
         g2.fillRoundRect(boxX, boxY, boxWidth, boxHeight, borderRadius, borderRadius);
-        
+
         // Borda externa da box de informações
         g2.setColor(new Color(100, 80, 120, 200));
         g2.setStroke(new BasicStroke(3));
         g2.drawRoundRect(boxX, boxY, boxWidth, boxHeight, borderRadius, borderRadius);
-        
+
         // Título "INFORMAÇÕES DO ITEM"
         g2.setFont(smallFont);
         String titleText = "INFORMAÇÕES DO ITEM";
         FontMetrics fm = g2.getFontMetrics();
         int titleX = boxX + (boxWidth - fm.stringWidth(titleText)) / 2;
         int titleY = boxY + 15;
-        
+
         // Sombra do título
         g2.setColor(new Color(0, 0, 0, 150));
         g2.drawString(titleText, titleX + 2, titleY + 2);
-        
+
         // Título principal
         g2.setColor(Color.WHITE);
         g2.drawString(titleText, titleX, titleY);
-        
+
         // Linha decorativa abaixo do título
         g2.setColor(new Color(100, 80, 120, 200));
         g2.setStroke(new BasicStroke(2));
         g2.drawLine(titleX, titleY + 3, titleX + fm.stringWidth(titleText), titleY + 3);
-        
+
         int textY = titleY + 20;
-        
+
         // Nome do item
         g2.setFont(itemFont);
         String nameText = item.getName();
@@ -333,28 +333,47 @@ public class InventoryUI {
         g2.setColor(item.getRarity().getColor());
         g2.drawString(nameText, boxX + padding, textY);
         textY += 15;
-        
-        // Raridade
+
+        // Strength Bônus
         g2.setFont(smallFont);
-        String rarityText = "Raridade: " + item.getRarity().getDisplayName();
+        String strengthText = "Strength Bônus: " + item.getStrengthFromEquip();
+        //String rarityText = "Strength: +" + item.getRarity().getDisplayName();
         g2.setColor(new Color(0, 0, 0, 150));
-        g2.drawString(rarityText, boxX + padding + 2, textY + 2);
+        g2.drawString(strengthText, boxX + padding + 2, textY + 2);
         g2.setColor(Color.WHITE);
-        g2.drawString(rarityText, boxX + padding, textY);
+        g2.drawString(strengthText, boxX + padding, textY);
         textY += 15;
-        
-        // Valor
-        String valueText = "Valor: " + item.getValue();
+
+        // Armor Bônus
+        String armorText = "Armor Bônus: " + item.getArmorFromEquip();
         g2.setColor(new Color(0, 0, 0, 150));
-        g2.drawString(valueText, boxX + padding + 2, textY + 2);
+        g2.drawString(armorText, boxX + padding + 2, textY + 2);
         g2.setColor(Color.WHITE);
-        g2.drawString(valueText, boxX + padding, textY);
+        g2.drawString(armorText, boxX + padding, textY);
         textY += 15;
-        
+
+        // Health Bônus
+        g2.setFont(smallFont);
+        String healthText = "Health Bônus: " + item.getHealthFromEquip();
+        //String rarityText = "Strength: +" + item.getRarity().getDisplayName();
+        g2.setColor(new Color(0, 0, 30, 150));
+        g2.drawString(healthText, boxX + padding + 2, textY + 2);
+        g2.setColor(Color.WHITE);
+        g2.drawString(healthText, boxX + padding, textY);
+        textY += 15;
+
+        // Mana Bônus
+        String manaText = "Mana Bônus: " + item.getManaFromEquip();
+        g2.setColor(new Color(0, 0, 0, 150));
+        g2.drawString(manaText, boxX + padding, textY + 2);
+        g2.setColor(Color.WHITE);
+        g2.drawString(manaText, boxX + padding, textY);
+        textY += 15;
+
         // Descrição se houver
         if (item.getDescription() != null && !item.getDescription().isEmpty()) {
             textY += 5; // Espaçamento extra
-            
+
             // Título da descrição
             String descTitleText = "Descrição:";
             g2.setColor(new Color(0, 0, 0, 150));
@@ -362,13 +381,13 @@ public class InventoryUI {
             g2.setColor(Color.WHITE);
             g2.drawString(descTitleText, boxX + padding, textY);
             textY += 15;
-            
+
             // Texto da descrição
             String description = item.getDescription();
             String[] words = description.split(" ");
             StringBuilder currentLine = new StringBuilder();
             int maxWidth = boxWidth - (padding * 2);
-            
+
             for (String word : words) {
                 String testLine = currentLine.length() == 0 ? word : currentLine + " " + word;
                 FontMetrics textFm = g2.getFontMetrics();

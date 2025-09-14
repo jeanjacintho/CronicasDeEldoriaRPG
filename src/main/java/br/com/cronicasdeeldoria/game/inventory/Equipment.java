@@ -1,5 +1,6 @@
 package br.com.cronicasdeeldoria.game.inventory;
 
+import br.com.cronicasdeeldoria.entity.character.player.Player;
 import br.com.cronicasdeeldoria.entity.item.Item;
 import br.com.cronicasdeeldoria.entity.item.ItemType;
 
@@ -12,21 +13,21 @@ public class Equipment {
         LEFTHAND(1, "Mão Esquerda", ItemType.LEFTHAND),
         ARMOR(2, "Armadura", ItemType.ARMOR),
         BOOT(3, "Bota", ItemType.BOOT);
-        
+
         private final int index;
         private final String displayName;
         private final ItemType requiredType;
-        
+
         EquipmentSlot(int index, String displayName, ItemType requiredType) {
             this.index = index;
             this.displayName = displayName;
             this.requiredType = requiredType;
         }
-        
+
         public int getIndex() { return index; }
         public String getDisplayName() { return displayName; }
         public ItemType getRequiredType() { return requiredType; }
-        
+
         public static EquipmentSlot fromIndex(int index) {
             for (EquipmentSlot slot : values()) {
                 if (slot.index == index) {
@@ -36,15 +37,17 @@ public class Equipment {
             return null;
         }
     }
-    
+
     private static final int TOTAL_SLOTS = 4;
     private final Item[] equippedItems;
     private int selectedSlot = 0;
-    
-    public Equipment() {
+    private Player player;
+
+    public Equipment(Player player) {
         this.equippedItems = new Item[TOTAL_SLOTS];
+        this.player = player;
     }
-    
+
     /**
      * Equipa um item no slot apropriado.
      * @param slot Slot de equipamento.
@@ -53,27 +56,32 @@ public class Equipment {
      */
     public Item equipItem(EquipmentSlot slot, Item item) {
         if (slot == null || item == null) return null;
-        
+
         // Verificar se o item é compatível com o slot
         // Anéis podem ser equipados no slot LEFTHAND
         boolean isCompatible = item.getItemType().equals(slot.getRequiredType()) ||
                               (slot == EquipmentSlot.LEFTHAND);
-        
+
         if (!isCompatible) {
             return null;
         }
-        
+
         // Verificar se o item é equipável
         if (!item.isEquipable()) {
             return null;
         }
-        
+
+        // Remove o item anterior e seus bonus
         Item previousItem = equippedItems[slot.getIndex()];
         equippedItems[slot.getIndex()] = item;
-        
+        if (previousItem != null) removeItemBonuses(previousItem);
+
+        // Aplica os bônus do item
+        applyItemBonuses(item);
+
         return previousItem;
     }
-    
+
     /**
      * Remove um item do slot de equipamento.
      * @param slot Slot de equipamento.
@@ -81,12 +89,14 @@ public class Equipment {
      */
     public Item unequipItem(EquipmentSlot slot) {
         if (slot == null) return null;
-        
+
         Item item = equippedItems[slot.getIndex()];
         equippedItems[slot.getIndex()] = null;
+
+        removeItemBonuses(item);
         return item;
     }
-    
+
     /**
      * Obtém o item equipado em um slot específico.
      * @param slot Slot de equipamento.
@@ -96,7 +106,7 @@ public class Equipment {
         if (slot == null) return null;
         return equippedItems[slot.getIndex()];
     }
-    
+
     /**
      * Obtém o item equipado por índice.
      * @param index Índice do slot (0-3).
@@ -106,7 +116,39 @@ public class Equipment {
         if (index < 0 || index >= TOTAL_SLOTS) return null;
         return equippedItems[index];
     }
-    
+
+    /**
+     * Aplica os bônus de um item aos atributos do personagem.
+     */
+    private void applyItemBonuses(Item item) {
+      player.setAttributeStrength(player.getAttributeStrength() + item.getStrengthFromEquip());
+      player.setAttributeArmor(player.getAttributeArmor() + item.getArmorFromEquip());
+      player.setAttributeMaxHealth(player.getAttributeMaxHealth() + item.getHealthFromEquip());
+      player.setAttributeMaxMana(player.getAttributeMaxMana() + item.getManaFromEquip());
+
+      // Atualiza a saúde/mana atual se necessário
+      if (item.getHealthFromEquip() > 0) {
+        player.setAttributeHealth(player.getAttributeHealth() + item.getHealthFromEquip());
+      }
+      if (item.getManaFromEquip() > 0) {
+        player.setAttributeMana(player.getAttributeMana() + item.getManaFromEquip());
+      }
+    }
+
+    /**
+    * Aplica os bônus de um item aos atributos do personagem.
+    */
+    private void removeItemBonuses(Item item) {
+      player.setAttributeStrength(player.getAttributeStrength() - item.getStrengthFromEquip());
+      player.setAttributeArmor(player.getAttributeArmor() - item.getArmorFromEquip());
+      player.setAttributeMaxHealth(player.getAttributeMaxHealth() - item.getHealthFromEquip());
+      player.setAttributeMaxMana(player.getAttributeMaxMana() - item.getManaFromEquip());
+
+      // Ajusta a saúde/mana atual se necessário (não pode ficar abaixo do máximo)
+      player.setAttributeHealth(Math.min(player.getAttributeHealth(), player.getAttributeMaxHealth()));
+      player.setAttributeMana(Math.min(player.getAttributeMana(), player.getAttributeMaxMana()));
+    }
+
     /**
      * Move o cursor para cima.
      */
@@ -115,7 +157,7 @@ public class Equipment {
             selectedSlot--;
         }
     }
-    
+
     /**
      * Move o cursor para baixo.
      */
@@ -124,7 +166,7 @@ public class Equipment {
             selectedSlot++;
         }
     }
-    
+
     /**
      * Obtém o slot selecionado.
      * @return Índice do slot selecionado.
@@ -132,7 +174,7 @@ public class Equipment {
     public int getSelectedSlot() {
         return selectedSlot;
     }
-    
+
     /**
      * Define o slot selecionado.
      * @param slot Índice do slot (0-3).
@@ -142,7 +184,7 @@ public class Equipment {
             selectedSlot = slot;
         }
     }
-    
+
     /**
      * Obtém o item no slot selecionado.
      * @return Item no slot selecionado.
@@ -150,7 +192,7 @@ public class Equipment {
     public Item getSelectedItem() {
         return getEquippedItem(selectedSlot);
     }
-    
+
     /**
      * Obtém o slot de equipamento selecionado.
      * @return EquipmentSlot selecionado.
@@ -158,7 +200,7 @@ public class Equipment {
     public EquipmentSlot getSelectedEquipmentSlot() {
         return EquipmentSlot.fromIndex(selectedSlot);
     }
-    
+
     /**
      * Obtém o número total de slots.
      * @return Total de slots de equipamento.
@@ -166,7 +208,7 @@ public class Equipment {
     public int getTotalSlots() {
         return TOTAL_SLOTS;
     }
-    
+
     /**
      * Verifica se um slot está vazio.
      * @param slot Slot de equipamento.
@@ -175,7 +217,7 @@ public class Equipment {
     public boolean isSlotEmpty(EquipmentSlot slot) {
         return getEquippedItem(slot) == null;
     }
-    
+
     /**
      * Verifica se um slot está vazio por índice.
      * @param index Índice do slot.
@@ -184,7 +226,7 @@ public class Equipment {
     public boolean isSlotEmpty(int index) {
         return getEquippedItem(index) == null;
     }
-    
+
     /**
      * Conta quantos slots estão ocupados.
      * @return Número de slots ocupados.
@@ -196,7 +238,7 @@ public class Equipment {
         }
         return count;
     }
-    
+
     /**
      * Obtém todos os itens equipados.
      * @return Array com todos os itens equipados.
@@ -204,7 +246,7 @@ public class Equipment {
     public Item[] getAllEquippedItems() {
         return equippedItems.clone();
     }
-    
+
     /**
      * Verifica se há algum item equipado.
      * @return true se pelo menos um item está equipado.

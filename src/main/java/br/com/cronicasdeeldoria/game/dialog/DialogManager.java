@@ -8,6 +8,9 @@ import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.io.IOException;
 
+import br.com.cronicasdeeldoria.entity.character.AttributeType;
+import br.com.cronicasdeeldoria.entity.item.ItemType;
+import br.com.cronicasdeeldoria.entity.item.QuestItem;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -264,12 +267,16 @@ public class DialogManager {
 
             // Usar o InventoryManager para adicionar o item
             if (gamePanel.getInventoryManager() != null) {
-                boolean success = gamePanel.getInventoryManager().addItem(item);
-                if (success) {
-                    gamePanel.getGameUI().addMessage("Você recebeu " + quantity + "x " + item.getName() + "!", null, 3500L);
-                } else {
-                    gamePanel.getGameUI().addMessage("Inventário cheio! Não foi possível receber o item.", null, 3500L);
-                }
+              // Se o item coletado for uma Orb, chama a quest
+              if (item instanceof QuestItem) {
+                ((QuestItem) item).onCollect();
+              }
+              boolean success = gamePanel.getInventoryManager().addItem(item);
+              if (success) {
+                gamePanel.getGameUI().addMessage("Você recebeu " + quantity + "x " + item.getName() + "!", null, 3500L);
+              } else {
+                gamePanel.getGameUI().addMessage("Inventário cheio! Não foi possível receber o item.", null, 3500L);
+              }
             } else {
                 System.err.println("InventoryManager não disponível para dar item: " + itemId);
             }
@@ -483,10 +490,10 @@ public class DialogManager {
         QuestManager questManager = QuestManager.getInstance();
         if (questManager != null) {
             questManager.startQuest(questId);
-            
+
             if (gamePanel != null && gamePanel.getGameUI() != null) {
                 gamePanel.getGameUI().addMessage(
-                    "Nova quest iniciada: " + questManager.getQuest(questId).getTitle(), 
+                    "Nova quest iniciada: " + questManager.getQuest(questId).getTitle(),
                     null, 4000L);
             }
         }

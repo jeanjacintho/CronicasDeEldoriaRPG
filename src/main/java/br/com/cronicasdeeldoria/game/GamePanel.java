@@ -9,6 +9,7 @@ import java.awt.BasicStroke;
 
 import javax.swing.JPanel;
 
+import br.com.cronicasdeeldoria.entity.character.Character;
 import br.com.cronicasdeeldoria.entity.character.npc.*;
 
 import br.com.cronicasdeeldoria.entity.character.player.Player;
@@ -28,6 +29,7 @@ import br.com.cronicasdeeldoria.tile.TileManager.MapTile;
 import br.com.cronicasdeeldoria.config.CharacterConfigLoader;
 import java.util.List;
 import java.util.ArrayList;
+import br.com.cronicasdeeldoria.entity.character.Character;
 
 import br.com.cronicasdeeldoria.entity.Entity;
 import br.com.cronicasdeeldoria.game.inventory.InventoryManager;
@@ -70,6 +72,7 @@ public class GamePanel extends JPanel implements Runnable{
   private DialogUI dialogUI;
   private TeleportManager teleportManager;
   private QuestManager questManager;
+  private String playerClassName;
 
   // Estados do jogo
   public int gameState;
@@ -92,7 +95,7 @@ public class GamePanel extends JPanel implements Runnable{
    * @param screenWidth Largura da tela.
    * @param screenHeight Altura da tela.
    * @param playerName Nome do jogador.
-   * @param characterClass Raça do jogador.
+   * @param characterClass Classe do jogador.
    * @param tileSize Tamanho do tile.
    * @param maxScreenRow Máximo de linhas na tela.
    * @param maxScreenCol Máximo de colunas na tela.
@@ -106,6 +109,7 @@ public class GamePanel extends JPanel implements Runnable{
     this.setDoubleBuffered(true);
     this.addKeyListener(keyHandler);
     this.setFocusable(true);
+    this.playerClassName = characterClass.getCharacterClassName();
 
     this.battle = new Battle(this);
     gameState = playState;
@@ -117,8 +121,6 @@ public class GamePanel extends JPanel implements Runnable{
     this.tileManager = new TileManager(this);
     this.maxWorldCol = tileManager.getMapWidth();
     this.maxWorldRow = tileManager.getMapHeight();
-
-    initializeGameComponents();
 
     int x = (maxWorldCol * tileSize) / 2 - (playerSize / 2);
     int y = (maxWorldRow * tileSize) / 2 - (playerSize / 2);
@@ -165,6 +167,7 @@ public class GamePanel extends JPanel implements Runnable{
 
     player = new Player(this, keyHandler, characterClassInstance, x, y, speed, direction, playerName, health, maxHealth, mana, maxMana, strength, agility, luck, armor);
 
+    initializeGameComponents(player);
     // Inicializar sistema de comerciante após a criação do player
     this.merchantManager = new MerchantManager(inventoryManager, player.getPlayerMoney());
     this.merchantUI = new MerchantUI(this);
@@ -354,6 +357,18 @@ public class GamePanel extends JPanel implements Runnable{
       } else if (battleMonster instanceof OrcMonster) {
         xpReward = ((OrcMonster) battleMonster).getXpReward();
         lootTable = new OrcLootTable();
+      } else if (battleMonster instanceof FrostbornBossMonster) {
+        xpReward = ((FrostbornBossMonster) battleMonster).getXpReward();
+        lootTable = new FrostbornBossLootTable();
+      } else if (battleMonster instanceof OrcBossMonster) {
+        xpReward = ((OrcBossMonster) battleMonster).getXpReward();
+        lootTable = new OrcBossLootTable();
+      } else if (battleMonster instanceof SkeletonBossMonster) {
+        xpReward = ((SkeletonBossMonster) battleMonster).getXpReward();
+        lootTable = new SkeletonBossLootTable();
+      } else if (battleMonster instanceof WolfBossMonster) {
+        xpReward = ((WolfBossMonster) battleMonster).getXpReward();
+        lootTable = new WolfBossLootTable();
       }
       player.gainXp(xpReward);
 
@@ -405,7 +420,9 @@ public class GamePanel extends JPanel implements Runnable{
           for (Npc npc : npcs) {
             // Verificar se é um monstro (usar distância de 5 tiles)
             if (npc instanceof WolfMonster || npc instanceof SkeletonMonster ||
-                npc instanceof FrostbornMonster || npc instanceof OrcMonster) {
+                npc instanceof FrostbornMonster || npc instanceof OrcMonster ||
+                npc instanceof FrostbornBossMonster || npc instanceof OrcBossMonster ||
+                npc instanceof SkeletonBossMonster || npc instanceof WolfBossMonster) {
                 if (isPlayerNearMonster(player, npc.getWorldX(), npc.getWorldY()) && npc.isInteractive()) {
 
                     // Verificar auto-interação
@@ -1114,7 +1131,7 @@ public class GamePanel extends JPanel implements Runnable{
     if (questManager != null) {
       // Verificar progresso das quests
       questManager.updateQuestProgress();
-      
+
       // Verificar se boss foi derrotado
       if (questManager.isBossSpawned()) {
         checkBossDefeat();
@@ -1128,7 +1145,7 @@ public class GamePanel extends JPanel implements Runnable{
   private void checkBossDefeat() {
     if (npcs != null) {
       for (Npc npc : npcs) {
-        if (npc instanceof SupremeMage && 
+        if (npc instanceof SupremeMage &&
             npc.getAttributeHealth() <= 0) {
           questManager.onBossDefeated();
           break;
@@ -1224,12 +1241,12 @@ public class GamePanel extends JPanel implements Runnable{
       /**
    * Inicializa componentes do jogo (NPCs e objetos).
    */
-  private void initializeGameComponents() {
+  private void initializeGameComponents(Player player) {
     // Inicializar GameUI
     this.gameUI = new GameUI(this);
 
     // Inicializar InventoryManager
-    this.inventoryManager = new InventoryManager();
+    this.inventoryManager = new InventoryManager(this.playerClassName, player);
 
     // Inicializar sistema de interação
     initializeInteractionSystem();
@@ -1543,7 +1560,7 @@ public class GamePanel extends JPanel implements Runnable{
         List<TileManager.MapTile> objectTiles = tileManager.getObjectTiles();
         this.objectManager = new ObjectManager(this, objectSpriteLoader, objectTiles);
       }
-      
+
       // Notificar QuestManager sobre mudança de mapa
       if (questManager != null) {
         questManager.onPlayerEnterMap(mapName);

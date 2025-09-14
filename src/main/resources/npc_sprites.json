@@ -37,5 +37,17 @@
     "up": ["monster/orc/orc_back.png", "monster/orc/orc_back_walk1.png", "monster/orc/orc_back_walk2.png"],
     "left": ["monster/orc/orc_left.png", "monster/orc/orc_left_walk1.png", "monster/orc/orc_left_walk2.png"],
     "right": ["monster/orc/orc_right.png", "monster/orc/orc_right_walk1.png", "monster/orc/orc_right_walk2.png"]
+  },
+  "wolfboss": {
+    "down": ["monster/miniBosses/frostbornBoss_front.png"]
+  },
+  "frostbornboss": {
+    "down": ["monster/miniBosses/wolfBoss_front.png"]
+  },
+  "skeletonboss": {
+    "down": ["monster/miniBosses/skeletonBoss_front.png"]
+  },
+  "orcboss": {
+    "down": ["monster/miniBosses/orcBoss_front.png"]
   }
 }

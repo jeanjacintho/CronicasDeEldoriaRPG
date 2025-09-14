@@ -101,4 +101,5 @@ public class Entity {
   public BufferedImage getDown() { return down; }
 
   public void setDown(BufferedImage down) { this.down = down; }
+
 }

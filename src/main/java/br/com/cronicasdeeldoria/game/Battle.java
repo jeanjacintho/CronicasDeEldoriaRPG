@@ -1,5 +1,6 @@
 package br.com.cronicasdeeldoria.game;
 
+import br.com.cronicasdeeldoria.entity.character.AttributeType;
 import br.com.cronicasdeeldoria.entity.character.Character;
 import br.com.cronicasdeeldoria.entity.character.classes.Barbarian;
 import br.com.cronicasdeeldoria.entity.character.classes.Paladin;
