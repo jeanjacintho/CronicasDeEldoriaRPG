@@ -34,7 +34,7 @@ public class Npc extends Character {
      * @param autoInteraction Indica se a interação é automática.
      */
     public Npc(String name, boolean isStatic, String dialog, int x, int y, String skin, int playerSize, boolean interactive, boolean autoInteraction) {
-        super(x, y, 1, "down", name, null, 50, 50, 0, 0, 12, 10, 6);
+        super(x, y, 1, "down", name, null, 35, 35, 0, 0, 12, 10, 7);
         this.isStatic = isStatic;
         this.dialog = dialog;
         this.skin = skin;

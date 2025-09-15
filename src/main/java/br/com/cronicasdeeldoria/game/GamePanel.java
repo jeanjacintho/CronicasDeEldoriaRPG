@@ -183,11 +183,11 @@ public class GamePanel extends JPanel implements Runnable{
     // Inicializar sistema de quests
     this.questManager = QuestManager.getInstance();
     this.questManager.initialize(this);
-    
+
     // Inicializar sistema de áudio
     this.audioManager = AudioManager.getInstance();
     this.currentMapName = "houses/player_house"; // Mapa inicial padrão
-    
+
     // Configurar contexto inicial de áudio
     AudioContext initialContext = AudioContext.fromMapName(currentMapName);
     audioManager.changeContext(initialContext);
@@ -344,7 +344,7 @@ public class GamePanel extends JPanel implements Runnable{
 
       // Mudar para estado de batalha
       gameState = battleState;
-      
+
       // Atualizar contexto de áudio para batalha
       updateAudioContextForBattle(monster);
 
@@ -353,7 +353,7 @@ public class GamePanel extends JPanel implements Runnable{
       System.out.println("Cannot start battle: target is not a monster");
     }
   }
-  
+
   /**
    * Atualiza o contexto de áudio baseado no tipo de inimigo na batalha.
    */
@@ -361,7 +361,7 @@ public class GamePanel extends JPanel implements Runnable{
     if (audioManager != null) {
       AudioContext battleContext = AudioContext.fromNpcName(monster.getName());
       audioManager.changeContext(battleContext);
-      
+
       // Reproduzir efeito sonoro de início de batalha
       audioManager.playSoundEffect("battle_start");
     }
@@ -373,6 +373,9 @@ public class GamePanel extends JPanel implements Runnable{
 
       LootTable lootTable = null;
       int xpReward = 0;
+
+      String charClass = getPlayer().getCharacterClass().getCharacterClassName();
+      System.out.println("------------------Char Class----------------------" + charClass);
 
       if (battleMonster instanceof WolfMonster ) {
         xpReward = ((WolfMonster) battleMonster).getXpReward();
@@ -388,16 +391,16 @@ public class GamePanel extends JPanel implements Runnable{
         lootTable = new OrcLootTable();
       } else if (battleMonster instanceof FrostbornBossMonster) {
         xpReward = ((FrostbornBossMonster) battleMonster).getXpReward();
-        lootTable = new FrostbornBossLootTable();
+        lootTable = new FrostbornBossLootTable(charClass);
       } else if (battleMonster instanceof OrcBossMonster) {
         xpReward = ((OrcBossMonster) battleMonster).getXpReward();
-        lootTable = new OrcBossLootTable();
+        lootTable = new OrcBossLootTable(charClass);
       } else if (battleMonster instanceof SkeletonBossMonster) {
         xpReward = ((SkeletonBossMonster) battleMonster).getXpReward();
-        lootTable = new SkeletonBossLootTable();
+        lootTable = new SkeletonBossLootTable(charClass);
       } else if (battleMonster instanceof WolfBossMonster) {
         xpReward = ((WolfBossMonster) battleMonster).getXpReward();
-        lootTable = new WolfBossLootTable();
+        lootTable = new WolfBossLootTable(charClass);
       }
       player.gainXp(xpReward);
 
@@ -443,7 +446,7 @@ public class GamePanel extends JPanel implements Runnable{
     battleMonster = null;
     lastBattleEndTime = System.currentTimeMillis();
   }
-  
+
   /**
    * Restaura o contexto de áudio do mapa após o fim da batalha.
    */
@@ -451,12 +454,12 @@ public class GamePanel extends JPanel implements Runnable{
     if (audioManager != null && currentMapName != null) {
       AudioContext mapContext = AudioContext.fromMapName(currentMapName);
       audioManager.changeContext(mapContext);
-      
+
       // Reproduzir efeito sonoro de fim de batalha
       audioManager.playSoundEffect("battle_end");
     }
   }
-  
+
   /**
    * Obtém o gerenciador de áudio.
    * @return AudioManager
@@ -464,7 +467,7 @@ public class GamePanel extends JPanel implements Runnable{
   public AudioManager getAudioManager() {
     return audioManager;
   }
-  
+
   /**
    * Reproduz efeito sonoro de interação com objeto.
    */
@@ -489,7 +492,7 @@ public class GamePanel extends JPanel implements Runnable{
       }
     }
   }
-  
+
   /**
    * Reproduz efeito sonoro de progresso de quest.
    */
@@ -498,7 +501,7 @@ public class GamePanel extends JPanel implements Runnable{
       audioManager.playSoundEffect("quest_complete");
     }
   }
-  
+
   /**
    * Reproduz efeito sonoro de level up.
    */
@@ -507,30 +510,30 @@ public class GamePanel extends JPanel implements Runnable{
       audioManager.playSoundEffect("level_up");
     }
   }
-  
+
   /**
    * Método de teste para verificar o sistema de áudio.
    */
   public void testAudioSystem() {
     System.out.println("=== TESTING AUDIO SYSTEM ===");
-    
+
     if (audioManager == null) {
       System.out.println("ERROR: AudioManager is null!");
       return;
     }
-    
+
     System.out.println("AudioManager instance: " + audioManager);
     System.out.println("Current context: " + audioManager.getCurrentContext());
     System.out.println("Music enabled: " + audioManager.isMusicEnabled());
     System.out.println("Muted: " + audioManager.isMuted());
     System.out.println("Master volume: " + audioManager.getMasterVolume());
     System.out.println("Music volume: " + audioManager.getMusicVolume());
-    
+
     // Testar mudança para floresta
     System.out.println("Testing forest context...");
     AudioContext forestContext = AudioContext.FOREST;
     audioManager.changeContext(forestContext);
-    
+
     System.out.println("=== END TESTING AUDIO SYSTEM ===");
   }
 
@@ -1795,16 +1798,16 @@ public class GamePanel extends JPanel implements Runnable{
       if (questManager != null) {
         questManager.onPlayerEnterMap(mapName);
       }
-      
+
       // Atualizar contexto de áudio baseado no novo mapa
       updateAudioContextForMap(mapName);
-      
+
     } catch (Exception e) {
       System.err.println("Erro ao carregar mapa: " + e.getMessage());
       e.printStackTrace();
     }
   }
-  
+
   /**
    * Atualiza o contexto de áudio baseado no mapa atual.
    */
@@ -1812,19 +1815,19 @@ public class GamePanel extends JPanel implements Runnable{
     System.out.println("=== AUDIO DEBUG ===");
     System.out.println("Current map name: " + mapName);
     System.out.println("Previous map name: " + currentMapName);
-    
+
     if (audioManager != null && !mapName.equals(currentMapName)) {
       currentMapName = mapName;
       AudioContext newContext = AudioContext.fromMapName(mapName);
-      
+
       System.out.println("New audio context: " + newContext);
       System.out.println("Context display name: " + newContext.getDisplayName());
-      
+
       audioManager.changeContext(newContext);
-      
+
       // Reproduzir efeito sonoro de mudança de mapa
       audioManager.playSoundEffect("teleport");
-      
+
       System.out.println("Audio context changed successfully");
     } else if (audioManager == null) {
       System.out.println("ERROR: AudioManager is null!");

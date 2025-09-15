@@ -1,7 +1,7 @@
 package br.com.cronicasdeeldoria.entity.character.npc;
 
 public class SkeletonMonster extends Npc {
-  private int xpReward = 30;
+  private int xpReward = 35;
 
   /**
    * Cria um novo SkeletonMonster.

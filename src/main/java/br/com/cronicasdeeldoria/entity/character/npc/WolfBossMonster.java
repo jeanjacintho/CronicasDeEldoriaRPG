@@ -1,7 +1,7 @@
 package br.com.cronicasdeeldoria.entity.character.npc;
 
 public class WolfBossMonster extends Npc {
-  private int xpReward = 250;
+  private int xpReward = 100;
   /**
    * Cria um novo WolfBossMonster.
    * @param name Nome do Monster.
@@ -18,9 +18,9 @@ public class WolfBossMonster extends Npc {
     super(name, isStatic, dialog, x, y, skin, playerSize, interactive, autoInteraction);
     setAttributeHealth(150);
     setAttributeMaxHealth(150);
-    setAttributeStrength(30);
-    setAttributeDefence(20);
-    setAttributeAgility(15);
+    setAttributeStrength(50);
+    setAttributeDefence(35);
+    setAttributeAgility(20);
   }
 
   public int getXpReward() { return xpReward; }

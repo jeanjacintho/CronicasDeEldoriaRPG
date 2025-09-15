@@ -156,6 +156,9 @@ public class Battle {
 
     if (monster.getAttributeHealth() <= 0) {
       countTurn = 0;
+      for (Character c : turnOrder) {
+        c.updateBuffs();
+      }
       gp.endBattle(true);
       return true;
     }
