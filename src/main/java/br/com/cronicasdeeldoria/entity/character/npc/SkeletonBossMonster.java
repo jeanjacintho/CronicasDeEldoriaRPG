@@ -16,8 +16,8 @@ public class SkeletonBossMonster extends Npc {
    */
   public SkeletonBossMonster(String name, boolean isStatic, String dialog, int x, int y, String skin, int playerSize, boolean interactive, boolean autoInteraction) {
     super(name, isStatic, dialog, x, y, skin, playerSize, interactive, autoInteraction);
-    setAttributeHealth(250);
-    setAttributeMaxHealth(250);
+    setAttributeHealth(300);
+    setAttributeMaxHealth(300);
     setAttributeStrength(60);
     setAttributeDefence(50);
     setAttributeAgility(25);

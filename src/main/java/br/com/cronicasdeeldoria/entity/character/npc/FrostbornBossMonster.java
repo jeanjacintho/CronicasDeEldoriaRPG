@@ -16,8 +16,8 @@ public class FrostbornBossMonster extends Npc {
    */
   public FrostbornBossMonster(String name, boolean isStatic, String dialog, int x, int y, String skin, int playerSize, boolean interactive, boolean autoInteraction) {
     super(name, isStatic, dialog, x, y, skin, playerSize, interactive, autoInteraction);
-    setAttributeHealth(150);
-    setAttributeMaxHealth(150);
+    setAttributeHealth(200);
+    setAttributeMaxHealth(200);
     setAttributeStrength(55);
     setAttributeDefence(45);
     setAttributeAgility(25);

@@ -59,47 +59,37 @@ class WolfLootTable extends LootTable {
 
 class SkeletonLootTable extends LootTable {
   public SkeletonLootTable() {
-    addLoot("health_potion", 0.6);
-    addLoot("mana_potion", 0.4);
-    addLoot("shield_common", 0.05);
-    addLoot("sword_common", 0.05);
-    addLoot("hammer_common", 0.05);
-    addLoot("bow_common", 0.05);
-    addLoot("axe_common", 0.05);
-    addLoot("armor_common", 0.05);
-    addLoot("ring_common", 0.05);
-    addLoot("key_common", 0.01);
-    addLoot("boot_speed", 0.01);
-
-    addLoot("sword_rare", 0.01);
-    addLoot("hammer_rare", 0.01);
-    addLoot("bow_rare", 0.01);
-    addLoot("axe_rare", 0.01);
-    addLoot("armor_rare", 0.01);
-    addLoot("ring_rare", 0.01);
+    addLoot("health_potion", 0.1);
+    addLoot("mana_potion", 0.8);
+    addLoot("sword_legendary", 0.05);
+    addLoot("hammer_legendary", 0.05);
+    addLoot("bow_legendary", 0.1);
+    addLoot("axe_legendary", 0.05);
+    addLoot("armor_legendary", 0.05);
+    addLoot("ring_legendary", 0.1);
   }
 }
 
 class FrostbornLootTable extends LootTable {
   public FrostbornLootTable() {
-    addLoot("health_potion", 0.6);
-    addLoot("mana_potion", 0.4);
-    addLoot("shield_common", 0.05);
-    addLoot("sword_common", 0.05);
-    addLoot("hammer_common", 0.05);
-    addLoot("bow_common", 0.05);
-    addLoot("axe_common", 0.05);
-    addLoot("armor_common", 0.05);
-    addLoot("ring_common", 0.05);
-    addLoot("key_common", 0.01);
-    addLoot("boot_speed", 0.01);
+    addLoot("health_potion", 0.8);
+    addLoot("mana_potion", 0.6);
+    addLoot("shield_rare", 0.05);
+    addLoot("sword_rare", 0.05);
+    addLoot("hammer_rare", 0.05);
+    addLoot("bow_rare", 0.05);
+    addLoot("axe_rare", 0.05);
+    addLoot("armor_rare", 0.05);
+    addLoot("ring_rae", 0.05);
+    //addLoot("key_common", 0.01);
+    //addLoot("boot_speed", 0.01);
 
-    addLoot("sword_rare", 0.01);
-    addLoot("hammer_rare", 0.01);
-    addLoot("bow_rare", 0.01);
-    addLoot("axe_rare", 0.01);
-    addLoot("armor_rare", 0.01);
-    addLoot("ring_rare", 0.01);
+    addLoot("sword_legendary", 0.01);
+    addLoot("hammer_legendary", 0.01);
+    addLoot("bow_legendary", 0.01);
+    addLoot("axe_legendary", 0.01);
+    addLoot("armor_legendary", 0.01);
+    addLoot("ring_legendary", 0.01);
   }
 }
 
@@ -210,10 +200,9 @@ class FrostbornBossLootTable extends LootTable {
     addLoot("axe_rare", 0.05);
     addLoot("armor_rare", 0.05);
     addLoot("ring_rare", 0.05);
-    //addLoot("key_common", 0.01);
     addLoot("boot_speed", 0.05);
 
-    addLoot("shield_legendary", 0.01);
+    addLoot("shield_legendary", 1);
     addLoot("sword_legendary", 0.01);
     addLoot("hammer_legendary", 0.01);
     addLoot("bow_legendary", 0.02);
