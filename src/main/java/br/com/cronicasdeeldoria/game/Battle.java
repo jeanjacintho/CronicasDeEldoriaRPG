@@ -194,7 +194,7 @@ public class Battle {
     if (attacker instanceof Player) {
       audioManager.playSoundEffect("player_attack");
     }
-    
+
     // Reproduzir som de bloqueio quando o jogador está defendendo e sendo atacado
     if (target instanceof Player && target.hasActiveBuff("ARMOR")) {
       audioManager.playSoundEffect("player_block");
@@ -207,7 +207,7 @@ public class Battle {
   }
 
   private void defend(Character character) {
-    int bonus = (int)(character.getAttributeArmor() * 1.3);
+    int bonus = (int)(character.getAttributeArmor() * 1.2);
 
     // 30% de buff por 2 turnos defendendo e 3 de cooldown
     Buff armorBuff = new Buff("ARMOR", bonus, 2 * 2, 2 * 2); //
@@ -218,7 +218,7 @@ public class Battle {
     if (character instanceof Player) {
       // Reproduzir som de tentativa de fuga sempre que o jogador tentar fugir
       audioManager.playSoundEffect("player_flee");
-      
+
       int fleeChance = 50; // 50% chance base
 
       if (Math.random() * 100 < fleeChance) {
@@ -246,8 +246,8 @@ public class Battle {
   private void healthPotion(Character character) {
     // Reproduzir som de cura quando poção de vida for consumida
     audioManager.playSoundEffect("potion_heal");
-    
-    int baseHeal = 45;
+
+    int baseHeal = 50;
     int variation = (int) (baseHeal * 0.4); // 40% de variação
     int finalHeal = baseHeal + (int)(Math.random() * variation * 2) - variation;
     int diffCurrentHpAndMaxHp = character.getAttributeMaxHealth() - character.getAttributeHealth();
@@ -268,8 +268,8 @@ public class Battle {
   private void manaPotion(Character character) {
     // Reproduzir som de cura quando poção de mana for consumida
     audioManager.playSoundEffect("potion_heal");
-    
-    int baseManaRecover = 30;
+
+    int baseManaRecover = 35;
     int variation = (int) (baseManaRecover * 0.3); // 30% de variação
     int finalManaRecover = baseManaRecover + (int)(Math.random() * variation * 2) - variation;
     int diffCurrentMpAndMaxMp = character.getAttributeMaxMana() - character.getAttributeMana();

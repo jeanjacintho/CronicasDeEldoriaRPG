@@ -234,6 +234,27 @@ public class GamePanel extends JPanel implements Runnable{
     gameThread = new Thread(this);
     gameThread.start();
     this.requestFocusInWindow(); // Garantir que o GamePanel tenha foco
+
+    // Ao iniciar o jogo da 3 poções ao player
+    dialogManager.giveItemToPlayer("health_potion", 3);
+    dialogManager.giveItemToPlayer("mana_potion", 2);
+
+    dialogManager.giveItemToPlayer("mana_potion", 5);
+    dialogManager.giveItemToPlayer("health_potion", 5);
+
+    //Itens para testar Dungeon3
+    dialogManager.giveItemToPlayer("ring_rare", 1);
+    dialogManager.giveItemToPlayer("shield_common", 1);
+    dialogManager.giveItemToPlayer("armor_rare", 1);
+    dialogManager.giveItemToPlayer("axe_rare", 1);
+    dialogManager.giveItemToPlayer("bow_rare", 1);
+
+    //Itens para testar Dungeon4
+    dialogManager.giveItemToPlayer("ring_legendary", 1);
+    dialogManager.giveItemToPlayer("shield_legendary", 1);
+    dialogManager.giveItemToPlayer("armor_legendary", 1);
+    dialogManager.giveItemToPlayer("axe_legendary", 1);
+    dialogManager.giveItemToPlayer("bow_legendary", 1);
   }
 
   @Override
@@ -377,7 +398,6 @@ public class GamePanel extends JPanel implements Runnable{
       int xpReward = 0;
 
       String charClass = getPlayer().getCharacterClass().getCharacterClassName();
-      System.out.println("------------------Char Class----------------------" + charClass);
 
       if (battleMonster instanceof WolfMonster ) {
         xpReward = ((WolfMonster) battleMonster).getXpReward();
@@ -428,11 +448,11 @@ public class GamePanel extends JPanel implements Runnable{
 
     // Limpar estado de batalha
     battle.endBattle();
-    
+
     if (playerWon) {
       // Entrar no estado de vitória
       gameState = victoryState;
-      
+
       // Reproduzir música de vitória
       if (audioManager != null) {
         audioManager.changeContext(AudioContext.VICTORY);
@@ -440,11 +460,11 @@ public class GamePanel extends JPanel implements Runnable{
     } else {
       // Voltar ao jogo normal em caso de derrota
       gameState = playState;
-      
+
       // Restaurar contexto de áudio do mapa após derrota
       restoreMapAudioContext();
     }
-    
+
     battleMonster = null;
     lastBattleEndTime = System.currentTimeMillis();
   }
@@ -560,16 +580,16 @@ public class GamePanel extends JPanel implements Runnable{
             System.out.println("Verificando " + npcs.size() + " NPCs para interação...");
             for (Npc npc : npcs) {
                 System.out.println("NPC: " + npc.getName() + " em (" + npc.getWorldX() + ", " + npc.getWorldY() + ") - Interativo: " + npc.isInteractive());
-                
+
                 // Verificar se é um monstro (usar distância de 5 tiles)
                 if (npc instanceof WolfMonster || npc instanceof SkeletonMonster ||
                     npc instanceof FrostbornMonster || npc instanceof OrcMonster ||
                     npc instanceof FrostbornBossMonster || npc instanceof OrcBossMonster ||
                     npc instanceof SkeletonBossMonster || npc instanceof WolfBossMonster) {
-                    
+
                     boolean isNearMonster = isPlayerNearMonster(player, npc.getWorldX(), npc.getWorldY());
                     System.out.println("  Monstro próximo: " + isNearMonster);
-                    
+
                     if (isNearMonster && npc.isInteractive()) {
                         // Verificar auto-interação
                         if (npc.isAutoInteraction()) {
@@ -585,7 +605,7 @@ public class GamePanel extends JPanel implements Runnable{
                     // NPCs normais (usar distância de 2 tiles)
                     boolean isNearNpc = isPlayerNearNpc(player, npc.getWorldX(), npc.getWorldY());
                     System.out.println("  NPC próximo: " + isNearNpc);
-                    
+
                     if (isNearNpc && npc.isInteractive()) {
                         // Verificar auto-interação
                         if (npc.isAutoInteraction()) {
@@ -608,7 +628,7 @@ public class GamePanel extends JPanel implements Runnable{
             System.out.println("Verificando objetos para interação...");
             for (MapObject obj : objectManager.getActiveObjects()) {
                 System.out.println("Objeto: " + obj.getObjectId() + " em (" + obj.getWorldX() + ", " + obj.getWorldY() + ") - Interativo: " + obj.isInteractive() + " - Ativo: " + obj.isActive());
-                
+
                 if (obj.isInteractive() && obj.isActive()) {
                     // Verificar auto-interação
                     if (obj.isAutoInteraction()) {
@@ -620,7 +640,7 @@ public class GamePanel extends JPanel implements Runnable{
                         // Para objetos sem auto-interação, verificar proximidade e mostrar tecla E
                         boolean isNearObject = isPlayerNearObject(player, obj.getWorldX(), obj.getWorldY());
                         System.out.println("  Objeto próximo: " + isNearObject);
-                        
+
                         if (isNearObject) {
                             System.out.println("  Adicionando ponto de interação para objeto!");
                             simpleInteractionManager.addInteractionPoint(obj.getWorldX(), obj.getWorldY(), "E", "object");
@@ -668,7 +688,7 @@ public class GamePanel extends JPanel implements Runnable{
         int maxDistance = tileSize * distanceInTiles;
 
         boolean isNear = distanceX <= maxDistance && distanceY <= maxDistance;
-        
+
         System.out.println("    Detecção proximidade: Jogador(" + playerCenterX + ", " + playerCenterY + ") -> Entidade(" + entityCenterX + ", " + entityCenterY + ")");
         System.out.println("    Distância: (" + distanceX + ", " + distanceY + ") / Máxima: " + maxDistance + " -> Próximo: " + isNear);
 
@@ -1247,7 +1267,7 @@ public class GamePanel extends JPanel implements Runnable{
     if (keyHandler.actionPressed) {
       gameState = playState;
       keyHandler.actionPressed = false;
-      
+
       // Restaurar contexto de áudio do mapa após vitória
       restoreMapAudioContext();
     }
@@ -1360,7 +1380,7 @@ public class GamePanel extends JPanel implements Runnable{
     public InteractionManager getInteractionManager() {
       return interactionManager;
     }
-    
+
     public SimpleInteractionManager getSimpleInteractionManager() {
       return simpleInteractionManager;
     }

@@ -17,6 +17,11 @@ public class FrostbornMonster extends Npc {
 
   public FrostbornMonster(String name, boolean isStatic, String dialog, int x, int y, String skin, int playerSize, boolean interactive, boolean autoInteraction) {
     super(name, isStatic, dialog, x, y, skin, playerSize, interactive, autoInteraction);
+    setAttributeHealth(150);
+    setAttributeMaxHealth(150);
+    setAttributeStrength(40);
+    setAttributeDefence(30);
+    setAttributeAgility(20);
   }
 
   public int getXpReward() { return xpReward; }
