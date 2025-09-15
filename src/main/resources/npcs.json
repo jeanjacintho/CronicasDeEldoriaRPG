@@ -102,28 +102,16 @@
     "skin": "skeletonboss"
   },
   {
-    "id": "merchant",
-    "name": "Comerciante",
+    "id": "smith",
+    "name": "Ferreiro",
     "isStatic": true,
     "interactive": true,
     "autoInteraction": false,
     "dialog": "Bem-vindo à minha loja!",
     "type": "merchant",
-    "skin": "guardiao",
+    "skin": "smith",
     "dialogId": 20,
     "itemProbabilities": [
-      {
-        "itemId": "health_potion",
-        "minQuantity": 1,
-        "maxQuantity": 5,
-        "probability": 0.8
-      },
-      {
-        "itemId": "mana_potion",
-        "minQuantity": 1,
-        "maxQuantity": 4,
-        "probability": 0.7
-      },
       {
         "itemId": "sword_common",
         "minQuantity": 1,
@@ -137,22 +125,142 @@
         "probability": 0.3
       },
       {
+        "itemId": "sword_rare",
+        "minQuantity": 1,
+        "maxQuantity": 1,
+        "probability": 0.2
+      },
+      {
+        "itemId": "sword_epic",
+        "minQuantity": 1,
+        "maxQuantity": 1,
+        "probability": 0.1
+      },
+      {
         "itemId": "bow_common",
         "minQuantity": 1,
         "maxQuantity": 2,
         "probability": 0.5
       },
       {
+        "itemId": "bow_uncommon",
+        "minQuantity": 1,
+        "maxQuantity": 1,
+        "probability": 0.2
+      },
+      {
+        "itemId": "bow_rare",
+        "minQuantity": 1,
+        "maxQuantity": 1,
+        "probability": 0.2
+      },
+      {
+        "itemId": "bow_epic",
+        "minQuantity": 1,
+        "maxQuantity": 1,
+        "probability": 0.1
+      },
+      {
+        "itemId": "ring_common",
+        "minQuantity": 1,
+        "maxQuantity": 1,
+        "probability": 0.2
+      },
+      {
+        "itemId": "ring_uncommon",
+        "minQuantity": 1,
+        "maxQuantity": 1,
+        "probability": 0.2
+      },
+      {
+        "itemId": "ring_rare",
+        "minQuantity": 1,
+        "maxQuantity": 1,
+        "probability": 0.1
+      },
+      {
+        "itemId": "ring_epic",
+        "minQuantity": 1,
+        "maxQuantity": 1,
+        "probability": 0.2
+      },
+      {
+        "itemId": "shield_common",
+        "minQuantity": 1,
+        "maxQuantity": 1,
+        "probability": 0.4
+      },
+      {
+        "itemId": "armor_common",
+        "minQuantity": 1,
+        "maxQuantity": 1,
+        "probability": 0.6
+      },
+      {
+        "itemId": "armor_uncommon",
+        "minQuantity": 1,
+        "maxQuantity": 1,
+        "probability": 0.3
+      },
+      {
+        "itemId": "armor_rare",
+        "minQuantity": 1,
+        "maxQuantity": 1,
+        "probability": 0.2
+      },
+      {
+        "itemId": "armor_epic",
+        "minQuantity": 1,
+        "maxQuantity": 1,
+        "probability": 0.1
+      },
+      {
+        "itemId": "hammer_common",
+        "minQuantity": 1,
+        "maxQuantity": 1,
+        "probability": 0.4
+      },
+      {
+        "itemId": "hammer_rare",
+        "minQuantity": 1,
+        "maxQuantity": 1,
+        "probability": 0.2
+      },
+      {
+        "itemId": "hammer_epic",
+        "minQuantity": 1,
+        "maxQuantity": 1,
+        "probability": 0.1
+      },
+      {
+        "itemId": "axe_common",
+        "minQuantity": 1,
+        "maxQuantity": 1,
+        "probability": 0.5
+      },
+      {
+        "itemId": "axe_uncommon",
+        "minQuantity": 1,
+        "maxQuantity": 1,
+        "probability": 0.3
+      },
+      {
+        "itemId": "axe_rare",
+        "minQuantity": 1,
+        "maxQuantity": 1,
+        "probability": 0.2
+      },
+      {
+        "itemId": "axe_epic",
+        "minQuantity": 1,
+        "maxQuantity": 1,
+        "probability": 0.1
+      },
+      {
         "itemId": "key_common",
         "minQuantity": 1,
         "maxQuantity": 3,
         "probability": 0.4
-      },
-      {
-        "itemId": "key_legendary",
-        "minQuantity": 1,
-        "maxQuantity": 1,
-        "probability": 0.1
       },
       {
         "itemId": "lamp",
@@ -163,14 +271,46 @@
     ]
   },
   {
+    "id": "arcane",
+    "name": "Mago",
+    "isStatic": true,
+    "interactive": true,
+    "autoInteraction": false
+  },
+  {
+      "id": "padeira",
+      "name": "Padeira",
+      "isStatic": true,
+      "interactive": true,
+      "autoInteraction": false,
+      "dialog": "Bem-vindo à minha loja!",
+      "type": "merchant",
+      "skin": "padeira",
+      "dialogId": 20,
+      "itemProbabilities": [
+      {
+        "itemId": "health_potion",
+        "minQuantity": 1,
+        "maxQuantity": 5,
+        "probability": 0.6
+      },
+      {
+        "itemId": "mana_potion",
+        "minQuantity": 1,
+        "maxQuantity": 5,
+        "probability": 0.6
+      }
+    ]
+  },
+  {
     "id": "smart_old_man",
     "name": "Sábio Ancião",
-    "isStatic": true,
+    "isStatic": false,
     "interactive": true,
     "autoInteraction": false,
     "dialog": "Olá, jovem! Sou o sábio ancião. O que deseja saber?",
     "type": "npc",
-    "skin": "guardiao",
+    "skin": "ancian",
     "dialogId": 30
   }
 ]

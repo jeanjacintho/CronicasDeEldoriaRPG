@@ -1700,7 +1700,6 @@ public class GamePanel extends JPanel implements Runnable{
     gameUI.addMessage(message.toString(), null, 5000L);
 
     // Por enquanto, usar o primeiro ponto de spawn
-    // TODO: Falta implementar sistema de seleção mais avançado
     performTeleportToConfig(config, config.spawnPoints.keySet().iterator().next());
   }
 

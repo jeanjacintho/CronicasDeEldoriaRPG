@@ -712,6 +712,7 @@
       ],
       "collider": false
     },
+    
     {
       "name": "Overlay",
       "tiles": [
@@ -755,6 +756,17 @@
           "x": 0,
           "y": 5
         }
+      ],
+      "collider": false
+    },
+    {
+        "name": "Npcs",
+        "tiles": [
+          {
+            "id": "padeira",
+            "x": 5,
+            "y": 2
+          }
       ],
       "collider": false
     },

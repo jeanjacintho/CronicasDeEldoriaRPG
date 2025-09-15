@@ -804,6 +804,17 @@
       "collider": true
     },
     {
+      "name": "Npcs",
+      "tiles": [
+        {
+          "id": "smith",
+          "x": 5,
+          "y": 4
+        }
+      ],
+      "collider": false
+    },
+    {
       "name": "Overlay",
       "tiles": [
         {

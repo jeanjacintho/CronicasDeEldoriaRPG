@@ -42,7 +42,6 @@ public class AudioConfigLoader {
                 configRoot = objectMapper.readTree(configStream);
                 loadMapAudioMapping();
                 loadEnemyAudioMapping();
-                System.out.println("Audio configuration loaded successfully");
             } else {
                 System.err.println("Audio configuration file not found: /audio_config.json");
                 createDefaultConfig();
@@ -58,7 +57,6 @@ public class AudioConfigLoader {
      */
     private void createDefaultConfig() {
         configRoot = objectMapper.createObjectNode();
-        System.out.println("Using default audio configuration");
     }
     
     /**
@@ -187,16 +185,9 @@ public class AudioConfigLoader {
         
         String lowerMapName = mapName.toLowerCase();
         String mappedContext = mapAudioMapping.get(lowerMapName);
-        
-        System.out.println("=== AUDIO CONFIG LOADER DEBUG ===");
-        System.out.println("Map name: " + mapName);
-        System.out.println("Lower map name: " + lowerMapName);
-        System.out.println("Mapped context: " + mappedContext);
-        System.out.println("Available mappings: " + mapAudioMapping.keySet());
+
         
         String result = mappedContext != null ? mappedContext : "forest";
-        System.out.println("Final context: " + result);
-        System.out.println("=== END AUDIO CONFIG LOADER DEBUG ===");
         
         return result;
     }

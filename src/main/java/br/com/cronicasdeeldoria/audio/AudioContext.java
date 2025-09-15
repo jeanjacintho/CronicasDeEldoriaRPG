@@ -83,7 +83,6 @@ public enum AudioContext {
             try {
                 return AudioContext.valueOf(mappedContext.toUpperCase());
             } catch (IllegalArgumentException e) {
-                System.out.println("Contexto inválido no mapeamento: " + mappedContext);
             }
         }
         
@@ -114,8 +113,6 @@ public enum AudioContext {
         } else if (lowerMapName.contains("city") || lowerMapName.contains("cidade")) {
             return CITY;
         } else {
-            // Para mapas não identificados, usar floresta como padrão
-            System.out.println("Mapa não identificado: " + mapName + " - usando contexto FOREST como padrão");
             return FOREST;
         }
     }

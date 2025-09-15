@@ -49,5 +49,41 @@
   },
   "orcboss": {
     "down": ["monster/miniBosses/orcBoss_front.png"]
+  },
+  "smith": {
+    "down": ["npc/npc002-smith/smith_front.png"]
+  },
+  "arcane": {
+    "down": ["npc/npc003-arcane/arcane_front.png"],
+    "up": ["npc/npc003-arcane/arcane_back.png"],
+    "left": ["npc/npc003-arcane/arcane_left.png"],
+    "right": ["npc/npc003-arcane/arcane_right.png"]
+  },
+  "ancian": {
+    "down": ["npc/npc003-ancian/ancian_front.png", "npc/npc003-ancian/ancian_front_walk1.png", "npc/npc003-ancian/ancian_front_walk2.png"],
+    "up": ["npc/npc003-ancian/ancian_back.png", "npc/npc003-ancian/ancian_back_walk1.png", "npc/npc003-ancian/ancian_back_walk2.png"],
+    "left": ["npc/npc003-ancian/ancian_left.png", "npc/npc003-ancian/ancian_left_walk1.png", "npc/npc003-ancian/ancian_left_walk2.png"],
+    "right": ["npc/npc003-ancian/ancian_right.png", "npc/npc003-ancian/ancian_right_walk1.png", "npc/npc003-ancian/ancian_right_walk2.png"]
+  },
+  "girl1": {
+    "down": ["npc/npc004-girl1/girl_front.png"],
+    "up": ["npc/npc004-girl1/girl_back.png"],
+    "left": ["npc/npc004-girl1/girl_left.png"],
+    "right": ["npc/npc004-girl1/girl_right.png"]
+  },
+  "girl2": {
+    "down": ["npc/npc005-girl2/girl2_front.png"],
+    "up": ["npc/npc005-girl2/girl2_back.png"],
+    "left": ["npc/npc005-girl2/girl2_left.png"],
+    "right": ["npc/npc005-girl2/girl2_right.png"]
+  },
+  "padeira": {
+    "down": ["npc/npc006-bakery/bakery_front.png"]
+  },
+  "men": {
+    "down": ["npc/npc007-men/men_front.png"],
+    "up": ["npc/npc007-men/men_back.png"],
+    "left": ["npc/npc007-men/men_left.png"],
+    "right": ["npc/npc007-men/men_right.png"]
   }
 }
