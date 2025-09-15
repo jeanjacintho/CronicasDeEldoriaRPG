@@ -1,5 +1,6 @@
 package br.com.cronicasdeeldoria.game.merchant;
 
+import br.com.cronicasdeeldoria.audio.AudioManager;
 import br.com.cronicasdeeldoria.entity.character.npc.MerchantNpc;
 import br.com.cronicasdeeldoria.entity.item.Item;
 import br.com.cronicasdeeldoria.game.inventory.ItemFactory;
@@ -14,6 +15,7 @@ import java.util.List;
 public class MerchantManager {
     private final InventoryManager inventoryManager;
     private final PlayerMoney playerMoney;
+    private final AudioManager audioManager;
     
     private MerchantNpc currentMerchant;
     private boolean visible;
@@ -24,6 +26,7 @@ public class MerchantManager {
     public MerchantManager(InventoryManager inventoryManager, PlayerMoney playerMoney) {
         this.inventoryManager = inventoryManager;
         this.playerMoney = playerMoney;
+        this.audioManager = AudioManager.getInstance();
         this.visible = false;
         this.selectedItemIndex = 0;
         this.playerInventorySelected = false;
@@ -190,6 +193,8 @@ public class MerchantManager {
                     playerMoney.removeMoney(merchantItem.getPrice());
                     // Reduzir estoque do comerciante
                     merchantItem.reduceStock();
+                    // Reproduzir som de compra
+                    audioManager.playSoundEffect("item_buy");
                     return true;
                 }
             }
@@ -210,6 +215,8 @@ public class MerchantManager {
                 return false;
             }
             
+            // Reproduzir som de compra
+            audioManager.playSoundEffect("item_buy");
             return true;
         }
         
