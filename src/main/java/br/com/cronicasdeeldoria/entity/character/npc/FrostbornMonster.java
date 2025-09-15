@@ -1,7 +1,7 @@
 package br.com.cronicasdeeldoria.entity.character.npc;
 
 public class FrostbornMonster extends Npc {
-  private int xpReward = 60;
+  private int xpReward = 35;
   /**
    * Cria um novo WolfMonster.
    * @param name Nome do Monster.
