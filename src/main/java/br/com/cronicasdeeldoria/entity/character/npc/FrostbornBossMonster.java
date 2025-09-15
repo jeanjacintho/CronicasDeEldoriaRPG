@@ -18,9 +18,9 @@ public class FrostbornBossMonster extends Npc {
     super(name, isStatic, dialog, x, y, skin, playerSize, interactive, autoInteraction);
     setAttributeHealth(150);
     setAttributeMaxHealth(150);
-    setAttributeStrength(30);
-    setAttributeDefence(20);
-    setAttributeAgility(15);
+    setAttributeStrength(55);
+    setAttributeDefence(45);
+    setAttributeAgility(25);
   }
 
   public int getXpReward() { return xpReward; }

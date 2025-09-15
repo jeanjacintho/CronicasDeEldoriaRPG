@@ -222,7 +222,7 @@
     "value": 55,
     "allowedClass": ["barbarian", "paladin", "mage", "ranger"],
     "strengthFromEquip": 0,
-    "armorFromEquip": 5,
+    "armorFromEquip": 4,
     "healthFromEquip": 20,
     "manaFromEquip": 0,
     "speedFromEquip": 0
@@ -243,9 +243,9 @@
     "value": 75,
     "allowedClass": ["barbarian", "paladin", "mage", "ranger"],
     "strengthFromEquip": 0,
-    "armorFromEquip": 8,
-    "healthFromEquip": 60,
-    "manaFromEquip": 0,
+    "armorFromEquip": 7,
+    "healthFromEquip": 40,
+    "manaFromEquip": 10,
     "speedFromEquip": 0
   },
   {
@@ -265,7 +265,7 @@
     "allowedClass": ["barbarian", "paladin", "mage", "ranger"],
     "strengthFromEquip": 0,
     "armorFromEquip": 12,
-    "healthFromEquip": 100,
+    "healthFromEquip": 60,
     "manaFromEquip": 0,
     "speedFromEquip": 0
   },
@@ -476,7 +476,7 @@
     "strengthFromEquip": 3,
     "armorFromEquip": 1,
     "healthFromEquip": 10,
-    "manaFromEquip": 30,
+    "manaFromEquip": 20,
     "speedFromEquip": 0
   },
   {
@@ -497,7 +497,7 @@
     "strengthFromEquip": 7,
     "armorFromEquip": 2,
     "healthFromEquip": 20,
-    "manaFromEquip": 60,
+    "manaFromEquip": 40,
     "speedFromEquip": 0
   },
   {
@@ -518,7 +518,7 @@
     "strengthFromEquip": 10,
     "armorFromEquip": 4,
     "healthFromEquip": 30,
-    "manaFromEquip": 90,
+    "manaFromEquip": 60,
     "speedFromEquip": 0
   },
   {
