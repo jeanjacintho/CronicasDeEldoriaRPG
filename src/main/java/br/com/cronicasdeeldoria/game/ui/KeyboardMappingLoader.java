@@ -24,29 +24,42 @@ public class KeyboardMappingLoader {
      */
     private void loadMappings() {
         try {
+            System.out.println("Tentando carregar arquivo de configuração: " + CONFIG_FILE);
+            
             InputStream inputStream = getClass().getResourceAsStream(CONFIG_FILE);
             if (inputStream == null) {
                 System.err.println("Arquivo de configuração não encontrado: " + CONFIG_FILE);
                 return;
             }
             
+            System.out.println("Arquivo de configuração encontrado! Carregando...");
+            
             ObjectMapper mapper = new ObjectMapper();
             JsonNode rootNode = mapper.readTree(inputStream);
             JsonNode mappingsArray = rootNode.get("keyboard_mappings");
             
             if (mappingsArray != null && mappingsArray.isArray()) {
+                System.out.println("Encontrados " + mappingsArray.size() + " mapeamentos de teclado");
+                
                 for (JsonNode mappingNode : mappingsArray) {
                     String key = mappingNode.get("key").asText();
                     String imagePath = mappingNode.get("imagePath").asText();
                     String description = mappingNode.get("description").asText();
                     
+                    System.out.println("Carregando mapeamento: " + key + " -> " + imagePath + " (" + description + ")");
+                    
                     KeyMapping mapping = new KeyMapping(key, imagePath, description);
                     mappings.put(key, mapping);
                 }
+                
+                System.out.println("Total de mapeamentos carregados: " + mappings.size());
+            } else {
+                System.err.println("Array 'keyboard_mappings' não encontrado ou não é um array");
             }
             
         } catch (Exception e) {
             System.err.println("Erro ao carregar mapeamentos de teclado: " + e.getMessage());
+            e.printStackTrace();
         }
     }
     

@@ -873,12 +873,7 @@
       "name": "Teleport",
       "tiles": [
         {
-          "id": "18_16",
-          "x": 4,
-          "y": 7
-        },
-        {
-          "id": "18_16",
+          "id": "city:exit_house2",
           "x": 4,
           "y": 8
         }

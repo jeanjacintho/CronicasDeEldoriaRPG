@@ -818,12 +818,7 @@
       "name": "Teleport",
       "tiles": [
         {
-          "id": "18_16",
-          "x": 5,
-          "y": 8
-        },
-        {
-          "id": "18_16",
+          "id": "city:exit_smith_house",
           "x": 5,
           "y": 9
         }

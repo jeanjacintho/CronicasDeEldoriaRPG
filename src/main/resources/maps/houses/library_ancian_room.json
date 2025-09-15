@@ -2073,7 +2073,7 @@
       "name": "Teleport",
       "tiles": [
         {
-          "id": "18_16",
+          "id": "library_base:exit_ancian_room",
           "x": 6,
           "y": 1
         },

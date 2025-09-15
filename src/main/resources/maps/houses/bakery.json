@@ -2,7 +2,6 @@
   "tileSize": 16,
   "mapWidth": 13,
   "mapHeight": 9,
-  "message": "Padaria",
   "layers": [
     {
       "name": "Layer_0",
@@ -754,6 +753,17 @@
         {
           "id": "60_29",
           "x": 0,
+          "y": 5
+        }
+      ],
+      "collider": false
+    },
+    {
+      "name": "Teleport",
+      "tiles": [
+        {
+          "id": "city:exit_bakery",
+          "x": 1,
           "y": 5
         }
       ],

@@ -21,6 +21,7 @@ import br.com.cronicasdeeldoria.game.ui.GameUI;
 import br.com.cronicasdeeldoria.game.ui.KeyboardMapper;
 import br.com.cronicasdeeldoria.game.font.FontManager;
 import br.com.cronicasdeeldoria.game.ui.InteractionManager;
+import br.com.cronicasdeeldoria.game.ui.SimpleInteractionManager;
 import br.com.cronicasdeeldoria.tile.TileManager;
 import br.com.cronicasdeeldoria.tile.TileManager.MapTile;
 import br.com.cronicasdeeldoria.config.CharacterConfigLoader;
@@ -63,6 +64,7 @@ public class GamePanel extends JPanel implements Runnable{
   private GameUI gameUI;
   private KeyboardMapper keyboardMapper;
   private InteractionManager interactionManager;
+  private SimpleInteractionManager simpleInteractionManager;
   private InventoryManager inventoryManager;
   private MerchantManager merchantManager;
   private MerchantUI merchantUI;
@@ -542,9 +544,9 @@ public class GamePanel extends JPanel implements Runnable{
      * Atualiza os pontos de interação baseado na proximidade do jogador
      */
     private void updateInteractionPoints() {
-        if (interactionManager == null) return;
+        if (simpleInteractionManager == null) return;
 
-        interactionManager.clearInteractionPoints();
+        simpleInteractionManager.clearInteractionPoints();
 
         // Não processar interações se estivermos em batalha
         if (gameState == battleState) return;
@@ -555,42 +557,58 @@ public class GamePanel extends JPanel implements Runnable{
 
         // Verificar interação com NPCs apenas se houver NPCs no mapa
         if (npcs != null && !npcs.isEmpty()) {
-          for (Npc npc : npcs) {
-            // Verificar se é um monstro (usar distância de 5 tiles)
-            if (npc instanceof WolfMonster || npc instanceof SkeletonMonster ||
-                npc instanceof FrostbornMonster || npc instanceof OrcMonster ||
-                npc instanceof FrostbornBossMonster || npc instanceof OrcBossMonster ||
-                npc instanceof SkeletonBossMonster || npc instanceof WolfBossMonster) {
-                if (isPlayerNearMonster(player, npc.getWorldX(), npc.getWorldY()) && npc.isInteractive()) {
-
-                    // Verificar auto-interação
-                    if (npc.isAutoInteraction()) {
-                        startBattle(npc);
-                        npc.interact();
-                    } else {
-                        // Usar coordenadas de mundo diretamente
-                        interactionManager.addInteractionPoint(npc.getWorldX(), npc.getWorldY(), "E", "monster");
+            System.out.println("Verificando " + npcs.size() + " NPCs para interação...");
+            for (Npc npc : npcs) {
+                System.out.println("NPC: " + npc.getName() + " em (" + npc.getWorldX() + ", " + npc.getWorldY() + ") - Interativo: " + npc.isInteractive());
+                
+                // Verificar se é um monstro (usar distância de 5 tiles)
+                if (npc instanceof WolfMonster || npc instanceof SkeletonMonster ||
+                    npc instanceof FrostbornMonster || npc instanceof OrcMonster ||
+                    npc instanceof FrostbornBossMonster || npc instanceof OrcBossMonster ||
+                    npc instanceof SkeletonBossMonster || npc instanceof WolfBossMonster) {
+                    
+                    boolean isNearMonster = isPlayerNearMonster(player, npc.getWorldX(), npc.getWorldY());
+                    System.out.println("  Monstro próximo: " + isNearMonster);
+                    
+                    if (isNearMonster && npc.isInteractive()) {
+                        // Verificar auto-interação
+                        if (npc.isAutoInteraction()) {
+                            startBattle(npc);
+                            npc.interact();
+                        } else {
+                            // Usar coordenadas de mundo diretamente
+                            System.out.println("  Adicionando ponto de interação para monstro!");
+                            simpleInteractionManager.addInteractionPoint(npc.getWorldX(), npc.getWorldY(), "E", "monster");
+                        }
                     }
-                }
-            } else {
-                // NPCs normais (usar distância de 2 tiles)
-                if (isPlayerNearNpc(player, npc.getWorldX(), npc.getWorldY()) && npc.isInteractive()) {
-
-                    // Verificar auto-interação
-                    if (npc.isAutoInteraction()) {
-                        System.out.println("AUTO-INTERAÇÃO com NPC: " + npc.getName());
-                        npc.interact();
-                    } else {
-                        // Usar coordenadas de mundo diretamente
-                        interactionManager.addInteractionPoint(npc.getWorldX(), npc.getWorldY(), "E", "npc");
+                } else {
+                    // NPCs normais (usar distância de 2 tiles)
+                    boolean isNearNpc = isPlayerNearNpc(player, npc.getWorldX(), npc.getWorldY());
+                    System.out.println("  NPC próximo: " + isNearNpc);
+                    
+                    if (isNearNpc && npc.isInteractive()) {
+                        // Verificar auto-interação
+                        if (npc.isAutoInteraction()) {
+                            System.out.println("AUTO-INTERAÇÃO com NPC: " + npc.getName());
+                            npc.interact();
+                        } else {
+                            // Usar coordenadas de mundo diretamente
+                            System.out.println("  Adicionando ponto de interação para NPC!");
+                            simpleInteractionManager.addInteractionPoint(npc.getWorldX(), npc.getWorldY(), "E", "npc");
+                        }
                     }
                 }
             }
+        } else {
+            System.out.println("Nenhum NPC encontrado no mapa");
         }
 
         // Verificar interação com objetos
         if (objectManager != null) {
+            System.out.println("Verificando objetos para interação...");
             for (MapObject obj : objectManager.getActiveObjects()) {
+                System.out.println("Objeto: " + obj.getObjectId() + " em (" + obj.getWorldX() + ", " + obj.getWorldY() + ") - Interativo: " + obj.isInteractive() + " - Ativo: " + obj.isActive());
+                
                 if (obj.isInteractive() && obj.isActive()) {
                     // Verificar auto-interação
                     if (obj.isAutoInteraction()) {
@@ -600,12 +618,18 @@ public class GamePanel extends JPanel implements Runnable{
                         }
                     } else {
                         // Para objetos sem auto-interação, verificar proximidade e mostrar tecla E
-                        if (isPlayerNearObject(player, obj.getWorldX(), obj.getWorldY())) {
-                            interactionManager.addInteractionPoint(obj.getWorldX(), obj.getWorldY(), "E", "object");
+                        boolean isNearObject = isPlayerNearObject(player, obj.getWorldX(), obj.getWorldY());
+                        System.out.println("  Objeto próximo: " + isNearObject);
+                        
+                        if (isNearObject) {
+                            System.out.println("  Adicionando ponto de interação para objeto!");
+                            simpleInteractionManager.addInteractionPoint(obj.getWorldX(), obj.getWorldY(), "E", "object");
                         }
                     }
                 }
             }
+        } else {
+            System.out.println("ObjectManager não disponível");
         }
 
         // Verificar interação com teleportes interativos
@@ -618,11 +642,10 @@ public class GamePanel extends JPanel implements Runnable{
 
                 // Teleporte interativo - mostrar tecla E quando próximo
                 if (isPlayerNearObject(player, teleportWorldX, teleportWorldY)) {
-                    interactionManager.addInteractionPoint(teleportWorldX, teleportWorldY, "E", "teleport");
+                    simpleInteractionManager.addInteractionPoint(teleportWorldX, teleportWorldY, "E", "teleport");
                 }
             }
         }
-      }
     }
 
     /**
@@ -644,7 +667,12 @@ public class GamePanel extends JPanel implements Runnable{
         // Distância máxima baseada no parâmetro (em pixels)
         int maxDistance = tileSize * distanceInTiles;
 
-        return distanceX <= maxDistance && distanceY <= maxDistance;
+        boolean isNear = distanceX <= maxDistance && distanceY <= maxDistance;
+        
+        System.out.println("    Detecção proximidade: Jogador(" + playerCenterX + ", " + playerCenterY + ") -> Entidade(" + entityCenterX + ", " + entityCenterY + ")");
+        System.out.println("    Distância: (" + distanceX + ", " + distanceY + ") / Máxima: " + maxDistance + " -> Próximo: " + isNear);
+
+        return isNear;
     }
 
     /**
@@ -796,8 +824,8 @@ public class GamePanel extends JPanel implements Runnable{
             npc.draw(graphics2D, npcSpriteLoader, tileSize, player, player.getScreenX(), player.getScreenY());
 
               // Renderizar tecla de interação para NPC se necessário
-              if (interactionManager != null) {
-                  interactionManager.renderInteractionKeyForEntity(graphics2D,
+              if (simpleInteractionManager != null) {
+                  simpleInteractionManager.renderInteractionKeyForEntity(graphics2D,
                       npc.getWorldX(), npc.getWorldY(),
                       npc.getWorldX() - player.getWorldX() + player.getScreenX(),
                       npc.getWorldY() - player.getWorldY() + player.getScreenY(),
@@ -807,10 +835,10 @@ public class GamePanel extends JPanel implements Runnable{
         }
 
         // Renderizar teclas de interação para objetos
-        if (objectManager != null && interactionManager != null) {
+        if (objectManager != null && simpleInteractionManager != null) {
             for (MapObject obj : objectManager.getActiveObjects()) {
                 if (obj.isActive()) {
-                    interactionManager.renderInteractionKeyForEntity(graphics2D,
+                    simpleInteractionManager.renderInteractionKeyForEntity(graphics2D,
                         obj.getWorldX(), obj.getWorldY(),
                         obj.getWorldX() - player.getWorldX() + player.getScreenX(),
                         obj.getWorldY() - player.getWorldY() + player.getScreenY(),
@@ -820,7 +848,7 @@ public class GamePanel extends JPanel implements Runnable{
         }
 
         // Renderizar teclas de interação para teleportes (apenas os configurados)
-        if (interactionManager != null) {
+        if (simpleInteractionManager != null) {
             List<MapTile> teleportTiles = tileManager.getTeleportTiles();
             for (MapTile teleportTile : teleportTiles) {
                 // Verificar se o teleporte está configurado no TeleportManager e é interativo
@@ -830,7 +858,7 @@ public class GamePanel extends JPanel implements Runnable{
                     int teleportWorldY = teleportTile.y * tileSize;
 
                     // Usar o método específico para tiles que centraliza a tecla
-                    interactionManager.renderInteractionKeyForTile(graphics2D,
+                    simpleInteractionManager.renderInteractionKeyForTile(graphics2D,
                         teleportWorldX, teleportWorldY,
                         teleportWorldX - player.getWorldX() + player.getScreenX(),
                         teleportWorldY - player.getWorldY() + player.getScreenY(),
@@ -1332,6 +1360,10 @@ public class GamePanel extends JPanel implements Runnable{
     public InteractionManager getInteractionManager() {
       return interactionManager;
     }
+    
+    public SimpleInteractionManager getSimpleInteractionManager() {
+      return simpleInteractionManager;
+    }
 
     public NpcSpriteLoader getNpcSpriteLoader() {
       return npcSpriteLoader;
@@ -1515,6 +1547,8 @@ public class GamePanel extends JPanel implements Runnable{
       // Inicializar o sistema de interação com imagens GIF separadas
       this.keyboardMapper = new KeyboardMapper();
       this.interactionManager = new InteractionManager(keyboardMapper);
+      this.simpleInteractionManager = new SimpleInteractionManager();
+      System.out.println("Sistemas de interação inicializados!");
     } catch (Exception e) {
       System.err.println("Erro ao inicializar sistema de interação: " + e.getMessage());
       e.printStackTrace();
