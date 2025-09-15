@@ -1,9 +1,8 @@
 package br.com.cronicasdeeldoria.entity.character.player;
 
-import br.com.cronicasdeeldoria.entity.character.AttributeType;
+import br.com.cronicasdeeldoria.audio.AudioManager;
 import br.com.cronicasdeeldoria.entity.character.Character;
 import br.com.cronicasdeeldoria.entity.character.classes.*;
-import br.com.cronicasdeeldoria.entity.item.Item;
 import br.com.cronicasdeeldoria.game.GamePanel;
 import br.com.cronicasdeeldoria.game.KeyHandler;
 
@@ -14,7 +13,6 @@ import br.com.cronicasdeeldoria.entity.character.classes.Ranger;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
-import java.util.List;
 
 import javax.imageio.ImageIO;
 
@@ -303,6 +301,9 @@ public class Player extends Character {
    * @param newLevel Novo nível.
    */
   private void levelUp(int oldLevel, int newLevel) {
+    // Reproduzir som de level up
+    AudioManager.getInstance().playSoundEffect("level_up");
+    
     gamePanel.getGameUI().showCenterMessage("NÍVEL UP!", 3500);
 
     for (int level = oldLevel + 1; level <= newLevel; level++) {

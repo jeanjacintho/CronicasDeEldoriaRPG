@@ -1,5 +1,6 @@
 package br.com.cronicasdeeldoria.game.inventory;
 
+import br.com.cronicasdeeldoria.audio.AudioManager;
 import br.com.cronicasdeeldoria.entity.character.player.Player;
 import br.com.cronicasdeeldoria.entity.item.Item;
 import br.com.cronicasdeeldoria.entity.item.ItemType;
@@ -42,10 +43,12 @@ public class Equipment {
     private final Item[] equippedItems;
     private int selectedSlot = 0;
     private Player player;
+    private final AudioManager audioManager;
 
     public Equipment(Player player) {
         this.equippedItems = new Item[TOTAL_SLOTS];
         this.player = player;
+        this.audioManager = AudioManager.getInstance();
     }
 
     /**
@@ -78,6 +81,9 @@ public class Equipment {
 
         // Aplica os bônus do item
         applyItemBonuses(item);
+
+        // Reproduz o som de equipar item
+        audioManager.playSoundEffect("item_equip");
 
         return previousItem;
     }

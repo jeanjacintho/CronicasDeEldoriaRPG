@@ -7,87 +7,87 @@
       "contexts": {
         "player_house": {
           "file": "/audio/music/20 - The Journey.wav",
-          "volume": 0.6,
+          "volume": 0.2,
           "loop": true,
-          "fade_duration": 2000
+          "fade_duration": 0
         },
         "city": {
           "file": "/audio/music/03 - Definitely Our Town.wav",
-          "volume": 0.6,
+          "volume": 0.3,
           "loop": true,
-          "fade_duration": 2000
+          "fade_duration": 0
         },
         "forest": {
           "file": "/audio/music/19 - Where The Winds Roam.wav",
-          "volume": 0.6,
+          "volume": 0.3,
           "loop": true,
-          "fade_duration": 2000
+          "fade_duration": 0
         },
         "dungeon1": {
           "file": "/audio/music/10 - Lost Shrine.wav",
-          "volume": 0.7,
+          "volume": 0.3,
           "loop": true,
-          "fade_duration": 2000
+          "fade_duration": 0
         },
         "dungeon2": {
           "file": "/audio/music/04 - Silent Forest.wav",
-          "volume": 0.7,
+          "volume": 0.3,
           "loop": true,
-          "fade_duration": 2000
+          "fade_duration": 0
         },
         "dungeon3": {
           "file": "/audio/music/12 - Frozen Abyss.wav",
-          "volume": 0.7,
+          "volume": 0.3,
           "loop": true,
-          "fade_duration": 2000
+          "fade_duration": 0
         },
         "dungeon4": {
           "file": "/audio/music/01 - Falling Apart (Prologue).wav",
-          "volume": 0.7,
+          "volume": 0.3,
           "loop": true,
-          "fade_duration": 2000
+          "fade_duration": 0
         },
         "battle_normal": {
           "file": "/audio/music/05 - Battle 1.wav",
-          "volume": 0.8,
+          "volume": 0.3,
           "loop": true,
-          "fade_duration": 1500
+          "fade_duration": 0
         },
         "battle_boss": {
           "file": "/audio/music/09 - Battle 2.wav",
-          "volume": 0.9,
+          "volume": 0.3,
           "loop": true,
-          "fade_duration": 1000
+          "fade_duration": 0
         },
         "battle_final_boss": {
           "file": "/audio/music/17 - Decisive Battle 2 - The Calamity.wav",
-          "volume": 1.0,
+          "volume": 0.3,
           "loop": true,
-          "fade_duration": 500
+          "fade_duration": 0
         },
         "battle_miniboss": {
           "file": "/audio/music/battle_miniboss.wav",
-          "volume": 0.8,
+          "volume": 0.3,
           "loop": true,
-          "fade_duration": 1500
+          "fade_duration": 0
         },
         "menu": {
           "file": "/audio/music/02 - Title Theme.wav",
-          "volume": 0.5,
+          "volume": 0.3,
           "loop": true,
-          "fade_duration": 3000
+          "fade_duration": 0
         },
         "victory": {
-          "file": "/audio/music/victory.wav",
-          "volume": 0.7,
-          "loop": false,
-          "fade_duration": 1000
+          "file": "/audio/music/06 - Victory!.wav",
+          "volume": 0.6,
+          "loop": true,
+          "fade_duration": 0
         },
         "defeat": {
           "file": "/audio/music/defeat.wav",
-          "volume": 0.6,
+          "volume": 0.3,
           "loop": false,
-          "fade_duration": 1000
+          "fade_duration": 0
         }
       }
     },
@@ -116,6 +116,21 @@
           "file": "/audio/sfx/item_pickup.wav",
           "volume": 0.8,
           "max_concurrent": 5
+        },
+        "item_equip": {
+          "file": "/audio/sfx/070_Equip_10.wav",
+          "volume": 0.8,
+          "max_concurrent": 3
+        },
+        "item_buy": {
+          "file": "/audio/sfx/079_Buy_sell_01.wav",
+          "volume": 0.8,
+          "max_concurrent": 3
+        },
+        "potion_heal": {
+          "file": "/audio/sfx/02_Heal_02.wav",
+          "volume": 0.8,
+          "max_concurrent": 3
         },
         "door_open": {
           "file": "/audio/sfx/door_open.wav",
@@ -150,6 +165,21 @@
           "volume": 0.8,
           "max_concurrent": 1
         },
+        "player_attack": {
+          "file": "/audio/sfx/56_Attack_03.wav",
+          "volume": 1.0,
+          "max_concurrent": 3
+        },
+        "player_flee": {
+          "file": "/audio/sfx/51_Flee_02.wav",
+          "volume": 1.0,
+          "max_concurrent": 2
+        },
+        "player_block": {
+          "file": "/audio/sfx/39_Block_03.wav",
+          "volume": 1.0,
+          "max_concurrent": 3
+        },
         "attack_hit": {
           "file": "/audio/sfx/attack_hit.wav",
           "volume": 0.8,
@@ -179,8 +209,8 @@
       
       "character": {
         "level_up": {
-          "file": "/audio/sfx/level_up.wav",
-          "volume": 0.9,
+          "file": "/audio/sfx/level-win-6416.wav",
+          "volume": 1.0,
           "max_concurrent": 1
         },
         "stat_increase": {

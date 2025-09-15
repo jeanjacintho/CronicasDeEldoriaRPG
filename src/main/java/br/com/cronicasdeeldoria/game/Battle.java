@@ -1,10 +1,7 @@
 package br.com.cronicasdeeldoria.game;
 
-import br.com.cronicasdeeldoria.entity.character.AttributeType;
+import br.com.cronicasdeeldoria.audio.AudioManager;
 import br.com.cronicasdeeldoria.entity.character.Character;
-import br.com.cronicasdeeldoria.entity.character.classes.Barbarian;
-import br.com.cronicasdeeldoria.entity.character.classes.Paladin;
-import br.com.cronicasdeeldoria.entity.character.classes.Ranger;
 import br.com.cronicasdeeldoria.entity.character.player.Player;
 import br.com.cronicasdeeldoria.entity.character.npc.Npc;
 import java.util.ArrayList;
@@ -20,13 +17,14 @@ public class Battle {
   private Npc monster;
   private boolean waitingForPlayerInput;
   private int countTurn = 0;
+  private final AudioManager audioManager;
 
   public Battle(GamePanel gp) {
     this.gp = gp;
     this.turnOrder = new ArrayList<>();
     this.inBattle = false;
     this.waitingForPlayerInput = false;
-
+    this.audioManager = AudioManager.getInstance();
   }
 
   public void startBattle(Player player, Npc monster) {
@@ -192,6 +190,16 @@ public class Battle {
     int newHealth = Math.max(0, target.getAttributeHealth() - damage);
     target.setAttributeHealth(newHealth);
 
+    // Reproduzir som de ataque apenas quando o jogador atacar
+    if (attacker instanceof Player) {
+      audioManager.playSoundEffect("player_attack");
+    }
+    
+    // Reproduzir som de bloqueio quando o jogador está defendendo e sendo atacado
+    if (target instanceof Player && target.hasActiveBuff("ARMOR")) {
+      audioManager.playSoundEffect("player_block");
+    }
+
     System.out.println(attacker.getName() + " attacks " + target.getName() + " causing " + damage + " damage!");
     System.out.println("-----------------------------");
 
@@ -208,6 +216,9 @@ public class Battle {
 
   private boolean flee(Character character) {
     if (character instanceof Player) {
+      // Reproduzir som de tentativa de fuga sempre que o jogador tentar fugir
+      audioManager.playSoundEffect("player_flee");
+      
       int fleeChance = 50; // 50% chance base
 
       if (Math.random() * 100 < fleeChance) {
@@ -233,6 +244,9 @@ public class Battle {
 
   // Health Potion
   private void healthPotion(Character character) {
+    // Reproduzir som de cura quando poção de vida for consumida
+    audioManager.playSoundEffect("potion_heal");
+    
     int baseHeal = 45;
     int variation = (int) (baseHeal * 0.4); // 40% de variação
     int finalHeal = baseHeal + (int)(Math.random() * variation * 2) - variation;
@@ -252,6 +266,9 @@ public class Battle {
 
   // Mana Potion
   private void manaPotion(Character character) {
+    // Reproduzir som de cura quando poção de mana for consumida
+    audioManager.playSoundEffect("potion_heal");
+    
     int baseManaRecover = 30;
     int variation = (int) (baseManaRecover * 0.3); // 30% de variação
     int finalManaRecover = baseManaRecover + (int)(Math.random() * variation * 2) - variation;

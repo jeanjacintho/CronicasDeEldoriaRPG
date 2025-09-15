@@ -82,6 +82,7 @@ public class GamePanel extends JPanel implements Runnable{
   public final int merchantState = 4;
   public final int dialogState = 5;
   public final int pauseState = 6;
+  public final int victoryState = 7;
 
   public Npc battleMonster = null;
   public Battle battle;
@@ -327,6 +328,10 @@ public class GamePanel extends JPanel implements Runnable{
       if (gameState == pauseState) {
         updatePause();
       }
+
+      if (gameState == victoryState) {
+        updateVictory();
+      }
     }
 
   public void startBattle(Entity targetEntity) {
@@ -421,12 +426,25 @@ public class GamePanel extends JPanel implements Runnable{
 
     // Limpar estado de batalha
     battle.endBattle();
-    gameState = playState;
+    
+    if (playerWon) {
+      // Entrar no estado de vitória
+      gameState = victoryState;
+      
+      // Reproduzir música de vitória
+      if (audioManager != null) {
+        audioManager.changeContext(AudioContext.VICTORY);
+      }
+    } else {
+      // Voltar ao jogo normal em caso de derrota
+      gameState = playState;
+      
+      // Restaurar contexto de áudio do mapa após derrota
+      restoreMapAudioContext();
+    }
+    
     battleMonster = null;
     lastBattleEndTime = System.currentTimeMillis();
-
-    // Restaurar contexto de áudio do mapa após batalha
-    restoreMapAudioContext();
   }
 
   /**
@@ -926,6 +944,30 @@ public class GamePanel extends JPanel implements Runnable{
 
         // Desenhar overlay de pausa
         drawPauseOverlay(graphics2D);
+      } else if (gameState == victoryState) {
+        // Desenha o jogo de fundo durante a vitória
+        tileManager.draw(graphics2D);
+
+        // Renderizar objetos
+        if (objectManager != null) {
+          objectManager.drawObjects(graphics2D);
+        }
+
+        // Renderizar NPCs apenas se houver NPCs no mapa
+        if (npcs != null && !npcs.isEmpty()) {
+          for (Npc npc : npcs) {
+            npc.draw(graphics2D, npcSpriteLoader, tileSize, player, player.getScreenX(), player.getScreenY());
+          }
+        }
+
+        // Renderizar player
+        player.draw(graphics2D);
+
+        // Interface normal de jogo
+        gameUI.draw(graphics2D);
+
+        // Desenhar overlay de vitória
+        drawVictoryOverlay(graphics2D);
       }
       graphics2D.dispose();
     }
@@ -979,6 +1021,65 @@ public class GamePanel extends JPanel implements Runnable{
     int instructionWidth = g2.getFontMetrics().stringWidth(instructionText);
     int instructionX = boxX + (boxWidth - instructionWidth) / 2;
     int instructionY = boxY + 100;
+
+    // Sombra da instrução
+    g2.setColor(new Color(0, 0, 0, 150));
+    g2.drawString(instructionText, instructionX + 1, instructionY + 1);
+
+    // Instrução principal
+    g2.setColor(new Color(200, 200, 200));
+    g2.drawString(instructionText, instructionX, instructionY);
+  }
+
+  /**
+   * Desenha o overlay de vitória.
+   */
+  private void drawVictoryOverlay(Graphics2D g2) {
+    // Overlay semi-transparente
+    g2.setColor(new Color(0, 0, 0, 150));
+    g2.fillRect(0, 0, getWidth(), getHeight());
+
+    // Caixa de vitória centralizada
+    int boxWidth = 400;
+    int boxHeight = 200;
+    int boxX = (getWidth() - boxWidth) / 2;
+    int boxY = (getHeight() - boxHeight) / 2;
+
+    // Sombra da caixa
+    g2.setColor(new Color(0, 0, 0, 100));
+    g2.fillRoundRect(boxX + 4, boxY + 4, boxWidth, boxHeight, 20, 20);
+
+    // Caixa principal (dourada para vitória)
+    g2.setColor(new Color(255, 215, 0, 250));
+    g2.fillRoundRect(boxX, boxY, boxWidth, boxHeight, 20, 20);
+
+    // Borda da caixa
+    g2.setColor(new Color(255, 255, 0, 200));
+    g2.setStroke(new BasicStroke(3));
+    g2.drawRoundRect(boxX, boxY, boxWidth, boxHeight, 20, 20);
+
+    // Texto "VITÓRIA!"
+    g2.setColor(Color.WHITE);
+    g2.setFont(FontManager.getFont(36f));
+    String victoryText = "VITÓRIA!";
+    int textWidth = g2.getFontMetrics().stringWidth(victoryText);
+    int textX = boxX + (boxWidth - textWidth) / 2;
+    int textY = boxY + 80;
+
+    // Sombra do texto
+    g2.setColor(new Color(0, 0, 0, 150));
+    g2.drawString(victoryText, textX + 2, textY + 2);
+
+    // Texto principal
+    g2.setColor(Color.WHITE);
+    g2.drawString(victoryText, textX, textY);
+
+    // Instrução
+    g2.setFont(FontManager.getFont(18f));
+    String instructionText = "Pressione ENTER para continuar";
+    int instructionWidth = g2.getFontMetrics().stringWidth(instructionText);
+    int instructionX = boxX + (boxWidth - instructionWidth) / 2;
+    int instructionY = boxY + 140;
 
     // Sombra da instrução
     g2.setColor(new Color(0, 0, 0, 150));
@@ -1109,6 +1210,18 @@ public class GamePanel extends JPanel implements Runnable{
     if (keyHandler.escapeKeyPressed) {
       gameState = playState;
       keyHandler.escapeKeyPressed = false;
+    }
+  }
+
+  // Sistema de vitória
+  private void updateVictory() {
+    // ENTER para sair da tela de vitória
+    if (keyHandler.actionPressed) {
+      gameState = playState;
+      keyHandler.actionPressed = false;
+      
+      // Restaurar contexto de áudio do mapa após vitória
+      restoreMapAudioContext();
     }
   }
 

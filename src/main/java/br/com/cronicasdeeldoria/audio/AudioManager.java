@@ -32,7 +32,6 @@ public class AudioManager {
     private static final float DEFAULT_MASTER_VOLUME = 0.7f;
     private static final float DEFAULT_MUSIC_VOLUME = 0.6f;
     private static final float DEFAULT_SFX_VOLUME = 0.8f;
-    private static final int FADE_DURATION_MS = 2000;
     private static final int MAX_CONCURRENT_SFX = 10;
     
     private AudioManager() {
@@ -107,11 +106,17 @@ public class AudioManager {
         // Carregar efeitos sonoros comuns
         loadAudioClip("button_click", "/audio/sfx/button_click.wav");
         loadAudioClip("item_pickup", "/audio/sfx/item_pickup.wav");
+        loadAudioClip("item_equip", "/audio/sfx/070_Equip_10.wav");
+        loadAudioClip("item_buy", "/audio/sfx/079_Buy_sell_01.wav");
+        loadAudioClip("potion_heal", "/audio/sfx/02_Heal_02.wav");
         loadAudioClip("door_open", "/audio/sfx/door_open.wav");
         loadAudioClip("teleport", "/audio/sfx/teleport.wav");
         loadAudioClip("battle_start", "/audio/sfx/battle_start.wav");
         loadAudioClip("battle_end", "/audio/sfx/battle_end.wav");
-        loadAudioClip("level_up", "/audio/sfx/level_up.wav");
+        loadAudioClip("player_attack", "/audio/sfx/56_Attack_03.wav");
+        loadAudioClip("player_flee", "/audio/sfx/51_Flee_02.wav");
+        loadAudioClip("player_block", "/audio/sfx/39_Block_03.wav");
+        loadAudioClip("level_up", "/audio/sfx/level-win-6416.wav");
         loadAudioClip("quest_complete", "/audio/sfx/quest_complete.wav");
         loadAudioClip("error", "/audio/sfx/error.wav");
         loadAudioClip("notification", "/audio/sfx/notification.wav");
@@ -186,8 +191,13 @@ public class AudioManager {
             return;
         }
         
+        // Obter volume específico do contexto
+        AudioConfigLoader configLoader = AudioConfigLoader.getInstance();
+        String contextName = currentContext.name().toLowerCase();
+        float contextVolume = configLoader.getMusicVolume(contextName);
+        
         System.out.println("Starting music playback...");
-        playMusic(musicFile, true);
+        playMusic(musicFile, true, contextVolume);
         System.out.println("=== END PLAY CONTEXT MUSIC DEBUG ===");
     }
     
@@ -195,9 +205,17 @@ public class AudioManager {
      * Reproduz música de fundo com fade in suave.
      */
     public void playMusic(String musicFile, boolean loop) {
+        playMusic(musicFile, loop, musicVolume);
+    }
+    
+    /**
+     * Reproduz música de fundo com volume específico.
+     */
+    public void playMusic(String musicFile, boolean loop, float specificVolume) {
         System.out.println("=== PLAY MUSIC DEBUG ===");
         System.out.println("Music file: " + musicFile);
         System.out.println("Loop: " + loop);
+        System.out.println("Specific volume: " + specificVolume);
         System.out.println("Music enabled: " + isMusicEnabled);
         System.out.println("Muted: " + isMuted);
         
@@ -214,7 +232,8 @@ public class AudioManager {
                 // Parar música atual se estiver tocando
                 if (currentMusicClip != null && currentMusicClip.isRunning()) {
                     System.out.println("Stopping current music clip");
-                    fadeOutAndStop(currentMusicClip, FADE_DURATION_MS);
+                    currentMusicClip.stop();
+                    currentMusicClip.close();
                 }
                 
                 // Carregar nova música
@@ -230,11 +249,11 @@ public class AudioManager {
                 currentMusicClip = AudioSystem.getClip();
                 currentMusicClip.open(audioInputStream);
                 
-                // Configurar volume
+                // Configurar volume usando o volume específico do contexto (sem master volume)
                 FloatControl volumeControl = (FloatControl) currentMusicClip.getControl(FloatControl.Type.MASTER_GAIN);
-                float volume = calculateVolume(musicVolume);
+                float volume = calculateVolumeDirect(specificVolume);
                 volumeControl.setValue(volume);
-                System.out.println("Volume set to: " + volume);
+                System.out.println("Volume set to: " + volume + " (from specific volume: " + specificVolume + ")");
                 
                 // Configurar loop
                 if (loop) {
@@ -244,10 +263,6 @@ public class AudioManager {
                 
                 currentMusicClip.start();
                 System.out.println("Music started successfully");
-                
-                // Fade in
-                fadeIn(currentMusicClip, FADE_DURATION_MS);
-                
                 System.out.println("Playing music: " + musicFile);
                 
             } catch (Exception e) {
@@ -290,9 +305,20 @@ public class AudioManager {
                 sfxClip.open(clip.getAudioFormat(), clip.getAudioData(), 0, clip.getAudioData().length);
                 
                 // Configurar volume
-                FloatControl volumeControl = (FloatControl) sfxClip.getControl(FloatControl.Type.MASTER_GAIN);
-                float volume = calculateVolume(sfxVolume * volumeMultiplier);
-                volumeControl.setValue(volume);
+                try {
+                    FloatControl volumeControl = (FloatControl) sfxClip.getControl(FloatControl.Type.MASTER_GAIN);
+                    float volume = calculateVolume(sfxVolume * volumeMultiplier);
+                    volumeControl.setValue(volume);
+                } catch (IllegalArgumentException e) {
+                    // Se MASTER_GAIN não estiver disponível, tentar VOLUME
+                    try {
+                        FloatControl volumeControl = (FloatControl) sfxClip.getControl(FloatControl.Type.VOLUME);
+                        float volume = calculateVolume(sfxVolume * volumeMultiplier);
+                        volumeControl.setValue(volume);
+                    } catch (IllegalArgumentException e2) {
+                        // Se nenhum controle de volume estiver disponível, apenas reproduzir sem ajuste
+                    }
+                }
                 
                 // Armazenar referência para controle
                 String clipId = soundName + "_" + System.currentTimeMillis();
@@ -316,11 +342,12 @@ public class AudioManager {
     }
     
     /**
-     * Para a música atual com fade out suave.
+     * Para a música atual imediatamente.
      */
     private void stopCurrentMusic() {
         if (currentMusicClip != null && currentMusicClip.isRunning()) {
-            fadeOutAndStop(currentMusicClip, FADE_DURATION_MS);
+            currentMusicClip.stop();
+            currentMusicClip.close();
         }
     }
     
@@ -352,60 +379,7 @@ public class AudioManager {
         }
     }
     
-    /**
-     * Aplica fade in suave ao clip.
-     */
-    private void fadeIn(Clip clip, int durationMs) {
-        if (clip == null) return;
-        
-        FloatControl volumeControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
-        float targetVolume = calculateVolume(musicVolume);
-        
-        int steps = 50;
-        int stepDuration = durationMs / steps;
-        float volumeStep = targetVolume / steps;
-        
-        for (int i = 0; i < steps; i++) {
-            final int step = i;
-            try {
-                Thread.sleep(stepDuration);
-                volumeControl.setValue(volumeStep * step);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                break;
-            }
-        }
-        
-        volumeControl.setValue(targetVolume);
-    }
     
-    /**
-     * Aplica fade out suave ao clip e o para.
-     */
-    private void fadeOutAndStop(Clip clip, int durationMs) {
-        if (clip == null || !clip.isRunning()) return;
-        
-        FloatControl volumeControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
-        float initialVolume = volumeControl.getValue();
-        
-        int steps = 50;
-        int stepDuration = durationMs / steps;
-        float volumeStep = initialVolume / steps;
-        
-        for (int i = steps; i > 0; i--) {
-            final int step = i;
-            try {
-                Thread.sleep(stepDuration);
-                volumeControl.setValue(volumeStep * step);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                break;
-            }
-        }
-        
-        clip.stop();
-        clip.close();
-    }
     
     /**
      * Calcula o volume baseado nas configurações.
@@ -413,6 +387,13 @@ public class AudioManager {
     private float calculateVolume(float baseVolume) {
         float finalVolume = baseVolume * masterVolume;
         return 20f * (float) Math.log10(Math.max(0.001f, finalVolume));
+    }
+    
+    /**
+     * Calcula o volume sem aplicar o master volume (para volumes específicos de contexto).
+     */
+    private float calculateVolumeDirect(float baseVolume) {
+        return 20f * (float) Math.log10(Math.max(0.001f, baseVolume));
     }
     
     // Getters e Setters para configurações
@@ -516,16 +497,6 @@ public class AudioManager {
      */
     public void setContextMusic(AudioContext context, String musicFile) {
         contextMusic.put(context, musicFile);
-    }
-    
-    /**
-     * Limpa recursos e fecha o AudioManager.
-     */
-    public void shutdown() {
-        stopAllAudio();
-        audioExecutor.shutdown();
-        audioClips.clear();
-        activeClips.clear();
     }
     
     /**
