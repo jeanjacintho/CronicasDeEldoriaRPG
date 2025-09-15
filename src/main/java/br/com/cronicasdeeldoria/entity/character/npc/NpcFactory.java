@@ -83,6 +83,10 @@ public class NpcFactory {
                     List<MerchantNpc.ItemConfig> itemConfigs = loadMerchantItemConfigs();
                     if (itemConfigs != null && !itemConfigs.isEmpty()) {
                         MerchantNpc merchant = new MerchantNpc(null, name, x, y, 0, "down", itemConfigs);
+                        // Garantir que o comerciante utilize a skin definida no npcs.json (ex.: "smith")
+                        if (skin != null && !skin.isEmpty()) {
+                            merchant.setSkin(skin);
+                        }
                         merchant.setDialogId(dialogId);
                         npcs.add(merchant);
                     }

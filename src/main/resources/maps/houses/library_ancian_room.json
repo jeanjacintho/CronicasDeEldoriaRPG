@@ -2033,6 +2033,17 @@
       "collider": true
     },
     {
+      "name": "Npcs",
+      "tiles": [
+        {
+          "id": "smart_old_man",
+          "x": 15,
+          "y": 7
+        }
+      ],
+      "collider": false
+    },
+    {
       "name": "Items",
       "tiles": [
         {

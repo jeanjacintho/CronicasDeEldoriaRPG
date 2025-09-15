@@ -92,11 +92,7 @@ public class AudioManager {
         this.masterVolume = settings.masterVolume;
         this.musicVolume = settings.musicVolume;
         this.sfxVolume = settings.sfxVolume;
-        
-        System.out.println("Audio configuration loaded from JSON:");
-        System.out.println("- Forest music: " + contextMusic.get(AudioContext.FOREST));
-        System.out.println("- Menu music: " + contextMusic.get(AudioContext.MENU));
-        System.out.println("- Player House music: " + contextMusic.get(AudioContext.PLAYER_HOUSE));
+    
     }
     
     /**
@@ -131,9 +127,6 @@ public class AudioManager {
             if (audioStream != null) {
                 AudioClip clip = new AudioClip(audioStream);
                 audioClips.put(name, clip);
-                System.out.println("Audio clip loaded: " + name);
-            } else {
-                System.out.println("Warning: Audio file not found: " + resourcePath);
             }
         } catch (Exception e) {
             System.err.println("Error loading audio clip " + name + ": " + e.getMessage());
@@ -144,50 +137,26 @@ public class AudioManager {
      * Muda o contexto de áudio e reproduz a música apropriada.
      */
     public void changeContext(AudioContext newContext) {
-        System.out.println("=== AUDIO MANAGER DEBUG ===");
-        System.out.println("Changing context from " + currentContext + " to " + newContext);
         
-        if (currentContext == newContext) {
-            System.out.println("Context unchanged, no action needed");
-            System.out.println("=== END AUDIO MANAGER DEBUG ===");
-            return; // Já está no contexto correto
-        }
-        
-        System.out.println("Stopping current music...");
         // Parar música atual com fade out
         stopCurrentMusic();
         
         // Atualizar contexto
         currentContext = newContext;
         
-        System.out.println("Playing context music for: " + newContext);
         // Reproduzir nova música com fade in
         playContextMusic();
         
-        System.out.println("=== END AUDIO MANAGER DEBUG ===");
     }
     
     /**
      * Reproduz a música do contexto atual.
      */
     private void playContextMusic() {
-        System.out.println("=== PLAY CONTEXT MUSIC DEBUG ===");
-        System.out.println("Current context: " + currentContext);
-        System.out.println("Music enabled: " + isMusicEnabled);
-        System.out.println("Muted: " + isMuted);
-        
-        if (!isMusicEnabled || isMuted) {
-            System.out.println("Music disabled or muted, skipping playback");
-            System.out.println("=== END PLAY CONTEXT MUSIC DEBUG ===");
-            return;
-        }
         
         String musicFile = contextMusic.get(currentContext);
-        System.out.println("Music file for context " + currentContext + ": " + musicFile);
         
         if (musicFile == null) {
-            System.out.println("No music configured for context: " + currentContext);
-            System.out.println("=== END PLAY CONTEXT MUSIC DEBUG ===");
             return;
         }
         
@@ -196,9 +165,7 @@ public class AudioManager {
         String contextName = currentContext.name().toLowerCase();
         float contextVolume = configLoader.getMusicVolume(contextName);
         
-        System.out.println("Starting music playback...");
         playMusic(musicFile, true, contextVolume);
-        System.out.println("=== END PLAY CONTEXT MUSIC DEBUG ===");
     }
     
     /**
@@ -212,26 +179,16 @@ public class AudioManager {
      * Reproduz música de fundo com volume específico.
      */
     public void playMusic(String musicFile, boolean loop, float specificVolume) {
-        System.out.println("=== PLAY MUSIC DEBUG ===");
-        System.out.println("Music file: " + musicFile);
-        System.out.println("Loop: " + loop);
-        System.out.println("Specific volume: " + specificVolume);
-        System.out.println("Music enabled: " + isMusicEnabled);
-        System.out.println("Muted: " + isMuted);
         
         if (!isMusicEnabled || isMuted) {
-            System.out.println("Music disabled or muted, skipping playback");
-            System.out.println("=== END PLAY MUSIC DEBUG ===");
             return;
         }
         
         audioExecutor.submit(() -> {
             try {
-                System.out.println("Loading music file: " + musicFile);
                 
                 // Parar música atual se estiver tocando
                 if (currentMusicClip != null && currentMusicClip.isRunning()) {
-                    System.out.println("Stopping current music clip");
                     currentMusicClip.stop();
                     currentMusicClip.close();
                 }
@@ -239,12 +196,8 @@ public class AudioManager {
                 // Carregar nova música
                 InputStream audioStream = getClass().getResourceAsStream(musicFile);
                 if (audioStream == null) {
-                    System.err.println("Music file not found: " + musicFile);
-                    System.out.println("=== END PLAY MUSIC DEBUG ===");
                     return;
                 }
-                
-                System.out.println("Creating audio input stream...");
                 AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(audioStream);
                 currentMusicClip = AudioSystem.getClip();
                 currentMusicClip.open(audioInputStream);
@@ -253,23 +206,18 @@ public class AudioManager {
                 FloatControl volumeControl = (FloatControl) currentMusicClip.getControl(FloatControl.Type.MASTER_GAIN);
                 float volume = calculateVolumeDirect(specificVolume);
                 volumeControl.setValue(volume);
-                System.out.println("Volume set to: " + volume + " (from specific volume: " + specificVolume + ")");
                 
                 // Configurar loop
                 if (loop) {
                     currentMusicClip.loop(Clip.LOOP_CONTINUOUSLY);
-                    System.out.println("Loop enabled");
                 }
                 
                 currentMusicClip.start();
-                System.out.println("Music started successfully");
-                System.out.println("Playing music: " + musicFile);
                 
             } catch (Exception e) {
                 System.err.println("Error playing music " + musicFile + ": " + e.getMessage());
                 e.printStackTrace();
             }
-            System.out.println("=== END PLAY MUSIC DEBUG ===");
         });
     }
     

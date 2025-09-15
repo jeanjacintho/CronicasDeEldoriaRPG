@@ -116,6 +116,13 @@ public class MerchantNpc extends Npc {
         this.merchantItems = new ArrayList<>();
         initializeMerchantItemsFromConfigs();
     }
+
+    /**
+     * Permite ajustar a skin do comerciante após a construção (usado pela NpcFactory).
+     */
+    public void setSkin(String skin) {
+        this.skin = skin;
+    }
     
     /**
      * Carrega configurações de itens do arquivo npcs.json.
