@@ -23770,24 +23770,16 @@
           "y": 3
         },
         {
-          "id": "7_15",
+          "id": "smith_house",
           "x": 21,
-          "y": 17
+          "y": 17,
+          "interactive": true
         },
         {
-          "id": "7_15",
-          "x": 47,
-          "y": 20
-        },
-        {
-          "id": "7_15",
+          "id": "library_base",
           "x": 5,
-          "y": 24
-        },
-        {
-          "id": "7_15",
-          "x": 34,
-          "y": 32
+          "y": 24,
+          "interactive": true
         },
         {
           "id": "city_to_dungeon1:entrance",
@@ -23800,34 +23792,28 @@
           "y": 35
         },
         {
-          "id": "7_15",
+          "id": "house_03",
           "x": 18,
-          "y": 39
+          "y": 39,
+          "interactive": true
         },
         {
-          "id": "7_15",
+          "id": "bakery",
           "x": 30,
-          "y": 39
+          "y": 39,
+          "interactive": true
         },
         {
-          "id": "7_15",
-          "x": 39,
-          "y": 39
-        },
-        {
-          "id": "7_15",
+          "id": "house_01",
           "x": 45,
-          "y": 39
+          "y": 39,
+          "interactive": true
         },
         {
-          "id": "7_15",
+          "id": "house_02",
           "x": 37,
-          "y": 45
-        },
-        {
-          "id": "7_15",
-          "x": 51,
-          "y": 45
+          "y": 45,
+          "interactive": true
         },
         {
           "id": "city_to_dungeon3:entrance",

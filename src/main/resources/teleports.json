@@ -62,63 +62,60 @@
       }
     },
     "bakery": {
-      "map": "bakery",
+      "map": "houses/bakery",
       "name": "Padaria",
       "description": "Uma padaria",
       "spawnPoints": {
-        "entrance": [160, 160],
-        "boss_room": [240, 240],
-        "treasure": [200, 200]
+        "entrance": [2, 5]
       }
     },
     "house_01": {
-      "map": "house01",
+      "map": "houses/house01",
       "name": "Casa do Aldeão",
       "description": "Uma casa simples na vila",
       "spawnPoints": {
-        "entrance": [160, 160],
-        "boss_room": [240, 240],
-        "treasure": [200, 200]
+        "entrance": [7, 7]
       }
     },
     "house_02": {
-      "map": "house02",
+      "map": "houses/house02",
       "name": "Casa do Aldeão",
       "description": "Uma casa simples na vila",
       "spawnPoints": {
-        "entrance": [160, 160],
-        "boss_room": [240, 240],
-        "treasure": [200, 200]
+        "entrance": [4, 7]
       }
     },
     "house_03": {
-      "map": "house03",
+      "map": "houses/house03",
       "name": "Casa do Aldeão",
       "description": "Uma casa simples na vila",
       "spawnPoints": {
-        "entrance": [160, 160],
-        "boss_room": [240, 240],
-        "treasure": [200, 200]
+        "entrance": [9, 4]
+      }
+    },
+    "smith_house": {
+      "map": "houses/smith_house",
+      "name": "Casa do Ferreiro",
+      "description": "Uma casa do ferreiro",
+      "spawnPoints": {
+        "entrance": [5, 8]
       }
     },
     "library_base": {
-      "map": "library_base",
+      "map": "houses/library_base",
       "name": "Biblioteca",
       "description": "Uma biblioteca",
       "spawnPoints": {
-        "entrance": [160, 160],
-        "boss_room": [240, 240],
-        "treasure": [200, 200]
+        "entrance": [13, 12],
+        "exit_ancian_room": [6, 2]
       }
     },
     "library_ancian_room": {
-      "map": "library_ancian_room",
+      "map": "houses/library_ancian_room",
       "name": "Sala do Ancião",
       "description": "Uma sala do anciana",
       "spawnPoints": {
-        "entrance": [160, 160],
-        "boss_room": [240, 240],
-        "treasure": [200, 200]
+        "entrance": [6, 2]
       }
     },
     "totem": {
@@ -151,7 +148,13 @@
         "entrance": [34, 4],
         "city_entrance_forest": [4, 34],
         "city_entrance_dungeon1": [54, 34],
-        "city_entrance_dungeon3": [31, 50]
+        "city_entrance_dungeon3": [31, 50],
+        "exit_bakery": [30, 39],
+        "exit_library_base": [4, 24],
+        "exit_smith_house": [20, 17],
+        "exit_house1": [44, 39],
+        "exit_house2": [36, 45],
+        "exit_house3": [17, 39]
       }
     }
   },

@@ -2118,7 +2118,7 @@
       "name": "Teleport",
       "tiles": [
         {
-          "id": "18_16",
+          "id": "library_ancian_room",
           "x": 6,
           "y": 1
         },
@@ -2128,12 +2128,7 @@
           "y": 2
         },
         {
-          "id": "18_16",
-          "x": 14,
-          "y": 13
-        },
-        {
-          "id": "18_16",
+          "id": "city:exit_library_base",
           "x": 14,
           "y": 14
         }
