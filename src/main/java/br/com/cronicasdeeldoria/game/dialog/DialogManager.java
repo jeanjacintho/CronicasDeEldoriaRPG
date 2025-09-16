@@ -8,8 +8,6 @@ import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.io.IOException;
 
-import br.com.cronicasdeeldoria.entity.character.AttributeType;
-import br.com.cronicasdeeldoria.entity.item.ItemType;
 import br.com.cronicasdeeldoria.entity.item.QuestItem;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -77,6 +75,20 @@ public class DialogManager {
 
                 Dialog dialog = new Dialog(id, speakerName, text, portraitSprite);
 
+                // Carregar condição se existir
+                if (dialogObj.has("condition")) {
+                    JsonObject conditionObj = dialogObj.getAsJsonObject("condition");
+                    String conditionType = conditionObj.get("type").getAsString();
+                    String questId = conditionObj.get("questId").getAsString();
+                    String statusStr = conditionObj.get("status").getAsString();
+                    
+                    br.com.cronicasdeeldoria.game.quest.QuestState requiredStatus = 
+                        br.com.cronicasdeeldoria.game.quest.QuestState.valueOf(statusStr.toUpperCase());
+                    
+                    DialogCondition condition = new DialogCondition(conditionType, questId, requiredStatus);
+                    dialog.setCondition(condition);
+                }
+
                 // Carregar opções se existirem
                 if (dialogObj.has("options")) {
                     JsonArray optionsArray = dialogObj.getAsJsonArray("options");
@@ -137,14 +149,71 @@ public class DialogManager {
     }
 
     /**
-     * Inicia um diálogo pelo ID.
-     * @param dialogId ID do diálogo
+     * Encontra o diálogo apropriado para um NPC baseado nas condições das quests.
+     * @param npcName Nome do NPC
+     * @return ID do diálogo apropriado ou -1 se nenhum for encontrado
+     */
+    public int findAppropriateDialog(String npcName) {
+        QuestManager questManager = QuestManager.getInstance();
+        if (questManager == null) {
+            return -1;
+        }
+
+        // Para o Sábio Ancião, verificar o status das quests
+        if (npcName.equals("Sábio Ancião")) {
+            // Verificar se a quest inicial foi completada
+            if (questManager.getCompletedQuests().containsKey("go_library")) {
+                // Verificar status das orbes
+                if (questManager.getCompletedQuests().containsKey("orb_1")) {
+                    if (questManager.getCompletedQuests().containsKey("orb_2")) {
+                        if (questManager.getCompletedQuests().containsKey("orb_3")) {
+                            if (questManager.getCompletedQuests().containsKey("orb_4")) {
+                                return 36; // Todas as orbes completadas
+                            } else {
+                                return 35; // Orbe 3 completada
+                            }
+                        } else {
+                            return 34; // Orbe 2 completada
+                        }
+                    } else {
+                        return 33; // Orbe 1 completada
+                    }
+                } else {
+                    // Quest inicial completada, mas nenhuma orbe ainda
+                    return 32; // Instruções para primeira orbe
+                }
+            } else {
+                // Quest inicial não completada
+                return 30; // Diálogo inicial
+            }
+        }
+
+        return -1; // NPC não reconhecido ou sem diálogo condicional
+    }
+
+    /**
+     * Inicia um diálogo apropriado para um NPC baseado nas condições.
+     * @param npcName Nome do NPC
      * @return true se o diálogo foi iniciado com sucesso
      */
+    public boolean startAppropriateDialog(String npcName) {
+        int dialogId = findAppropriateDialog(npcName);
+        if (dialogId != -1) {
+            return startDialog(dialogId);
+        }
+        return false;
+    }
     public boolean startDialog(int dialogId) {
         Dialog dialog = dialogs.get(dialogId);
         if (dialog == null) {
             System.err.println("Diálogo com ID " + dialogId + " não encontrado!");
+            return false;
+        }
+
+        // Verificar se a condição do diálogo é atendida
+        QuestManager questManager = QuestManager.getInstance();
+        if (!dialog.isConditionMet(questManager)) {
+            System.out.println("Condição do diálogo " + dialogId + " não foi atendida");
             return false;
         }
 
@@ -273,6 +342,10 @@ public class DialogManager {
               }
               boolean success = gamePanel.getInventoryManager().addItem(item);
               if (success) {
+                // Notificar QuestManager sobre coleta de item
+                if (gamePanel.getQuestManager() != null) {
+                  gamePanel.getQuestManager().onItemCollected(itemId);
+                }
                 gamePanel.getGameUI().addMessage("Você recebeu " + quantity + "x " + item.getName() + "!", null, 3500L);
               } else {
                 gamePanel.getGameUI().addMessage("Inventário cheio! Não foi possível receber o item.", null, 3500L);

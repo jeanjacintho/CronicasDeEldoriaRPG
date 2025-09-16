@@ -82,6 +82,17 @@ public class Npc extends Character {
      */
     public void interact(GamePanel gamePanel) {
         if (interactive && gamePanel.getDialogManager() != null) {
+            // Primeiro notificar o QuestManager sobre a interação com o NPC
+            if (gamePanel.getQuestManager() != null) {
+                gamePanel.getQuestManager().onPlayerTalkToNpc(getName());
+            }
+            
+            // Depois tentar usar diálogo condicional
+            if (gamePanel.getDialogManager().startAppropriateDialog(getName())) {
+                return;
+            }
+            
+            // Fallback para diálogo fixo se não houver diálogo condicional
             if (dialogId > 0) {
                 gamePanel.getDialogManager().startDialog(dialogId);
             }

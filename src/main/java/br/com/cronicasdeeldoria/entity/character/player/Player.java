@@ -170,6 +170,22 @@ public class Player extends Character {
       keyHandler.qPressed = false;
     }
 
+    if (keyHandler.jPressed) {
+      gamePanel.getGameUI().toggleQuestWindow();
+      keyHandler.jPressed = false;
+    }
+
+    // Controles de scroll da janela de quests
+    if (keyHandler.upArrowPressed && gamePanel.getGameUI().isQuestWindowVisible()) {
+      gamePanel.getGameUI().scrollQuestWindowUp();
+      keyHandler.upArrowPressed = false;
+    }
+
+    if (keyHandler.downArrowPressed && gamePanel.getGameUI().isQuestWindowVisible()) {
+      gamePanel.getGameUI().scrollQuestWindowDown();
+      keyHandler.downArrowPressed = false;
+    }
+
     // Debug - mostrar posição em tiles (tecla P)
     if (keyHandler.debugPressed) {
       int tileX = getWorldX() / gamePanel.getTileSize();
@@ -290,9 +306,6 @@ public class Player extends Character {
     if (currentLevel > oldLevel) {
       levelUp(oldLevel, currentLevel);
     }
-    int xpNextLevel = levelManager.getXpForNextLevel(currentLevel);
-
-    System.out.println("XP ganho: " + xp + " | Total: " + totalXp + "|" + xpNextLevel + " | Nível: " + currentLevel);
   }
 
   /**

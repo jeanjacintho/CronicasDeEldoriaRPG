@@ -24,6 +24,19 @@
     ]
   },
   {
+    "id": 37,
+    "speakerName": "Narrador",
+    "text": "Você desperta em sua casa. Rumores sombrios correm pela vila... Dirija-se à cidade e procure o Sábio Ancião na biblioteca (2º andar).",
+    "options": [
+      { 
+        "text": "Entendido.", 
+        "nextDialogId": -1,
+        "actionType": "start_quest",
+        "actionData": "go_library"
+      }
+    ]
+  },
+  {
     "id": 2,
     "speakerName": "Guardião",
     "text": "Eldoria é uma vila pacífica, mas ultimamente temos tido problemas com criaturas selvagens nas florestas próximas. Os comerciantes estão com medo de viajar.",
@@ -398,6 +411,11 @@
     "speakerName": "Sábio Ancião",
     "text": "Aventureiro! Tempos sombrios se aproximam. O Mago Supremo roubou as 4 orbes mágicas que mantêm o equilíbrio do mundo. Sem elas, a magia está se corrompendo e monstros mais poderosos estão surgindo.",
     "portraitSprite": "mage",
+    "condition": {
+      "type": "quest_status",
+      "questId": "go_library",
+      "status": "NOT_STARTED"
+    },
     "options": [
       {
         "text": "Como posso ajudar?",
@@ -412,14 +430,14 @@
   {
     "id": 31,
     "speakerName": "Sábio Ancião",
-    "text": "Você deve encontrar e coletar as 4 orbes: a Orbe de Fogo nas Montanhas Ardentes, a Orbe de Água nas Profundezas Aquáticas, a Orbe de Terra nas Cavernas Subterrâneas e a Orbe de Ar nos Picos Celestiais. Depois, leve todas ao Totem Central para despertar o Mago Supremo.",
+    "text": "O Mago Supremo roubou as 4 orbes que mantêm o equilíbrio do mundo e as espalhou, protegidas por monstros. Você deve recuperar cada orbe e depositá-la no Totem Central. Começaremos pela primeira orbe.",
     "portraitSprite": "mage",
     "options": [
       {
-        "text": "Aceito esta missão!",
+        "text": "Aceito esta missão! (Pegue 100 moedas para se preparar)",
         "nextDialogId": 32,
-        "actionType": "start_quest",
-        "actionData": "main_orb_quest"
+        "actionType": "give_money",
+        "actionData": "100"
       },
       {
         "text": "Preciso pensar melhor.",
@@ -430,13 +448,76 @@
   {
     "id": 32,
     "speakerName": "Sábio Ancião",
-    "text": "Excelente! Sua coragem será lembrada. As orbes estão espalhadas pelos quatro cantos do mundo. Use os portais mágicos para viajar entre os reinos. Boa sorte, aventureiro!",
+    "text": "A primeira orbe está ao LESTE da floresta, mais ao NORTE. Você encontrará uma dungeon onde um Orc Boss a protege. Derrote-o, colete a orbe e traga-a ao Totem Central. Depois volte aqui para receber instruções sobre a próxima.",
     "portraitSprite": "mage",
+    "condition": {
+      "type": "quest_status",
+      "questId": "go_library",
+      "status": "COMPLETED"
+    },
     "options": [
       {
-        "text": "Obrigado pela orientação!",
-        "nextDialogId": -1
+        "text": "Entendido! Irei buscar a primeira orbe.",
+        "nextDialogId": -1,
+        "actionType": "start_quest",
+        "actionData": "orb_1"
       }
+    ]
+  },
+  {
+    "id": 33,
+    "speakerName": "Sábio Ancião",
+    "text": "Vejo que recuperaste a primeira orbe. A próxima jaz ao LESTE, saída mais ao SUL da floresta. Mantém-te alerta.",
+    "portraitSprite": "mage",
+    "condition": {
+      "type": "quest_status",
+      "questId": "orb_1",
+      "status": "COMPLETED"
+    },
+    "options": [
+      { "text": "Irei imediatamente.", "nextDialogId": -1, "actionType": "start_quest", "actionData": "orb_2" }
+    ]
+  },
+  {
+    "id": 34,
+    "speakerName": "Sábio Ancião",
+    "text": "Excelente. A terceira orbe está ao SUL da cidade, em uma cripta gelada. Leva provisões.",
+    "portraitSprite": "mage",
+    "condition": {
+      "type": "quest_status",
+      "questId": "orb_2",
+      "status": "COMPLETED"
+    },
+    "options": [
+      { "text": "Partirei agora.", "nextDialogId": -1, "actionType": "start_quest", "actionData": "orb_3" }
+    ]
+  },
+  {
+    "id": 35,
+    "speakerName": "Sábio Ancião",
+    "text": "Falta pouco. A última orbe repousa a LESTE da cidade, entre ossos e ecos antigos.",
+    "portraitSprite": "mage",
+    "condition": {
+      "type": "quest_status",
+      "questId": "orb_3",
+      "status": "COMPLETED"
+    },
+    "options": [
+      { "text": "Entendido.", "nextDialogId": -1, "actionType": "start_quest", "actionData": "orb_4" }
+    ]
+  },
+  {
+    "id": 36,
+    "speakerName": "Sábio Ancião",
+    "text": "O Totem vibra… o Mago Supremo despertou. Enfrente-o e restaure o equilíbrio!",
+    "portraitSprite": "mage",
+    "condition": {
+      "type": "quest_status",
+      "questId": "orb_4",
+      "status": "COMPLETED"
+    },
+    "options": [
+      { "text": "Pelo equilíbrio de Eldoria!", "nextDialogId": -1 }
     ]
   }
 ]

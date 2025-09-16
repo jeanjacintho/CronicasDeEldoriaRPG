@@ -299,7 +299,6 @@ public class MerchantNpc extends Npc {
     @Override
     public void interact() {
         // A interação será gerenciada pelo GamePanel
-        System.out.println("Comerciante " + merchantName + " interagiu!");
     }
     
     @Override

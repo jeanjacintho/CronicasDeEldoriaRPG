@@ -10,7 +10,8 @@ public class KeyHandler implements KeyListener {
     public boolean actionPressed, upPressed, downPressed, leftPressed, rightPressed, xPressed, zPressed, qPressed;
     public boolean rPressed, fPressed, gPressed, hPressed, tPressed, specialPressed, attackPressed, defendPressed, escapePressed;
     public boolean healthPressed, manaPressed;
-    public boolean inventoryPressed, tabPressed, escapeKeyPressed, debugPressed;
+    public boolean inventoryPressed, tabPressed, escapeKeyPressed, debugPressed, jPressed;
+    public boolean upArrowPressed, downArrowPressed; // Teclas de seta para scroll
 
     /**
      * Evento chamado quando uma tecla é digitada.
@@ -45,6 +46,9 @@ public class KeyHandler implements KeyListener {
             case KeyEvent.VK_TAB: tabPressed = true; break;
             case KeyEvent.VK_ESCAPE: escapeKeyPressed = true; break;
             case KeyEvent.VK_P: debugPressed = true; break;
+            case KeyEvent.VK_J: jPressed = true; break;
+            case KeyEvent.VK_UP: upArrowPressed = true; break;
+            case KeyEvent.VK_DOWN: downArrowPressed = true; break;
 
             // Key de batalha
             case KeyEvent.VK_1: specialPressed = true; break;
@@ -83,6 +87,9 @@ public class KeyHandler implements KeyListener {
             case KeyEvent.VK_TAB: tabPressed = false; break;
             case KeyEvent.VK_ESCAPE: escapeKeyPressed = false; break;
             case KeyEvent.VK_P: debugPressed = false; break;
+            case KeyEvent.VK_J: jPressed = false; break;
+            case KeyEvent.VK_UP: upArrowPressed = false; break;
+            case KeyEvent.VK_DOWN: downArrowPressed = false; break;
 
 
           // Batalha

@@ -67,10 +67,6 @@ public class Mage implements CharacterClass {
       int newHealth = Math.max(0, target.getAttributeHealth() - magicDamage);
       target.setAttributeHealth(newHealth);
       gp.getGameUI().showDamage(target, magicDamage);
-
-      System.out.println(attacker.getName() + " uses Special Ability on " + target.getName() +
-        " causing " + magicDamage + " Fire damage!");
-      System.out.println("-----------------------------");
     }
   }
 }

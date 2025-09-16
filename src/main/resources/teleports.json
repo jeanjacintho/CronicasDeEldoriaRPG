@@ -123,7 +123,7 @@
       "name": "Totem Central",
       "description": "Um totem mágico",
       "spawnPoints": {
-        "entrance": [12, 21]
+        "entrance": [12, 20]
       }
     },
     "city_to_dungeon1": {
@@ -154,7 +154,8 @@
         "exit_smith_house": [20, 17],
         "exit_house1": [44, 39],
         "exit_house2": [36, 45],
-        "exit_house3": [17, 39]
+        "exit_house3": [17, 39],
+        "exit_totem": [28, 16]
       }
     }
   },

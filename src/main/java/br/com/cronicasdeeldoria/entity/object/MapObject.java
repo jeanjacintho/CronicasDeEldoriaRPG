@@ -167,6 +167,18 @@ public class MapObject extends Entity {
                         ((QuestItem) item).onCollect();
                     }
                     
+                    // Notificar QuestManager sobre coleta de item
+                    try {
+                        Method getQuestManagerMethod = gamePanel.getClass().getMethod("getQuestManager");
+                        Object questManager = getQuestManagerMethod.invoke(gamePanel);
+                        if (questManager != null) {
+                            Method onItemCollectedMethod = questManager.getClass().getMethod("onItemCollected", String.class);
+                            onItemCollectedMethod.invoke(questManager, item.getItemId());
+                        }
+                    } catch (Exception e) {
+                        System.err.println("Erro ao notificar QuestManager sobre coleta de item: " + e.getMessage());
+                    }
+                    
                     Method getGameUIMethod = gamePanel.getClass().getMethod("getGameUI");
                     Object gameUI = getGameUIMethod.invoke(gamePanel);
                     Method addMessageMethod = gameUI.getClass().getMethod("addMessage", String.class, java.awt.Image.class, long.class);
