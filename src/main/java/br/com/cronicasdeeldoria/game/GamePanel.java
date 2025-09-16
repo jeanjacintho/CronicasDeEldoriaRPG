@@ -242,6 +242,27 @@ public class GamePanel extends JPanel implements Runnable{
     gameThread = new Thread(this);
     gameThread.start();
     this.requestFocusInWindow(); // Garantir que o GamePanel tenha foco
+
+    // Ao iniciar o jogo da 3 poções ao player
+    dialogManager.giveItemToPlayer("health_potion", 3);
+    dialogManager.giveItemToPlayer("mana_potion", 2);
+
+    dialogManager.giveItemToPlayer("mana_potion", 5);
+    dialogManager.giveItemToPlayer("health_potion", 5);
+
+    //Itens para testar Dungeon3
+    dialogManager.giveItemToPlayer("ring_rare", 1);
+    dialogManager.giveItemToPlayer("shield_common", 1);
+    dialogManager.giveItemToPlayer("armor_rare", 1);
+    dialogManager.giveItemToPlayer("axe_rare", 1);
+    dialogManager.giveItemToPlayer("bow_rare", 1);
+
+    //Itens para testar Dungeon4
+    dialogManager.giveItemToPlayer("ring_legendary", 1);
+    dialogManager.giveItemToPlayer("shield_legendary", 1);
+    dialogManager.giveItemToPlayer("armor_legendary", 1);
+    dialogManager.giveItemToPlayer("axe_legendary", 1);
+    dialogManager.giveItemToPlayer("bow_legendary", 1);
   }
 
   @Override
@@ -430,11 +451,11 @@ public class GamePanel extends JPanel implements Runnable{
 
     // Limpar estado de batalha
     battle.endBattle();
-    
+
     if (playerWon) {
       // Entrar no estado de vitória
       gameState = victoryState;
-      
+
       // Reproduzir música de vitória
       if (audioManager != null) {
         audioManager.changeContext(AudioContext.VICTORY);
@@ -442,11 +463,11 @@ public class GamePanel extends JPanel implements Runnable{
     } else {
       // Voltar ao jogo normal em caso de derrota
       gameState = playState;
-      
+
       // Restaurar contexto de áudio do mapa após derrota
       restoreMapAudioContext();
     }
-    
+
     battleMonster = null;
     lastBattleEndTime = System.currentTimeMillis();
   }
@@ -565,9 +586,8 @@ public class GamePanel extends JPanel implements Runnable{
                     npc instanceof FrostbornMonster || npc instanceof OrcMonster ||
                     npc instanceof FrostbornBossMonster || npc instanceof OrcBossMonster ||
                     npc instanceof SkeletonBossMonster || npc instanceof WolfBossMonster) {
-                    
+
                     boolean isNearMonster = isPlayerNearMonster(player, npc.getWorldX(), npc.getWorldY());
-                    
                     if (isNearMonster && npc.isInteractive()) {
                         // Verificar auto-interação
                         if (npc.isAutoInteraction()) {
@@ -581,7 +601,6 @@ public class GamePanel extends JPanel implements Runnable{
                 } else {
                     // NPCs normais (usar distância de 2 tiles)
                     boolean isNearNpc = isPlayerNearNpc(player, npc.getWorldX(), npc.getWorldY());
-                    
                     if (isNearNpc && npc.isInteractive()) {
                         // Verificar auto-interação
                         if (npc.isAutoInteraction()) {
@@ -598,7 +617,6 @@ public class GamePanel extends JPanel implements Runnable{
         // Verificar interação com objetos
         if (objectManager != null) {
             for (MapObject obj : objectManager.getActiveObjects()) {
-                
                 if (obj.isInteractive() && obj.isActive()) {
                     // Verificar auto-interação
                     if (obj.isAutoInteraction()) {
@@ -609,7 +627,6 @@ public class GamePanel extends JPanel implements Runnable{
                     } else {
                         // Para objetos sem auto-interação, verificar proximidade e mostrar tecla E
                         boolean isNearObject = isPlayerNearObject(player, obj.getWorldX(), obj.getWorldY());
-                        
                         if (isNearObject) {
                             simpleInteractionManager.addInteractionPoint(obj.getWorldX(), obj.getWorldY(), "E", "object");
                         }
@@ -654,6 +671,7 @@ public class GamePanel extends JPanel implements Runnable{
         int maxDistance = tileSize * distanceInTiles;
 
         boolean isNear = distanceX <= maxDistance && distanceY <= maxDistance;
+
 
         return isNear;
     }
@@ -1230,7 +1248,7 @@ public class GamePanel extends JPanel implements Runnable{
     if (keyHandler.actionPressed) {
       gameState = playState;
       keyHandler.actionPressed = false;
-      
+
       // Restaurar contexto de áudio do mapa após vitória
       restoreMapAudioContext();
     }
@@ -1348,7 +1366,7 @@ public class GamePanel extends JPanel implements Runnable{
     public InteractionManager getInteractionManager() {
       return interactionManager;
     }
-    
+
     public SimpleInteractionManager getSimpleInteractionManager() {
       return simpleInteractionManager;
     }

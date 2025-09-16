@@ -63,7 +63,7 @@ public class Mage implements CharacterClass {
 
     if (attacker.getAttributeMana() >= manaCost) {
       attacker.setAttributeMana(attacker.getAttributeMana() - manaCost);
-      int magicDamage = (int) (Battle.calculateDamage(attacker, target) * 4.5);
+      int magicDamage = (int) (Battle.calculateDamage(attacker, target) * 2.8);
       int newHealth = Math.max(0, target.getAttributeHealth() - magicDamage);
       target.setAttributeHealth(newHealth);
       gp.getGameUI().showDamage(target, magicDamage);
