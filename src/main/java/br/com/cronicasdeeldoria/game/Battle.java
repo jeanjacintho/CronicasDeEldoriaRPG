@@ -37,12 +37,6 @@ public class Battle {
     // Popula a ordem dos turnos
     determineTurnOrder();
 
-    System.out.println("Battle started: " + player.getName() + " vs " + monster.getName());
-    System.out.println("Turn order: ");
-    for (Character c : turnOrder) {
-      System.out.println("- " + c.getName());
-    }
-
     // Se o primeiro turno for do monstro, processa automaticamente
     if (getCurrentCharacter() instanceof Npc) {
       processMonsterTurn();
@@ -56,12 +50,6 @@ public class Battle {
 
     // Ordenar por agilidade se você tiver esse atributo
     Collections.sort(turnOrder, (c1, c2) -> Integer.compare(c2.getAttributeAgility(), c1.getAttributeAgility()));
-
-    System.out.println("Turn order determined by agility:");
-    for (int i = 0; i < turnOrder.size(); i++) {
-      Character c = turnOrder.get(i);
-      System.out.println((i+1) + ". " + c.getName() + " (Agility: " + c.getAttributeAgility() + ")");
-    }
   }
 
   public void processPlayerAction(String action) {
@@ -70,7 +58,6 @@ public class Battle {
 
     Character currentCharacter = getCurrentCharacter();
     if (!(currentCharacter instanceof Player)) {
-      System.out.println("Not player's turn!");
       return;
     }
 
@@ -89,7 +76,6 @@ public class Battle {
       case "HEALTH": healthPotion(player); break;
       case "MANA": manaPotion(player); break;
       default:
-        System.out.println("Invalid action!");
         //waitingForPlayerInput = true; // Permite tentar novamente
         return;
     }
@@ -173,8 +159,6 @@ public class Battle {
     for (Character c : turnOrder) {
       c.updateBuffs();
     }
-
-    System.out.println("\n---------- Turn: " + countTurn + " ----------");
   }
 
   public static int calculateDamage(Character attacker, Character target) {
@@ -200,9 +184,6 @@ public class Battle {
       audioManager.playSoundEffect("player_block");
     }
 
-    System.out.println(attacker.getName() + " attacks " + target.getName() + " causing " + damage + " damage!");
-    System.out.println("-----------------------------");
-
     gp.getGameUI().showDamage(target, damage);
   }
 
@@ -222,16 +203,12 @@ public class Battle {
       int fleeChance = 50; // 50% chance base
 
       if (Math.random() * 100 < fleeChance) {
-        System.out.println("You successfully fled from battle!");
-        System.out.println("-----------------------------");
 
         // Mover o jogador para fora da área de detecção (6 tiles de distância)
         movePlayerAwayFromMonster();
 
         return true;
       } else {
-        System.out.println("Failed to flee!");
-        System.out.println("-----------------------------");
         return false;
       }
     }
@@ -254,12 +231,8 @@ public class Battle {
 
     if (diffCurrentHpAndMaxHp > finalHeal) {
       character.setAttributeHealth(character.getAttributeHealth() + finalHeal);
-      System.out.println(character.getName() + " recuperou " + finalHeal + " de Vida");
-      System.out.println("-----------------------------");
     } else {
       character.setAttributeHealth(character.getAttributeHealth() + diffCurrentHpAndMaxHp);
-      System.out.println(character.getName() + " recuperou " + diffCurrentHpAndMaxHp + " de Vida");
-      System.out.println("-----------------------------");
     }
     gp.getGameUI().showHeal(character, finalHeal);
   }
@@ -276,10 +249,8 @@ public class Battle {
 
     if (diffCurrentMpAndMaxMp > finalManaRecover) {
       character.setAttributeMana(character.getAttributeMana() + finalManaRecover);
-      System.out.println(character.getName() + " recuperou " + finalManaRecover + " de Mana");
     } else {
       character.setAttributeMana(character.getAttributeMana() + diffCurrentMpAndMaxMp);
-      System.out.println(character.getName() + " recuperou " + diffCurrentMpAndMaxMp + " de Mana");
     }
     gp.getGameUI().showMana(character, finalManaRecover);
   }

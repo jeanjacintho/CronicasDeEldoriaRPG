@@ -78,9 +78,6 @@ public class Character extends Entity {
   public void applyBuff(Buff buff) {
     if (canApplyBuff(buff.getType())) {
       activeBuffs.add(buff);
-      System.out.println(getName() + " gained " + buff.getType() + " buff!");
-    } else {
-      System.out.println(getName() + " cannot apply " + buff.getType() + " buff right now.");
     }
   }
 

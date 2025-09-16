@@ -11,6 +11,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
+import br.com.cronicasdeeldoria.game.GamePanel;
 import br.com.cronicasdeeldoria.tile.TileManager.MapTile;
 
 /**
@@ -23,6 +24,8 @@ public class NpcFactory {
      */
     public static List<Npc> loadNpcsFromTiles(List<MapTile> npcTiles, int tileSize, int playerSize) {
         List<Npc> npcs = new ArrayList<>();
+
+        
 
         // Carregar definições do JSON
         Map<String, Map<String, Object>> npcDefinitions = loadNpcDefinitionsFromJson();
@@ -74,7 +77,6 @@ public class NpcFactory {
                       break;
                     default:
                       npcs.add(new OrcMonster(name, isStatic, dialog, x, y, skin, playerSize, interactive, autoInteraction));
-                      System.out.println("ID " + monster + " não encontrado, adicione o monstro no NpcFactory.");
                       break;
                   }
                 }
@@ -91,7 +93,7 @@ public class NpcFactory {
                         npcs.add(merchant);
                     }
                 } else {
-                    npcs.add(new Npc(name, isStatic, dialog, x, y, skin, playerSize, interactive, autoInteraction, dialogId));
+                     npcs.add(new Npc(name, isStatic, dialog, x, y, skin, playerSize, interactive, autoInteraction, dialogId));
                 }
             } else {
                 System.err.println("Definição não encontrada para NPC ID: " + npcTile.id);

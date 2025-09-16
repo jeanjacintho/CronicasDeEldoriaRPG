@@ -128,7 +128,7 @@ class OrcLootTable extends LootTable {
 
 class OrcBossLootTable extends LootTable {
   public OrcBossLootTable(String charClass) {
-    addLoot("orb_earth", 1);
+   addLoot("orb_earth", 1);
     addLoot("armor_rare", 1);
     addLoot("health_potion", 0.8);
     addLoot("mana_potion", 0.6);
@@ -157,7 +157,7 @@ class WolfBossLootTable extends LootTable {
       case "Ranger": addLoot("bow_rare", 1); break;
       case "Paladin", "Barbarian": addLoot("axe_rare", 1); break;
     }
-    addLoot("orb_fire", 1);
+    //addLoot("orb_fire", 1);
     addLoot("health_potion", 0.8);
     addLoot("mana_potion", 0.6);
     addLoot("shield_common", 0.1);
@@ -180,7 +180,7 @@ class WolfBossLootTable extends LootTable {
 
 class SkeletonBossLootTable extends LootTable {
   public SkeletonBossLootTable(String charClass) {
-    addLoot("orb_air", 1);
+    //addLoot("orb_air", 1);
     addLoot("health_potion", 0.8);
     addLoot("mana_potion", 0.6);
     addLoot("shield_common", 0.1);
@@ -203,7 +203,7 @@ class SkeletonBossLootTable extends LootTable {
 
 class FrostbornBossLootTable extends LootTable {
   public FrostbornBossLootTable(String charClass) {
-    addLoot("orb_water", 1);
+    //addLoot("orb_water", 1);
     addLoot("health_potion", 0.8);
     addLoot("mana_potion", 0.6);
     addLoot("shield_common", 0.2);

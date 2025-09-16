@@ -76,6 +76,8 @@ public class GamePanel extends JPanel implements Runnable{
   private String playerClassName;
   private String currentMapName;
 
+  public int ancianDialogId = 30;
+
   // Estados do jogo
   public int gameState;
   public final int playState = 1;
@@ -193,6 +195,14 @@ public class GamePanel extends JPanel implements Runnable{
     // Configurar contexto inicial de áudio
     AudioContext initialContext = AudioContext.fromMapName(currentMapName);
     audioManager.changeContext(initialContext);
+
+    // Iniciar diálogo inicial ao começar um novo jogo
+    if (this.dialogManager != null) {
+      boolean started = this.dialogManager.startDialog(37);
+      if (started) {
+        gameState = dialogState;
+      }
+    }
   }
 
   /**
@@ -219,9 +229,7 @@ public class GamePanel extends JPanel implements Runnable{
     System.out.println("TESTE: Verificando NPCs carregados...");
     if (npcs != null) {
       System.out.println("Total de NPCs: " + npcs.size());
-      for (Npc npc : npcs) {
-        System.out.println("NPC: " + npc.getName() + " - dialogId: " + npc.getDialogId() + " - Interativo: " + npc.isInteractive());
-      }
+
     } else {
       System.out.println("TESTE: Lista de NPCs é null!");
     }
@@ -349,10 +357,6 @@ public class GamePanel extends JPanel implements Runnable{
 
       // Atualizar contexto de áudio para batalha
       updateAudioContextForBattle(monster);
-
-      System.out.println("Entered battle state with " + monster.getName());
-    } else {
-      System.out.println("Cannot start battle: target is not a monster");
     }
   }
 
@@ -371,13 +375,11 @@ public class GamePanel extends JPanel implements Runnable{
 
   public void endBattle(boolean playerWon) {
     if (playerWon) {
-      System.out.println("Victory! You defeated " + battleMonster.getName());
 
       LootTable lootTable = null;
       int xpReward = 0;
 
       String charClass = getPlayer().getCharacterClass().getCharacterClassName();
-      System.out.println("------------------Char Class----------------------" + charClass);
 
       if (battleMonster instanceof WolfMonster ) {
         xpReward = ((WolfMonster) battleMonster).getXpReward();
@@ -557,10 +559,7 @@ public class GamePanel extends JPanel implements Runnable{
 
         // Verificar interação com NPCs apenas se houver NPCs no mapa
         if (npcs != null && !npcs.isEmpty()) {
-            System.out.println("Verificando " + npcs.size() + " NPCs para interação...");
             for (Npc npc : npcs) {
-                System.out.println("NPC: " + npc.getName() + " em (" + npc.getWorldX() + ", " + npc.getWorldY() + ") - Interativo: " + npc.isInteractive());
-                
                 // Verificar se é um monstro (usar distância de 5 tiles)
                 if (npc instanceof WolfMonster || npc instanceof SkeletonMonster ||
                     npc instanceof FrostbornMonster || npc instanceof OrcMonster ||
@@ -568,7 +567,6 @@ public class GamePanel extends JPanel implements Runnable{
                     npc instanceof SkeletonBossMonster || npc instanceof WolfBossMonster) {
                     
                     boolean isNearMonster = isPlayerNearMonster(player, npc.getWorldX(), npc.getWorldY());
-                    System.out.println("  Monstro próximo: " + isNearMonster);
                     
                     if (isNearMonster && npc.isInteractive()) {
                         // Verificar auto-interação
@@ -577,37 +575,29 @@ public class GamePanel extends JPanel implements Runnable{
                             npc.interact();
                         } else {
                             // Usar coordenadas de mundo diretamente
-                            System.out.println("  Adicionando ponto de interação para monstro!");
                             simpleInteractionManager.addInteractionPoint(npc.getWorldX(), npc.getWorldY(), "E", "monster");
                         }
                     }
                 } else {
                     // NPCs normais (usar distância de 2 tiles)
                     boolean isNearNpc = isPlayerNearNpc(player, npc.getWorldX(), npc.getWorldY());
-                    System.out.println("  NPC próximo: " + isNearNpc);
                     
                     if (isNearNpc && npc.isInteractive()) {
                         // Verificar auto-interação
                         if (npc.isAutoInteraction()) {
-                            System.out.println("AUTO-INTERAÇÃO com NPC: " + npc.getName());
                             npc.interact();
                         } else {
                             // Usar coordenadas de mundo diretamente
-                            System.out.println("  Adicionando ponto de interação para NPC!");
                             simpleInteractionManager.addInteractionPoint(npc.getWorldX(), npc.getWorldY(), "E", "npc");
                         }
                     }
                 }
             }
-        } else {
-            System.out.println("Nenhum NPC encontrado no mapa");
         }
 
         // Verificar interação com objetos
         if (objectManager != null) {
-            System.out.println("Verificando objetos para interação...");
             for (MapObject obj : objectManager.getActiveObjects()) {
-                System.out.println("Objeto: " + obj.getObjectId() + " em (" + obj.getWorldX() + ", " + obj.getWorldY() + ") - Interativo: " + obj.isInteractive() + " - Ativo: " + obj.isActive());
                 
                 if (obj.isInteractive() && obj.isActive()) {
                     // Verificar auto-interação
@@ -619,17 +609,13 @@ public class GamePanel extends JPanel implements Runnable{
                     } else {
                         // Para objetos sem auto-interação, verificar proximidade e mostrar tecla E
                         boolean isNearObject = isPlayerNearObject(player, obj.getWorldX(), obj.getWorldY());
-                        System.out.println("  Objeto próximo: " + isNearObject);
                         
                         if (isNearObject) {
-                            System.out.println("  Adicionando ponto de interação para objeto!");
                             simpleInteractionManager.addInteractionPoint(obj.getWorldX(), obj.getWorldY(), "E", "object");
                         }
                     }
                 }
             }
-        } else {
-            System.out.println("ObjectManager não disponível");
         }
 
         // Verificar interação com teleportes interativos
@@ -668,9 +654,6 @@ public class GamePanel extends JPanel implements Runnable{
         int maxDistance = tileSize * distanceInTiles;
 
         boolean isNear = distanceX <= maxDistance && distanceY <= maxDistance;
-        
-        System.out.println("    Detecção proximidade: Jogador(" + playerCenterX + ", " + playerCenterY + ") -> Entidade(" + entityCenterX + ", " + entityCenterY + ")");
-        System.out.println("    Distância: (" + distanceX + ", " + distanceY + ") / Máxima: " + maxDistance + " -> Próximo: " + isNear);
 
         return isNear;
     }
@@ -1310,6 +1293,11 @@ public class GamePanel extends JPanel implements Runnable{
 
   // Metodo para remover monstro derrotado do mapa
   private void removeMonsterFromMap(Npc monster) {
+    // Notificar QuestManager sobre a morte do NPC
+    if (questManager != null && monster != null) {
+      questManager.onNpcKilled(monster.getName());
+    }
+    
     npcs.remove(monster);
   }
 
@@ -1548,7 +1536,6 @@ public class GamePanel extends JPanel implements Runnable{
       this.keyboardMapper = new KeyboardMapper();
       this.interactionManager = new InteractionManager(keyboardMapper);
       this.simpleInteractionManager = new SimpleInteractionManager();
-      System.out.println("Sistemas de interação inicializados!");
     } catch (Exception e) {
       System.err.println("Erro ao inicializar sistema de interação: " + e.getMessage());
       e.printStackTrace();
@@ -1753,14 +1740,11 @@ public class GamePanel extends JPanel implements Runnable{
           String[] parts = teleportTile.id.split(":", 2);
           teleportId = parts[0].trim();
           spawnPoint = parts[1].trim();
-          System.out.println("Split - TeleportId: " + teleportId + ", SpawnPoint: " + spawnPoint);
         }
 
         // Verificar se há configuração de teleporte no TeleportManager
-        System.out.println("Has teleport '" + teleportId + "': " + teleportManager.hasTeleport(teleportId));
         if (teleportManager.hasTeleport(teleportId)) {
           TeleportManager.TeleportConfig config = teleportManager.getTeleport(teleportId);
-          System.out.println("Config found: " + config.name + " -> " + config.map);
 
           // Carregar novo mapa
           loadMap(config.map);
@@ -1769,8 +1753,6 @@ public class GamePanel extends JPanel implements Runnable{
           int[] spawnCoords;
           if (spawnPoint != null) {
             spawnCoords = config.getSpawnPoint(spawnPoint);
-            System.out.println("Spawn point '" + spawnPoint + "' coords: " +
-              (spawnCoords != null ? spawnCoords[0] + "," + spawnCoords[1] : "null"));
             if (spawnCoords == null) {
               System.err.println("Ponto de spawn '" + spawnPoint + "' não encontrado para " + config.name);
               gameUI.addMessage("Ponto de spawn não encontrado!", null, 3000L);
@@ -1778,20 +1760,15 @@ public class GamePanel extends JPanel implements Runnable{
             }
           } else {
             spawnCoords = config.getFirstSpawnPoint();
-            System.out.println("First spawn point coords: " +
-              (spawnCoords != null ? spawnCoords[0] + "," + spawnCoords[1] : "null"));
           }
 
           if (spawnCoords != null && spawnCoords.length == 2) {
             // Converter coordenadas de tile para pixels
             int pixelX = spawnCoords[0] * tileSize;
             int pixelY = spawnCoords[1] * tileSize;
-            System.out.println("Teleporting to tile: " + spawnCoords[0] + "," + spawnCoords[1] +
-              " (pixels: " + pixelX + "," + pixelY + ")");
             player.setWorldX(pixelX);
             player.setWorldY(pixelY);
             gameUI.addMessage("Você foi teleportado para " + config.name + "!", null, 3000L);
-            System.out.println("Teleport completed successfully!");
           } else {
             System.err.println("Nenhum ponto de spawn válido encontrado para " + config.name);
             gameUI.addMessage("Erro: pontos de spawn inválidos!", null, 3000L);

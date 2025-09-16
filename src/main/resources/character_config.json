@@ -15,7 +15,7 @@
   {
     "id": "barbarian",
     "name": "Barbarian",
-    "speed": 4,
+    "speed": 8,
     "direction": "down",
     "health": 100,
     "mana": 50,

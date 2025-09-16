@@ -15,7 +15,7 @@
     "name": "Guerreiro Contratável",
     "isStatic": true,
     "dialog": "Posso lutar ao seu lado por algumas moedas.",
-    "type": "npc",
+    "type": "barbarian",
     "skin": "barbarian",
     "interactive": true,
     "autoInteraction": false,
@@ -102,7 +102,7 @@
     "skin": "skeletonboss"
   },
   {
-    "id": "smith",
+    "id": "merchant",
     "name": "Ferreiro",
     "isStatic": true,
     "interactive": true,
@@ -271,11 +271,15 @@
     ]
   },
   {
-    "id": "arcane",
-    "name": "Mago",
+    "id": "arcane_merchant",
+    "name": "Mago Comerciante",
     "isStatic": true,
     "interactive": true,
-    "autoInteraction": false
+    "autoInteraction": false,
+    "dialog": "Bem-vindo à minha loja mágica!",
+    "type": "merchant",
+    "skin": "arcane",
+    "dialogId": 25
   },
   {
       "id": "padeira",
@@ -312,5 +316,45 @@
     "type": "npc",
     "skin": "ancian",
     "dialogId": 30
+  },
+  {
+    "id": "girl1",
+    "name": "Garota 1",
+    "isStatic": false,
+    "interactive": true,
+    "autoInteraction": false,
+    "dialog": "Olá, jovem! Sou a garota 1.",
+    "type": "npc",
+    "skin": "girl1"
+  },
+  {
+    "id": "girl2",
+    "name": "Garota 2",
+    "isStatic": false,
+    "interactive": true,
+    "autoInteraction": false,
+    "dialog": "Olá, jovem! Sou a garota 2.",
+    "type": "npc",
+    "skin": "girl2"
+  },
+  {
+    "id": "men",
+    "name": "Homem",
+    "isStatic": false,
+    "interactive": true,
+    "autoInteraction": false,
+    "dialog": "Olá, jovem! Sou o homem.",
+    "type": "npc",
+    "skin": "men"
+  },
+  {
+    "id": "arcane_npc",
+    "name": "Mago",
+    "isStatic": false,
+    "interactive": true,
+    "autoInteraction": false,
+    "dialog": "Olá, jovem! Sou o mago.",
+    "type": "npc",
+    "skin": "arcane"
   }
 ]
