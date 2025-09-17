@@ -2,6 +2,7 @@ package br.com.cronicasdeeldoria.game;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
@@ -22,6 +23,8 @@ import br.com.cronicasdeeldoria.game.ui.KeyboardMapper;
 import br.com.cronicasdeeldoria.game.font.FontManager;
 import br.com.cronicasdeeldoria.game.ui.InteractionManager;
 import br.com.cronicasdeeldoria.game.ui.SimpleInteractionManager;
+import br.com.cronicasdeeldoria.game.dialog.DialogManager;
+import br.com.cronicasdeeldoria.game.dialog.DialogUI;
 import br.com.cronicasdeeldoria.tile.TileManager;
 import br.com.cronicasdeeldoria.tile.TileManager.MapTile;
 import br.com.cronicasdeeldoria.config.CharacterConfigLoader;
@@ -32,8 +35,6 @@ import br.com.cronicasdeeldoria.entity.Entity;
 import br.com.cronicasdeeldoria.game.inventory.InventoryManager;
 import br.com.cronicasdeeldoria.game.merchant.MerchantManager;
 import br.com.cronicasdeeldoria.game.merchant.MerchantUI;
-import br.com.cronicasdeeldoria.game.dialog.DialogManager;
-import br.com.cronicasdeeldoria.game.dialog.DialogUI;
 import br.com.cronicasdeeldoria.game.teleport.TeleportManager;
 import br.com.cronicasdeeldoria.game.quest.QuestManager;
 import br.com.cronicasdeeldoria.audio.AudioManager;
@@ -80,6 +81,7 @@ public class GamePanel extends JPanel implements Runnable{
 
   // Estados do jogo
   public int gameState;
+  public final int tutorialState = 0;
   public final int playState = 1;
   public final int battleState = 2;
   public final int inventoryState = 3;
@@ -117,7 +119,7 @@ public class GamePanel extends JPanel implements Runnable{
     this.playerClassName = characterClass.getCharacterClassName();
 
     this.battle = new Battle(this);
-    gameState = playState;
+    gameState = tutorialState;
 
     CharacterConfigLoader configLoader = CharacterConfigLoader.getInstance();
     String characterClassName = characterClass.getCharacterClassName().toLowerCase();
@@ -197,12 +199,14 @@ public class GamePanel extends JPanel implements Runnable{
     audioManager.changeContext(initialContext);
 
     // Iniciar diálogo inicial ao começar um novo jogo
-    if (this.dialogManager != null) {
-      boolean started = this.dialogManager.startDialog(37);
-      if (started) {
-        gameState = dialogState;
-      }
-    }
+    // COMENTADO: Diálogo inicial será iniciado após o tutorial
+    // if (this.dialogManager != null) {
+    //   boolean started = this.dialogManager.startDialog(37);
+    //   if (started) {
+    //     gameState = dialogState;
+    //   }
+    // }
+    
   }
 
   /**
@@ -213,27 +217,10 @@ public class GamePanel extends JPanel implements Runnable{
       boolean success = dialogManager.startDialog(1);
       if (success) {
         gameState = dialogState;
-        System.out.println("TESTE: Diálogo forçado com sucesso!");
-      } else {
-        System.out.println("TESTE: Falha ao forçar diálogo!");
       }
-    } else {
-      System.out.println("TESTE: DialogManager é null!");
     }
   }
 
-  /**
-   * Método de teste para verificar NPCs carregados
-   */
-  public void testNpcs() {
-    System.out.println("TESTE: Verificando NPCs carregados...");
-    if (npcs != null) {
-      System.out.println("Total de NPCs: " + npcs.size());
-
-    } else {
-      System.out.println("TESTE: Lista de NPCs é null!");
-    }
-  }
 
   /**
    * Inicia a thread principal do jogo.
@@ -294,6 +281,10 @@ public class GamePanel extends JPanel implements Runnable{
      * Atualiza o estado do jogo.
      */
     public void update() {
+
+      if (gameState == tutorialState) {
+        updateTutorial();
+      }
 
       if (gameState == playState) {
         player.update();
@@ -444,7 +435,6 @@ public class GamePanel extends JPanel implements Runnable{
       // Remover monstro derrotado do mapa
       removeMonsterFromMap(battleMonster);
     } else {
-      System.out.println("Defeat! You were defeated by " + battleMonster.getName());
       // Aplicar penalidade se necessário
       // player.applyDeathPenalty(); // se você tiver este metodo
     }
@@ -537,32 +527,6 @@ public class GamePanel extends JPanel implements Runnable{
   }
 
   /**
-   * Método de teste para verificar o sistema de áudio.
-   */
-  public void testAudioSystem() {
-    System.out.println("=== TESTING AUDIO SYSTEM ===");
-
-    if (audioManager == null) {
-      System.out.println("ERROR: AudioManager is null!");
-      return;
-    }
-
-    System.out.println("AudioManager instance: " + audioManager);
-    System.out.println("Current context: " + audioManager.getCurrentContext());
-    System.out.println("Music enabled: " + audioManager.isMusicEnabled());
-    System.out.println("Muted: " + audioManager.isMuted());
-    System.out.println("Master volume: " + audioManager.getMasterVolume());
-    System.out.println("Music volume: " + audioManager.getMusicVolume());
-
-    // Testar mudança para floresta
-    System.out.println("Testing forest context...");
-    AudioContext forestContext = AudioContext.FOREST;
-    audioManager.changeContext(forestContext);
-
-    System.out.println("=== END TESTING AUDIO SYSTEM ===");
-  }
-
-  /**
     /**
      * Atualiza os pontos de interação baseado na proximidade do jogador
      */
@@ -592,7 +556,7 @@ public class GamePanel extends JPanel implements Runnable{
                         // Verificar auto-interação
                         if (npc.isAutoInteraction()) {
                             startBattle(npc);
-                            npc.interact();
+                            npc.interact(this);
                         } else {
                             // Usar coordenadas de mundo diretamente
                             simpleInteractionManager.addInteractionPoint(npc.getWorldX(), npc.getWorldY(), "E", "monster");
@@ -604,7 +568,7 @@ public class GamePanel extends JPanel implements Runnable{
                     if (isNearNpc && npc.isInteractive()) {
                         // Verificar auto-interação
                         if (npc.isAutoInteraction()) {
-                            npc.interact();
+                            npc.interact(this);
                         } else {
                             // Usar coordenadas de mundo diretamente
                             simpleInteractionManager.addInteractionPoint(npc.getWorldX(), npc.getWorldY(), "E", "npc");
@@ -741,7 +705,7 @@ public class GamePanel extends JPanel implements Runnable{
           for (Npc npc : npcs) {
             if (npc instanceof WolfMonster) {
                 if (isPlayerNearMonster(player, npc.getWorldX(), npc.getWorldY()) && npc.isInteractive()) {
-                    npc.interact();
+                    npc.interact(this);
                     return;
                 }
             }
@@ -811,8 +775,8 @@ public class GamePanel extends JPanel implements Runnable{
       Graphics2D graphics2D = (Graphics2D) graphics;
 
       if (gameState == playState) {
-        // Renderização normal do jogo
-        tileManager.draw(graphics2D);
+        // Renderização normal do jogo - apenas camadas de fundo (sem overlay)
+        tileManager.drawBackgroundLayers(graphics2D);
 
         // Renderizar objetos
         if (objectManager != null) {
@@ -871,39 +835,21 @@ public class GamePanel extends JPanel implements Runnable{
         // Renderizar player
         player.draw(graphics2D);
 
+        // Renderizar camadas overlay APÓS o player (para efeito de profundidade)
+        tileManager.drawOverlayLayers(graphics2D);
+
         // Interface normal de jogo
         gameUI.draw(graphics2D);
 
+      } else if (gameState == tutorialState) {
+        // Renderizar tela de tutorial
+        drawTutorialScreen(graphics2D);
       } else if (gameState == battleState) {
         // Desenhar interface de batalha
         gameUI.drawBattleUI(graphics2D);
-      } else if (gameState == inventoryState) {
-        // Desenha o jogo de fundo mesmo durante o inventário (para transparência)
-        tileManager.draw(graphics2D);
-
-        // Renderizar objetos
-        if (objectManager != null) {
-          objectManager.drawObjects(graphics2D);
-        }
-
-        // Renderizar NPCs apenas se houver NPCs no mapa
-        if (npcs != null && !npcs.isEmpty()) {
-          for (Npc npc : npcs) {
-            npc.draw(graphics2D, npcSpriteLoader, tileSize, player, player.getScreenX(), player.getScreenY());
-          }
-        }
-
-        // Renderizar player
-        player.draw(graphics2D);
-
-        // Interface normal de jogo
-        gameUI.draw(graphics2D);
-
-        // Desenhar interface do inventário por cima (transparente)
-        gameUI.drawInventoryUI(graphics2D, inventoryManager);
       } else if (gameState == merchantState) {
         // Desenha o jogo de fundo mesmo durante o comerciante (para transparência)
-        tileManager.draw(graphics2D);
+        tileManager.drawBackgroundLayers(graphics2D);
 
         // Renderizar objetos
         if (objectManager != null) {
@@ -919,6 +865,9 @@ public class GamePanel extends JPanel implements Runnable{
 
         // Renderizar player
         player.draw(graphics2D);
+
+        // Renderizar camadas overlay APÓS o player (para efeito de profundidade)
+        tileManager.drawOverlayLayers(graphics2D);
 
         // Interface normal de jogo
         gameUI.draw(graphics2D);
@@ -927,7 +876,7 @@ public class GamePanel extends JPanel implements Runnable{
         merchantUI.draw(graphics2D, merchantManager);
       } else if (gameState == dialogState) {
         // Desenha o jogo de fundo mesmo durante o diálogo
-        tileManager.draw(graphics2D);
+        tileManager.drawBackgroundLayers(graphics2D);
 
         // Renderizar objetos
         if (objectManager != null) {
@@ -943,6 +892,9 @@ public class GamePanel extends JPanel implements Runnable{
 
         // Renderizar player
         player.draw(graphics2D);
+
+        // Renderizar camadas overlay APÓS o player (para efeito de profundidade)
+        tileManager.drawOverlayLayers(graphics2D);
 
         // Interface normal de jogo
         gameUI.draw(graphics2D);
@@ -1000,6 +952,69 @@ public class GamePanel extends JPanel implements Runnable{
       }
       graphics2D.dispose();
     }
+
+  /**
+   * Desenha a tela de tutorial com os comandos do jogo.
+   * @param graphics2D Contexto gráfico.
+   */
+  private void drawTutorialScreen(Graphics2D graphics2D) {
+    // Fundo preto
+    graphics2D.setColor(Color.BLACK);
+    graphics2D.fillRect(0, 0, getWidth(), getHeight());
+    
+    // Configurar fontes
+    Font titleFont = FontManager.getDefaultFont().deriveFont(Font.BOLD, 24f);
+    Font commandFont = FontManager.getDefaultFont().deriveFont(Font.BOLD, 16f);
+    Font instructionFont = FontManager.getDefaultFont().deriveFont(Font.PLAIN, 14f);
+    
+    // Título
+    graphics2D.setColor(Color.WHITE);
+    graphics2D.setFont(titleFont);
+    String title = "CRÔNICAS DE ELDORIA";
+    int titleWidth = graphics2D.getFontMetrics().stringWidth(title);
+    graphics2D.drawString(title, (getWidth() - titleWidth) / 2, 80);
+    
+    // Subtítulo
+    graphics2D.setFont(commandFont);
+    String subtitle = "CONTROLES DO JOGO";
+    int subtitleWidth = graphics2D.getFontMetrics().stringWidth(subtitle);
+    graphics2D.drawString(subtitle, (getWidth() - subtitleWidth) / 2, 120);
+    
+    // Comandos
+    graphics2D.setFont(commandFont);
+    int startY = 180;
+    int lineHeight = 35;
+    
+    String[][] commands = {
+      {"1", "Use WASD para mover o personagem"},
+      {"2", "Use E para interagir com NPCs e objetos"},
+      {"3", "Use I para abrir/fechar inventário"},
+      {"4", "Use Q para abrir a tela de status do jogador"},
+      {"5", "Use J para abrir a tela de quest"},
+      {"6", "Use ESC para pausar o jogo"},
+      {"7", "Use 1-9 para interação em batalha"}
+    };
+    
+    for (int i = 0; i < commands.length; i++) {
+      // Desenhar descrição em branco
+      graphics2D.setColor(Color.WHITE);
+      int descriptionWidth = graphics2D.getFontMetrics().stringWidth(commands[i][1]);
+      graphics2D.drawString(commands[i][1],  (getWidth() - descriptionWidth) / 2, startY + (i * lineHeight));
+    }
+    
+    // Instrução para continuar
+    graphics2D.setFont(instructionFont);
+    graphics2D.setColor(Color.YELLOW);
+    String instruction = "Pressione E para começar a jogar";
+    int instructionWidth = graphics2D.getFontMetrics().stringWidth(instruction);
+    graphics2D.drawString(instruction, (getWidth() - instructionWidth) / 2, getHeight() - 80);
+    
+    // Efeito de piscar
+    long currentTime = System.currentTimeMillis();
+    if ((currentTime / 500) % 2 == 0) {
+      graphics2D.drawString(instruction, (getWidth() - instructionWidth) / 2, getHeight() - 80);
+    }
+  }
 
   /**
    * Desenha o overlay de pausa.
@@ -1219,10 +1234,46 @@ public class GamePanel extends JPanel implements Runnable{
       keyHandler.downPressed = false;
     }
 
-    // ENTER para confirmar seleção
+    // ENTER para confirmar seleção ou avançar página
     if (keyHandler.actionPressed) {
-      dialogManager.confirmSelection();
       keyHandler.actionPressed = false;
+      
+      // Verificar se há paginação ativa no DialogManager (sistema principal)
+      if (!dialogManager.isOnLastPage()) {
+        dialogManager.nextPage();
+        // Sincronizar com DialogUI
+        if (dialogUI != null) {
+          dialogUI.nextPage();
+        }
+      } else {
+        dialogManager.confirmSelection();
+      }
+    }
+
+    // Tecla D para próxima página
+    if (keyHandler.rightPressed) {
+      keyHandler.rightPressed = false;
+      
+      if (!dialogManager.isOnLastPage()) {
+        dialogManager.nextPage();
+        // Sincronizar com DialogUI
+        if (dialogUI != null) {
+          dialogUI.nextPage();
+        }
+      }
+    }
+
+    // Tecla A para página anterior
+    if (keyHandler.leftPressed) {
+      keyHandler.leftPressed = false;
+      
+      if (!dialogManager.isOnFirstPage()) {
+        dialogManager.previousPage();
+        // Sincronizar com DialogUI
+        if (dialogUI != null) {
+          dialogUI.previousPage();
+        }
+      }
     }
 
     // ESC para sair do diálogo
@@ -1254,6 +1305,28 @@ public class GamePanel extends JPanel implements Runnable{
     }
   }
 
+  // Sistema de tutorial
+  private void updateTutorial() {
+    // ENTER para sair do tutorial e começar o jogo
+    if (keyHandler.actionPressed) {
+      gameState = playState;
+      keyHandler.actionPressed = false;
+      
+      // Reproduzir som de confirmação se disponível
+      if (audioManager != null) {
+        audioManager.playSoundEffect("button_click");
+      }
+      
+      // Iniciar diálogo inicial após o tutorial
+      if (dialogManager != null) {
+        boolean started = dialogManager.startDialog(37);
+        if (started) {
+          gameState = dialogState;
+        }
+      }
+    }
+  }
+
   // Batalha por turnos
   private void updateBattle() {
     if (!battle.isInBattle()) return;
@@ -1267,8 +1340,6 @@ public class GamePanel extends JPanel implements Runnable{
       else if (keyHandler.defendPressed ) {
         if (player.canApplyBuff("ARMOR")) {
           battle.processPlayerAction("DEFEND");
-        } else {
-          System.out.println("ARMOR buff is activate or in cooldown!");
         }
         keyHandler.defendPressed = false;
       }
@@ -1279,8 +1350,6 @@ public class GamePanel extends JPanel implements Runnable{
       else if (keyHandler.specialPressed && player.getAttributeMana() > 15) {
         if (player.canApplyBuff("STRENGTH")) {
           battle.processPlayerAction("SPECIAL");
-        } else {
-          System.out.println("STRENGTH buff is activate or in cooldown! ");
         }
         keyHandler.specialPressed = false;
       }
@@ -1289,8 +1358,6 @@ public class GamePanel extends JPanel implements Runnable{
         if (player.getAttributeHealth() < player.getAttributeMaxHealth() && inventoryManager.hasItemById("health_potion")) {
           inventoryManager.consumeItem("health_potion");
           battle.processPlayerAction("HEALTH");
-        } else {
-          System.out.println("You don't have health potion or your life is full");
         }
         keyHandler.healthPressed = false;
       }
@@ -1299,8 +1366,6 @@ public class GamePanel extends JPanel implements Runnable{
         if (player.getAttributeMana() < player.getAttributeMaxMana() && inventoryManager.hasItemById("mana_potion")) {
           inventoryManager.consumeItem("mana_potion");
           battle.processPlayerAction("MANA");
-        } else {
-          System.out.println("You already have a maximum MANA or your mana is full");
         }
         keyHandler.manaPressed = false;
       }
@@ -1745,9 +1810,6 @@ public class GamePanel extends JPanel implements Runnable{
    */
   private void performTeleport(MapTile teleportTile) {
     try {
-      System.out.println("=== PERFORM TELEPORT DEBUG ===");
-      System.out.println("Tile ID: " + teleportTile.id);
-      System.out.println("Tile X: " + teleportTile.x + ", Y: " + teleportTile.y);
 
       if (teleportTile.id != null) {
         String teleportId = teleportTile.id;
@@ -1840,28 +1902,15 @@ public class GamePanel extends JPanel implements Runnable{
    * Atualiza o contexto de áudio baseado no mapa atual.
    */
   private void updateAudioContextForMap(String mapName) {
-    System.out.println("=== AUDIO DEBUG ===");
-    System.out.println("Current map name: " + mapName);
-    System.out.println("Previous map name: " + currentMapName);
-
     if (audioManager != null && !mapName.equals(currentMapName)) {
       currentMapName = mapName;
       AudioContext newContext = AudioContext.fromMapName(mapName);
-
-      System.out.println("New audio context: " + newContext);
-      System.out.println("Context display name: " + newContext.getDisplayName());
 
       audioManager.changeContext(newContext);
 
       // Reproduzir efeito sonoro de mudança de mapa
       audioManager.playSoundEffect("teleport");
 
-      System.out.println("Audio context changed successfully");
-    } else if (audioManager == null) {
-      System.out.println("ERROR: AudioManager is null!");
-    } else {
-      System.out.println("Map name unchanged, no audio context change needed");
     }
-    System.out.println("=== END AUDIO DEBUG ===");
   }
 }

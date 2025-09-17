@@ -27,19 +27,13 @@ public class KeyboardMapper {
      * Inicializa o mapeamento das teclas
      */
     private void initializeKeyMappings() {
-        System.out.println("Inicializando mapeamento de teclas...");
         
         // Carregar mapeamentos do arquivo JSON
         Map<String, KeyboardMappingLoader.KeyMapping> mappings = mappingLoader.getAllMappings();
-        System.out.println("Mapeamentos obtidos do loader: " + mappings.size());
         
         for (KeyboardMappingLoader.KeyMapping mapping : mappings.values()) {
-            System.out.println("Processando mapeamento: " + mapping.getKey() + " -> " + mapping.getImagePath());
             loadKeyImage(mapping.getKey(), mapping.getImagePath());
         }
-        
-        System.out.println("Mapeamento de teclas inicializado. Total de teclas: " + keySprites.size());
-        System.out.println("Teclas disponíveis: " + keySprites.keySet());
     }
     
     /**
@@ -49,21 +43,27 @@ public class KeyboardMapper {
      */
     public void loadKeyImage(String keyName, String imagePath) {
         try {
-            System.out.println("Tentando carregar imagem para tecla '" + keyName + "' do caminho: " + imagePath);
             
-            ImageIcon imageIcon = new ImageIcon(getClass().getResource(imagePath));
-            if (imageIcon.getImage() != null) {
-                System.out.println("Imagem carregada com sucesso! Dimensões: " + 
-                    imageIcon.getIconWidth() + "x" + imageIcon.getIconHeight());
+            // Verificar se o recurso existe antes de criar o ImageIcon
+            java.net.URL resourceUrl = getClass().getResource(imagePath);
+            if (resourceUrl == null) {
+                System.err.println("AVISO: Recurso não encontrado para tecla '" + keyName + "' no caminho: " + imagePath);
+                System.err.println("Criando sprite de fallback para tecla: " + keyName);
+                return;
+            }
+            
+            ImageIcon imageIcon = new ImageIcon(resourceUrl);
+            if (imageIcon.getImage() != null && imageIcon.getIconWidth() > 0 && imageIcon.getIconHeight() > 0) {
+                
                 AnimatedKeySprite animatedSprite = new AnimatedKeySprite(imageIcon);
                 keySprites.put(keyName, animatedSprite);
-                System.out.println("Tecla '" + keyName + "' adicionada ao mapeamento com sucesso!");
             } else {
-                System.err.println("Erro: Não foi possível carregar a imagem " + imagePath);
+                System.err.println("AVISO: Imagem inválida para tecla '" + keyName + "' no caminho: " + imagePath);
+                System.err.println("Criando sprite de fallback para tecla: " + keyName);
             }
         } catch (Exception e) {
             System.err.println("Erro ao carregar imagem da tecla " + keyName + ": " + e.getMessage());
-            e.printStackTrace();
+            System.err.println("Criando sprite de fallback para tecla: " + keyName);
         }
     }
     

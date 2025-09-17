@@ -9,9 +9,6 @@ import br.com.cronicasdeeldoria.game.GamePanel;
  */
 public class Barbarian implements CharacterClass {
   private int willpower;
-  private String specialAbilityName;
-  private String specialAbility;
-
 
   /**
    * Cria um Barbarian com força de vontade definida.

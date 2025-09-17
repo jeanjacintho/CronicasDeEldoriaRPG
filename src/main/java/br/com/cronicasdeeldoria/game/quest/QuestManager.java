@@ -183,7 +183,6 @@ public class QuestManager {
      * @param npcName Nome do NPC que foi morto
      */
     public void onNpcKilled(String npcName) {
-        System.out.println("DEBUG: NPC morto: " + npcName);
         
         // Mapear nomes de NPCs para IDs de quest
         String npcId = null;
@@ -201,18 +200,14 @@ public class QuestManager {
             orbType = "air";
         }
         
-        System.out.println("DEBUG: NPC ID mapeado: " + npcId + ", Orb Type: " + orbType);
         
         if (npcId == null) {
-            System.out.println("DEBUG: NPC não reconhecido, ignorando");
             return;
         }
         
         // Verificar se há quests ativas que requerem matar este NPC
-        System.out.println("DEBUG: Verificando quests ativas...");
         for (Map.Entry<String, Quest> entry : activeQuests.entrySet()) {
             Quest quest = entry.getValue();
-            System.out.println("DEBUG: Quest " + entry.getKey() + " - Estado: " + quest.getState());
             
             if (quest.getState() == QuestState.IN_PROGRESS) {
                 // Verificar objetivos KILL_NPC
@@ -220,13 +215,10 @@ public class QuestManager {
                     if (objective.getType() == QuestObjectiveType.KILL_NPC && 
                         objective.getTargetId().equals(npcId) && 
                         !objective.isCompleted()) {
-                        System.out.println("DEBUG: Objetivo KILL_NPC encontrado: " + objective.getId());
                         updateQuestObjective(entry.getKey(), objective.getId(), true);
-                        System.out.println("Objetivo KILL_NPC completado: " + objective.getId() + " para quest " + entry.getKey());
                         
                         // Spawnar orbe correspondente
                         if (orbType != null && gamePanel != null) {
-                            System.out.println("DEBUG: Spawnando orbe do tipo: " + orbType);
                             spawnOrbAfterBossKill(orbType);
                         }
                     }
@@ -291,7 +283,6 @@ public class QuestManager {
                         objective.getTargetId().equals(itemId) && 
                         !objective.isCompleted()) {
                         updateQuestObjective(entry.getKey(), objective.getId(), true);
-                        System.out.println("Objetivo COLLECT_ITEM completado: " + objective.getId() + " para quest " + entry.getKey());
                     }
                 }
             }
@@ -316,7 +307,6 @@ public class QuestManager {
                         // Verificar se o item depositado corresponde ao objetivo
                         if (objective.getId().contains(itemId)) {
                             updateQuestObjective(entry.getKey(), objective.getId(), true);
-                            System.out.println("Objetivo DEPOSIT_ITEM completado: " + objective.getId() + " para quest " + entry.getKey());
                         }
                     }
                 }
@@ -349,16 +339,13 @@ public class QuestManager {
      * @param mapName Nome do mapa onde o jogador entrou
      */
     public void onPlayerEnterMap(String mapName) {
-        System.out.println("DEBUG: Jogador entrou no mapa: " + mapName);
         String questId = mapQuestTriggers.get(mapName);
 
         if (questId != null) {
-            System.out.println("DEBUG: Trigger encontrado para mapa " + mapName + " -> quest " + questId);
             Quest quest = activeQuests.get(questId);
 
             // Atualiza objetivos reach_<map> quando entrar no mapa target
             if (quest != null && quest.getState() == QuestState.IN_PROGRESS) {
-                System.out.println("DEBUG: Quest " + questId + " está em progresso, atualizando objetivo");
                 switch (mapName) {
                     case "dungeon2":
                         updateQuestObjective("orb_1", "reach_dungeon2", true);
@@ -373,11 +360,7 @@ public class QuestManager {
                         updateQuestObjective("orb_4", "reach_dungeon1", true);
                         break;
                 }
-            } else {
-                System.out.println("DEBUG: Quest " + questId + " não encontrada ou não está em progresso. Estado: " + (quest != null ? quest.getState() : "null"));
             }
-        } else {
-            System.out.println("DEBUG: Nenhum trigger encontrado para mapa " + mapName);
         }
     }
 
@@ -385,10 +368,8 @@ public class QuestManager {
      * Cria e inicia a sub-quest para a primeira orbe.
      */
     public void createOrb1Quest() {
-        System.out.println("DEBUG: Criando quest orb_1...");
         
         if (activeQuests.containsKey("orb_1")) {
-            System.out.println("DEBUG: Quest orb_1 já existe, ignorando");
             return; // Quest já existe
         }
         
@@ -400,11 +381,9 @@ public class QuestManager {
         orb1.addObjective(new QuestObjective("talk_smart_old_man", "Falar com o Sábio", QuestObjectiveType.TALK_TO_NPC, "smart_old_man"));
         
         activeQuests.put("orb_1", orb1);
-        System.out.println("DEBUG: Quest orb_1 criada e adicionada às quests ativas");
         
         // Iniciar a quest diretamente
         orb1.setState(QuestState.IN_PROGRESS);
-        System.out.println("DEBUG: Quest orb_1 iniciada diretamente");
         
         if (gamePanel != null && gamePanel.getGameUI() != null) {
             gamePanel.getGameUI().addMessage(
@@ -416,10 +395,8 @@ public class QuestManager {
      * Cria e inicia a sub-quest para a segunda orbe.
      */
     public void createOrb2Quest() {
-        System.out.println("DEBUG: Criando quest orb_2...");
         
         if (activeQuests.containsKey("orb_2")) {
-            System.out.println("DEBUG: Quest orb_2 já existe, ignorando");
             return; // Quest já existe
         }
         
@@ -431,11 +408,9 @@ public class QuestManager {
         orb2.addObjective(new QuestObjective("talk_smart_old_man", "Falar com o Sábio", QuestObjectiveType.TALK_TO_NPC, "smart_old_man"));
         
         activeQuests.put("orb_2", orb2);
-        System.out.println("DEBUG: Quest orb_2 criada e adicionada às quests ativas");
         
         // Iniciar a quest diretamente
         orb2.setState(QuestState.IN_PROGRESS);
-        System.out.println("DEBUG: Quest orb_2 iniciada diretamente");
         
         if (gamePanel != null && gamePanel.getGameUI() != null) {
             gamePanel.getGameUI().addMessage(
@@ -447,10 +422,8 @@ public class QuestManager {
      * Cria e inicia a sub-quest para a terceira orbe.
      */
     public void createOrb3Quest() {
-        System.out.println("DEBUG: Criando quest orb_3...");
         
         if (activeQuests.containsKey("orb_3")) {
-            System.out.println("DEBUG: Quest orb_3 já existe, ignorando");
             return; // Quest já existe
         }
         
@@ -462,11 +435,9 @@ public class QuestManager {
         orb3.addObjective(new QuestObjective("talk_smart_old_man", "Falar com o Sábio", QuestObjectiveType.TALK_TO_NPC, "smart_old_man"));
         
         activeQuests.put("orb_3", orb3);
-        System.out.println("DEBUG: Quest orb_3 criada e adicionada às quests ativas");
         
         // Iniciar a quest diretamente
         orb3.setState(QuestState.IN_PROGRESS);
-        System.out.println("DEBUG: Quest orb_3 iniciada diretamente");
         
         if (gamePanel != null && gamePanel.getGameUI() != null) {
             gamePanel.getGameUI().addMessage(
@@ -478,10 +449,8 @@ public class QuestManager {
      * Cria e inicia a sub-quest para a quarta orbe.
      */
     public void createOrb4Quest() {
-        System.out.println("DEBUG: Criando quest orb_4...");
         
         if (activeQuests.containsKey("orb_4")) {
-            System.out.println("DEBUG: Quest orb_4 já existe, ignorando");
             return; // Quest já existe
         }
         
@@ -493,11 +462,9 @@ public class QuestManager {
         // A última orbe não exige falar com o sábio antes do boss final
         
         activeQuests.put("orb_4", orb4);
-        System.out.println("DEBUG: Quest orb_4 criada e adicionada às quests ativas");
         
         // Iniciar a quest diretamente
         orb4.setState(QuestState.IN_PROGRESS);
-        System.out.println("DEBUG: Quest orb_4 iniciada diretamente");
         
         if (gamePanel != null && gamePanel.getGameUI() != null) {
             gamePanel.getGameUI().addMessage(
@@ -527,12 +494,10 @@ public class QuestManager {
      * @param questId ID da quest a ser iniciada
      */
     public void startQuest(String questId) {
-        System.out.println("DEBUG: Iniciando quest: " + questId);
         
         // Criar sub-quests conforme necessário
         switch (questId) {
             case "orb_1":
-                System.out.println("DEBUG: Caso orb_1 - chamando createOrb1Quest()");
                 createOrb1Quest();
                 return;
             case "orb_2":
@@ -549,13 +514,10 @@ public class QuestManager {
         Quest quest = activeQuests.get(questId);
         if (quest != null && quest.getState() == QuestState.NOT_STARTED) {
             quest.setState(QuestState.IN_PROGRESS);
-            System.out.println("DEBUG: Quest " + questId + " iniciada com sucesso");
             if (gamePanel != null && gamePanel.getGameUI() != null) {
                 gamePanel.getGameUI().addMessage(
                     "Nova quest iniciada: " + quest.getTitle(), null, 4000L);
             }
-        } else {
-            System.out.println("DEBUG: Quest " + questId + " não encontrada ou já iniciada. Quest: " + (quest != null ? quest.getState() : "null"));
         }
     }
 
@@ -724,15 +686,11 @@ public class QuestManager {
         Quest quest = activeQuests.get(questId);
         if (quest != null) {
             quest.updateObjective(objectiveId, completed);
-            System.out.println("DEBUG: Objetivo atualizado - Quest: " + questId + ", Objetivo: " + objectiveId + ", Completado: " + completed);
-            
+
             // Verificar se a quest foi completada
             if (quest.isCompleted()) {
-                System.out.println("DEBUG: Quest " + questId + " foi completada!");
                 completeQuest(questId);
             }
-        } else {
-            System.out.println("DEBUG: Quest não encontrada: " + questId);
         }
     }
 
@@ -773,7 +731,6 @@ public class QuestManager {
             for (String itemId : reward.getItemIds()) {
                 // Implementar criação de itens de recompensa
                 // gamePanel.getPlayer().getInventoryManager().addItem(ItemFactory.createItem(itemId));
-                System.out.println("Item de recompensa: " + itemId);
             }
 
             if (gamePanel.getGameUI() != null) {
@@ -803,25 +760,6 @@ public class QuestManager {
         for (String questId : completedQuestIds) {
             completeQuest(questId);
         }
-    }
-
-    /**
-     * Lista todas as quests ativas para debug.
-     */
-    public void listActiveQuests() {
-        System.out.println("=== QUESTS ATIVAS ===");
-        for (Map.Entry<String, Quest> entry : activeQuests.entrySet()) {
-            Quest quest = entry.getValue();
-            System.out.println("Quest ID: " + entry.getKey());
-            System.out.println("  Título: " + quest.getTitle());
-            System.out.println("  Estado: " + quest.getState());
-            System.out.println("  Objetivos:");
-            for (QuestObjective objective : quest.getObjectives()) {
-                System.out.println("    - " + objective.getId() + ": " + objective.getDescription() + " (Completado: " + objective.isCompleted() + ")");
-            }
-            System.out.println("---");
-        }
-        System.out.println("=== FIM QUESTS ATIVAS ===");
     }
 
     // Getters

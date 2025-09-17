@@ -71,8 +71,6 @@ public class AudioManager {
         contextMusic.put(AudioContext.DUNGEON2, configLoader.getMusicFile("dungeon2"));
         contextMusic.put(AudioContext.DUNGEON3, configLoader.getMusicFile("dungeon3"));
         contextMusic.put(AudioContext.DUNGEON4, configLoader.getMusicFile("dungeon4"));
-        contextMusic.put(AudioContext.CAVE, configLoader.getMusicFile("cave"));
-        contextMusic.put(AudioContext.CASTLE, configLoader.getMusicFile("castle"));
         contextMusic.put(AudioContext.PLAYER_HOUSE, configLoader.getMusicFile("player_house"));
         
         // Música de batalha - usando configuração do JSON
@@ -100,22 +98,22 @@ public class AudioManager {
      */
     private void loadAudioResources() {
         // Carregar efeitos sonoros comuns
-        loadAudioClip("button_click", "/audio/sfx/button_click.wav");
+        //loadAudioClip("button_click", "/audio/sfx/button_click.wav");
         loadAudioClip("item_pickup", "/audio/sfx/item_pickup.wav");
         loadAudioClip("item_equip", "/audio/sfx/070_Equip_10.wav");
         loadAudioClip("item_buy", "/audio/sfx/079_Buy_sell_01.wav");
         loadAudioClip("potion_heal", "/audio/sfx/02_Heal_02.wav");
-        loadAudioClip("door_open", "/audio/sfx/door_open.wav");
-        loadAudioClip("teleport", "/audio/sfx/teleport.wav");
-        loadAudioClip("battle_start", "/audio/sfx/battle_start.wav");
-        loadAudioClip("battle_end", "/audio/sfx/battle_end.wav");
+        //loadAudioClip("door_open", "/audio/sfx/door_open.wav");
+        //loadAudioClip("teleport", "/audio/sfx/teleport.wav");
+        //loadAudioClip("battle_start", "/audio/sfx/battle_start.wav");
+        //loadAudioClip("battle_end", "/audio/sfx/battle_end.wav");
         loadAudioClip("player_attack", "/audio/sfx/56_Attack_03.wav");
         loadAudioClip("player_flee", "/audio/sfx/51_Flee_02.wav");
         loadAudioClip("player_block", "/audio/sfx/39_Block_03.wav");
         loadAudioClip("level_up", "/audio/sfx/level-win-6416.wav");
-        loadAudioClip("quest_complete", "/audio/sfx/quest_complete.wav");
-        loadAudioClip("error", "/audio/sfx/error.wav");
-        loadAudioClip("notification", "/audio/sfx/notification.wav");
+        //loadAudioClip("quest_complete", "/audio/sfx/quest_complete.wav");
+        //loadAudioClip("error", "/audio/sfx/error.wav");
+        //loadAudioClip("notification", "/audio/sfx/notification.wav");
     }
     
     /**

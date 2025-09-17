@@ -13,8 +13,6 @@ public enum AudioContext {
     DUNGEON2("Masmorra", "Música ambiente de masmorra"),
     DUNGEON3("Masmorra", "Música ambiente de masmorra"),
     DUNGEON4("Masmorra", "Música ambiente de masmorra"),
-    CAVE("Caverna", "Música ambiente de caverna"),
-    CASTLE("Castelo", "Música ambiente do castelo"),
     PLAYER_HOUSE("Casa do Jogador", "Música ambiente da casa do jogador"),
     
     // Contextos de batalha
@@ -56,7 +54,7 @@ public enum AudioContext {
      * Determina se este contexto é de exploração/mapa.
      */
     public boolean isExplorationContext() {
-        return this == CITY || this == FOREST || this == DUNGEON1 || this == DUNGEON2 || this == DUNGEON3 || this == DUNGEON4 || this == CAVE || this == CASTLE || this == PLAYER_HOUSE;
+        return this == CITY || this == FOREST || this == DUNGEON1 || this == DUNGEON2 || this == DUNGEON3 || this == DUNGEON4 || this == PLAYER_HOUSE;
     }
     
     /**
@@ -92,25 +90,20 @@ public enum AudioContext {
         // Verificar contextos específicos primeiro
         if (lowerMapName.contains("forest") || lowerMapName.contains("floresta")) {
             return FOREST;
-        } else if (lowerMapName.contains("dungeon1") || lowerMapName.contains("masmorra")) {
+        } else if (lowerMapName.contains("dungeon1")) {
             return DUNGEON1;
-        } else if (lowerMapName.contains("dungeon2") || lowerMapName.contains("masmorra")) {
+        } else if (lowerMapName.contains("dungeon2")) {
             return DUNGEON2;
-        } else if (lowerMapName.contains("dungeon3") || lowerMapName.contains("masmorra")) {
+        } else if (lowerMapName.contains("dungeon3")) {
             return DUNGEON3;
-        } else if (lowerMapName.contains("dungeon4") || lowerMapName.contains("masmorra")) {
+        } else if (lowerMapName.contains("dungeon4")) {
             return DUNGEON4;
-        } else if (lowerMapName.contains("cave") || lowerMapName.contains("caverna")) {
-            return CAVE;
-        } else if (lowerMapName.contains("castle") || lowerMapName.contains("castelo")) {
-            return CASTLE;
-        } else if (lowerMapName.contains("player_house") || lowerMapName.contains("casa_do_jogador")) {
+        } else if (lowerMapName.contains("player_house")) {
             return PLAYER_HOUSE;
-        } else if (lowerMapName.contains("house") || lowerMapName.contains("casa") || 
-                   lowerMapName.contains("houses") || lowerMapName.contains("casas")) {
+        } else if (lowerMapName.contains("house")) {
             // Outras casas são parte da cidade, então usar música da cidade
             return CITY;
-        } else if (lowerMapName.contains("city") || lowerMapName.contains("cidade")) {
+        } else if (lowerMapName.contains("city")) {
             return CITY;
         } else {
             return FOREST;
@@ -148,8 +141,7 @@ public enum AudioContext {
         
         // Verificar se é o boss final (Supreme Mage)
         if (lowerNpcName.contains("supreme mage") || lowerNpcName.contains("supreme_mage") ||
-            lowerNpcName.contains("mago supremo") || lowerNpcName.contains("supremo") ||
-            lowerNpcName.contains("final boss") || lowerNpcName.contains("boss final")) {
+            lowerNpcName.contains("mago supremo") || lowerNpcName.contains("supremo")) {
             return BATTLE_FINAL_BOSS;
         }
         

@@ -42,7 +42,6 @@ public class MerchantManager {
         this.selectedItemIndex = 0;
         this.playerInventorySelected = false;
         
-        System.out.println("Abrindo loja do comerciante: " + merchant.getMerchantName());
     }
     
     /**
@@ -54,7 +53,6 @@ public class MerchantManager {
         this.selectedItemIndex = 0;
         this.playerInventorySelected = false;
         
-        System.out.println("Fechando loja do comerciante");
     }
     
     /**
@@ -167,14 +165,11 @@ public class MerchantManager {
         
         // Verificar se o item está disponível
         if (!merchantItem.isAvailable()) {
-            System.out.println("Item não está disponível!");
             return false;
         }
         
         // Verificar se o jogador tem dinheiro suficiente
         if (!playerMoney.hasEnoughMoney(merchantItem.getPrice())) {
-            System.out.println("Dinheiro insuficiente! Necessário: " + merchantItem.getPrice() + 
-                             ", Disponível: " + playerMoney.getCurrentMoney());
             return false;
         }
         
@@ -211,7 +206,6 @@ public class MerchantManager {
             if (!added) {
                 // Se não conseguiu adicionar, devolver o dinheiro
                 playerMoney.addMoney(merchantItem.getPrice());
-                System.out.println("Inventário cheio! Compra cancelada.");
                 return false;
             }
             
@@ -237,7 +231,6 @@ public class MerchantManager {
         
         // Verificar se o item tem valor de venda
         if (item.getValue() <= 0) {
-            System.out.println("Este item não pode ser vendido!");
             return false;
         }
         
@@ -253,7 +246,6 @@ public class MerchantManager {
             // Se não é stackable ou tem apenas 1, remover completamente
             Item removedItem = inventoryManager.removeItem(selectedItemIndex);
             if (removedItem == null) {
-                System.out.println("Erro ao remover item do inventário!");
                 return false;
             }
         }
@@ -268,8 +260,6 @@ public class MerchantManager {
         itemToSell.setValue(sellPrice * 2); // Comerciante vende pelo dobro do que pagou (100% do valor original)
         addItemToMerchant(itemToSell);
         
-        System.out.println("Venda realizada: " + itemToSell.getName() + 
-                         " por " + sellPrice + " moedas");
         return true;
     }
     

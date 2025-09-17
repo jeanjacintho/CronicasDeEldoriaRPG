@@ -2,10 +2,7 @@ package br.com.cronicasdeeldoria.entity.character;
 
 import br.com.cronicasdeeldoria.entity.Entity;
 import br.com.cronicasdeeldoria.entity.character.classes.CharacterClass;
-import br.com.cronicasdeeldoria.entity.character.player.Player;
 import br.com.cronicasdeeldoria.game.Buff;
-import br.com.cronicasdeeldoria.entity.item.Item;
-import br.com.cronicasdeeldoria.entity.character.AttributeType;
 import br.com.cronicasdeeldoria.game.inventory.Equipment;
 
 import java.util.ArrayList;

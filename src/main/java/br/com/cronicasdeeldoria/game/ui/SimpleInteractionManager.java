@@ -99,22 +99,6 @@ public class SimpleInteractionManager {
     }
     
     /**
-     * Método de debug para verificar o estado do sistema
-     */
-    public void debugSystem() {
-        System.out.println("=== DEBUG SIMPLE INTERACTION MANAGER ===");
-        System.out.println("Renderer disponível: " + (renderer != null));
-        if (renderer != null) {
-            System.out.println("Teclas disponíveis: " + renderer.getAvailableKeys());
-        }
-        System.out.println("Pontos de interação ativos: " + interactionPoints.size());
-        for (InteractionPoint point : interactionPoints) {
-            System.out.println("  - " + point.getEntityType() + " em (" + point.getWorldX() + ", " + point.getWorldY() + ") com tecla '" + point.getKey() + "'");
-        }
-        System.out.println("=== FIM DEBUG ===");
-    }
-    
-    /**
      * Classe interna para representar um ponto de interação
      */
     private static class InteractionPoint {

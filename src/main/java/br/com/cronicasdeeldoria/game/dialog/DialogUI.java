@@ -8,6 +8,7 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.InputStream;
 import java.util.List;
+import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 
@@ -42,6 +43,10 @@ public class DialogUI {
     private int optionSpacing;
     private int borderRadius;
     
+    // Sistema de paginação local
+    private List<String> currentTextPages;
+    private int currentPageIndex;
+    
     /**
      * Cria uma nova interface de diálogo.
      * @param gamePanel Painel do jogo
@@ -61,15 +66,19 @@ public class DialogUI {
         this.shadowColor = new Color(0, 0, 0, 100); // Sombra da caixa
         this.highlightColor = new Color(255, 255, 255, 120); // Destaque mais visível
 
-        // Configurar dimensões
-        this.dialogBoxWidth = Math.min(600, gamePanel.getWidth() - 80);
+        // Configurar dimensões - Box com largura da tela e posicionado na parte inferior
+        this.dialogBoxWidth = gamePanel.getWidth() - 40; // Margem de 20px de cada lado
         this.dialogBoxHeight = 280;
-        this.dialogBoxX = (gamePanel.getWidth() - dialogBoxWidth) / 2;
-        this.dialogBoxY = gamePanel.getHeight() - dialogBoxHeight - 60;
+        this.dialogBoxX = 20; // Margem esquerda
+        this.dialogBoxY = gamePanel.getHeight() - dialogBoxHeight - 20; // Margem inferior de 20px
         this.portraitSize = 100;
         this.textPadding = 25;
         this.optionSpacing = 30;
         this.borderRadius = 15;
+        
+        // Inicializar sistema de paginação local
+        this.currentTextPages = new ArrayList<>();
+        this.currentPageIndex = 0;
     }
 
     /**
@@ -98,10 +107,12 @@ public class DialogUI {
 
         drawSpeakerName(g2, currentDialog);
 
-        drawDialogText(g2, currentDialog);
+        drawDialogText(g2, dialogManager);
 
-        // Desenhar opções com indicadores visuais
-        drawOptions(g2, dialogManager);
+        // Desenhar opções com indicadores visuais (apenas na última página)
+        if (isOnLastPage()) {
+            drawOptions(g2, dialogManager);
+        }
     }
 
     /**
@@ -198,38 +209,165 @@ public class DialogUI {
     }
 
     /**
-     * Desenha o texto do diálogo.
+     * Desenha o texto do diálogo com suporte a paginação local.
      * @param g2 Contexto gráfico
-     * @param dialog Diálogo atual
+     * @param dialogManager Gerenciador de diálogos
      */
-    private void drawDialogText(Graphics2D g2, Dialog dialog) {
+    private void drawDialogText(Graphics2D g2, DialogManager dialogManager) {
+        Dialog dialog = dialogManager.getCurrentDialog();
+        if (dialog == null) return;
+        
+        // SÓ processar texto em páginas se ainda não foi processado
+        if (currentTextPages.isEmpty()) {
+            processTextIntoPages(dialog.getText());
+        }
+        
         g2.setFont(dialogFont);
         
         int textX = dialogBoxX + portraitSize + 40;
         int textY = dialogBoxY + 70;
-        int maxWidth = dialogBoxWidth - portraitSize - 80;
+        int maxWidth = dialogBoxWidth - portraitSize - 100; // Ajustado para nova largura
         
-        // Quebrar texto em múltiplas linhas se necessário
-        String[] words = dialog.getText().split(" ");
+        // Obter texto da página atual
+        String currentPageText = getCurrentPageText();
+       
+        // Desenhar texto da página atual
+        drawTextLines(g2, currentPageText, textX, textY, maxWidth);
+        
+        // Desenhar indicadores de paginação se necessário
+        drawPaginationIndicatorsLocal(g2);
+    }
+    
+    /**
+     * Processa o texto em páginas localmente - VERSÃO ULTRA SIMPLIFICADA.
+     * @param text Texto completo
+     */
+    private void processTextIntoPages(String text) {
+        currentTextPages.clear();
+        currentPageIndex = 0;
+        
+        // Configurações ajustadas para largura da tela - mais caracteres por página
+        int maxCharsPerPage = 200; // Aumentado para aproveitar a largura da tela
+        
+        // Dividir texto em páginas baseado em caracteres
+        for (int i = 0; i < text.length(); i += maxCharsPerPage) {
+            int endIndex = Math.min(i + maxCharsPerPage, text.length());
+            String pageText = text.substring(i, endIndex);
+            
+            // Tentar quebrar em palavra completa se possível
+            if (endIndex < text.length()) {
+                int lastSpace = pageText.lastIndexOf(' ');
+                if (lastSpace > maxCharsPerPage * 0.6) { // Se encontrou espaço em posição razoável
+                    pageText = pageText.substring(0, lastSpace);
+                    i = i + lastSpace - maxCharsPerPage; // Ajustar índice
+                }
+            }
+            
+            currentTextPages.add(pageText.trim());
+        }
+        
+        // Se não há páginas, criar uma página vazia
+        if (currentTextPages.isEmpty()) {
+            currentTextPages.add("");
+        }
+    }
+    
+    /**
+     * Obtém o texto da página atual.
+     * @return Texto da página atual
+     */
+    private String getCurrentPageText() {
+        if (currentTextPages.isEmpty() || currentPageIndex >= currentTextPages.size()) {
+            return "";
+        }
+        return currentTextPages.get(currentPageIndex);
+    }
+    
+    /**
+     * Verifica se tem múltiplas páginas.
+     * @return true se tem mais de uma página
+     */
+    private boolean hasMultiplePages() {
+        return currentTextPages.size() > 1;
+    }
+    
+    /**
+     * Verifica se está na última página.
+     * @return true se está na última página
+     */
+    public boolean isOnLastPage() {
+        boolean isLast = currentPageIndex >= currentTextPages.size() - 1;
+        return isLast;
+    }
+
+    /**
+     * Verifica se está na primeira página.
+     * @return true se está na primeira página
+     */
+    public boolean isOnFirstPage() {
+        boolean isFirst = currentPageIndex <= 0;
+        return isFirst;
+    }
+    
+    /**
+     * Avança para a próxima página.
+     * @return true se conseguiu avançar
+     */
+    public boolean nextPage() {
+        if (currentPageIndex < currentTextPages.size() - 1) {
+            currentPageIndex++;
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Volta para a página anterior.
+     * @return true se conseguiu voltar
+     */
+    public boolean previousPage() {
+        if (currentPageIndex > 0) {
+            currentPageIndex--;
+            return true;
+        }
+        return false;
+    }
+    
+    /**
+     * Desenha as linhas de texto - VERSÃO SIMPLIFICADA.
+     * @param g2 Contexto gráfico
+     * @param text Texto a desenhar
+     * @param x Posição X
+     * @param y Posição Y
+     * @param maxWidth Largura máxima
+     */
+    private void drawTextLines(Graphics2D g2, String text, int x, int y, int maxWidth) {
+        if (text == null || text.isEmpty()) return;
+        
+        FontMetrics fm = g2.getFontMetrics();
+        int lineHeight = fm.getHeight() + 3;
+        int lineY = y;
+        
+        // Dividir texto em linhas baseado na largura máxima
+        String[] words = text.split(" ");
         StringBuilder currentLine = new StringBuilder();
-        int lineY = textY;
         
         for (String word : words) {
             String testLine = currentLine.length() > 0 ? 
                 currentLine + " " + word : word;
             
-            FontMetrics fm = g2.getFontMetrics();
             int textWidth = fm.stringWidth(testLine);
             
             if (textWidth > maxWidth && currentLine.length() > 0) {
-                // Desenhar linha atual com sombra
-                g2.setColor(new Color(0, 0, 0, 100));
-                g2.drawString(currentLine.toString(), textX + 1, lineY + 1);
-                g2.setColor(textColor);
-                g2.drawString(currentLine.toString(), textX, lineY);
+                // Desenhar linha atual
+                g2.setColor(new Color(0, 0, 0, 100)); // Sombra
+                g2.drawString(currentLine.toString(), x + 1, lineY + 1);
+                g2.setColor(textColor); // Texto principal
+                g2.drawString(currentLine.toString(), x, lineY);
                 
+                // Começar nova linha
                 currentLine = new StringBuilder(word);
-                lineY += fm.getHeight() + 3;
+                lineY += lineHeight;
             } else {
                 currentLine = new StringBuilder(testLine);
             }
@@ -237,10 +375,50 @@ public class DialogUI {
         
         // Desenhar última linha
         if (currentLine.length() > 0) {
-            g2.setColor(new Color(0, 0, 0, 100));
-            g2.drawString(currentLine.toString(), textX + 1, lineY + 1);
-            g2.setColor(textColor);
-            g2.drawString(currentLine.toString(), textX, lineY);
+            g2.setColor(new Color(0, 0, 0, 100)); // Sombra
+            g2.drawString(currentLine.toString(), x + 1, lineY + 1);
+            g2.setColor(textColor); // Texto principal
+            g2.drawString(currentLine.toString(), x, lineY);
+        }
+    }
+
+    /**
+     * Desenha os indicadores de paginação local.
+     * @param g2 Contexto gráfico
+     */
+    private void drawPaginationIndicatorsLocal(Graphics2D g2) {
+        
+        g2.setFont(FontManager.getFont(12f));
+        
+        int currentPage = currentPageIndex;
+        int totalPages = currentTextPages.size();
+        
+        // Posição dos indicadores (canto inferior direito da área de texto)
+        int indicatorX = dialogBoxX + dialogBoxWidth - 100;
+        int indicatorY = dialogBoxY + dialogBoxHeight - 120;
+        
+        // Fundo dos indicadores
+        g2.setColor(new Color(0, 0, 0, 100));
+        g2.fillRoundRect(indicatorX - 10, indicatorY - 15, 90, 25, 5, 5);
+        
+        // Borda dos indicadores
+        g2.setColor(borderColor);
+        g2.setStroke(new BasicStroke(1));
+        g2.drawRoundRect(indicatorX - 10, indicatorY - 15, 90, 25, 5, 5);
+        
+        // Texto da página atual
+        g2.setColor(textColor);
+        String pageText = String.format("Página %d/%d", currentPage + 1, totalPages);
+        g2.drawString(pageText, indicatorX, indicatorY);
+        
+        // Indicador de "pressione A/D para continuar" se não for a última página
+        if (currentPage < totalPages - 1) {
+            g2.setFont(FontManager.getFont(10f));
+            g2.setColor(new Color(255, 255, 0, 200)); // Amarelo para destacar
+            String continueText = "Pressione A/D para passar páginas";
+            int continueX = dialogBoxX + textPadding;
+            int continueY = indicatorY + 20;
+            g2.drawString(continueText, continueX, continueY);
         }
     }
 
@@ -313,8 +491,16 @@ public class DialogUI {
      * Atualiza as dimensões da interface baseada no tamanho do painel.
      */
     public void updateDimensions() {
-        this.dialogBoxWidth = Math.min(600, gamePanel.getWidth() - 80);
-        this.dialogBoxX = (gamePanel.getWidth() - dialogBoxWidth) / 2;
-        this.dialogBoxY = gamePanel.getHeight() - dialogBoxHeight - 60;
+        this.dialogBoxWidth = gamePanel.getWidth() - 40; // Margem de 20px de cada lado
+        this.dialogBoxX = 20; // Margem esquerda
+        this.dialogBoxY = gamePanel.getHeight() - dialogBoxHeight - 20; // Margem inferior de 20px
+    }
+    
+    /**
+     * Reseta a paginação para um novo diálogo.
+     */
+    public void resetPagination() {
+        this.currentTextPages.clear();
+        this.currentPageIndex = 0;
     }
 }
