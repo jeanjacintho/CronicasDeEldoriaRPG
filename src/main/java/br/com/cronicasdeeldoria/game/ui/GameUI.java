@@ -11,6 +11,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import javax.imageio.ImageIO;
+import javax.swing.*;
 
 import java.util.ArrayList;
 import java.awt.Image;
@@ -51,6 +52,10 @@ public class GameUI {
   private long centerMessageDuration = 3000; // 3 segundos por padrão
   private boolean centerMessageVisible = false;
   private List<FloatingText> floatingTexts = new ArrayList<>();
+  private Image swordEffect;
+  private boolean showSwordEffect = false;
+  private long swordEffectStartTime;
+  private long swordEffectDuration = 2000;
 
   private final List<Message> messages = new ArrayList<>();
   private InventoryUI inventoryUI;
@@ -149,25 +154,45 @@ public class GameUI {
     messages.add(new Message(text, image, durationMillis));
   }
 
+  public void showSwordEffect() {
+    try {
+      // Carregar o gif (pode ser .gif animado)
+      swordEffect = new ImageIcon(Objects.requireNonNull(getClass().getResource("/sprites/effects/swordHit1time.gif"))).getImage();
+      showSwordEffect = true;
+      swordEffectStartTime = System.currentTimeMillis();
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
+
+  private void drawSwordEffect(Graphics2D g2) {
+    if (!showSwordEffect || swordEffect == null) return;
+
+    long elapsed = System.currentTimeMillis() - swordEffectStartTime;
+    if (elapsed > swordEffectDuration) {
+      showSwordEffect = false; // Esconde após 2s
+      return;
+    }
+
+    int x = gamePanel.getWidth() / 2 - 64;  // posição centralizada
+    int y = gamePanel.getHeight() / 2 - 64;
+    g2.drawImage(swordEffect, x, y, 40, 40, null);
+  }
+
   /**
    * Desenha a interface gráfica e as mensagens na tela.
    * @param graphics2D Contexto gráfico.
    */
   public void draw(Graphics2D graphics2D) {
-    // PRIMEIRO: Desenhar interface básica (sempre visível)
+    //Desenhar interface básica (sempre visível)
     if (gamePanel.gameState != gamePanel.battleState) {
       drawPlayerStats(graphics2D);
       drawPlayerMoney(graphics2D);
     }
 
-    // SEGUNDO: Desenhar interface de batalha se necessário
+    //Desenhar interface de batalha se necessário
     if (gamePanel.gameState == gamePanel.battleState && gamePanel.battle.isInBattle()) {
       drawBattleUI(graphics2D);
-
-      // Desenhar indicador de turno do monstro por cima da interface
-//      if (showMonsterTurnIndicator) {
-//        drawMonsterTurnIndicator(graphics2D);
-//      }
     }
 
     // TERCEIRO: Desenhar elementos que ficam por cima de tudo
@@ -180,6 +205,9 @@ public class GameUI {
     if (centerMessageVisible) {
       drawCenterMessage(graphics2D);
     }
+
+    // Efeito golpe de espada do player
+    drawSwordEffect(graphics2D);
 
     // Desenhar textos flutuantes sempre por último
     drawFloatingTexts(graphics2D);
@@ -661,24 +689,32 @@ public class GameUI {
     g2.drawString("(3) - Defender", 280, screenHeight - 75);
     g2.drawString("(4) - Tentar Fugir", 280, screenHeight - 35);
 
+    // Se o player possui a orb no inventario libera pra utilizar o buff
+    if (player.getGamePanel().getInventoryManager().hasItemById("orb_earth")) {
+      g2.drawString("(0) - Earth Orb Buff", 500, screenHeight - 40);
+    }
+    if (player.getGamePanel().getInventoryManager().hasItemById("orb_fire")) {
+      g2.drawString("(9) - Fire Orb Buff", 500, screenHeight - 10);
+    }
+
     g2.setColor(Color.BLACK);
     int amountOfPotionHp = gamePanel.getInventoryManager().countItemById("health_potion");
     int amountOfPotionMp = gamePanel.getInventoryManager().countItemById("mana_potion");
 
     if (healthPotionImg != null) {
-      g2.drawImage(healthPotionImg, 550, screenHeight - 102, potionIconSize - 5, potionIconSize, null);
+      g2.drawImage(healthPotionImg, 555, screenHeight - 142, potionIconSize - 5, potionIconSize, null);
     }
-    g2.drawString("(6) - ", 500, screenHeight - 75);
+    g2.drawString("(6) - ", 500, screenHeight - 115);
 
     if (manaPotionImg != null) {
-      g2.drawImage(manaPotionImg, 550, screenHeight - 60, potionIconSize - 5, potionIconSize , null);
+      g2.drawImage(manaPotionImg, 555, screenHeight - 100, potionIconSize - 5, potionIconSize , null);
     }
-    g2.drawString("(7) - ", 500, screenHeight - 35);
+    g2.drawString("(7) - ", 500, screenHeight - 75);
 
     // Exibe a quantidade de poções no inventário
     g2.setFont(dogicaFont_18);
-    g2.drawString(String.valueOf(amountOfPotionHp), 565, screenHeight - 70);
-    g2.drawString(String.valueOf(amountOfPotionMp), 565, screenHeight - 30);
+    g2.drawString(String.valueOf(amountOfPotionHp), 570, screenHeight - 110);
+    g2.drawString(String.valueOf(amountOfPotionMp), 570, screenHeight - 70);
 
     g2.setFont(dogicaFont_16);
     g2.setColor(Color.BLACK);
@@ -714,6 +750,7 @@ public class GameUI {
       swordImg = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/sprites/objects/items/sword_common.png")));
       shieldImg   = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/sprites/objects/items/shield_common.png")));
       earthOrbImg  = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/sprites/objects/quest/orb_earth.png")));
+      //earthOrbImg  = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/sprites/effects/swordHit1time.gif")));
       fireOrbImg  = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/sprites/objects/quest/orb_fire.png")));
     } catch (IOException e) {
       e.printStackTrace();

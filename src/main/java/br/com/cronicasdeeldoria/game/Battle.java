@@ -202,6 +202,9 @@ public class Battle {
     // Reproduzir som de ataque apenas quando o jogador atacar
     if (attacker instanceof Player) {
       audioManager.playSoundEffect("player_attack");
+
+      // Mostra o efeito de espada
+      gp.getGameUI().showSwordEffect();
     }
 
     // Reproduzir som de bloqueio quando o jogador está defendendo e sendo atacado

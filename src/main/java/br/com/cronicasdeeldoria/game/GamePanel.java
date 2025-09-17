@@ -1286,7 +1286,8 @@ public class GamePanel extends JPanel implements Runnable{
         }
         keyHandler.defendPressed = false;
       }
-      else if (keyHandler.earthOrbPressed ) {
+      // Player deve ter a earth orb no inventário para usar o buff
+      else if (keyHandler.earthOrbPressed && player.getGamePanel().getInventoryManager().hasItemById("orb_earth")) {
         if (player.canApplyBuff("HOT")) {
           battle.processPlayerAction("REGEN");
         } else {
@@ -1294,7 +1295,8 @@ public class GamePanel extends JPanel implements Runnable{
         }
         keyHandler.defendPressed = false;
       }
-      else if (keyHandler.fireOrbPressed ) {
+      // Player deve ter a fire orb no inventário para usar o buff
+      else if (keyHandler.fireOrbPressed && player.getGamePanel().getInventoryManager().hasItemById("orb_fire")) {
         if (player.canApplyBuff("DOT")) {
           battle.processPlayerAction("DAMAGEOVERTIME");
         } else {
