@@ -545,10 +545,15 @@ public class GameUI {
     graphics2D.drawString(centerMessage, x, y);
   }
 
-  public void showDamage(Character target, int damage) {
+  public void showDamage(Character target, int damage, String source) {
     int offsetX = 130; // dano deslocado para direita do player
     int offsetY = 0;
 
+    if ("DAMAGEOVERTIME".equals(source)) {
+      offsetX = 150;
+      offsetY = 90;
+      showFloatingText(target, "-" + damage, Color.BLACK, offsetX, offsetY);
+    }
     showFloatingText(target, "-" + damage, Color.RED, offsetX, offsetY);
   }
 
@@ -640,63 +645,63 @@ public class GameUI {
     g2.setColor(Color.BLACK);
     g2.setFont(dogicaFont_16);
 
-    if (gamePanel.battle.isWaitingForPlayerInput()) {
-      int potionIconSize = 35;
-      try {
-        healthPotionImg = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/sprites/objects/healthPotion-0002.png")));
-        manaPotionImg   = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/sprites/objects/manaPotion-0001.png")));
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
 
-      // Mostrar ações disponíveis
-      g2.drawString("Escolha sua ação:", 20, screenHeight - 115);
+    int potionIconSize = 35;
+    try {
+      healthPotionImg = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/sprites/objects/healthPotion-0002.png")));
+      manaPotionImg   = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/sprites/objects/manaPotion-0001.png")));
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+
+    // Mostrar ações disponíveis
+    g2.drawString("Escolha sua ação:", 20, screenHeight - 115);
+    g2.drawString("(1) - " + player.getCharacterClass().getSpecialAbilityName(), 20, screenHeight - 75);
+    g2.drawString("(2) - Ataque Básico", 20, screenHeight - 35);
+    g2.drawString("(3) - Defender", 280, screenHeight - 75);
+    g2.drawString("(4) - Tentar Fugir", 280, screenHeight - 35);
+
+    g2.setColor(Color.BLACK);
+    int amountOfPotionHp = gamePanel.getInventoryManager().countItemById("health_potion");
+    int amountOfPotionMp = gamePanel.getInventoryManager().countItemById("mana_potion");
+
+    if (healthPotionImg != null) {
+      g2.drawImage(healthPotionImg, 550, screenHeight - 102, potionIconSize - 5, potionIconSize, null);
+    }
+    g2.drawString("(6) - ", 500, screenHeight - 75);
+
+    if (manaPotionImg != null) {
+      g2.drawImage(manaPotionImg, 550, screenHeight - 60, potionIconSize - 5, potionIconSize , null);
+    }
+    g2.drawString("(7) - ", 500, screenHeight - 35);
+
+    // Exibe a quantidade de poções no inventário
+    g2.setFont(dogicaFont_18);
+    g2.drawString(String.valueOf(amountOfPotionHp), 565, screenHeight - 70);
+    g2.drawString(String.valueOf(amountOfPotionMp), 565, screenHeight - 30);
+
+    g2.setFont(dogicaFont_16);
+    g2.setColor(Color.BLACK);
+    // Destacar opções indisponíveis
+    if (player.getAttributeMana() < 15) {
+      g2.setColor(Color.GRAY);
       g2.drawString("(1) - " + player.getCharacterClass().getSpecialAbilityName(), 20, screenHeight - 75);
-      g2.drawString("(2) - Ataque Básico", 20, screenHeight - 35);
+    }
+    if (!player.canApplyBuff("ARMOR")) {
+      g2.setColor(Color.GRAY);
       g2.drawString("(3) - Defender", 280, screenHeight - 75);
-      g2.drawString("(4) - Tentar Fugir", 280, screenHeight - 35);
-
+    } else if (player.canApplyBuff("ARMOR")){
       g2.setColor(Color.BLACK);
-      int amountOfPotionHp = gamePanel.getInventoryManager().countItemById("health_potion");
-      int amountOfPotionMp = gamePanel.getInventoryManager().countItemById("mana_potion");
-
-      if (healthPotionImg != null) {
-        g2.drawImage(healthPotionImg, 550, screenHeight - 102, potionIconSize - 5, potionIconSize, null);
-      }
-      g2.drawString("(6) - ", 500, screenHeight - 75);
-
-      if (manaPotionImg != null) {
-        g2.drawImage(manaPotionImg, 550, screenHeight - 60, potionIconSize - 5, potionIconSize , null);
-      }
-      g2.drawString("(7) - ", 500, screenHeight - 35);
-
-      // Exibe a quantidade de poções no inventário
-      g2.setFont(dogicaFont_18);
-      g2.drawString(String.valueOf(amountOfPotionHp), 565, screenHeight - 70);
-      g2.drawString(String.valueOf(amountOfPotionMp), 565, screenHeight - 30);
-
-      g2.setFont(dogicaFont_16);
+      g2.drawString("(3) - Defender", 280, screenHeight - 75);
+    }
+    if (!player.canApplyBuff("STRENGTH")) {
+      g2.setColor(Color.GRAY);
+      g2.drawString("(1) - " + player.getCharacterClass().getSpecialAbilityName(), 20, screenHeight - 75);
+    } else if (player.canApplyBuff("STRENGTH")) {
       g2.setColor(Color.BLACK);
-      // Destacar opções indisponíveis
-      if (player.getAttributeMana() < 15) {
-        g2.setColor(Color.GRAY);
-        g2.drawString("(1) - " + player.getCharacterClass().getSpecialAbilityName(), 20, screenHeight - 75);
-      }
-      if (!player.canApplyBuff("ARMOR")) {
-        g2.setColor(Color.GRAY);
-        g2.drawString("(3) - Defender", 280, screenHeight - 75);
-      } else if (player.canApplyBuff("ARMOR")){
-        g2.setColor(Color.BLACK);
-        g2.drawString("(3) - Defender", 280, screenHeight - 75);
-      }
-      if (!player.canApplyBuff("STRENGTH")) {
-        g2.setColor(Color.GRAY);
-        g2.drawString("(1) - " + player.getCharacterClass().getSpecialAbilityName(), 20, screenHeight - 75);
-      } else if (player.canApplyBuff("STRENGTH")) {
-        g2.setColor(Color.BLACK);
-        g2.drawString("(1) - " + player.getCharacterClass().getSpecialAbilityName(), 20, screenHeight - 75);
-      }
-      //    else {
+      g2.drawString("(1) - " + player.getCharacterClass().getSpecialAbilityName(), 20, screenHeight - 75);
+    }
+    //    else {
 //      // Mostrar turno atual
 //      Character currentChar = gamePanel.battle.getCurrentCharacter();
 //      g2.setColor(Color.BLUE);
@@ -704,43 +709,42 @@ public class GameUI {
 //      g2.drawString("Turno de: " + currentChar.getName(), 20, screenHeight - 50);
 //    }
 
-      int buffIconSize = 35;
-      try {
-        swordImg = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/sprites/objects/items/sword_common.png")));
-        shieldImg   = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/sprites/objects/items/shield_common.png")));
-        earthOrbImg  = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/sprites/objects/quest/orb_earth.png")));
-        fireOrbImg  = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/sprites/objects/quest/orb_fire.png")));
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
+    int buffIconSize = 35;
+    try {
+      swordImg = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/sprites/objects/items/sword_common.png")));
+      shieldImg   = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/sprites/objects/items/shield_common.png")));
+      earthOrbImg  = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/sprites/objects/quest/orb_earth.png")));
+      fireOrbImg  = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/sprites/objects/quest/orb_fire.png")));
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
 
-      // Player buffs
-      if (player.hasActiveBuff("ARMOR")) {
-        if (shieldImg != null) {
-          g2.drawImage(shieldImg, 135, screenHeight - 300, buffIconSize, buffIconSize , null);
-        }
+    // Player buffs
+    if (player.hasActiveBuff("ARMOR")) {
+      if (shieldImg != null) {
+        g2.drawImage(shieldImg, 135, screenHeight - 300, buffIconSize, buffIconSize , null);
       }
-      if (player.hasActiveBuff("STRENGTH")) {
-        if (swordImg != null) {
-          g2.drawImage(swordImg, 135, screenHeight - 270, buffIconSize, buffIconSize, null);
-        }
+    }
+    if (player.hasActiveBuff("STRENGTH")) {
+      if (swordImg != null) {
+        g2.drawImage(swordImg, 135, screenHeight - 270, buffIconSize, buffIconSize, null);
       }
-      if (player.hasActiveBuff("HOT")) {
-        if (earthOrbImg != null) {
-          g2.drawImage(earthOrbImg, 135, screenHeight - 240, buffIconSize, buffIconSize, null);
-        }
+    }
+    if (player.hasActiveBuff("HOT")) {
+      if (earthOrbImg != null) {
+        g2.drawImage(earthOrbImg, 135, screenHeight - 240, buffIconSize, buffIconSize, null);
       }
+    }
 
-      // Monster buff
-      if (battleMonster.hasActiveBuff("ARMOR")) {
-        if (swordImg != null) {
-          g2.drawImage(shieldImg, 610, screenHeight - 465, buffIconSize, buffIconSize, null);
-        }
+    // Monster buff
+    if (battleMonster.hasActiveBuff("ARMOR")) {
+      if (shieldImg != null) {
+        g2.drawImage(shieldImg, 610, screenHeight - 465, buffIconSize, buffIconSize, null);
       }
-      if (battleMonster.hasActiveBuff("DOT")) {
-        if (fireOrbImg != null) {
-          g2.drawImage(fireOrbImg, 610, screenHeight - 435, buffIconSize, buffIconSize, null);
-        }
+    }
+    if (battleMonster.hasActiveBuff("DOT")) {
+      if (fireOrbImg != null) {
+        g2.drawImage(fireOrbImg, 610, screenHeight - 425, buffIconSize, buffIconSize, null);
       }
     }
 

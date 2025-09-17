@@ -65,7 +65,7 @@ public class Ranger implements CharacterClass {
       int damage = (int)((Math.max(1, finalDamage)) * 2);
       int newHealth = Math.max(0, target.getAttributeHealth() - damage);
       target.setAttributeHealth(newHealth);
-      gp.getGameUI().showDamage(target, damage);
+      gp.getGameUI().showDamage(target, damage, null);
 
       System.out.println(attacker.getName() + " uses Special Ability on " + target.getName() +
         " causing " + damage + " Physical damage!");

@@ -67,7 +67,7 @@ public class Paladin implements CharacterClass {
       int damage = (int) (Battle.calculateDamage(attacker, target) * 2); // 100% mais dano
       int newHealth = Math.max(0, target.getAttributeHealth() - damage);
       target.setAttributeHealth(newHealth);
-      gp.getGameUI().showDamage(target, damage);
+      gp.getGameUI().showDamage(target, damage, null);
 
       // Cura o atacante com 80% do dano causado
       int finalHeal = (int) (damage * 0.8);

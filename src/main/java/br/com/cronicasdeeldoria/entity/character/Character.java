@@ -64,7 +64,7 @@ public class Character extends Entity {
   }
 
   public boolean canApplyBuff(String type) {
-    // até 2 buffs diferentes ativos
+    // até 3 buffs diferentes ativos
     if (activeBuffs.size() >= 3) return false;
 
     // impede reaplicar mesmo tipo de buff ativo ou em cooldown
@@ -107,17 +107,12 @@ public class Character extends Entity {
         case "DOT":
           if (countTurn % 2 == 0) {
             System.out.println("Dano no turno: " + countTurn);
-            int missingHp = Math.max(0, (attributeMaxHealth - attributeHealth));
-            int damageAmount = Math.max(0, Math.min(b.getBonus(), missingHp));
-            if (damageAmount > 0) {
-              attributeHealth -= damageAmount;
+            attributeHealth -= b.getBonus();
 
-              gp.getGameUI().showHeal(this, damageAmount, "DAMAGEOVERTIME");
-            }
+            gp.getGameUI().showDamage(this, b.getBonus(), "DAMAGEOVERTIME");
           }
           break;
       }
-
       b.decrementDuration(this);
     }
   }

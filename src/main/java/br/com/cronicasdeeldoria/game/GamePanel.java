@@ -1315,7 +1315,7 @@ public class GamePanel extends JPanel implements Runnable{
         keyHandler.specialPressed = false;
       }
       else if (keyHandler.healthPressed) {
-        // Se vida atual menor que máxima e tem potion no inventário, pode ser potion
+        // Se vida atual menor que máxima e tem potion no inventário, pode usar potion
         if (player.getAttributeHealth() < player.getAttributeMaxHealth() && inventoryManager.hasItemById("health_potion")) {
           inventoryManager.consumeItem("health_potion");
           battle.processPlayerAction("HEALTH");

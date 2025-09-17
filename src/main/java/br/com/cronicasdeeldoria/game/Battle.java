@@ -24,6 +24,7 @@ public class Battle {
   private Npc monster;
   private boolean waitingForPlayerInput;
   private int countTurn = 0;
+  private int timeOutCounter = 0;
   private final AudioManager audioManager;
   private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
 
@@ -95,7 +96,7 @@ public class Battle {
         break;
       case "SPECIAL": specialAttack(player, monster, countTurn); break;
       case "REGEN": earthOrb(player); break;
-      case "DAMAGEOVERTIME": earthOrb(player); break;
+      case "DAMAGEOVERTIME": fireOrb(monster); break;
       case "HEALTH": healthPotion(player); break;
       case "MANA": manaPotion(player); break;
       default:
@@ -111,7 +112,12 @@ public class Battle {
     nextTurn();
 
     if (getCurrentCharacter() instanceof Npc) {
-      processMonsterTurn();
+      // Delay para processar o turno do monstro
+      scheduler.schedule(() -> {
+        SwingUtilities.invokeLater(() -> {
+          processMonsterTurn();
+        });
+      }, 1200, TimeUnit.MILLISECONDS);
     } else {
       waitingForPlayerInput = true;
     }
@@ -129,17 +135,11 @@ public class Battle {
     Random random = new Random();
     int choice = random.nextInt(100);
 
-    if (choice < 69) { // 70% chance de ataque
+    if (choice < 79) { // 80% chance de ataque
       attack(currentMonster, player);
     } else if (choice < 99) { // 20% chance de defesa
       defend(currentMonster);
     }
-    // Caso monstro poder usar magia
-//    else { // 20% chance de magia (se tiver mana)
-//      if (currentMonster.getAttributeMana() >= 10) {
-//        useMagic(currentMonster, player);
-//      }
-//    }
 
     // Verificar se a batalha terminou
     if (checkBattleEnd()) return;
@@ -212,31 +212,29 @@ public class Battle {
     System.out.println(attacker.getName() + " attacks " + target.getName() + " causing " + damage + " damage!");
     System.out.println("-----------------------------");
 
-    gp.getGameUI().showDamage(target, damage);
+    gp.getGameUI().showDamage(target, damage, null);
   }
 
   private void defend(Character character) {
     int bonus = (int)(character.getAttributeArmor() * 1.2);
 
     // 30% de buff por 2 turnos defendendo e 3 de cooldown
-    Buff armorBuff = new Buff("ARMOR", bonus, 2 * 2, 2 * 2); //
+    Buff armorBuff = new Buff("ARMOR", bonus, 2 * 2, 2 * 2, character); //
     character.applyBuff(armorBuff);
   }
 
-  // Earth orb
   private void earthOrb(Character character) {
     System.out.println("--------método earth orb--------");
-    int effectiveHeal = (int) (character.getAttributeMaxHealth() * 0.02);
-    Buff healingOverTime = new Buff("HOT", effectiveHeal, 10, 0);
+    int effectiveHeal = (int) (character.getAttributeMaxHealth() * 0.035);
+    Buff healingOverTime = new Buff("HOT", effectiveHeal, 30, 0, character);
 
     character.applyBuff(healingOverTime);
   }
 
-  // Earth orb
   private void fireOrb(Character monster) {
     System.out.println("--------método fire orb--------");
-    int effectiveDamage = (int) (monster.getAttributeMaxHealth() * 0.03);
-    Buff damageOverTime = new Buff("DOT", effectiveDamage, 10, 0);
+    int effectiveDamage = (int) (monster.getAttributeMaxHealth() * 0.05);
+    Buff damageOverTime = new Buff("DOT", effectiveDamage, 30, 0, player);
 
     monster.applyBuff(damageOverTime);
   }
