@@ -9,7 +9,7 @@ import java.awt.event.KeyListener;
 public class KeyHandler implements KeyListener {
     public boolean actionPressed, upPressed, downPressed, leftPressed, rightPressed, xPressed, zPressed, qPressed;
     public boolean rPressed, fPressed, gPressed, hPressed, tPressed, specialPressed, attackPressed, defendPressed, escapePressed;
-    public boolean healthPressed, manaPressed, earthOrbPressed = false, fireOrbPressed;
+    public boolean healthPressed, manaPressed, waterOrbPressed = false, fireOrbPressed;
     public boolean inventoryPressed, tabPressed, escapeKeyPressed, debugPressed;
 
     /**
@@ -55,7 +55,7 @@ public class KeyHandler implements KeyListener {
             case KeyEvent.VK_7: manaPressed = true; break;
 
             // Efeitos das orbes
-            case KeyEvent.VK_0: earthOrbPressed = true; break;
+            case KeyEvent.VK_0: waterOrbPressed = true; break;
             case KeyEvent.VK_9: fireOrbPressed = true; break;
 
         }
@@ -98,7 +98,7 @@ public class KeyHandler implements KeyListener {
           case KeyEvent.VK_7: manaPressed = false; break;
 
           // Efeitos das orbes
-          case KeyEvent.VK_0: earthOrbPressed = false; break;
+          case KeyEvent.VK_0: waterOrbPressed = false; break;
           case KeyEvent.VK_9: fireOrbPressed = false; break;
         }
     }

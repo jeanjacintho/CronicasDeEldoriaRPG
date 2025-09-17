@@ -95,7 +95,7 @@ public class Battle {
         }
         break;
       case "SPECIAL": specialAttack(player, monster, countTurn); break;
-      case "REGEN": earthOrb(player); break;
+      case "REGEN": waterOrb(player); break;
       case "DAMAGEOVERTIME": fireOrb(monster); break;
       case "HEALTH": healthPotion(player); break;
       case "MANA": manaPotion(player); break;
@@ -202,9 +202,6 @@ public class Battle {
     // Reproduzir som de ataque apenas quando o jogador atacar
     if (attacker instanceof Player) {
       audioManager.playSoundEffect("player_attack");
-
-      // Mostra o efeito de espada
-      gp.getGameUI().showSwordEffect();
     }
 
     // Reproduzir som de bloqueio quando o jogador está defendendo e sendo atacado
@@ -226,20 +223,18 @@ public class Battle {
     character.applyBuff(armorBuff);
   }
 
-  private void earthOrb(Character character) {
-    System.out.println("--------método earth orb--------");
-    int effectiveHeal = (int) (character.getAttributeMaxHealth() * 0.035);
-    Buff healingOverTime = new Buff("HOT", effectiveHeal, 30, 0, character);
-
-    character.applyBuff(healingOverTime);
-  }
-
   private void fireOrb(Character monster) {
-    System.out.println("--------método fire orb--------");
     int effectiveDamage = (int) (monster.getAttributeMaxHealth() * 0.05);
     Buff damageOverTime = new Buff("DOT", effectiveDamage, 30, 0, player);
 
     monster.applyBuff(damageOverTime);
+  }
+
+  private void waterOrb(Character character) {
+    int effectiveHeal = (int) (character.getAttributeMaxHealth() * 0.035);
+    Buff healingOverTime = new Buff("HOT", effectiveHeal, 30, 0, character);
+
+    character.applyBuff(healingOverTime);
   }
 
   private boolean flee(Character character) {

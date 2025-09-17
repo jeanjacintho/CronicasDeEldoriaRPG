@@ -1287,7 +1287,7 @@ public class GamePanel extends JPanel implements Runnable{
         keyHandler.defendPressed = false;
       }
       // Player deve ter a earth orb no inventário para usar o buff
-      else if (keyHandler.earthOrbPressed && player.getGamePanel().getInventoryManager().hasItemById("orb_earth")) {
+      else if (keyHandler.waterOrbPressed && player.getGamePanel().getInventoryManager().hasItemById("orb_water")) {
         if (player.canApplyBuff("HOT")) {
           battle.processPlayerAction("REGEN");
         } else {
