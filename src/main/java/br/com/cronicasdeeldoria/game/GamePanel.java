@@ -901,6 +901,35 @@ public class GamePanel extends JPanel implements Runnable{
 
         // Desenhar interface de diálogo por cima
         dialogUI.draw(graphics2D, dialogManager);
+      } else if (gameState == inventoryState) {
+        // Desenha o jogo de fundo mesmo durante o inventário (para transparência)
+        tileManager.drawBackgroundLayers(graphics2D);
+
+        // Renderizar objetos
+        if (objectManager != null) {
+          objectManager.drawObjects(graphics2D);
+        }
+
+        // Renderizar NPCs apenas se houver NPCs no mapa
+        if (npcs != null && !npcs.isEmpty()) {
+          for (Npc npc : npcs) {
+            npc.draw(graphics2D, npcSpriteLoader, tileSize, player, player.getScreenX(), player.getScreenY());
+          }
+        }
+
+        // Renderizar player
+        player.draw(graphics2D);
+
+        // Renderizar camadas overlay APÓS o player (para efeito de profundidade)
+        tileManager.drawOverlayLayers(graphics2D);
+
+        // Interface normal de jogo
+        gameUI.draw(graphics2D);
+
+        // Desenhar interface do inventário por cima (transparente)
+        if (inventoryManager != null) {
+          gameUI.drawInventoryUI(graphics2D, inventoryManager);
+        }
       } else if (gameState == pauseState) {
         // Desenha o jogo de fundo durante a pausa
         tileManager.draw(graphics2D);
