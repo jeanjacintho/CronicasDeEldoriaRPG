@@ -154,21 +154,35 @@ public class GameUI {
    * @param graphics2D Contexto gráfico.
    */
   public void draw(Graphics2D graphics2D) {
-    // Desenhar interface do jogador (vida, mana, nível)
-    drawPlayerStats(graphics2D);
+    // PRIMEIRO: Desenhar interface básica (sempre visível)
+    if (gamePanel.gameState != gamePanel.battleState) {
+      drawPlayerStats(graphics2D);
+      drawPlayerMoney(graphics2D);
+    }
 
-    // Desenhar mensagens no canto inferior esquerdo
+    // SEGUNDO: Desenhar interface de batalha se necessário
+    if (gamePanel.gameState == gamePanel.battleState && gamePanel.battle.isInBattle()) {
+      drawBattleUI(graphics2D);
+
+      // Desenhar indicador de turno do monstro por cima da interface
+//      if (showMonsterTurnIndicator) {
+//        drawMonsterTurnIndicator(graphics2D);
+//      }
+    }
+
+    // TERCEIRO: Desenhar elementos que ficam por cima de tudo
     drawMessages(graphics2D);
 
-    // Desenhar janela de stats se estiver visível
     if (showStatsWindow) {
       drawStatsWindow(graphics2D);
     }
 
-    // Desenhar mensagem central se estiver visível
     if (centerMessageVisible) {
       drawCenterMessage(graphics2D);
     }
+
+    // Desenhar textos flutuantes sempre por último
+    drawFloatingTexts(graphics2D);
   }
 
   /**
@@ -533,20 +547,30 @@ public class GameUI {
 
   public void showDamage(Character target, int damage) {
     int offsetX = 130; // dano deslocado para direita do player
-    showFloatingText(target, "-" + damage, Color.RED, offsetX);
+    int offsetY = 0;
+
+    showFloatingText(target, "-" + damage, Color.RED, offsetX, offsetY);
   }
 
-  public void showHeal(Character target, int heal) {
+  public void showHeal(Character target, int heal, String source) {
     int offsetX = 0; // vida aparece a esquerda do player
-    showFloatingText(target, "+" + heal, Color.GREEN, offsetX);
+    int offsetY = 0;
+
+    if ("REGEN".equals(source)) {
+      offsetX = -55;
+      offsetY = 90;
+    }
+    showFloatingText(target, "+" + heal, Color.GREEN, offsetX, offsetY);
   }
 
   public void showMana(Character target, int mana) {
     int offsetX = 0; //mana aparece a esquerda do player
-    showFloatingText(target, "+" + mana, Color.BLUE, offsetX);
+    int offsetY = 0; //mana aparece a esquerda do player
+
+    showFloatingText(target, "+" + mana, Color.BLUE, offsetX, offsetY);
   }
 
-  public void showFloatingText(Character target, String text, Color color, int offsetX) {
+  public void showFloatingText(Character target, String text, Color color, int offsetX, int offsetY) {
     int screenHeight = gamePanel.getHeight();
     int x, y;
 
@@ -558,7 +582,7 @@ public class GameUI {
       y = screenHeight - 465;
     }
 
-    floatingTexts.add(new FloatingText(text, x + offsetX, y, color));
+    floatingTexts.add(new FloatingText(text, x + offsetX, y + offsetY, color));
   }
 
   public void drawBattleUI(Graphics2D g2) {
@@ -573,6 +597,8 @@ public class GameUI {
     BufferedImage manaPotionImg = null;
     BufferedImage swordImg = null;
     BufferedImage shieldImg = null;
+    BufferedImage earthOrbImg = null;
+    BufferedImage fireOrbImg = null;
 
     // Fundo de batalha
     g2.setColor(new Color(50, 50, 35));
@@ -682,6 +708,8 @@ public class GameUI {
       try {
         swordImg = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/sprites/objects/items/sword_common.png")));
         shieldImg   = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/sprites/objects/items/shield_common.png")));
+        earthOrbImg  = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/sprites/objects/quest/orb_earth.png")));
+        fireOrbImg  = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/sprites/objects/quest/orb_fire.png")));
       } catch (IOException e) {
         e.printStackTrace();
       }
@@ -691,9 +719,15 @@ public class GameUI {
         if (shieldImg != null) {
           g2.drawImage(shieldImg, 135, screenHeight - 300, buffIconSize, buffIconSize , null);
         }
-      } else if (player.hasActiveBuff("STRENGTH")) {
+      }
+      if (player.hasActiveBuff("STRENGTH")) {
         if (swordImg != null) {
           g2.drawImage(swordImg, 135, screenHeight - 270, buffIconSize, buffIconSize, null);
+        }
+      }
+      if (player.hasActiveBuff("HOT")) {
+        if (earthOrbImg != null) {
+          g2.drawImage(earthOrbImg, 135, screenHeight - 240, buffIconSize, buffIconSize, null);
         }
       }
 
@@ -701,6 +735,11 @@ public class GameUI {
       if (battleMonster.hasActiveBuff("ARMOR")) {
         if (swordImg != null) {
           g2.drawImage(shieldImg, 610, screenHeight - 465, buffIconSize, buffIconSize, null);
+        }
+      }
+      if (battleMonster.hasActiveBuff("DOT")) {
+        if (fireOrbImg != null) {
+          g2.drawImage(fireOrbImg, 610, screenHeight - 435, buffIconSize, buffIconSize, null);
         }
       }
     }

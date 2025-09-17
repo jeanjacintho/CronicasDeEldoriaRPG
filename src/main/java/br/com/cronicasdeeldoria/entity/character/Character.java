@@ -7,6 +7,7 @@ import br.com.cronicasdeeldoria.game.Buff;
 import br.com.cronicasdeeldoria.entity.item.Item;
 import br.com.cronicasdeeldoria.entity.character.AttributeType;
 import br.com.cronicasdeeldoria.game.inventory.Equipment;
+import br.com.cronicasdeeldoria.game.GamePanel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -64,10 +65,12 @@ public class Character extends Entity {
 
   public boolean canApplyBuff(String type) {
     // até 2 buffs diferentes ativos
-    if (activeBuffs.size() >= 2) return false;
+    if (activeBuffs.size() >= 3) return false;
 
     // impede reaplicar mesmo tipo de buff ativo ou em cooldown
     for (Buff b : activeBuffs) {
+
+      // Qualquer outro buff, não pode aplicar de novo
       if (b.getType().equals(type) && (b.isActive() || b.isOnCooldown())) {
         return false;
       }
@@ -84,9 +87,37 @@ public class Character extends Entity {
     }
   }
 
-  public void updateBuffs() {
+  public void updateBuffs(int countTurn, GamePanel gp) {
     activeBuffs.removeIf(b -> !b.isActive() && !b.isOnCooldown()); // limpa buffs que terminaram
+
     for (Buff b : activeBuffs) {
+      switch (b.getType()) {
+        case "HOT":
+          if (countTurn % 2 == 0) {
+            System.out.println("Curei no turno: " + countTurn);
+            int missingHp = Math.max(0, (attributeMaxHealth - attributeHealth));
+            int healAmount = Math.max(0, Math.min(b.getBonus(), missingHp));
+            if (healAmount > 0) {
+              attributeHealth += healAmount;
+
+              gp.getGameUI().showHeal(this, healAmount, "REGEN");
+            }
+          }
+          break;
+        case "DOT":
+          if (countTurn % 2 == 0) {
+            System.out.println("Dano no turno: " + countTurn);
+            int missingHp = Math.max(0, (attributeMaxHealth - attributeHealth));
+            int damageAmount = Math.max(0, Math.min(b.getBonus(), missingHp));
+            if (damageAmount > 0) {
+              attributeHealth -= damageAmount;
+
+              gp.getGameUI().showHeal(this, damageAmount, "DAMAGEOVERTIME");
+            }
+          }
+          break;
+      }
+
       b.decrementDuration(this);
     }
   }

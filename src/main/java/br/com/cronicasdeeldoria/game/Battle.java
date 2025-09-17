@@ -4,9 +4,16 @@ import br.com.cronicasdeeldoria.audio.AudioManager;
 import br.com.cronicasdeeldoria.entity.character.Character;
 import br.com.cronicasdeeldoria.entity.character.player.Player;
 import br.com.cronicasdeeldoria.entity.character.npc.Npc;
+import br.com.cronicasdeeldoria.game.ui.GameUI;
+
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class Battle {
   private final GamePanel gp;
@@ -18,6 +25,7 @@ public class Battle {
   private boolean waitingForPlayerInput;
   private int countTurn = 0;
   private final AudioManager audioManager;
+  private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
 
   public Battle(GamePanel gp) {
     this.gp = gp;
@@ -86,6 +94,8 @@ public class Battle {
         }
         break;
       case "SPECIAL": specialAttack(player, monster, countTurn); break;
+      case "REGEN": earthOrb(player); break;
+      case "DAMAGEOVERTIME": earthOrb(player); break;
       case "HEALTH": healthPotion(player); break;
       case "MANA": manaPotion(player); break;
       default:
@@ -100,7 +110,6 @@ public class Battle {
     // Próximo turno
     nextTurn();
 
-    // Se for turno do monstro, processar automaticamente
     if (getCurrentCharacter() instanceof Npc) {
       processMonsterTurn();
     } else {
@@ -157,7 +166,7 @@ public class Battle {
     if (monster.getAttributeHealth() <= 0) {
       countTurn = 0;
       for (Character c : turnOrder) {
-        c.updateBuffs();
+        c.updateBuffs(countTurn, gp);
       }
       gp.endBattle(true);
       return true;
@@ -171,7 +180,7 @@ public class Battle {
 
     // Atualiza buffs de todos
     for (Character c : turnOrder) {
-      c.updateBuffs();
+      c.updateBuffs(countTurn, gp);
     }
 
     System.out.println("\n---------- Turn: " + countTurn + " ----------");
@@ -212,6 +221,24 @@ public class Battle {
     // 30% de buff por 2 turnos defendendo e 3 de cooldown
     Buff armorBuff = new Buff("ARMOR", bonus, 2 * 2, 2 * 2); //
     character.applyBuff(armorBuff);
+  }
+
+  // Earth orb
+  private void earthOrb(Character character) {
+    System.out.println("--------método earth orb--------");
+    int effectiveHeal = (int) (character.getAttributeMaxHealth() * 0.02);
+    Buff healingOverTime = new Buff("HOT", effectiveHeal, 10, 0);
+
+    character.applyBuff(healingOverTime);
+  }
+
+  // Earth orb
+  private void fireOrb(Character monster) {
+    System.out.println("--------método fire orb--------");
+    int effectiveDamage = (int) (monster.getAttributeMaxHealth() * 0.03);
+    Buff damageOverTime = new Buff("DOT", effectiveDamage, 10, 0);
+
+    monster.applyBuff(damageOverTime);
   }
 
   private boolean flee(Character character) {
@@ -261,7 +288,7 @@ public class Battle {
       System.out.println(character.getName() + " recuperou " + diffCurrentHpAndMaxHp + " de Vida");
       System.out.println("-----------------------------");
     }
-    gp.getGameUI().showHeal(character, finalHeal);
+    gp.getGameUI().showHeal(character, finalHeal, "POTION");
   }
 
   // Mana Potion

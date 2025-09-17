@@ -76,12 +76,12 @@ public class Paladin implements CharacterClass {
       if (diffCurrentHpAndMaxHp > finalHeal) {
         attacker.setAttributeHealth(attacker.getAttributeHealth() + finalHeal);
         System.out.println(attacker.getName() + " recuperou " + finalHeal + " de Vida");
-        gp.getGameUI().showHeal(attacker, finalHeal);
+        gp.getGameUI().showHeal(attacker, finalHeal, "ATTACK");
         System.out.println("-----------------------------");
       } else {
         attacker.setAttributeHealth(attacker.getAttributeHealth() + diffCurrentHpAndMaxHp);
         System.out.println(attacker.getName() + " recuperou " + diffCurrentHpAndMaxHp + " de Vida");
-        gp.getGameUI().showHeal(attacker, diffCurrentHpAndMaxHp);
+        gp.getGameUI().showHeal(attacker, diffCurrentHpAndMaxHp, "ATTACK");
         System.out.println("-----------------------------");
       }
 

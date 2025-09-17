@@ -215,17 +215,17 @@ public class GamePanel extends JPanel implements Runnable{
   /**
    * Método de teste para verificar NPCs carregados
    */
-  public void testNpcs() {
-    System.out.println("TESTE: Verificando NPCs carregados...");
-    if (npcs != null) {
-      System.out.println("Total de NPCs: " + npcs.size());
-      for (Npc npc : npcs) {
-        System.out.println("NPC: " + npc.getName() + " - dialogId: " + npc.getDialogId() + " - Interativo: " + npc.isInteractive());
-      }
-    } else {
-      System.out.println("TESTE: Lista de NPCs é null!");
-    }
-  }
+//  public void testNpcs() {
+//    System.out.println("TESTE: Verificando NPCs carregados...");
+//    if (npcs != null) {
+//      System.out.println("Total de NPCs: " + npcs.size());
+//      for (Npc npc : npcs) {
+//        System.out.println("NPC: " + npc.getName() + " - dialogId: " + npc.getDialogId() + " - Interativo: " + npc.isInteractive());
+//      }
+//    } else {
+//      System.out.println("TESTE: Lista de NPCs é null!");
+//    }
+//  }
 
   /**
    * Inicia a thread principal do jogo.
@@ -577,9 +577,9 @@ public class GamePanel extends JPanel implements Runnable{
 
         // Verificar interação com NPCs apenas se houver NPCs no mapa
         if (npcs != null && !npcs.isEmpty()) {
-            System.out.println("Verificando " + npcs.size() + " NPCs para interação...");
+            //System.out.println("Verificando " + npcs.size() + " NPCs para interação...");
             for (Npc npc : npcs) {
-                System.out.println("NPC: " + npc.getName() + " em (" + npc.getWorldX() + ", " + npc.getWorldY() + ") - Interativo: " + npc.isInteractive());
+                //System.out.println("NPC: " + npc.getName() + " em (" + npc.getWorldX() + ", " + npc.getWorldY() + ") - Interativo: " + npc.isInteractive());
 
                 // Verificar se é um monstro (usar distância de 5 tiles)
                 if (npc instanceof WolfMonster || npc instanceof SkeletonMonster ||
@@ -588,7 +588,6 @@ public class GamePanel extends JPanel implements Runnable{
                     npc instanceof SkeletonBossMonster || npc instanceof WolfBossMonster) {
 
                     boolean isNearMonster = isPlayerNearMonster(player, npc.getWorldX(), npc.getWorldY());
-                    System.out.println("  Monstro próximo: " + isNearMonster);
 
                     if (isNearMonster && npc.isInteractive()) {
                         // Verificar auto-interação
@@ -597,14 +596,14 @@ public class GamePanel extends JPanel implements Runnable{
                             npc.interact();
                         } else {
                             // Usar coordenadas de mundo diretamente
-                            System.out.println("  Adicionando ponto de interação para monstro!");
+                            //System.out.println("  Adicionando ponto de interação para monstro!");
                             simpleInteractionManager.addInteractionPoint(npc.getWorldX(), npc.getWorldY(), "E", "monster");
                         }
                     }
                 } else {
                     // NPCs normais (usar distância de 2 tiles)
                     boolean isNearNpc = isPlayerNearNpc(player, npc.getWorldX(), npc.getWorldY());
-                    System.out.println("  NPC próximo: " + isNearNpc);
+                    //System.out.println("  NPC próximo: " + isNearNpc);
 
                     if (isNearNpc && npc.isInteractive()) {
                         // Verificar auto-interação
@@ -613,21 +612,21 @@ public class GamePanel extends JPanel implements Runnable{
                             npc.interact();
                         } else {
                             // Usar coordenadas de mundo diretamente
-                            System.out.println("  Adicionando ponto de interação para NPC!");
+                            //System.out.println("  Adicionando ponto de interação para NPC!");
                             simpleInteractionManager.addInteractionPoint(npc.getWorldX(), npc.getWorldY(), "E", "npc");
                         }
                     }
                 }
             }
         } else {
-            System.out.println("Nenhum NPC encontrado no mapa");
+            //System.out.println("Nenhum NPC encontrado no mapa");
         }
 
         // Verificar interação com objetos
         if (objectManager != null) {
-            System.out.println("Verificando objetos para interação...");
+            //System.out.println("Verificando objetos para interação...");
             for (MapObject obj : objectManager.getActiveObjects()) {
-                System.out.println("Objeto: " + obj.getObjectId() + " em (" + obj.getWorldX() + ", " + obj.getWorldY() + ") - Interativo: " + obj.isInteractive() + " - Ativo: " + obj.isActive());
+                //System.out.println("Objeto: " + obj.getObjectId() + " em (" + obj.getWorldX() + ", " + obj.getWorldY() + ") - Interativo: " + obj.isInteractive() + " - Ativo: " + obj.isActive());
 
                 if (obj.isInteractive() && obj.isActive()) {
                     // Verificar auto-interação
@@ -642,7 +641,7 @@ public class GamePanel extends JPanel implements Runnable{
                         System.out.println("  Objeto próximo: " + isNearObject);
 
                         if (isNearObject) {
-                            System.out.println("  Adicionando ponto de interação para objeto!");
+                            //System.out.println("  Adicionando ponto de interação para objeto!");
                             simpleInteractionManager.addInteractionPoint(obj.getWorldX(), obj.getWorldY(), "E", "object");
                         }
                     }
@@ -688,10 +687,6 @@ public class GamePanel extends JPanel implements Runnable{
         int maxDistance = tileSize * distanceInTiles;
 
         boolean isNear = distanceX <= maxDistance && distanceY <= maxDistance;
-
-        System.out.println("    Detecção proximidade: Jogador(" + playerCenterX + ", " + playerCenterY + ") -> Entidade(" + entityCenterX + ", " + entityCenterY + ")");
-        System.out.println("    Distância: (" + distanceX + ", " + distanceY + ") / Máxima: " + maxDistance + " -> Próximo: " + isNear);
-
         return isNear;
     }
 
@@ -1288,6 +1283,22 @@ public class GamePanel extends JPanel implements Runnable{
           battle.processPlayerAction("DEFEND");
         } else {
           System.out.println("ARMOR buff is activate or in cooldown!");
+        }
+        keyHandler.defendPressed = false;
+      }
+      else if (keyHandler.earthOrbPressed ) {
+        if (player.canApplyBuff("HOT")) {
+          battle.processPlayerAction("REGEN");
+        } else {
+          System.out.println("HOT buff is activate or in cooldown!");
+        }
+        keyHandler.defendPressed = false;
+      }
+      else if (keyHandler.fireOrbPressed ) {
+        if (player.canApplyBuff("DOT")) {
+          battle.processPlayerAction("DAMAGEOVERTIME");
+        } else {
+          System.out.println("DOT buff is activate or in cooldown!");
         }
         keyHandler.defendPressed = false;
       }

@@ -94,7 +94,7 @@ public class NpcFactory {
                     npcs.add(new Npc(name, isStatic, dialog, x, y, skin, playerSize, interactive, autoInteraction, dialogId));
                 }
             } else {
-                System.err.println("Definição não encontrada para NPC ID: " + npcTile.id);
+                //System.err.println("Definição não encontrada para NPC ID: " + npcTile.id);
             }
         }
 
