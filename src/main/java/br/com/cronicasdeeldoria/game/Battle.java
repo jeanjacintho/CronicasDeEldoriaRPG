@@ -79,7 +79,6 @@ public class Battle {
 
     Character currentCharacter = getCurrentCharacter();
     if (!(currentCharacter instanceof Player)) {
-      System.out.println("Not player's turn!");
       return;
     }
 
@@ -100,7 +99,6 @@ public class Battle {
       case "HEALTH": healthPotion(player); break;
       case "MANA": manaPotion(player); break;
       default:
-        System.out.println("Invalid action!");
         //waitingForPlayerInput = true; // Permite tentar novamente
         return;
     }
@@ -111,6 +109,7 @@ public class Battle {
     // Próximo turno
     nextTurn();
 
+    // Se for turno do monstro, processar automaticamente
     if (getCurrentCharacter() instanceof Npc) {
       // Delay para processar o turno do monstro
       scheduler.schedule(() -> {
@@ -183,7 +182,7 @@ public class Battle {
       c.updateBuffs(countTurn, gp);
     }
 
-    System.out.println("\n---------- Turn: " + countTurn + " ----------");
+    //System.out.println("\n---------- Turn: " + countTurn + " ----------");
   }
 
   public static int calculateDamage(Character attacker, Character target) {
@@ -277,12 +276,9 @@ public class Battle {
 
     if (diffCurrentHpAndMaxHp > finalHeal) {
       character.setAttributeHealth(character.getAttributeHealth() + finalHeal);
-      System.out.println(character.getName() + " recuperou " + finalHeal + " de Vida");
-      System.out.println("-----------------------------");
+
     } else {
       character.setAttributeHealth(character.getAttributeHealth() + diffCurrentHpAndMaxHp);
-      System.out.println(character.getName() + " recuperou " + diffCurrentHpAndMaxHp + " de Vida");
-      System.out.println("-----------------------------");
     }
     gp.getGameUI().showHeal(character, finalHeal, "POTION");
   }
@@ -299,10 +295,8 @@ public class Battle {
 
     if (diffCurrentMpAndMaxMp > finalManaRecover) {
       character.setAttributeMana(character.getAttributeMana() + finalManaRecover);
-      System.out.println(character.getName() + " recuperou " + finalManaRecover + " de Mana");
     } else {
       character.setAttributeMana(character.getAttributeMana() + diffCurrentMpAndMaxMp);
-      System.out.println(character.getName() + " recuperou " + diffCurrentMpAndMaxMp + " de Mana");
     }
     gp.getGameUI().showMana(character, finalManaRecover);
   }

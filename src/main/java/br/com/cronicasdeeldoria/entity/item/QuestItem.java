@@ -2,8 +2,6 @@ package br.com.cronicasdeeldoria.entity.item;
 
 import br.com.cronicasdeeldoria.game.quest.QuestManager;
 
-import java.util.List;
-
 /**
  * Item especial usado em quests.
  * Herda de Item e adiciona funcionalidades específicas para quests.

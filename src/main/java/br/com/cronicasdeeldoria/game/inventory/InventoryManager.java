@@ -1,13 +1,11 @@
 package br.com.cronicasdeeldoria.game.inventory;
 
-import br.com.cronicasdeeldoria.entity.character.AttributeType;
 import br.com.cronicasdeeldoria.entity.character.player.Player;
 import br.com.cronicasdeeldoria.entity.item.Item;
 import br.com.cronicasdeeldoria.entity.item.ItemType;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Gerencia o inventário e sistema de equipamento do jogador.
@@ -144,9 +142,6 @@ public class InventoryManager {
 
         // Verificar se o jogador pode equipar o item
         if (!canPlayerEquipItem(selectedItem)) {
-          String playerClass = playerClassName;
-          String allowedClasses = selectedItem.getAllowedClass() != null ? String.join(", ", selectedItem.getAllowedClass()) : "nenhuma";
-          System.out.printf("Classe %s não pode equipar o item da classe %s%n", playerClass,allowedClasses );
           return false;
         }
 
@@ -166,19 +161,6 @@ public class InventoryManager {
         // Remover item do inventário
         int slotIndex = selectedRow * INVENTORY_COLUMNS + selectedColumn;
         removeItem(slotIndex);
-
-//        System.out.println("Atributos do jogador após equipar:");
-//        for (AttributeType type : AttributeType.values()) {
-//          System.out.println(type.name() + " = " + player.getEffectiveAttribute(type));
-//        }
-
-        // Debug: mostrar atributos atualizados
-        System.out.println("Atributos após equipar " + selectedItem.getName() + ":");
-        System.out.println("Força: " + player.getAttributeStrength());
-        System.out.println("Armadura: " + player.getAttributeArmor());
-        System.out.println("Vida Máxima: " + player.getAttributeMaxHealth());
-        System.out.println("Mana Máxima: " + player.getAttributeMaxMana());
-        //System.out.println("Speed: " + player.getAttrib());
 
         return true;
     }

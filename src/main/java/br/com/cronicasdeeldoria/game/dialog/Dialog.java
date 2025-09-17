@@ -14,6 +14,7 @@ public class Dialog {
     private boolean isEndDialog;
     private String portraitSprite;
     private int portraitFrame;
+    private DialogCondition condition; // Condição para exibir este diálogo
 
     /**
      * Cria um novo diálogo.
@@ -45,6 +46,42 @@ public class Dialog {
         this.isEndDialog = false;
         this.portraitSprite = portraitSprite;
         this.portraitFrame = 0;
+    }
+
+    /**
+     * Cria um novo diálogo com condição.
+     * @param id ID único do diálogo
+     * @param speakerName Nome do personagem que fala
+     * @param text Texto do diálogo
+     * @param condition Condição para exibir o diálogo
+     */
+    public Dialog(int id, String speakerName, String text, DialogCondition condition) {
+        this.id = id;
+        this.speakerName = speakerName;
+        this.text = text;
+        this.options = new ArrayList<>();
+        this.isEndDialog = false;
+        this.portraitFrame = 0;
+        this.condition = condition;
+    }
+
+    /**
+     * Cria um novo diálogo com sprite de retrato e condição.
+     * @param id ID único do diálogo
+     * @param speakerName Nome do personagem que fala
+     * @param text Texto do diálogo
+     * @param portraitSprite Sprite do retrato
+     * @param condition Condição para exibir o diálogo
+     */
+    public Dialog(int id, String speakerName, String text, String portraitSprite, DialogCondition condition) {
+        this.id = id;
+        this.speakerName = speakerName;
+        this.text = text;
+        this.options = new ArrayList<>();
+        this.isEndDialog = false;
+        this.portraitSprite = portraitSprite;
+        this.portraitFrame = 0;
+        this.condition = condition;
     }
 
     /**
@@ -97,6 +134,18 @@ public class Dialog {
      */
     public boolean hasAvailableOptions() {
         return options.stream().anyMatch(DialogOption::isAvailable);
+    }
+
+    /**
+     * Verifica se a condição do diálogo é atendida.
+     * @param questManager Gerenciador de quests para verificar condições
+     * @return true se a condição for atendida ou se não há condição
+     */
+    public boolean isConditionMet(br.com.cronicasdeeldoria.game.quest.QuestManager questManager) {
+        if (condition == null) {
+            return true; // Sem condição, sempre disponível
+        }
+        return condition.isMet(questManager);
     }
 
     /**
@@ -167,5 +216,13 @@ public class Dialog {
 
     public void setPortraitFrame(int portraitFrame) {
         this.portraitFrame = portraitFrame;
+    }
+
+    public DialogCondition getCondition() {
+        return condition;
+    }
+
+    public void setCondition(DialogCondition condition) {
+        this.condition = condition;
     }
 }

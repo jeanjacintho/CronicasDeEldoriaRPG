@@ -68,9 +68,6 @@ public class Mage implements CharacterClass {
       target.setAttributeHealth(newHealth);
       gp.getGameUI().showDamage(target, magicDamage, null);
 
-      System.out.println(attacker.getName() + " uses Special Ability on " + target.getName() +
-        " causing " + magicDamage + " Fire damage!");
-      System.out.println("-----------------------------");
     }
   }
 }

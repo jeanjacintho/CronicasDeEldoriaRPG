@@ -1,6 +1,5 @@
 package br.com.cronicasdeeldoria.entity.character.classes;
 
-import br.com.cronicasdeeldoria.entity.character.AttributeType;
 import br.com.cronicasdeeldoria.entity.character.Character;
 import br.com.cronicasdeeldoria.game.GamePanel;
 
@@ -9,8 +8,6 @@ import br.com.cronicasdeeldoria.game.GamePanel;
  */
 public class Ranger implements CharacterClass {
   private int dexterity;
-  private String specialAbilityName;
-  private String specialAbility;
 
   /**
    * Cria um Ranger com destreza definida.
@@ -66,10 +63,6 @@ public class Ranger implements CharacterClass {
       int newHealth = Math.max(0, target.getAttributeHealth() - damage);
       target.setAttributeHealth(newHealth);
       gp.getGameUI().showDamage(target, damage, null);
-
-      System.out.println(attacker.getName() + " uses Special Ability on " + target.getName() +
-        " causing " + damage + " Physical damage!");
-      System.out.println("-----------------------------");
     }
   }
 

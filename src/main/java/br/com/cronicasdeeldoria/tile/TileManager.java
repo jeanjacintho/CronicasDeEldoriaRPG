@@ -129,7 +129,24 @@ public class TileManager {
         public List<MapLayer> layers;
     }
 
+    /**
+     * Renderiza todas as camadas do mapa (método original mantido para compatibilidade).
+     * @param g2 Contexto gráfico
+     */
     public void draw(Graphics2D g2) {
+        drawBackgroundLayers(g2);
+        
+        // Renderizar o player
+        gamePanel.getPlayer().draw(g2);
+        
+        drawOverlayLayers(g2);
+    }
+
+    /**
+     * Renderiza apenas as camadas de fundo (sem overlay).
+     * @param g2 Contexto gráfico
+     */
+    public void drawBackgroundLayers(Graphics2D g2) {
         int playerWorldX = gamePanel.getPlayer().getWorldX();
         int playerWorldY = gamePanel.getPlayer().getWorldY();
         int screenX = gamePanel.getPlayer().getScreenX();
@@ -142,7 +159,6 @@ public class TileManager {
         int lastRow = Math.min((playerWorldY + screenY + playerSize) / tileSize, mapHeight - 1);
 
         List<MapLayer> normalLayers = new ArrayList<>();
-        List<MapLayer> overlayLayers = new ArrayList<>();
         List<MapLayer> objectLayers = new ArrayList<>();
         List<MapLayer> npcLayers = new ArrayList<>();
         List<MapLayer> monsterLayers = new ArrayList<>();
@@ -150,7 +166,8 @@ public class TileManager {
         for (MapLayer layer : mapLayers) {
             String layerName = layer.name.toLowerCase();
             if (layerName.contains("overlay")) {
-                overlayLayers.add(layer);
+                // Pular camadas overlay - serão renderizadas separadamente
+                continue;
             } else if (layerName.contains("objetos") || layerName.contains("objects") || layerName.contains("items")) {
                 objectLayers.add(layer);
             } else if (layerName.contains("npcs") || layerName.contains("npc")) {
@@ -185,11 +202,34 @@ public class TileManager {
             renderLayer(g2, layer, firstCol, lastCol, firstRow, lastRow, playerWorldX, playerWorldY, screenX, screenY);
           }
         }
+    }
 
-        // 4. Renderizar o player
-        gamePanel.getPlayer().draw(g2);
+    /**
+     * Renderiza apenas as camadas overlay (acima do player).
+     * @param g2 Contexto gráfico
+     */
+    public void drawOverlayLayers(Graphics2D g2) {
+        int playerWorldX = gamePanel.getPlayer().getWorldX();
+        int playerWorldY = gamePanel.getPlayer().getWorldY();
+        int screenX = gamePanel.getPlayer().getScreenX();
+        int screenY = gamePanel.getPlayer().getScreenY();
+        int playerSize = gamePanel.getPlayerSize();
 
-        // 5. Renderizar layers overlay (acima do player)
+        int firstCol = Math.max((playerWorldX - screenX) / tileSize, 0);
+        int lastCol = Math.min((playerWorldX + screenX + playerSize) / tileSize, mapWidth - 1);
+        int firstRow = Math.max((playerWorldY - screenY) / tileSize, 0);
+        int lastRow = Math.min((playerWorldY + screenY + playerSize) / tileSize, mapHeight - 1);
+
+        List<MapLayer> overlayLayers = new ArrayList<>();
+
+        for (MapLayer layer : mapLayers) {
+            String layerName = layer.name.toLowerCase();
+            if (layerName.contains("overlay")) {
+                overlayLayers.add(layer);
+            }
+        }
+
+        // Renderizar layers overlay (acima do player)
         for (MapLayer layer : overlayLayers) {
             renderLayer(g2, layer, firstCol, lastCol, firstRow, lastRow, playerWorldX, playerWorldY, screenX, screenY);
         }

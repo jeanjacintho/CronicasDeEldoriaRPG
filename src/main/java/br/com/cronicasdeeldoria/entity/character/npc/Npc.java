@@ -1,7 +1,20 @@
 package br.com.cronicasdeeldoria.entity.character.npc;
 
 import br.com.cronicasdeeldoria.entity.character.Character;
+
+import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Random;
+
+import javax.imageio.ImageIO;
+
 import br.com.cronicasdeeldoria.entity.character.player.Player;
 import br.com.cronicasdeeldoria.game.GamePanel;
 
@@ -45,7 +58,7 @@ public class Npc extends Character {
         int hitboxHeight = 36;
         int hitboxX = (playerSize - hitboxWidth) / 2;
         int hitboxY = playerSize / 2;
-        this.setHitbox(new java.awt.Rectangle(hitboxX, hitboxY, hitboxWidth, hitboxHeight));
+        this.setHitbox(new Rectangle(hitboxX, hitboxY, hitboxWidth, hitboxHeight));
     }
 
     /**
@@ -73,7 +86,7 @@ public class Npc extends Character {
         int hitboxHeight = 36;
         int hitboxX = (playerSize - hitboxWidth) / 2;
         int hitboxY = playerSize / 2;
-        this.setHitbox(new java.awt.Rectangle(hitboxX, hitboxY, hitboxWidth, hitboxHeight));
+        this.setHitbox(new Rectangle(hitboxX, hitboxY, hitboxWidth, hitboxHeight));
     }
 
     /**
@@ -82,18 +95,20 @@ public class Npc extends Character {
      */
     public void interact(GamePanel gamePanel) {
         if (interactive && gamePanel.getDialogManager() != null) {
+            // Primeiro notificar o QuestManager sobre a interação com o NPC
+            if (gamePanel.getQuestManager() != null) {
+                gamePanel.getQuestManager().onPlayerTalkToNpc(getName());
+            }
+            
+            // Depois tentar usar diálogo condicional
+            if (gamePanel.getDialogManager().startAppropriateDialog(getName())) {
+                return;
+            }
+            
+            // Fallback para diálogo fixo se não houver diálogo condicional
             if (dialogId > 0) {
                 gamePanel.getDialogManager().startDialog(dialogId);
             }
-        }
-    }
-
-    /**
-     * Interage com o NPC, exibindo seu diálogo (método legado).
-     */
-    public void interact() {
-        if (interactive) {
-            System.out.println("Interagindo com NPC: " + getName() + " - " + getDialog());
         }
     }
 
@@ -140,7 +155,7 @@ public class Npc extends Character {
     public void walk(GamePanel gamePanel, Player player) {
         if (!isStatic) {
             actionCounter++;
-            java.util.Random random = new java.util.Random();
+            Random random = new Random();
 
             if (actionCounter >= actionInterval) {
                 actionCounter = 0;
@@ -148,8 +163,8 @@ public class Npc extends Character {
 
                 if (random.nextInt(100) < 80) {
                     String[] directions = {"up", "down", "left", "right"};
-                    java.util.List<String> dirList = java.util.Arrays.asList(directions);
-                    java.util.Collections.shuffle(dirList, random);
+                    List<String> dirList = Arrays.asList(directions);
+                    Collections.shuffle(dirList, random);
 
                     for (String dir : dirList) {
                         if (canMove(dir, gamePanel, player)) {
@@ -209,13 +224,13 @@ public class Npc extends Character {
         }
 
         if (this.getHitbox() != null && player.getHitbox() != null) {
-            java.awt.Rectangle npcFutureBox = new java.awt.Rectangle(
+            Rectangle npcFutureBox = new Rectangle(
                 newX + getHitbox().x,
                 newY + getHitbox().y,
                 getHitbox().width,
                 getHitbox().height
             );
-            java.awt.Rectangle playerBox = new java.awt.Rectangle(
+            Rectangle playerBox = new Rectangle(
                 player.getWorldX() + player.getHitbox().x,
                 player.getWorldY() + player.getHitbox().y,
                 player.getHitbox().width,
@@ -250,23 +265,23 @@ public class Npc extends Character {
         }
         if (sprites != null && !sprites.isEmpty()) {
             try {
-                java.io.InputStream is = getClass().getResourceAsStream("/sprites/" + sprites.get(spriteIdx));
+                InputStream is = getClass().getResourceAsStream("/sprites/" + sprites.get(spriteIdx));
                 if (is != null) {
-                    java.awt.image.BufferedImage img = javax.imageio.ImageIO.read(is);
+                    BufferedImage img = ImageIO.read(is);
                     g.drawImage(img, screenX, screenY, npcSize, npcSize, null);
                 } else {
                     System.err.println("Sprite não encontrado: /sprites/" + sprites.get(spriteIdx));
-                    g.setColor(java.awt.Color.RED);
+                    g.setColor(Color.RED);
                     g.fillRect(screenX, screenY, npcSize, npcSize);
                 }
-            } catch (java.io.IOException e) {
+            } catch (IOException e) {
                 System.err.println("Erro ao carregar sprite: " + e.getMessage());
-                g.setColor(java.awt.Color.RED);
+                g.setColor(Color.RED);
                 g.fillRect(screenX, screenY, npcSize, npcSize);
             }
         } else {
             System.err.println("Nenhum sprite encontrado para skin: " + skin + ", direção: " + direction);
-            g.setColor(java.awt.Color.RED);
+            g.setColor(Color.RED);
             g.fillRect(screenX, screenY, npcSize, npcSize);
         }
     }

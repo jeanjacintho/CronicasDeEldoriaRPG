@@ -29,10 +29,7 @@ public class InteractionManager {
      */
     public void addInteractionPoint(int worldX, int worldY, String key, String entityType) {
         if (keyboardMapper.hasKey(key)) {
-            //System.out.println("Adicionando ponto de interação: " + entityType + " em (" + worldX + ", " + worldY + ") com tecla '" + key + "'");
             interactionPoints.add(new InteractionPoint(worldX, worldY, key, entityType));
-        } else {
-            System.out.println("Tecla '" + key + "' não encontrada no mapeamento para " + entityType + " em (" + worldX + ", " + worldY + ")");
         }
     }
 
@@ -115,7 +112,6 @@ public class InteractionManager {
                                              int screenX, int screenY, String entityType, int tileSize) {
         String key = getInteractionKeyForEntity(worldX, worldY, entityType);
         if (key != null) {
-            System.out.println("Renderizando tecla '" + key + "' para " + entityType + " em (" + worldX + ", " + worldY + ") -> (" + screenX + ", " + screenY + ")");
 
             // Tentar usar ImageIcon para GIFs animados primeiro
             ImageIcon keyImageIcon = keyboardMapper.getKeyImageIcon(key);
@@ -129,7 +125,6 @@ public class InteractionManager {
                 int keyScreenX = screenX - keyOffsetX + tileSize;
                 int keyScreenY = screenY - keyOffsetY + (tileSize * 2) - 8;
 
-                System.out.println("Renderizando ImageIcon em (" + keyScreenX + ", " + keyScreenY + ") com tamanho " + tileSize);
                 g2d.drawImage(keyImageIcon.getImage(), keyScreenX, keyScreenY, tileSize, tileSize, null);
             } else {
                 BufferedImage keySprite = keyboardMapper.getKeySprite(key);
@@ -143,10 +138,7 @@ public class InteractionManager {
                     int keyScreenX = screenX - keyOffsetX + tileSize;
                     int keyScreenY = screenY - keyOffsetY + (tileSize * 2) - 8;
 
-                    System.out.println("Renderizando BufferedImage em (" + keyScreenX + ", " + keyScreenY + ") com tamanho " + tileSize);
                     g2d.drawImage(keySprite, keyScreenX, keyScreenY, tileSize, tileSize, null);
-                } else {
-                    System.out.println("Nenhuma imagem encontrada para a tecla '" + key + "'");
                 }
             }
         }
@@ -186,23 +178,6 @@ public class InteractionManager {
                 g2d.drawImage(keySprite, screenPosX, screenPosY, tileSize, tileSize, null);
             }
         }
-    }
-
-    /**
-     * Método de debug para verificar o estado do sistema
-     */
-    public void debugSystem() {
-        System.out.println("=== DEBUG INTERACTION MANAGER ===");
-        System.out.println("KeyboardMapper disponível: " + (keyboardMapper != null));
-        if (keyboardMapper != null) {
-            System.out.println("Teclas mapeadas: " + keyboardMapper.getMappedKeys());
-            System.out.println("Tecla 'E' disponível: " + keyboardMapper.hasKey("E"));
-        }
-        System.out.println("Pontos de interação ativos: " + interactionPoints.size());
-        for (InteractionPoint point : interactionPoints) {
-            System.out.println("  - " + point.getEntityType() + " em (" + point.getWorldX() + ", " + point.getWorldY() + ") com tecla '" + point.getKey() + "'");
-        }
-        System.out.println("=== FIM DEBUG ===");
     }
 
     /**

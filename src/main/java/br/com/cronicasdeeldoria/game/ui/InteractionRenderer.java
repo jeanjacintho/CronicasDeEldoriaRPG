@@ -85,13 +85,8 @@ public class InteractionRenderer {
         int keyX = screenX + (tileSize - keySize) / 2;
         int keyY = screenY - keySize - 10; // 10 pixels acima da entidade
         
-        // Aplicar transparência para melhor visibilidade
-        Composite originalComposite = g2d.getComposite();
-        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.9f));
-        
+        // Renderizar sem opacidade
         g2d.drawImage(imageIcon.getImage(), keyX, keyY, keySize, keySize, null);
-        
-        g2d.setComposite(originalComposite);
     }
     
     /**
@@ -103,13 +98,8 @@ public class InteractionRenderer {
         int keyX = screenX + (tileSize - keySize) / 2;
         int keyY = screenY - keySize - 10; // 10 pixels acima da entidade
         
-        // Aplicar transparência para melhor visibilidade
-        Composite originalComposite = g2d.getComposite();
-        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.9f));
-        
+        // Renderizar sem opacidade
         g2d.drawImage(image, keyX, keyY, keySize, keySize, null);
-        
-        g2d.setComposite(originalComposite);
     }
     
     /**

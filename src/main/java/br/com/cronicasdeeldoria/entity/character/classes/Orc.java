@@ -9,9 +9,6 @@ import br.com.cronicasdeeldoria.game.GamePanel;
  */
 public class Orc implements CharacterClass {
   private int rage;
-  private String specialAbilityName;
-  private String specialAbility;
-
 
   /**
    * Cria um Orc com rage definido.
@@ -77,17 +74,9 @@ public class Orc implements CharacterClass {
 
       if (diffCurrentHpAndMaxHp > finalHeal) {
         attacker.setAttributeHealth(attacker.getAttributeHealth() + finalHeal);
-        System.out.println(attacker.getName() + " recuperou " + finalHeal + " de Vida");
-        System.out.println("-----------------------------");
       } else {
         attacker.setAttributeHealth(attacker.getAttributeHealth() + diffCurrentHpAndMaxHp);
-        System.out.println(attacker.getName() + " recuperou " + diffCurrentHpAndMaxHp + " de Vida");
-        System.out.println("-----------------------------");
       }
-
-      System.out.println(attacker.getName() + " uses magic on " + target.getName() +
-        " causing " + magicDamage + " magic damage!");
-      System.out.println("-----------------------------");
     }
   }
 }

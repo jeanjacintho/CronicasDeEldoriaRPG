@@ -9,9 +9,12 @@ import br.com.cronicasdeeldoria.game.inventory.ItemFactory;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
+import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.List;
+
+import javax.imageio.ImageIO;
 
 /**
  * Representa um objeto do mapa que pode ser renderizado e interagido.
@@ -68,7 +71,7 @@ public class MapObject extends Entity {
      * @param playerScreenY Posição Y do jogador na tela.
      */
     public void draw(Graphics2D g, ObjectSpriteLoader spriteLoader, int tileSize,
-                    br.com.cronicasdeeldoria.entity.character.player.Player player,
+                   Player player,
                     int playerScreenX, int playerScreenY) {
         if (!active || objectDefinition == null || objectDefinition.spritePaths == null ||
             objectDefinition.spritePaths.isEmpty()) {
@@ -90,9 +93,9 @@ public class MapObject extends Entity {
                     String spritePath = spriteRowPaths.get(spriteCol);
 
                     try {
-                        java.io.InputStream is = getClass().getResourceAsStream(spritePath);
+                        InputStream is = getClass().getResourceAsStream(spritePath);
                         if (is != null) {
-                            BufferedImage img = javax.imageio.ImageIO.read(is);
+                            BufferedImage img = ImageIO.read(is);
                             int drawX = screenX + (col * tileSize);
                             int drawY = screenY + (row * tileSize);
 
@@ -165,6 +168,18 @@ public class MapObject extends Entity {
                     // Chamar onCollect se o item for um QuestItem
                     if (item instanceof QuestItem) {
                         ((QuestItem) item).onCollect();
+                    }
+                    
+                    // Notificar QuestManager sobre coleta de item
+                    try {
+                        Method getQuestManagerMethod = gamePanel.getClass().getMethod("getQuestManager");
+                        Object questManager = getQuestManagerMethod.invoke(gamePanel);
+                        if (questManager != null) {
+                            Method onItemCollectedMethod = questManager.getClass().getMethod("onItemCollected", String.class);
+                            onItemCollectedMethod.invoke(questManager, item.getItemId());
+                        }
+                    } catch (Exception e) {
+                        System.err.println("Erro ao notificar QuestManager sobre coleta de item: " + e.getMessage());
                     }
                     
                     Method getGameUIMethod = gamePanel.getClass().getMethod("getGameUI");

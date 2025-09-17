@@ -2,6 +2,7 @@ package br.com.cronicasdeeldoria.game;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
@@ -22,6 +23,8 @@ import br.com.cronicasdeeldoria.game.ui.KeyboardMapper;
 import br.com.cronicasdeeldoria.game.font.FontManager;
 import br.com.cronicasdeeldoria.game.ui.InteractionManager;
 import br.com.cronicasdeeldoria.game.ui.SimpleInteractionManager;
+import br.com.cronicasdeeldoria.game.dialog.DialogManager;
+import br.com.cronicasdeeldoria.game.dialog.DialogUI;
 import br.com.cronicasdeeldoria.tile.TileManager;
 import br.com.cronicasdeeldoria.tile.TileManager.MapTile;
 import br.com.cronicasdeeldoria.config.CharacterConfigLoader;
@@ -32,8 +35,6 @@ import br.com.cronicasdeeldoria.entity.Entity;
 import br.com.cronicasdeeldoria.game.inventory.InventoryManager;
 import br.com.cronicasdeeldoria.game.merchant.MerchantManager;
 import br.com.cronicasdeeldoria.game.merchant.MerchantUI;
-import br.com.cronicasdeeldoria.game.dialog.DialogManager;
-import br.com.cronicasdeeldoria.game.dialog.DialogUI;
 import br.com.cronicasdeeldoria.game.teleport.TeleportManager;
 import br.com.cronicasdeeldoria.game.quest.QuestManager;
 import br.com.cronicasdeeldoria.audio.AudioManager;
@@ -76,8 +77,11 @@ public class GamePanel extends JPanel implements Runnable{
   private String playerClassName;
   private String currentMapName;
 
+  public int ancianDialogId = 30;
+
   // Estados do jogo
   public int gameState;
+  public final int tutorialState = 0;
   public final int playState = 1;
   public final int battleState = 2;
   public final int inventoryState = 3;
@@ -115,7 +119,7 @@ public class GamePanel extends JPanel implements Runnable{
     this.playerClassName = characterClass.getCharacterClassName();
 
     this.battle = new Battle(this);
-    gameState = playState;
+    gameState = tutorialState;
 
     CharacterConfigLoader configLoader = CharacterConfigLoader.getInstance();
     String characterClassName = characterClass.getCharacterClassName().toLowerCase();
@@ -193,6 +197,16 @@ public class GamePanel extends JPanel implements Runnable{
     // Configurar contexto inicial de áudio
     AudioContext initialContext = AudioContext.fromMapName(currentMapName);
     audioManager.changeContext(initialContext);
+
+    // Iniciar diálogo inicial ao começar um novo jogo
+    // COMENTADO: Diálogo inicial será iniciado após o tutorial
+    // if (this.dialogManager != null) {
+    //   boolean started = this.dialogManager.startDialog(37);
+    //   if (started) {
+    //     gameState = dialogState;
+    //   }
+    // }
+
   }
 
   /**
@@ -203,29 +217,10 @@ public class GamePanel extends JPanel implements Runnable{
       boolean success = dialogManager.startDialog(1);
       if (success) {
         gameState = dialogState;
-        System.out.println("TESTE: Diálogo forçado com sucesso!");
-      } else {
-        System.out.println("TESTE: Falha ao forçar diálogo!");
       }
-    } else {
-      System.out.println("TESTE: DialogManager é null!");
     }
   }
 
-  /**
-   * Método de teste para verificar NPCs carregados
-   */
-//  public void testNpcs() {
-//    System.out.println("TESTE: Verificando NPCs carregados...");
-//    if (npcs != null) {
-//      System.out.println("Total de NPCs: " + npcs.size());
-//      for (Npc npc : npcs) {
-//        System.out.println("NPC: " + npc.getName() + " - dialogId: " + npc.getDialogId() + " - Interativo: " + npc.isInteractive());
-//      }
-//    } else {
-//      System.out.println("TESTE: Lista de NPCs é null!");
-//    }
-//  }
 
   /**
    * Inicia a thread principal do jogo.
@@ -286,6 +281,10 @@ public class GamePanel extends JPanel implements Runnable{
      * Atualiza o estado do jogo.
      */
     public void update() {
+
+      if (gameState == tutorialState) {
+        updateTutorial();
+      }
 
       if (gameState == playState) {
         player.update();
@@ -370,10 +369,6 @@ public class GamePanel extends JPanel implements Runnable{
 
       // Atualizar contexto de áudio para batalha
       updateAudioContextForBattle(monster);
-
-      System.out.println("Entered battle state with " + monster.getName());
-    } else {
-      System.out.println("Cannot start battle: target is not a monster");
     }
   }
 
@@ -392,7 +387,6 @@ public class GamePanel extends JPanel implements Runnable{
 
   public void endBattle(boolean playerWon) {
     if (playerWon) {
-      System.out.println("Victory! You defeated " + battleMonster.getName());
 
       LootTable lootTable = null;
       int xpReward = 0;
@@ -441,7 +435,6 @@ public class GamePanel extends JPanel implements Runnable{
       // Remover monstro derrotado do mapa
       removeMonsterFromMap(battleMonster);
     } else {
-      System.out.println("Defeat! You were defeated by " + battleMonster.getName());
       // Aplicar penalidade se necessário
       // player.applyDeathPenalty(); // se você tiver este metodo
     }
@@ -534,32 +527,6 @@ public class GamePanel extends JPanel implements Runnable{
   }
 
   /**
-   * Método de teste para verificar o sistema de áudio.
-   */
-  public void testAudioSystem() {
-    System.out.println("=== TESTING AUDIO SYSTEM ===");
-
-    if (audioManager == null) {
-      System.out.println("ERROR: AudioManager is null!");
-      return;
-    }
-
-    System.out.println("AudioManager instance: " + audioManager);
-    System.out.println("Current context: " + audioManager.getCurrentContext());
-    System.out.println("Music enabled: " + audioManager.isMusicEnabled());
-    System.out.println("Muted: " + audioManager.isMuted());
-    System.out.println("Master volume: " + audioManager.getMasterVolume());
-    System.out.println("Music volume: " + audioManager.getMusicVolume());
-
-    // Testar mudança para floresta
-    System.out.println("Testing forest context...");
-    AudioContext forestContext = AudioContext.FOREST;
-    audioManager.changeContext(forestContext);
-
-    System.out.println("=== END TESTING AUDIO SYSTEM ===");
-  }
-
-  /**
     /**
      * Atualiza os pontos de interação baseado na proximidade do jogador
      */
@@ -577,10 +544,7 @@ public class GamePanel extends JPanel implements Runnable{
 
         // Verificar interação com NPCs apenas se houver NPCs no mapa
         if (npcs != null && !npcs.isEmpty()) {
-            //System.out.println("Verificando " + npcs.size() + " NPCs para interação...");
             for (Npc npc : npcs) {
-                //System.out.println("NPC: " + npc.getName() + " em (" + npc.getWorldX() + ", " + npc.getWorldY() + ") - Interativo: " + npc.isInteractive());
-
                 // Verificar se é um monstro (usar distância de 5 tiles)
                 if (npc instanceof WolfMonster || npc instanceof SkeletonMonster ||
                     npc instanceof FrostbornMonster || npc instanceof OrcMonster ||
@@ -588,46 +552,35 @@ public class GamePanel extends JPanel implements Runnable{
                     npc instanceof SkeletonBossMonster || npc instanceof WolfBossMonster) {
 
                     boolean isNearMonster = isPlayerNearMonster(player, npc.getWorldX(), npc.getWorldY());
-
                     if (isNearMonster && npc.isInteractive()) {
                         // Verificar auto-interação
                         if (npc.isAutoInteraction()) {
                             startBattle(npc);
-                            npc.interact();
+                            npc.interact(this);
                         } else {
                             // Usar coordenadas de mundo diretamente
-                            //System.out.println("  Adicionando ponto de interação para monstro!");
                             simpleInteractionManager.addInteractionPoint(npc.getWorldX(), npc.getWorldY(), "E", "monster");
                         }
                     }
                 } else {
                     // NPCs normais (usar distância de 2 tiles)
                     boolean isNearNpc = isPlayerNearNpc(player, npc.getWorldX(), npc.getWorldY());
-                    //System.out.println("  NPC próximo: " + isNearNpc);
-
                     if (isNearNpc && npc.isInteractive()) {
                         // Verificar auto-interação
                         if (npc.isAutoInteraction()) {
-                            System.out.println("AUTO-INTERAÇÃO com NPC: " + npc.getName());
-                            npc.interact();
+                            npc.interact(this);
                         } else {
                             // Usar coordenadas de mundo diretamente
-                            //System.out.println("  Adicionando ponto de interação para NPC!");
                             simpleInteractionManager.addInteractionPoint(npc.getWorldX(), npc.getWorldY(), "E", "npc");
                         }
                     }
                 }
             }
-        } else {
-            //System.out.println("Nenhum NPC encontrado no mapa");
         }
 
         // Verificar interação com objetos
         if (objectManager != null) {
-            //System.out.println("Verificando objetos para interação...");
             for (MapObject obj : objectManager.getActiveObjects()) {
-                //System.out.println("Objeto: " + obj.getObjectId() + " em (" + obj.getWorldX() + ", " + obj.getWorldY() + ") - Interativo: " + obj.isInteractive() + " - Ativo: " + obj.isActive());
-
                 if (obj.isInteractive() && obj.isActive()) {
                     // Verificar auto-interação
                     if (obj.isAutoInteraction()) {
@@ -638,17 +591,12 @@ public class GamePanel extends JPanel implements Runnable{
                     } else {
                         // Para objetos sem auto-interação, verificar proximidade e mostrar tecla E
                         boolean isNearObject = isPlayerNearObject(player, obj.getWorldX(), obj.getWorldY());
-                        System.out.println("  Objeto próximo: " + isNearObject);
-
                         if (isNearObject) {
-                            //System.out.println("  Adicionando ponto de interação para objeto!");
                             simpleInteractionManager.addInteractionPoint(obj.getWorldX(), obj.getWorldY(), "E", "object");
                         }
                     }
                 }
             }
-        } else {
-            System.out.println("ObjectManager não disponível");
         }
 
         // Verificar interação com teleportes interativos
@@ -687,6 +635,8 @@ public class GamePanel extends JPanel implements Runnable{
         int maxDistance = tileSize * distanceInTiles;
 
         boolean isNear = distanceX <= maxDistance && distanceY <= maxDistance;
+
+
         return isNear;
     }
 
@@ -755,7 +705,7 @@ public class GamePanel extends JPanel implements Runnable{
           for (Npc npc : npcs) {
             if (npc instanceof WolfMonster) {
                 if (isPlayerNearMonster(player, npc.getWorldX(), npc.getWorldY()) && npc.isInteractive()) {
-                    npc.interact();
+                    npc.interact(this);
                     return;
                 }
             }
@@ -825,8 +775,8 @@ public class GamePanel extends JPanel implements Runnable{
       Graphics2D graphics2D = (Graphics2D) graphics;
 
       if (gameState == playState) {
-        // Renderização normal do jogo
-        tileManager.draw(graphics2D);
+        // Renderização normal do jogo - apenas camadas de fundo (sem overlay)
+        tileManager.drawBackgroundLayers(graphics2D);
 
         // Renderizar objetos
         if (objectManager != null) {
@@ -885,39 +835,21 @@ public class GamePanel extends JPanel implements Runnable{
         // Renderizar player
         player.draw(graphics2D);
 
+        // Renderizar camadas overlay APÓS o player (para efeito de profundidade)
+        tileManager.drawOverlayLayers(graphics2D);
+
         // Interface normal de jogo
         gameUI.draw(graphics2D);
 
+      } else if (gameState == tutorialState) {
+        // Renderizar tela de tutorial
+        drawTutorialScreen(graphics2D);
       } else if (gameState == battleState) {
         // Desenhar interface de batalha
         gameUI.drawBattleUI(graphics2D);
-      } else if (gameState == inventoryState) {
-        // Desenha o jogo de fundo mesmo durante o inventário (para transparência)
-        tileManager.draw(graphics2D);
-
-        // Renderizar objetos
-        if (objectManager != null) {
-          objectManager.drawObjects(graphics2D);
-        }
-
-        // Renderizar NPCs apenas se houver NPCs no mapa
-        if (npcs != null && !npcs.isEmpty()) {
-          for (Npc npc : npcs) {
-            npc.draw(graphics2D, npcSpriteLoader, tileSize, player, player.getScreenX(), player.getScreenY());
-          }
-        }
-
-        // Renderizar player
-        player.draw(graphics2D);
-
-        // Interface normal de jogo
-        gameUI.draw(graphics2D);
-
-        // Desenhar interface do inventário por cima (transparente)
-        gameUI.drawInventoryUI(graphics2D, inventoryManager);
       } else if (gameState == merchantState) {
         // Desenha o jogo de fundo mesmo durante o comerciante (para transparência)
-        tileManager.draw(graphics2D);
+        tileManager.drawBackgroundLayers(graphics2D);
 
         // Renderizar objetos
         if (objectManager != null) {
@@ -933,6 +865,9 @@ public class GamePanel extends JPanel implements Runnable{
 
         // Renderizar player
         player.draw(graphics2D);
+
+        // Renderizar camadas overlay APÓS o player (para efeito de profundidade)
+        tileManager.drawOverlayLayers(graphics2D);
 
         // Interface normal de jogo
         gameUI.draw(graphics2D);
@@ -941,7 +876,7 @@ public class GamePanel extends JPanel implements Runnable{
         merchantUI.draw(graphics2D, merchantManager);
       } else if (gameState == dialogState) {
         // Desenha o jogo de fundo mesmo durante o diálogo
-        tileManager.draw(graphics2D);
+        tileManager.drawBackgroundLayers(graphics2D);
 
         // Renderizar objetos
         if (objectManager != null) {
@@ -957,6 +892,9 @@ public class GamePanel extends JPanel implements Runnable{
 
         // Renderizar player
         player.draw(graphics2D);
+
+        // Renderizar camadas overlay APÓS o player (para efeito de profundidade)
+        tileManager.drawOverlayLayers(graphics2D);
 
         // Interface normal de jogo
         gameUI.draw(graphics2D);
@@ -1014,6 +952,69 @@ public class GamePanel extends JPanel implements Runnable{
       }
       graphics2D.dispose();
     }
+
+  /**
+   * Desenha a tela de tutorial com os comandos do jogo.
+   * @param graphics2D Contexto gráfico.
+   */
+  private void drawTutorialScreen(Graphics2D graphics2D) {
+    // Fundo preto
+    graphics2D.setColor(Color.BLACK);
+    graphics2D.fillRect(0, 0, getWidth(), getHeight());
+
+    // Configurar fontes
+    Font titleFont = FontManager.getDefaultFont().deriveFont(Font.BOLD, 24f);
+    Font commandFont = FontManager.getDefaultFont().deriveFont(Font.BOLD, 16f);
+    Font instructionFont = FontManager.getDefaultFont().deriveFont(Font.PLAIN, 14f);
+
+    // Título
+    graphics2D.setColor(Color.WHITE);
+    graphics2D.setFont(titleFont);
+    String title = "CRÔNICAS DE ELDORIA";
+    int titleWidth = graphics2D.getFontMetrics().stringWidth(title);
+    graphics2D.drawString(title, (getWidth() - titleWidth) / 2, 80);
+
+    // Subtítulo
+    graphics2D.setFont(commandFont);
+    String subtitle = "CONTROLES DO JOGO";
+    int subtitleWidth = graphics2D.getFontMetrics().stringWidth(subtitle);
+    graphics2D.drawString(subtitle, (getWidth() - subtitleWidth) / 2, 120);
+
+    // Comandos
+    graphics2D.setFont(commandFont);
+    int startY = 180;
+    int lineHeight = 35;
+
+    String[][] commands = {
+      {"1", "Use WASD para mover o personagem"},
+      {"2", "Use E para interagir com NPCs e objetos"},
+      {"3", "Use I para abrir/fechar inventário"},
+      {"4", "Use Q para abrir a tela de status do jogador"},
+      {"5", "Use J para abrir a tela de quest"},
+      {"6", "Use ESC para pausar o jogo"},
+      {"7", "Use 1-9 para interação em batalha"}
+    };
+
+    for (int i = 0; i < commands.length; i++) {
+      // Desenhar descrição em branco
+      graphics2D.setColor(Color.WHITE);
+      int descriptionWidth = graphics2D.getFontMetrics().stringWidth(commands[i][1]);
+      graphics2D.drawString(commands[i][1],  (getWidth() - descriptionWidth) / 2, startY + (i * lineHeight));
+    }
+
+    // Instrução para continuar
+    graphics2D.setFont(instructionFont);
+    graphics2D.setColor(Color.YELLOW);
+    String instruction = "Pressione E para começar a jogar";
+    int instructionWidth = graphics2D.getFontMetrics().stringWidth(instruction);
+    graphics2D.drawString(instruction, (getWidth() - instructionWidth) / 2, getHeight() - 80);
+
+    // Efeito de piscar
+    long currentTime = System.currentTimeMillis();
+    if ((currentTime / 500) % 2 == 0) {
+      graphics2D.drawString(instruction, (getWidth() - instructionWidth) / 2, getHeight() - 80);
+    }
+  }
 
   /**
    * Desenha o overlay de pausa.
@@ -1233,10 +1234,46 @@ public class GamePanel extends JPanel implements Runnable{
       keyHandler.downPressed = false;
     }
 
-    // ENTER para confirmar seleção
+    // ENTER para confirmar seleção ou avançar página
     if (keyHandler.actionPressed) {
-      dialogManager.confirmSelection();
       keyHandler.actionPressed = false;
+
+      // Verificar se há paginação ativa no DialogManager (sistema principal)
+      if (!dialogManager.isOnLastPage()) {
+        dialogManager.nextPage();
+        // Sincronizar com DialogUI
+        if (dialogUI != null) {
+          dialogUI.nextPage();
+        }
+      } else {
+        dialogManager.confirmSelection();
+      }
+    }
+
+    // Tecla D para próxima página
+    if (keyHandler.rightPressed) {
+      keyHandler.rightPressed = false;
+
+      if (!dialogManager.isOnLastPage()) {
+        dialogManager.nextPage();
+        // Sincronizar com DialogUI
+        if (dialogUI != null) {
+          dialogUI.nextPage();
+        }
+      }
+    }
+
+    // Tecla A para página anterior
+    if (keyHandler.leftPressed) {
+      keyHandler.leftPressed = false;
+
+      if (!dialogManager.isOnFirstPage()) {
+        dialogManager.previousPage();
+        // Sincronizar com DialogUI
+        if (dialogUI != null) {
+          dialogUI.previousPage();
+        }
+      }
     }
 
     // ESC para sair do diálogo
@@ -1265,6 +1302,28 @@ public class GamePanel extends JPanel implements Runnable{
 
       // Restaurar contexto de áudio do mapa após vitória
       restoreMapAudioContext();
+    }
+  }
+
+  // Sistema de tutorial
+  private void updateTutorial() {
+    // ENTER para sair do tutorial e começar o jogo
+    if (keyHandler.actionPressed) {
+      gameState = playState;
+      keyHandler.actionPressed = false;
+
+      // Reproduzir som de confirmação se disponível
+      if (audioManager != null) {
+        audioManager.playSoundEffect("button_click");
+      }
+
+      // Iniciar diálogo inicial após o tutorial
+      if (dialogManager != null) {
+        boolean started = dialogManager.startDialog(37);
+        if (started) {
+          gameState = dialogState;
+        }
+      }
     }
   }
 
@@ -1343,6 +1402,11 @@ public class GamePanel extends JPanel implements Runnable{
 
   // Metodo para remover monstro derrotado do mapa
   private void removeMonsterFromMap(Npc monster) {
+    // Notificar QuestManager sobre a morte do NPC
+    if (questManager != null && monster != null) {
+      questManager.onNpcKilled(monster.getName());
+    }
+
     npcs.remove(monster);
   }
 
@@ -1581,7 +1645,6 @@ public class GamePanel extends JPanel implements Runnable{
       this.keyboardMapper = new KeyboardMapper();
       this.interactionManager = new InteractionManager(keyboardMapper);
       this.simpleInteractionManager = new SimpleInteractionManager();
-      System.out.println("Sistemas de interação inicializados!");
     } catch (Exception e) {
       System.err.println("Erro ao inicializar sistema de interação: " + e.getMessage());
       e.printStackTrace();
@@ -1773,9 +1836,6 @@ public class GamePanel extends JPanel implements Runnable{
    */
   private void performTeleport(MapTile teleportTile) {
     try {
-      System.out.println("=== PERFORM TELEPORT DEBUG ===");
-      System.out.println("Tile ID: " + teleportTile.id);
-      System.out.println("Tile X: " + teleportTile.x + ", Y: " + teleportTile.y);
 
       if (teleportTile.id != null) {
         String teleportId = teleportTile.id;
@@ -1786,14 +1846,11 @@ public class GamePanel extends JPanel implements Runnable{
           String[] parts = teleportTile.id.split(":", 2);
           teleportId = parts[0].trim();
           spawnPoint = parts[1].trim();
-          System.out.println("Split - TeleportId: " + teleportId + ", SpawnPoint: " + spawnPoint);
         }
 
         // Verificar se há configuração de teleporte no TeleportManager
-        System.out.println("Has teleport '" + teleportId + "': " + teleportManager.hasTeleport(teleportId));
         if (teleportManager.hasTeleport(teleportId)) {
           TeleportManager.TeleportConfig config = teleportManager.getTeleport(teleportId);
-          System.out.println("Config found: " + config.name + " -> " + config.map);
 
           // Carregar novo mapa
           loadMap(config.map);
@@ -1802,8 +1859,6 @@ public class GamePanel extends JPanel implements Runnable{
           int[] spawnCoords;
           if (spawnPoint != null) {
             spawnCoords = config.getSpawnPoint(spawnPoint);
-            System.out.println("Spawn point '" + spawnPoint + "' coords: " +
-              (spawnCoords != null ? spawnCoords[0] + "," + spawnCoords[1] : "null"));
             if (spawnCoords == null) {
               System.err.println("Ponto de spawn '" + spawnPoint + "' não encontrado para " + config.name);
               gameUI.addMessage("Ponto de spawn não encontrado!", null, 3000L);
@@ -1811,20 +1866,15 @@ public class GamePanel extends JPanel implements Runnable{
             }
           } else {
             spawnCoords = config.getFirstSpawnPoint();
-            System.out.println("First spawn point coords: " +
-              (spawnCoords != null ? spawnCoords[0] + "," + spawnCoords[1] : "null"));
           }
 
           if (spawnCoords != null && spawnCoords.length == 2) {
             // Converter coordenadas de tile para pixels
             int pixelX = spawnCoords[0] * tileSize;
             int pixelY = spawnCoords[1] * tileSize;
-            System.out.println("Teleporting to tile: " + spawnCoords[0] + "," + spawnCoords[1] +
-              " (pixels: " + pixelX + "," + pixelY + ")");
             player.setWorldX(pixelX);
             player.setWorldY(pixelY);
             gameUI.addMessage("Você foi teleportado para " + config.name + "!", null, 3000L);
-            System.out.println("Teleport completed successfully!");
           } else {
             System.err.println("Nenhum ponto de spawn válido encontrado para " + config.name);
             gameUI.addMessage("Erro: pontos de spawn inválidos!", null, 3000L);
@@ -1878,28 +1928,15 @@ public class GamePanel extends JPanel implements Runnable{
    * Atualiza o contexto de áudio baseado no mapa atual.
    */
   private void updateAudioContextForMap(String mapName) {
-    System.out.println("=== AUDIO DEBUG ===");
-    System.out.println("Current map name: " + mapName);
-    System.out.println("Previous map name: " + currentMapName);
-
     if (audioManager != null && !mapName.equals(currentMapName)) {
       currentMapName = mapName;
       AudioContext newContext = AudioContext.fromMapName(mapName);
-
-      System.out.println("New audio context: " + newContext);
-      System.out.println("Context display name: " + newContext.getDisplayName());
 
       audioManager.changeContext(newContext);
 
       // Reproduzir efeito sonoro de mudança de mapa
       audioManager.playSoundEffect("teleport");
 
-      System.out.println("Audio context changed successfully");
-    } else if (audioManager == null) {
-      System.out.println("ERROR: AudioManager is null!");
-    } else {
-      System.out.println("Map name unchanged, no audio context change needed");
     }
-    System.out.println("=== END AUDIO DEBUG ===");
   }
 }

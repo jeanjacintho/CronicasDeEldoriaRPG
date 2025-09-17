@@ -8,8 +8,6 @@ import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.io.IOException;
 
-import br.com.cronicasdeeldoria.entity.character.AttributeType;
-import br.com.cronicasdeeldoria.entity.item.ItemType;
 import br.com.cronicasdeeldoria.entity.item.QuestItem;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -36,6 +34,10 @@ public class DialogManager {
     private int selectedOptionIndex;
     private GamePanel gamePanel;
     private Player player;
+    
+    // Sistema de paginação
+    private List<String> textPages;
+    private int currentPageIndex;
 
     /**
      * Cria um novo gerenciador de diálogos.
@@ -48,6 +50,8 @@ public class DialogManager {
         this.dialogs = new HashMap<>();
         this.isDialogActive = false;
         this.selectedOptionIndex = 0;
+        this.textPages = new ArrayList<>();
+        this.currentPageIndex = 0;
         loadDialogsFromJson();
     }
 
@@ -76,6 +80,20 @@ public class DialogManager {
                     dialogObj.get("portraitSprite").getAsString() : null;
 
                 Dialog dialog = new Dialog(id, speakerName, text, portraitSprite);
+
+                // Carregar condição se existir
+                if (dialogObj.has("condition")) {
+                    JsonObject conditionObj = dialogObj.getAsJsonObject("condition");
+                    String conditionType = conditionObj.get("type").getAsString();
+                    String questId = conditionObj.get("questId").getAsString();
+                    String statusStr = conditionObj.get("status").getAsString();
+                    
+                    br.com.cronicasdeeldoria.game.quest.QuestState requiredStatus = 
+                        br.com.cronicasdeeldoria.game.quest.QuestState.valueOf(statusStr.toUpperCase());
+                    
+                    DialogCondition condition = new DialogCondition(conditionType, questId, requiredStatus);
+                    dialog.setCondition(condition);
+                }
 
                 // Carregar opções se existirem
                 if (dialogObj.has("options")) {
@@ -137,25 +155,222 @@ public class DialogManager {
     }
 
     /**
-     * Inicia um diálogo pelo ID.
-     * @param dialogId ID do diálogo
+     * Encontra o diálogo apropriado para um NPC baseado nas condições das quests.
+     * @param npcName Nome do NPC
+     * @return ID do diálogo apropriado ou -1 se nenhum for encontrado
+     */
+    public int findAppropriateDialog(String npcName) {
+        QuestManager questManager = QuestManager.getInstance();
+        if (questManager == null) {
+            return -1;
+        }
+
+        // Para o Sábio Ancião, verificar o status das quests
+        if (npcName.equals("Sábio Ancião")) {
+            // Verificar se a quest inicial foi completada
+            if (questManager.getCompletedQuests().containsKey("go_library")) {
+                // Verificar status das orbes
+                if (questManager.getCompletedQuests().containsKey("orb_1")) {
+                    if (questManager.getCompletedQuests().containsKey("orb_2")) {
+                        if (questManager.getCompletedQuests().containsKey("orb_3")) {
+                            if (questManager.getCompletedQuests().containsKey("orb_4")) {
+                                return 36; // Todas as orbes completadas
+                            } else {
+                                return 35; // Orbe 3 completada
+                            }
+                        } else {
+                            return 34; // Orbe 2 completada
+                        }
+                    } else {
+                        return 33; // Orbe 1 completada
+                    }
+                } else {
+                    // Quest inicial completada, mas nenhuma orbe ainda
+                    return 32; // Instruções para primeira orbe
+                }
+            } else {
+                // Quest inicial não completada
+                return 30; // Diálogo inicial
+            }
+        }
+
+        return -1; // NPC não reconhecido ou sem diálogo condicional
+    }
+
+    /**
+     * Inicia um diálogo apropriado para um NPC baseado nas condições.
+     * @param npcName Nome do NPC
      * @return true se o diálogo foi iniciado com sucesso
      */
+    public boolean startAppropriateDialog(String npcName) {
+        int dialogId = findAppropriateDialog(npcName);
+        if (dialogId != -1) {
+            return startDialog(dialogId);
+        }
+        return false;
+    }
     public boolean startDialog(int dialogId) {
+        
         Dialog dialog = dialogs.get(dialogId);
         if (dialog == null) {
             System.err.println("Diálogo com ID " + dialogId + " não encontrado!");
             return false;
         }
 
+        // Verificar se a condição do diálogo é atendida
+        QuestManager questManager = QuestManager.getInstance();
+        if (!dialog.isConditionMet(questManager)) {
+            return false;
+        }
+
         this.currentDialog = dialog;
         this.isDialogActive = true;
         this.selectedOptionIndex = 0;
+        this.currentPageIndex = 0;
+
+        // Resetar paginação da UI para novo diálogo
+        if (gamePanel != null && gamePanel.getDialogUI() != null) {
+            gamePanel.getDialogUI().resetPagination();
+        }
+
+        // Processar texto em páginas (mantido para compatibilidade)
+        processTextIntoPages(dialog.getText());
 
         // Verificar disponibilidade das opções
         updateOptionAvailability();
 
         return true;
+    }
+
+    /**
+     * Processa o texto do diálogo em páginas baseado no espaço disponível.
+     * @param text Texto completo do diálogo
+     */
+    private void processTextIntoPages(String text) {
+        textPages.clear();
+        
+        // Configurações de paginação - ajustadas para caixa menor
+        int maxWidth = 300; 
+        int maxHeight = 100; 
+        int lineHeight = 18; // Altura aproximada de uma linha
+        int maxLinesPerPage = maxHeight / lineHeight; // Aproximadamente 5-6 linhas por página
+        
+        String[] words = text.split(" ");
+        StringBuilder currentPage = new StringBuilder();
+        int currentLines = 0;
+        
+        for (String word : words) {
+            String testText = currentPage.length() > 0 ? 
+                currentPage + " " + word : word;
+            
+            // Estimativa mais precisa do comprimento da linha (baseada na fonte de 16px)
+            int estimatedLength = testText.length() * 9;
+            
+            if (estimatedLength > maxWidth && currentPage.length() > 0) {
+                // Verificar se ainda cabe mais linhas nesta página
+                if (currentLines >= maxLinesPerPage) {
+                    // Finalizar página atual e começar nova
+                    textPages.add(currentPage.toString().trim());
+                    currentPage = new StringBuilder(word);
+                    currentLines = 1;
+                } else {
+                    // Quebrar linha
+                    currentPage.append("\n").append(word);
+                    currentLines++;
+                }
+            } else {
+                // Adicionar palavra à linha atual
+                if (currentPage.length() > 0) {
+                    currentPage.append(" ");
+                }
+                currentPage.append(word);
+            }
+        }
+        
+        // Adicionar última página se não estiver vazia
+        if (currentPage.length() > 0) {
+            textPages.add(currentPage.toString().trim());
+        }
+        
+        // Se não há páginas, criar uma página vazia
+        if (textPages.isEmpty()) {
+            textPages.add("");
+        }
+    }
+
+    /**
+     * Avança para a próxima página do diálogo.
+     * @return true se conseguiu avançar, false se já está na última página
+     */
+    public boolean nextPage() {
+        if (currentPageIndex < textPages.size() - 1) {
+            currentPageIndex++;
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Volta para a página anterior do diálogo.
+     * @return true se conseguiu voltar, false se já está na primeira página
+     */
+    public boolean previousPage() {
+        if (currentPageIndex > 0) {
+            currentPageIndex--;
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Obtém o texto da página atual.
+     * @return Texto da página atual
+     */
+    public String getCurrentPageText() {
+        if (textPages.isEmpty() || currentPageIndex >= textPages.size()) {
+            return "";
+        }
+        return textPages.get(currentPageIndex);
+    }
+
+    /**
+     * Verifica se o diálogo tem múltiplas páginas.
+     * @return true se tem mais de uma página
+     */
+    public boolean hasMultiplePages() {
+        return textPages.size() > 1;
+    }
+
+    /**
+     * Verifica se está na última página.
+     * @return true se está na última página
+     */
+    public boolean isOnLastPage() {
+        return currentPageIndex >= textPages.size() - 1;
+    }
+
+    /**
+     * Verifica se está na primeira página.
+     * @return true se está na primeira página
+     */
+    public boolean isOnFirstPage() {
+        return currentPageIndex <= 0;
+    }
+
+    /**
+     * Obtém o índice da página atual.
+     * @return Índice da página atual (0-based)
+     */
+    public int getCurrentPage() {
+        return currentPageIndex;
+    }
+
+    /**
+     * Obtém o número total de páginas.
+     * @return Número total de páginas
+     */
+    public int getTotalPages() {
+        return textPages.size();
     }
 
     /**
@@ -219,15 +434,22 @@ public class DialogManager {
 
     /**
      * Confirma a seleção atual e executa a ação.
+     * NOTA: Este método só deve ser chamado quando se está na última página!
      */
     public void confirmSelection() {
-        if (!isDialogActive || currentDialog == null) return;
+
+        if (!isDialogActive || currentDialog == null) {
+            return;
+        }
 
         List<DialogOption> availableOptions = currentDialog.getAvailableOptions();
-        if (availableOptions.isEmpty()) return;
+        
+        if (availableOptions.isEmpty()) {
+            endDialog();
+            return;
+        }
 
         DialogOption selectedOption = availableOptions.get(selectedOptionIndex);
-
         // Dar item se a opção especificar
         if (selectedOption.givesItem()) {
             giveItemToPlayer(selectedOption.getItemId(), selectedOption.getItemQuantity());
@@ -273,6 +495,10 @@ public class DialogManager {
               }
               boolean success = gamePanel.getInventoryManager().addItem(item);
               if (success) {
+                // Notificar QuestManager sobre coleta de item
+                if (gamePanel.getQuestManager() != null) {
+                  gamePanel.getQuestManager().onItemCollected(itemId);
+                }
                 gamePanel.getGameUI().addMessage("Você recebeu " + quantity + "x " + item.getName() + "!", null, 3500L);
               } else {
                 gamePanel.getGameUI().addMessage("Inventário cheio! Não foi possível receber o item.", null, 3500L);
@@ -500,11 +726,14 @@ public class DialogManager {
     }
 
     /**
+     * Encerra o diálogo atual e reseta o estado.
      */
     public void endDialog() {
         this.isDialogActive = false;
         this.currentDialog = null;
         this.selectedOptionIndex = 0;
+        this.currentPageIndex = 0;
+        this.textPages.clear();
     }
 
     /**

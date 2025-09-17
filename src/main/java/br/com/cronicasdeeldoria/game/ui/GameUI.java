@@ -47,11 +47,17 @@ public class GameUI {
   private BufferedImage heartEmpty;
   private BufferedImage coinIcon;
   private boolean showStatsWindow = false;
+  private boolean showQuestWindow = false;
   private String centerMessage = "";
   private long centerMessageStartTime = 0;
   private long centerMessageDuration = 3000; // 3 segundos por padrão
   private boolean centerMessageVisible = false;
   private List<FloatingText> floatingTexts = new ArrayList<>();
+
+  // Variáveis para scroll da janela de quests
+  private int questScrollOffset = 0;
+  private int maxQuestScrollOffset = 0;
+  private static final int QUEST_SCROLL_SPEED = 20;
 
   private final List<Message> messages = new ArrayList<>();
   private InventoryUI inventoryUI;
@@ -90,6 +96,70 @@ public class GameUI {
    */
   public boolean isStatsWindowVisible() {
     return showStatsWindow;
+  }
+
+  /**
+   * Alterna a visibilidade da janela de quests.
+   */
+  public void toggleQuestWindow() {
+    showQuestWindow = !showQuestWindow;
+    if (showQuestWindow) {
+      // Resetar scroll quando abrir a janela
+      questScrollOffset = 0;
+      calculateMaxScrollOffset();
+    }
+  }
+
+  /**
+   * Verifica se a janela de quests está visível.
+   */
+  public boolean isQuestWindowVisible() {
+    return showQuestWindow;
+  }
+
+  /**
+   * Move o scroll da janela de quests para cima.
+   */
+  public void scrollQuestWindowUp() {
+    if (showQuestWindow && questScrollOffset > 0) {
+      questScrollOffset = Math.max(0, questScrollOffset - QUEST_SCROLL_SPEED);
+    }
+  }
+
+  /**
+   * Move o scroll da janela de quests para baixo.
+   */
+  public void scrollQuestWindowDown() {
+    if (showQuestWindow && questScrollOffset < maxQuestScrollOffset) {
+      questScrollOffset = Math.min(maxQuestScrollOffset, questScrollOffset + QUEST_SCROLL_SPEED);
+    }
+  }
+
+  private void calculateMaxScrollOffset() {
+    var questManager = br.com.cronicasdeeldoria.game.quest.QuestManager.getInstance();
+    var activeQuests = questManager.getActiveQuests();
+
+    if (activeQuests.isEmpty()) {
+      maxQuestScrollOffset = 0;
+      return;
+    }
+
+    int contentHeight = 0;
+    int spacing = 20;
+
+    for (var quest : activeQuests.values()) {
+      contentHeight += 60; // Altura base da quest (título + descrição + progresso)
+
+      // Adicionar altura de todos os objetivos
+      var objectives = quest.getObjectives();
+      contentHeight += objectives.size() * spacing;
+
+      contentHeight += spacing + 5; // Separador entre quests
+    }
+
+    int windowHeight = 600;
+    int contentAreaHeight = windowHeight - 120; // Área disponível para conteúdo
+    maxQuestScrollOffset = Math.max(0, contentHeight - contentAreaHeight);
   }
 
   /**
@@ -169,10 +239,17 @@ public class GameUI {
     // TERCEIRO: Desenhar elementos que ficam por cima de tudo
     drawMessages(graphics2D);
 
+    // Desenhar janela de stats se estiver visível
     if (showStatsWindow) {
       drawStatsWindow(graphics2D);
     }
 
+    // Desenhar janela de quests se estiver visível
+    if (showQuestWindow) {
+      drawQuestWindow(graphics2D);
+    }
+
+    // Desenhar mensagem central se estiver visível
     if (centerMessageVisible) {
       drawCenterMessage(graphics2D);
     }
@@ -506,6 +583,174 @@ public class GameUI {
     // Texto principal
     g2.setColor(color);
     g2.drawString(text, x, y);
+  }
+
+  /**
+   * Desenha a janela de quests ativas.
+   * @param graphics2D Contexto gráfico.
+   */
+  private void drawQuestWindow(Graphics2D graphics2D) {
+    var questManager = br.com.cronicasdeeldoria.game.quest.QuestManager.getInstance();
+
+    // Overlay semi-transparente
+    graphics2D.setColor(new Color(0, 0, 0, 150));
+    graphics2D.fillRect(0, 0, gamePanel.getWidth(), gamePanel.getHeight());
+
+    // Cores do tema (mesmo estilo da janela de stats)
+    Color backgroundColor = new Color(50, 40, 60, 250); // Fundo principal
+    Color textColor = Color.WHITE; // Texto branco
+    Color titleColor = Color.WHITE; // Título branco
+    Color borderColor = new Color(100, 80, 120, 200); // Borda roxa
+    Color shadowColor = new Color(0, 0, 0, 100); // Sombra da caixa
+    Color textShadowColor = new Color(0, 0, 0, 150); // Sombra do texto
+    Color separatorColor = new Color(150, 150, 150); // Cinza para separadores
+    Color questActiveColor = new Color(255, 255, 100); // Amarelo para quests ativas
+    Color questCompletedColor = new Color(100, 255, 100); // Verde para objetivos completos
+    Color questInProgressColor = new Color(255, 200, 100); // Laranja para objetivos em progresso
+
+    graphics2D.setFont(dogicaFont_16);
+
+    int windowWidth = 450;
+    int windowHeight = 600;
+    int x = (gamePanel.getWidth() - windowWidth) / 2;
+    int y = (gamePanel.getHeight() - windowHeight) / 2;
+    int borderRadius = 20;
+    int padding = 25;
+
+    // Sombra da janela
+    graphics2D.setColor(shadowColor);
+    graphics2D.fillRoundRect(x + 4, y + 4, windowWidth, windowHeight, borderRadius, borderRadius);
+
+    // Fundo principal da janela
+    graphics2D.setColor(backgroundColor);
+    graphics2D.fillRoundRect(x, y, windowWidth, windowHeight, borderRadius, borderRadius);
+
+    // Borda da janela
+    graphics2D.setColor(borderColor);
+    graphics2D.setStroke(new BasicStroke(3));
+    graphics2D.drawRoundRect(x, y, windowWidth, windowHeight, borderRadius, borderRadius);
+
+    // Título com sombra
+    graphics2D.setFont(FontManager.getFont(20f));
+    String title = "QUESTS ATIVAS";
+    graphics2D.setColor(textShadowColor);
+    graphics2D.drawString(title, x + padding + 2, y + 45 + 2);
+    graphics2D.setColor(titleColor);
+    graphics2D.drawString(title, x + padding, y + 45);
+
+    // Linha decorativa abaixo do título
+    java.awt.FontMetrics fm = graphics2D.getFontMetrics();
+    int titleWidth = fm.stringWidth(title);
+    graphics2D.setColor(borderColor);
+    graphics2D.setStroke(new BasicStroke(2));
+    graphics2D.drawLine(x + padding, y + 50, x + padding + titleWidth, y + 50);
+
+    graphics2D.setFont(dogicaFont_14);
+    int textY = y + 85 - questScrollOffset; // Aplicar offset de scroll
+    int spacing = 20;
+    int contentStartY = y + 85;
+    int contentEndY = y + windowHeight - 80;
+
+    // Obter quests ativas
+    var activeQuests = questManager.getActiveQuests();
+
+    if (activeQuests.isEmpty()) {
+      // Nenhuma quest ativa
+      graphics2D.setColor(textColor);
+      graphics2D.drawString("Nenhuma quest ativa no momento.", x + padding, textY);
+    } else {
+      // Aplicar clipping para área de conteúdo
+      graphics2D.setClip(x + padding, contentStartY, windowWidth - 2 * padding, contentEndY - contentStartY);
+
+      // Mostrar todas as quests ativas
+      for (var quest : activeQuests.values()) {
+        // Nome da quest
+        graphics2D.setFont(dogicaFont_16);
+        graphics2D.setColor(questActiveColor);
+        graphics2D.drawString("• " + quest.getTitle(), x + padding, textY);
+        textY += spacing + 5;
+
+        // Descrição da quest (truncada se necessário)
+        graphics2D.setFont(dogicaFont_12);
+        graphics2D.setColor(textColor);
+        String description = quest.getDescription();
+        if (description.length() > 50) {
+          description = description.substring(0, 47) + "...";
+        }
+        graphics2D.drawString("  " + description, x + padding, textY);
+        textY += spacing;
+
+        // Progresso geral
+        graphics2D.setFont(dogicaFont_14);
+        int progress = quest.getProgressPercentage();
+        Color progressColor = progress == 100 ? questCompletedColor : questInProgressColor;
+        graphics2D.setColor(progressColor);
+        graphics2D.drawString("  Progresso: " + progress + "%", x + padding, textY);
+        textY += spacing;
+
+        // Objetivos
+        var objectives = quest.getObjectives();
+        for (var objective : objectives) {
+          graphics2D.setFont(dogicaFont_12);
+          Color objColor = objective.isCompleted() ? questCompletedColor : textColor;
+          graphics2D.setColor(objColor);
+          String objStatus = objective.isCompleted() ? "✓" : "○";
+          graphics2D.drawString("    " + objStatus + " " + objective.getDescription(), x + padding, textY);
+          textY += spacing;
+        }
+
+        // Separador entre quests
+        textY += 5;
+        graphics2D.setColor(separatorColor);
+        graphics2D.setStroke(new BasicStroke(1));
+        graphics2D.drawLine(x + padding, textY, x + windowWidth - padding, textY);
+        textY += spacing;
+      }
+
+      // Restaurar clipping
+      graphics2D.setClip(null);
+    }
+
+    // Instrução para fechar e controles de scroll
+    graphics2D.setFont(FontManager.getFont(14f));
+    String instructionText = "Pressione J para fechar";
+    int instructionY = y + windowHeight - 40;
+
+    // Sombra da instrução
+    graphics2D.setColor(new Color(0, 0, 0, 150));
+    graphics2D.drawString(instructionText, x + padding + 1, instructionY + 1);
+
+    // Instrução principal
+    graphics2D.setColor(new Color(200, 200, 200));
+    graphics2D.drawString(instructionText, x + padding, instructionY);
+
+    // Instruções de scroll se houver conteúdo para rolar
+    if (maxQuestScrollOffset > 0) {
+      String scrollText = "↑↓ para rolar";
+      graphics2D.setColor(new Color(0, 0, 0, 150));
+      graphics2D.drawString(scrollText, x + windowWidth - padding - 100 + 1, instructionY + 1);
+      graphics2D.setColor(new Color(200, 200, 200));
+      graphics2D.drawString(scrollText, x + windowWidth - padding - 100, instructionY);
+    }
+
+    // Indicador de scroll (barra lateral)
+    if (maxQuestScrollOffset > 0) {
+      int scrollBarWidth = 8;
+      int scrollBarHeight = 100;
+      int scrollBarX = x + windowWidth - padding - scrollBarWidth - 5;
+      int scrollBarY = y + 100;
+
+      // Fundo da barra de scroll
+      graphics2D.setColor(new Color(100, 100, 100, 100));
+      graphics2D.fillRoundRect(scrollBarX, scrollBarY, scrollBarWidth, scrollBarHeight, 4, 4);
+
+      // Indicador de posição
+      int indicatorHeight = Math.max(20, (int)(scrollBarHeight * (1.0 - (double)questScrollOffset / maxQuestScrollOffset)));
+      int indicatorY = scrollBarY + (scrollBarHeight - indicatorHeight);
+
+      graphics2D.setColor(new Color(200, 200, 200, 200));
+      graphics2D.fillRoundRect(scrollBarX, indicatorY, scrollBarWidth, indicatorHeight, 4, 4);
+    }
   }
 
   /**

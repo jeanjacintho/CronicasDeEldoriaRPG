@@ -2,10 +2,7 @@ package br.com.cronicasdeeldoria.entity.character;
 
 import br.com.cronicasdeeldoria.entity.Entity;
 import br.com.cronicasdeeldoria.entity.character.classes.CharacterClass;
-import br.com.cronicasdeeldoria.entity.character.player.Player;
 import br.com.cronicasdeeldoria.game.Buff;
-import br.com.cronicasdeeldoria.entity.item.Item;
-import br.com.cronicasdeeldoria.entity.character.AttributeType;
 import br.com.cronicasdeeldoria.game.inventory.Equipment;
 import br.com.cronicasdeeldoria.game.GamePanel;
 
@@ -81,9 +78,6 @@ public class Character extends Entity {
   public void applyBuff(Buff buff) {
     if (canApplyBuff(buff.getType())) {
       activeBuffs.add(buff);
-      System.out.println(getName() + " gained " + buff.getType() + " buff!");
-    } else {
-      System.out.println(getName() + " cannot apply " + buff.getType() + " buff right now.");
     }
   }
 

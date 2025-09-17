@@ -2,9 +2,12 @@ package br.com.cronicasdeeldoria.config;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 
 public class CharacterConfigLoader {
   private static CharacterConfigLoader instance;
@@ -25,13 +28,13 @@ public class CharacterConfigLoader {
     try {
       characterConfigs = new HashMap<>();
 
-      java.io.InputStream is = getClass().getResourceAsStream("/character_config.json");
+      InputStream is = getClass().getResourceAsStream("/character_config.json");
       if (is == null) {
         System.err.println("ERRO: character_config.json não encontrado!");
         throw new RuntimeException("character_config.json não encontrado!");
       }
 
-      java.util.Scanner scanner = new java.util.Scanner(is);
+      Scanner scanner = new Scanner(is);
       scanner.useDelimiter("\\A");
       String json = scanner.hasNext() ? scanner.next() : "";
       scanner.close();
@@ -57,7 +60,7 @@ public class CharacterConfigLoader {
   public CharacterConfig getCharacterConfig(String playerClass) {
     CharacterConfig config = characterConfigs.get(playerClass.toLowerCase());
     if (config == null) {
-      config = characterConfigs.get("archer"); // Usar archer como padrão
+      config = characterConfigs.get("ranger"); // Usar ranger como padrão
     }
     return config;
   }

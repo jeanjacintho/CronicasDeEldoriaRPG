@@ -74,7 +74,6 @@ public class NpcFactory {
                       break;
                     default:
                       npcs.add(new OrcMonster(name, isStatic, dialog, x, y, skin, playerSize, interactive, autoInteraction));
-                      System.out.println("ID " + monster + " não encontrado, adicione o monstro no NpcFactory.");
                       break;
                   }
                 }
@@ -91,7 +90,7 @@ public class NpcFactory {
                         npcs.add(merchant);
                     }
                 } else {
-                    npcs.add(new Npc(name, isStatic, dialog, x, y, skin, playerSize, interactive, autoInteraction, dialogId));
+                     npcs.add(new Npc(name, isStatic, dialog, x, y, skin, playerSize, interactive, autoInteraction, dialogId));
                 }
             } else {
                 //System.err.println("Definição não encontrada para NPC ID: " + npcTile.id);

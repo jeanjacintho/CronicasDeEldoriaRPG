@@ -2610,29 +2610,9 @@
       "name": "Items",
       "tiles": [
         {
-          "id": "orb_air",
-          "x": 8,
-          "y": 8
-        },
-        {
-          "id": "orb_water",
-          "x": 15,
-          "y": 8
-        },
-        {
-          "id": "orb_earth",
-          "x": 12,
-          "y": 11
-        },
-        {
           "id": "totem_central",
           "x": 12,
           "y": 12
-        },
-        {
-          "id": "orb_fire",
-          "x": 15,
-          "y": 14
         }
       ],
       "collider": false
@@ -4128,25 +4108,14 @@
       "name": "Teleport",
       "tiles": [
         {
-          "id": "4_15",
+          "id": "city:exit_totem",
           "x": 12,
           "y": 21
         },
         {
-          "id": "casa_01",
+          "id": "city:exit_totem",
           "x": 12,
           "y": 22
-        }
-      ],
-      "collider": false
-    },
-    {
-      "name": "Npcs",
-      "tiles": [
-        {
-          "id": "smart_old_man",
-          "x": 12,
-          "y": 7
         }
       ],
       "collider": false
