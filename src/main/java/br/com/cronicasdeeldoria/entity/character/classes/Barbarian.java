@@ -64,7 +64,7 @@ public class Barbarian implements CharacterClass {
       attacker.setAttributeMana(attacker.getAttributeMana() - manaCost);
 
       // 50% de buff por 2 turnos atacando e 4 de cooldown
-      Buff strBuff = new Buff("STRENGTH", bonus, 3 * 2, 3 * 2);
+      Buff strBuff = new Buff("STRENGTH", bonus, 3 * 2, 3 * 2, attacker);
       attacker.applyBuff(strBuff);
     }
   }

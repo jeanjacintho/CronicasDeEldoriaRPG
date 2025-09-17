@@ -206,7 +206,7 @@ public class GamePanel extends JPanel implements Runnable{
     //     gameState = dialogState;
     //   }
     // }
-    
+
   }
 
   /**
@@ -961,30 +961,30 @@ public class GamePanel extends JPanel implements Runnable{
     // Fundo preto
     graphics2D.setColor(Color.BLACK);
     graphics2D.fillRect(0, 0, getWidth(), getHeight());
-    
+
     // Configurar fontes
     Font titleFont = FontManager.getDefaultFont().deriveFont(Font.BOLD, 24f);
     Font commandFont = FontManager.getDefaultFont().deriveFont(Font.BOLD, 16f);
     Font instructionFont = FontManager.getDefaultFont().deriveFont(Font.PLAIN, 14f);
-    
+
     // Título
     graphics2D.setColor(Color.WHITE);
     graphics2D.setFont(titleFont);
     String title = "CRÔNICAS DE ELDORIA";
     int titleWidth = graphics2D.getFontMetrics().stringWidth(title);
     graphics2D.drawString(title, (getWidth() - titleWidth) / 2, 80);
-    
+
     // Subtítulo
     graphics2D.setFont(commandFont);
     String subtitle = "CONTROLES DO JOGO";
     int subtitleWidth = graphics2D.getFontMetrics().stringWidth(subtitle);
     graphics2D.drawString(subtitle, (getWidth() - subtitleWidth) / 2, 120);
-    
+
     // Comandos
     graphics2D.setFont(commandFont);
     int startY = 180;
     int lineHeight = 35;
-    
+
     String[][] commands = {
       {"1", "Use WASD para mover o personagem"},
       {"2", "Use E para interagir com NPCs e objetos"},
@@ -994,21 +994,21 @@ public class GamePanel extends JPanel implements Runnable{
       {"6", "Use ESC para pausar o jogo"},
       {"7", "Use 1-9 para interação em batalha"}
     };
-    
+
     for (int i = 0; i < commands.length; i++) {
       // Desenhar descrição em branco
       graphics2D.setColor(Color.WHITE);
       int descriptionWidth = graphics2D.getFontMetrics().stringWidth(commands[i][1]);
       graphics2D.drawString(commands[i][1],  (getWidth() - descriptionWidth) / 2, startY + (i * lineHeight));
     }
-    
+
     // Instrução para continuar
     graphics2D.setFont(instructionFont);
     graphics2D.setColor(Color.YELLOW);
     String instruction = "Pressione E para começar a jogar";
     int instructionWidth = graphics2D.getFontMetrics().stringWidth(instruction);
     graphics2D.drawString(instruction, (getWidth() - instructionWidth) / 2, getHeight() - 80);
-    
+
     // Efeito de piscar
     long currentTime = System.currentTimeMillis();
     if ((currentTime / 500) % 2 == 0) {
@@ -1237,7 +1237,7 @@ public class GamePanel extends JPanel implements Runnable{
     // ENTER para confirmar seleção ou avançar página
     if (keyHandler.actionPressed) {
       keyHandler.actionPressed = false;
-      
+
       // Verificar se há paginação ativa no DialogManager (sistema principal)
       if (!dialogManager.isOnLastPage()) {
         dialogManager.nextPage();
@@ -1253,7 +1253,7 @@ public class GamePanel extends JPanel implements Runnable{
     // Tecla D para próxima página
     if (keyHandler.rightPressed) {
       keyHandler.rightPressed = false;
-      
+
       if (!dialogManager.isOnLastPage()) {
         dialogManager.nextPage();
         // Sincronizar com DialogUI
@@ -1266,7 +1266,7 @@ public class GamePanel extends JPanel implements Runnable{
     // Tecla A para página anterior
     if (keyHandler.leftPressed) {
       keyHandler.leftPressed = false;
-      
+
       if (!dialogManager.isOnFirstPage()) {
         dialogManager.previousPage();
         // Sincronizar com DialogUI
@@ -1311,12 +1311,12 @@ public class GamePanel extends JPanel implements Runnable{
     if (keyHandler.actionPressed) {
       gameState = playState;
       keyHandler.actionPressed = false;
-      
+
       // Reproduzir som de confirmação se disponível
       if (audioManager != null) {
         audioManager.playSoundEffect("button_click");
       }
-      
+
       // Iniciar diálogo inicial após o tutorial
       if (dialogManager != null) {
         boolean started = dialogManager.startDialog(37);
@@ -1340,6 +1340,26 @@ public class GamePanel extends JPanel implements Runnable{
       else if (keyHandler.defendPressed ) {
         if (player.canApplyBuff("ARMOR")) {
           battle.processPlayerAction("DEFEND");
+        } else {
+          System.out.println("ARMOR buff is activate or in cooldown!");
+        }
+        keyHandler.defendPressed = false;
+      }
+      // Player deve ter a earth orb no inventário para usar o buff
+      else if (keyHandler.waterOrbPressed && player.getGamePanel().getInventoryManager().hasItemById("orb_water")) {
+        if (player.canApplyBuff("HOT")) {
+          battle.processPlayerAction("REGEN");
+        } else {
+          System.out.println("HOT buff is activate or in cooldown!");
+        }
+        keyHandler.defendPressed = false;
+      }
+      // Player deve ter a fire orb no inventário para usar o buff
+      else if (keyHandler.fireOrbPressed && player.getGamePanel().getInventoryManager().hasItemById("orb_fire")) {
+        if (player.canApplyBuff("DOT")) {
+          battle.processPlayerAction("DAMAGEOVERTIME");
+        } else {
+          System.out.println("DOT buff is activate or in cooldown!");
         }
         keyHandler.defendPressed = false;
       }
@@ -1350,14 +1370,18 @@ public class GamePanel extends JPanel implements Runnable{
       else if (keyHandler.specialPressed && player.getAttributeMana() > 15) {
         if (player.canApplyBuff("STRENGTH")) {
           battle.processPlayerAction("SPECIAL");
+        } else {
+          System.out.println("STRENGTH buff is activate or in cooldown! ");
         }
         keyHandler.specialPressed = false;
       }
       else if (keyHandler.healthPressed) {
-        // Se vida atual menor que máxima e tem potion no inventário, pode ser potion
+        // Se vida atual menor que máxima e tem potion no inventário, pode usar potion
         if (player.getAttributeHealth() < player.getAttributeMaxHealth() && inventoryManager.hasItemById("health_potion")) {
           inventoryManager.consumeItem("health_potion");
           battle.processPlayerAction("HEALTH");
+        } else {
+          System.out.println("You don't have health potion or your life is full");
         }
         keyHandler.healthPressed = false;
       }
@@ -1366,6 +1390,8 @@ public class GamePanel extends JPanel implements Runnable{
         if (player.getAttributeMana() < player.getAttributeMaxMana() && inventoryManager.hasItemById("mana_potion")) {
           inventoryManager.consumeItem("mana_potion");
           battle.processPlayerAction("MANA");
+        } else {
+          System.out.println("You already have a maximum MANA or your mana is full");
         }
         keyHandler.manaPressed = false;
       }
@@ -1380,7 +1406,7 @@ public class GamePanel extends JPanel implements Runnable{
     if (questManager != null && monster != null) {
       questManager.onNpcKilled(monster.getName());
     }
-    
+
     npcs.remove(monster);
   }
 

@@ -4,9 +4,16 @@ import br.com.cronicasdeeldoria.audio.AudioManager;
 import br.com.cronicasdeeldoria.entity.character.Character;
 import br.com.cronicasdeeldoria.entity.character.player.Player;
 import br.com.cronicasdeeldoria.entity.character.npc.Npc;
+import br.com.cronicasdeeldoria.game.ui.GameUI;
+
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class Battle {
   private final GamePanel gp;
@@ -17,7 +24,9 @@ public class Battle {
   private Npc monster;
   private boolean waitingForPlayerInput;
   private int countTurn = 0;
+  private int timeOutCounter = 0;
   private final AudioManager audioManager;
+  private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
 
   public Battle(GamePanel gp) {
     this.gp = gp;
@@ -37,6 +46,12 @@ public class Battle {
     // Popula a ordem dos turnos
     determineTurnOrder();
 
+    System.out.println("Battle started: " + player.getName() + " vs " + monster.getName());
+    System.out.println("Turn order: ");
+    for (Character c : turnOrder) {
+      System.out.println("- " + c.getName());
+    }
+
     // Se o primeiro turno for do monstro, processa automaticamente
     if (getCurrentCharacter() instanceof Npc) {
       processMonsterTurn();
@@ -50,6 +65,12 @@ public class Battle {
 
     // Ordenar por agilidade se você tiver esse atributo
     Collections.sort(turnOrder, (c1, c2) -> Integer.compare(c2.getAttributeAgility(), c1.getAttributeAgility()));
+
+    System.out.println("Turn order determined by agility:");
+    for (int i = 0; i < turnOrder.size(); i++) {
+      Character c = turnOrder.get(i);
+      System.out.println((i+1) + ". " + c.getName() + " (Agility: " + c.getAttributeAgility() + ")");
+    }
   }
 
   public void processPlayerAction(String action) {
@@ -73,6 +94,8 @@ public class Battle {
         }
         break;
       case "SPECIAL": specialAttack(player, monster, countTurn); break;
+      case "REGEN": waterOrb(player); break;
+      case "DAMAGEOVERTIME": fireOrb(monster); break;
       case "HEALTH": healthPotion(player); break;
       case "MANA": manaPotion(player); break;
       default:
@@ -88,7 +111,12 @@ public class Battle {
 
     // Se for turno do monstro, processar automaticamente
     if (getCurrentCharacter() instanceof Npc) {
-      processMonsterTurn();
+      // Delay para processar o turno do monstro
+      scheduler.schedule(() -> {
+        SwingUtilities.invokeLater(() -> {
+          processMonsterTurn();
+        });
+      }, 1200, TimeUnit.MILLISECONDS);
     } else {
       waitingForPlayerInput = true;
     }
@@ -106,17 +134,11 @@ public class Battle {
     Random random = new Random();
     int choice = random.nextInt(100);
 
-    if (choice < 69) { // 70% chance de ataque
+    if (choice < 79) { // 80% chance de ataque
       attack(currentMonster, player);
     } else if (choice < 99) { // 20% chance de defesa
       defend(currentMonster);
     }
-    // Caso monstro poder usar magia
-//    else { // 20% chance de magia (se tiver mana)
-//      if (currentMonster.getAttributeMana() >= 10) {
-//        useMagic(currentMonster, player);
-//      }
-//    }
 
     // Verificar se a batalha terminou
     if (checkBattleEnd()) return;
@@ -143,7 +165,7 @@ public class Battle {
     if (monster.getAttributeHealth() <= 0) {
       countTurn = 0;
       for (Character c : turnOrder) {
-        c.updateBuffs();
+        c.updateBuffs(countTurn, gp);
       }
       gp.endBattle(true);
       return true;
@@ -157,8 +179,10 @@ public class Battle {
 
     // Atualiza buffs de todos
     for (Character c : turnOrder) {
-      c.updateBuffs();
+      c.updateBuffs(countTurn, gp);
     }
+
+    //System.out.println("\n---------- Turn: " + countTurn + " ----------");
   }
 
   public static int calculateDamage(Character attacker, Character target) {
@@ -184,15 +208,32 @@ public class Battle {
       audioManager.playSoundEffect("player_block");
     }
 
-    gp.getGameUI().showDamage(target, damage);
+    System.out.println(attacker.getName() + " attacks " + target.getName() + " causing " + damage + " damage!");
+    System.out.println("-----------------------------");
+
+    gp.getGameUI().showDamage(target, damage, null);
   }
 
   private void defend(Character character) {
     int bonus = (int)(character.getAttributeArmor() * 1.2);
 
     // 30% de buff por 2 turnos defendendo e 3 de cooldown
-    Buff armorBuff = new Buff("ARMOR", bonus, 2 * 2, 2 * 2); //
+    Buff armorBuff = new Buff("ARMOR", bonus, 2 * 2, 2 * 2, character); //
     character.applyBuff(armorBuff);
+  }
+
+  private void fireOrb(Character monster) {
+    int effectiveDamage = (int) (monster.getAttributeMaxHealth() * 0.05);
+    Buff damageOverTime = new Buff("DOT", effectiveDamage, 30, 0, player);
+
+    monster.applyBuff(damageOverTime);
+  }
+
+  private void waterOrb(Character character) {
+    int effectiveHeal = (int) (character.getAttributeMaxHealth() * 0.035);
+    Buff healingOverTime = new Buff("HOT", effectiveHeal, 30, 0, character);
+
+    character.applyBuff(healingOverTime);
   }
 
   private boolean flee(Character character) {
@@ -203,12 +244,16 @@ public class Battle {
       int fleeChance = 50; // 50% chance base
 
       if (Math.random() * 100 < fleeChance) {
+        System.out.println("You successfully fled from battle!");
+        System.out.println("-----------------------------");
 
         // Mover o jogador para fora da área de detecção (6 tiles de distância)
         movePlayerAwayFromMonster();
 
         return true;
       } else {
+        System.out.println("Failed to flee!");
+        System.out.println("-----------------------------");
         return false;
       }
     }
@@ -231,10 +276,11 @@ public class Battle {
 
     if (diffCurrentHpAndMaxHp > finalHeal) {
       character.setAttributeHealth(character.getAttributeHealth() + finalHeal);
+
     } else {
       character.setAttributeHealth(character.getAttributeHealth() + diffCurrentHpAndMaxHp);
     }
-    gp.getGameUI().showHeal(character, finalHeal);
+    gp.getGameUI().showHeal(character, finalHeal, "POTION");
   }
 
   // Mana Potion

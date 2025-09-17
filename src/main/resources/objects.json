@@ -144,6 +144,27 @@
     "speedFromEquip": 0
   },
   {
+    "id": "sword_epic",
+    "name": "Espada Épica",
+    "spritePaths": [
+      ["/sprites/objects/items/sword_epic.png"]
+    ],
+    "size": [1, 1],
+    "collision": false,
+    "interactive": true,
+    "autoInteraction": true,
+    "itemType": "weapon",
+    "rarity": "epic",
+    "description": "Uma espada épica.",
+    "value": 100,
+    "allowedClass": ["barbarian", "paladin"],
+    "strengthFromEquip": 11,
+    "armorFromEquip": 7,
+    "healthFromEquip": 45,
+    "manaFromEquip": 15,
+    "speedFromEquip": 0
+  },
+  {
     "id": "sword_legendary",
     "name": "Espada Lendária",
     "spritePaths": [
@@ -249,6 +270,27 @@
     "speedFromEquip": 0
   },
   {
+    "id": "armor_epic",
+    "name": "Armadura Épica",
+    "spritePaths": [
+      ["/sprites/objects/items/armor_epic.png"]
+    ],
+    "size": [1, 1],
+    "collision": false,
+    "interactive": true,
+    "autoInteraction": true,
+    "itemType": "armor",
+    "rarity": "epic",
+    "description": "Uma armadura épica.",
+    "value": 125,
+    "allowedClass": ["barbarian", "paladin", "mage", "ranger"],
+    "strengthFromEquip": 0,
+    "armorFromEquip": 12,
+    "healthFromEquip": 60,
+    "manaFromEquip": 20,
+    "speedFromEquip": 0
+  },
+  {
     "id": "armor_legendary",
     "name": "Armadura Lendária",
     "spritePaths": [
@@ -309,6 +351,27 @@
     "armorFromEquip": 2,
     "healthFromEquip": 30,
     "manaFromEquip": 0,
+    "speedFromEquip": 0
+  },
+  {
+    "id": "axe_epic",
+    "name": "Machado Épico",
+    "spritePaths": [
+      ["/sprites/objects/items/axe_epic.png"]
+    ],
+    "size": [1, 1],
+    "collision": false,
+    "interactive": true,
+    "autoInteraction": true,
+    "itemType": "weapon",
+    "rarity": "epic",
+    "description": "Um machado lendário.",
+    "value": 85,
+    "allowedClass": ["barbarian", "paladin"],
+    "strengthFromEquip": 13,
+    "armorFromEquip": 5,
+    "healthFromEquip": 50,
+    "manaFromEquip": 15,
     "speedFromEquip": 0
   },
   {
@@ -375,6 +438,27 @@
     "speedFromEquip": 0
   },
   {
+    "id": "bow_epic",
+    "name": "Arco Épico",
+    "spritePaths": [
+      ["/sprites/objects/items/bow_epic.png"]
+    ],
+    "size": [1, 1],
+    "collision": false,
+    "interactive": true,
+    "autoInteraction": true,
+    "itemType": "weapon",
+    "rarity": "epic",
+    "description": "Um arco épico.",
+    "value": 105,
+    "allowedClass": ["ranger"],
+    "strengthFromEquip": 15,
+    "armorFromEquip": 3,
+    "healthFromEquip": 50,
+    "manaFromEquip": 30,
+    "speedFromEquip": 0
+  },
+  {
     "id": "bow_legendary",
     "name": "Arco Lendário",
     "spritePaths": [
@@ -438,6 +522,27 @@
     "speedFromEquip": 0
   },
   {
+    "id": "hammer_epic",
+    "name": "Martelo Épico",
+    "spritePaths": [
+      ["/sprites/objects/items/hammer_epic.png"]
+    ],
+    "size": [1, 1],
+    "collision": false,
+    "interactive": true,
+    "autoInteraction": true,
+    "itemType": "weapon",
+    "rarity": "epic",
+    "description": "Um martelo Épico.",
+    "value": 95,
+    "allowedClass": ["barbarian", "paladin"],
+    "strengthFromEquip": 15,
+    "armorFromEquip": 3,
+    "healthFromEquip": 50,
+    "manaFromEquip": 15,
+    "speedFromEquip": 0
+  },
+  {
     "id": "hammer_legendary",
     "name": "Martelo Lendário",
     "spritePaths": [
@@ -498,6 +603,27 @@
     "armorFromEquip": 2,
     "healthFromEquip": 20,
     "manaFromEquip": 30,
+    "speedFromEquip": 0
+  },
+  {
+    "id": "ring_epic",
+    "name": "Anel Épico",
+    "spritePaths": [
+      ["/sprites/objects/items/ring_epic.png"]
+    ],
+    "size": [1, 1],
+    "collision": false,
+    "interactive": true,
+    "autoInteraction": true,
+    "itemType": "weapon",
+    "rarity": "epic",
+    "description": "Um anel épico.",
+    "value": 95,
+    "allowedClass": ["mage"],
+    "strengthFromEquip": 12,
+    "armorFromEquip": 6,
+    "healthFromEquip": 30,
+    "manaFromEquip": 50,
     "speedFromEquip": 0
   },
   {

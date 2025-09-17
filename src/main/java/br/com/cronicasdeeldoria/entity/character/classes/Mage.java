@@ -66,7 +66,8 @@ public class Mage implements CharacterClass {
       int magicDamage = (int) (Battle.calculateDamage(attacker, target) * 2.8);
       int newHealth = Math.max(0, target.getAttributeHealth() - magicDamage);
       target.setAttributeHealth(newHealth);
-      gp.getGameUI().showDamage(target, magicDamage);
+      gp.getGameUI().showDamage(target, magicDamage, null);
+
     }
   }
 }

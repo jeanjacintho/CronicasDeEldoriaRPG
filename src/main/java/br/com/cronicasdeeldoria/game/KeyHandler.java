@@ -9,10 +9,10 @@ import java.awt.event.KeyListener;
 public class KeyHandler implements KeyListener {
     public boolean actionPressed, upPressed, downPressed, leftPressed, rightPressed, xPressed, zPressed, qPressed;
     public boolean rPressed, fPressed, gPressed, hPressed, tPressed, specialPressed, attackPressed, defendPressed, escapePressed;
-    public boolean healthPressed, manaPressed;
+    public boolean healthPressed, manaPressed, waterOrbPressed, fireOrbPressed;
     public boolean inventoryPressed, tabPressed, escapeKeyPressed, debugPressed, jPressed;
     public boolean upArrowPressed, downArrowPressed; // Teclas de seta para scroll
-    
+
     // Sistema anti-repeat para teclas importantes
     private boolean actionKeyDown = false;
     private boolean leftKeyDown = false;
@@ -36,19 +36,19 @@ public class KeyHandler implements KeyListener {
         switch (code) {
             case KeyEvent.VK_W: upPressed = true; break;
             case KeyEvent.VK_S: downPressed = true; break;
-            case KeyEvent.VK_A: 
+            case KeyEvent.VK_A:
                 if (!leftKeyDown) {
                     leftPressed = true;
                     leftKeyDown = true;
                 }
                 break;
-            case KeyEvent.VK_D: 
+            case KeyEvent.VK_D:
                 if (!rightKeyDown) {
                     rightPressed = true;
                     rightKeyDown = true;
                 }
                 break;
-            case KeyEvent.VK_E: 
+            case KeyEvent.VK_E:
                 if (!actionKeyDown) {
                     actionPressed = true;
                     actionKeyDown = true;
@@ -78,6 +78,10 @@ public class KeyHandler implements KeyListener {
             case KeyEvent.VK_6: healthPressed = true; break;
             case KeyEvent.VK_7: manaPressed = true; break;
 
+            // Efeitos das orbes
+            case KeyEvent.VK_0: waterOrbPressed = true; break;
+            case KeyEvent.VK_9: fireOrbPressed = true; break;
+
         }
     }
 
@@ -92,15 +96,15 @@ public class KeyHandler implements KeyListener {
 
             case KeyEvent.VK_W: upPressed = false; break;
             case KeyEvent.VK_S: downPressed = false; break;
-            case KeyEvent.VK_A: 
+            case KeyEvent.VK_A:
                 leftPressed = false;
                 leftKeyDown = false;
                 break;
-            case KeyEvent.VK_D: 
+            case KeyEvent.VK_D:
                 rightPressed = false;
                 rightKeyDown = false;
                 break;
-            case KeyEvent.VK_E: 
+            case KeyEvent.VK_E:
                 actionPressed = false;
                 actionKeyDown = false;
                 break;
@@ -128,6 +132,10 @@ public class KeyHandler implements KeyListener {
           case KeyEvent.VK_4: escapePressed = false; break;
           case KeyEvent.VK_6: healthPressed = false; break;
           case KeyEvent.VK_7: manaPressed = false; break;
+
+          // Efeitos das orbes
+          case KeyEvent.VK_0: waterOrbPressed = false; break;
+          case KeyEvent.VK_9: fireOrbPressed = false; break;
         }
     }
 }
