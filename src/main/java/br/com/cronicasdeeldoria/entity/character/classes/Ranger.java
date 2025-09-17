@@ -1,6 +1,5 @@
 package br.com.cronicasdeeldoria.entity.character.classes;
 
-import br.com.cronicasdeeldoria.entity.character.AttributeType;
 import br.com.cronicasdeeldoria.entity.character.Character;
 import br.com.cronicasdeeldoria.game.GamePanel;
 
@@ -9,8 +8,6 @@ import br.com.cronicasdeeldoria.game.GamePanel;
  */
 public class Ranger implements CharacterClass {
   private int dexterity;
-  private String specialAbilityName;
-  private String specialAbility;
 
   /**
    * Cria um Ranger com destreza definida.

@@ -11,7 +11,6 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
-import br.com.cronicasdeeldoria.game.GamePanel;
 import br.com.cronicasdeeldoria.tile.TileManager.MapTile;
 
 /**
@@ -24,8 +23,6 @@ public class NpcFactory {
      */
     public static List<Npc> loadNpcsFromTiles(List<MapTile> npcTiles, int tileSize, int playerSize) {
         List<Npc> npcs = new ArrayList<>();
-
-        
 
         // Carregar definições do JSON
         Map<String, Map<String, Object>> npcDefinitions = loadNpcDefinitionsFromJson();

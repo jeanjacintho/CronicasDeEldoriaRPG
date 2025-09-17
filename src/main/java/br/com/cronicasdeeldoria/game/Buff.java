@@ -42,7 +42,6 @@ public class Buff {
       turnsLeft--;
       if (turnsLeft == 0) {
         cooldownLeft = cooldownTime; // inicia cooldown
-        System.out.println(character.getName() + "'s " + type + " Buff has expired!");
       }
     }
     if (cooldownLeft > 0) {

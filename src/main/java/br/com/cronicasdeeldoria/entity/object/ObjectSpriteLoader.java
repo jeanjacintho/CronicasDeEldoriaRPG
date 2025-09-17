@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import br.com.cronicasdeeldoria.entity.character.AttributeType;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 

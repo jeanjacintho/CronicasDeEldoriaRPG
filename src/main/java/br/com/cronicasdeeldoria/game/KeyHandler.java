@@ -12,6 +12,11 @@ public class KeyHandler implements KeyListener {
     public boolean healthPressed, manaPressed;
     public boolean inventoryPressed, tabPressed, escapeKeyPressed, debugPressed, jPressed;
     public boolean upArrowPressed, downArrowPressed; // Teclas de seta para scroll
+    
+    // Sistema anti-repeat para teclas importantes
+    private boolean actionKeyDown = false;
+    private boolean leftKeyDown = false;
+    private boolean rightKeyDown = false;
 
     /**
      * Evento chamado quando uma tecla é digitada.
@@ -31,9 +36,24 @@ public class KeyHandler implements KeyListener {
         switch (code) {
             case KeyEvent.VK_W: upPressed = true; break;
             case KeyEvent.VK_S: downPressed = true; break;
-            case KeyEvent.VK_A: leftPressed = true; break;
-            case KeyEvent.VK_D: rightPressed = true; break;
-            case KeyEvent.VK_E: actionPressed = true; break;
+            case KeyEvent.VK_A: 
+                if (!leftKeyDown) {
+                    leftPressed = true;
+                    leftKeyDown = true;
+                }
+                break;
+            case KeyEvent.VK_D: 
+                if (!rightKeyDown) {
+                    rightPressed = true;
+                    rightKeyDown = true;
+                }
+                break;
+            case KeyEvent.VK_E: 
+                if (!actionKeyDown) {
+                    actionPressed = true;
+                    actionKeyDown = true;
+                }
+                break;
             case KeyEvent.VK_X: xPressed = true; break;
             case KeyEvent.VK_Z: zPressed = true; break;
             case KeyEvent.VK_Q: qPressed = true; break;
@@ -72,9 +92,18 @@ public class KeyHandler implements KeyListener {
 
             case KeyEvent.VK_W: upPressed = false; break;
             case KeyEvent.VK_S: downPressed = false; break;
-            case KeyEvent.VK_A: leftPressed = false; break;
-            case KeyEvent.VK_D: rightPressed = false; break;
-            case KeyEvent.VK_E: actionPressed = false; break;
+            case KeyEvent.VK_A: 
+                leftPressed = false;
+                leftKeyDown = false;
+                break;
+            case KeyEvent.VK_D: 
+                rightPressed = false;
+                rightKeyDown = false;
+                break;
+            case KeyEvent.VK_E: 
+                actionPressed = false;
+                actionKeyDown = false;
+                break;
             case KeyEvent.VK_X: xPressed = false; break;
             case KeyEvent.VK_Z: zPressed = false; break;
             case KeyEvent.VK_Q: qPressed = false; break;

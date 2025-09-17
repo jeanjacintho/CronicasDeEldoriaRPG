@@ -3,7 +3,6 @@ package br.com.cronicasdeeldoria.entity.item;
 import br.com.cronicasdeeldoria.entity.Entity;
 import br.com.cronicasdeeldoria.entity.object.ObjectSpriteLoader;
 import java.awt.Rectangle;
-import br.com.cronicasdeeldoria.entity.character.AttributeType;
 
 import java.util.*;
 

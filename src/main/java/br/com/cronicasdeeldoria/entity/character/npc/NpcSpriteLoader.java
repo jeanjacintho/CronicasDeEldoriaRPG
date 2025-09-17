@@ -78,8 +78,6 @@ public class NpcSpriteLoader {
         } catch (Exception e) {
             System.err.println("Erro ao carregar sprites de NPCs: " + e.getMessage());
             e.printStackTrace();
-            // Fallback para sprites básicos
-            addFallbackSprites();
         }
     }
     
@@ -150,26 +148,6 @@ public class NpcSpriteLoader {
         }
 
         return sprites;
-    }
-    
-    /**
-     * Adiciona sprites de fallback caso o carregamento falhe.
-     */
-    private void addFallbackSprites() {
-        // Sprites básicos para fallback
-        Map<String, List<String>> guardiaoSprites = new HashMap<>();
-        guardiaoSprites.put("down", List.of("player/orc/orc_front.png"));
-        guardiaoSprites.put("up", List.of("player/orc/orc_back.png"));
-        guardiaoSprites.put("left", List.of("player/orc/orc_left.png"));
-        guardiaoSprites.put("right", List.of("player/orc/orc_right.png"));
-        spriteMap.put("guardiao", guardiaoSprites);
-        
-        Map<String, List<String>> guerreiroSprites = new HashMap<>();
-        guerreiroSprites.put("down", List.of("player/breton/breton_front.png"));
-        guerreiroSprites.put("up", List.of("player/breton/breton_back.png"));
-        guerreiroSprites.put("left", List.of("player/breton/breton_left.png"));
-        guerreiroSprites.put("right", List.of("player/breton/breton_right.png"));
-        spriteMap.put("guerreiro", guerreiroSprites);
     }
 
     public List<String> getSprites(String skin, String direction) {

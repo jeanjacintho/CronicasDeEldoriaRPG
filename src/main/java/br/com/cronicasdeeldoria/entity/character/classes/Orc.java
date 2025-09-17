@@ -9,9 +9,6 @@ import br.com.cronicasdeeldoria.game.GamePanel;
  */
 public class Orc implements CharacterClass {
   private int rage;
-  private String specialAbilityName;
-  private String specialAbility;
-
 
   /**
    * Cria um Orc com rage definido.
