@@ -234,8 +234,8 @@ public class GamePanel extends JPanel implements Runnable{
     dialogManager.giveItemToPlayer("health_potion", 3);
     dialogManager.giveItemToPlayer("mana_potion", 2);
 
-    dialogManager.giveItemToPlayer("mana_potion", 5);
-    dialogManager.giveItemToPlayer("health_potion", 5);
+    //dialogManager.giveItemToPlayer("mana_potion", 5);
+    //dialogManager.giveItemToPlayer("health_potion", 5);
 
     //Itens para testar Dungeon3
     dialogManager.giveItemToPlayer("ring_rare", 1);
@@ -245,11 +245,11 @@ public class GamePanel extends JPanel implements Runnable{
     dialogManager.giveItemToPlayer("bow_rare", 1);
 
     //Itens para testar Dungeon4
-    dialogManager.giveItemToPlayer("ring_legendary", 1);
-    dialogManager.giveItemToPlayer("shield_legendary", 1);
-    dialogManager.giveItemToPlayer("armor_legendary", 1);
-    dialogManager.giveItemToPlayer("axe_legendary", 1);
-    dialogManager.giveItemToPlayer("bow_legendary", 1);
+//    dialogManager.giveItemToPlayer("ring_legendary", 1);
+//    dialogManager.giveItemToPlayer("shield_legendary", 1);
+//    dialogManager.giveItemToPlayer("armor_legendary", 1);
+//    dialogManager.giveItemToPlayer("axe_legendary", 1);
+//    dialogManager.giveItemToPlayer("bow_legendary", 1);
   }
 
   @Override

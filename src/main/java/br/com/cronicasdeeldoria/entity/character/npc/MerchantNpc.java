@@ -107,7 +107,7 @@ public class MerchantNpc extends Npc {
      * @param worldY Posição Y no mundo.
      * @param speed Velocidade do NPC.
      * @param direction Direção inicial.
-     * @param itemProbabilities Lista de itens com probabilidades.
+     //* @param itemProbabilities Lista de itens com probabilidades.
      */
     public MerchantNpc(GamePanel gamePanel, String name, int worldX, int worldY, int speed, String direction, List<ItemConfig> itemConfigs) {
         super(name, true, "Bem-vindo à minha loja!", worldX, worldY, "guardiao", 48, true, false);

@@ -119,22 +119,10 @@
         "probability": 0.6
       },
       {
-        "itemId": "sword_uncommon",
-        "minQuantity": 1,
-        "maxQuantity": 1,
-        "probability": 0.3
-      },
-      {
         "itemId": "sword_rare",
         "minQuantity": 1,
         "maxQuantity": 1,
         "probability": 0.2
-      },
-      {
-        "itemId": "sword_epic",
-        "minQuantity": 1,
-        "maxQuantity": 1,
-        "probability": 0.1
       },
       {
         "itemId": "bow_common",
@@ -143,31 +131,13 @@
         "probability": 0.5
       },
       {
-        "itemId": "bow_uncommon",
-        "minQuantity": 1,
-        "maxQuantity": 1,
-        "probability": 0.2
-      },
-      {
         "itemId": "bow_rare",
         "minQuantity": 1,
         "maxQuantity": 1,
         "probability": 0.2
       },
       {
-        "itemId": "bow_epic",
-        "minQuantity": 1,
-        "maxQuantity": 1,
-        "probability": 0.1
-      },
-      {
         "itemId": "ring_common",
-        "minQuantity": 1,
-        "maxQuantity": 1,
-        "probability": 0.2
-      },
-      {
-        "itemId": "ring_uncommon",
         "minQuantity": 1,
         "maxQuantity": 1,
         "probability": 0.2
@@ -177,12 +147,6 @@
         "minQuantity": 1,
         "maxQuantity": 1,
         "probability": 0.1
-      },
-      {
-        "itemId": "ring_epic",
-        "minQuantity": 1,
-        "maxQuantity": 1,
-        "probability": 0.2
       },
       {
         "itemId": "shield_common",
@@ -197,22 +161,10 @@
         "probability": 0.6
       },
       {
-        "itemId": "armor_uncommon",
-        "minQuantity": 1,
-        "maxQuantity": 1,
-        "probability": 0.3
-      },
-      {
         "itemId": "armor_rare",
         "minQuantity": 1,
         "maxQuantity": 1,
         "probability": 0.2
-      },
-      {
-        "itemId": "armor_epic",
-        "minQuantity": 1,
-        "maxQuantity": 1,
-        "probability": 0.1
       },
       {
         "itemId": "hammer_common",
@@ -227,22 +179,10 @@
         "probability": 0.2
       },
       {
-        "itemId": "hammer_epic",
-        "minQuantity": 1,
-        "maxQuantity": 1,
-        "probability": 0.1
-      },
-      {
         "itemId": "axe_common",
         "minQuantity": 1,
         "maxQuantity": 1,
         "probability": 0.5
-      },
-      {
-        "itemId": "axe_uncommon",
-        "minQuantity": 1,
-        "maxQuantity": 1,
-        "probability": 0.3
       },
       {
         "itemId": "axe_rare",
@@ -251,22 +191,10 @@
         "probability": 0.2
       },
       {
-        "itemId": "axe_epic",
-        "minQuantity": 1,
-        "maxQuantity": 1,
-        "probability": 0.1
-      },
-      {
         "itemId": "key_common",
         "minQuantity": 1,
         "maxQuantity": 3,
         "probability": 0.4
-      },
-      {
-        "itemId": "lamp",
-        "minQuantity": 1,
-        "maxQuantity": 2,
-        "probability": 0.6
       }
     ]
   },
