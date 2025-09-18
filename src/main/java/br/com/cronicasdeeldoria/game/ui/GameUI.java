@@ -11,7 +11,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import javax.imageio.ImageIO;
-import javax.swing.*;
 
 import java.util.ArrayList;
 import java.awt.Image;
@@ -846,9 +845,18 @@ public class GameUI {
     BufferedImage waterOrbImg = null;
     BufferedImage fireOrbImg = null;
 
-    // Fundo de batalha
-    g2.setColor(new Color(50, 50, 35));
-    g2.fillRect(0, 0, screenWidth, screenHeight);
+    // Desenha o plano de fundo da batalha com base no mapa atual
+    Image battleBackground = null;
+    if (gamePanel.getBattleEffectManager() != null) {
+      battleBackground = gamePanel.getBattleEffectManager().loadBattleBackground(gamePanel.getCurrentMapName());
+    }
+    
+    if (battleBackground != null) {
+      g2.drawImage(battleBackground, 0, 0, screenWidth, screenHeight, null);
+    } else {
+      g2.setColor(new Color(50, 50, 35));
+      g2.fillRect(0, 0, screenWidth, screenHeight);
+    }
 
     // Desenhar o monstro (lado direito)
     if (battleMonster != null) {
@@ -877,6 +885,31 @@ public class GameUI {
     int playerX = screenWidth / 5;
     int playerY = screenHeight / 2 - tileSize;
     g2.drawImage(player.getUp(), playerX, playerY, tileSize * 3, tileSize * 3, null);
+
+    // Desenhar overlays configuráveis (GIF) por cima do jogador e monstro
+    if (gamePanel.getBattleEffectManager() != null) {
+      int monsterX = screenWidth / 2 + 2 * tileSize;
+      int monsterY = screenHeight / 6;
+      
+      gamePanel.getBattleEffectManager().drawOverlays(
+        g2,
+        gamePanel,
+        playerX, playerY,
+        monsterX, monsterY,
+        tileSize * 3, tileSize * 3
+      );
+      
+      // Desenha efeitos persistentes com base em buffs ativos (escudo enquanto o buff de ARMADURA estiver ativo)
+      gamePanel.getBattleEffectManager().drawPersistentEffects(
+        g2,
+        gamePanel,
+        playerX, playerY,
+        monsterX, monsterY,
+        tileSize * 3, tileSize * 3,
+        player,
+        battleMonster
+      );
+    }
 
     // Interface de batalha (painel inferior)
     g2.setColor(new Color(255, 255, 255, 200));

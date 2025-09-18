@@ -255,14 +255,32 @@ public class ColisionChecker {
    * Gera chave única para cache de colisão entre entidades.
    */
   private String getCollisionCacheKey(Entity entity1, Entity entity2) {
-    return entity1.hashCode() + "_" + entity2.hashCode() + "_" + entity1.getDirection();
+    // Incluir posições atuais para evitar resultados "grudados" após movimento
+    return new StringBuilder()
+      .append(entity1.hashCode()).append('_')
+      .append(entity2.hashCode()).append('_')
+      .append(entity1.getDirection()).append('_')
+      .append(entity1.getWorldX()).append(',')
+      .append(entity1.getWorldY()).append('_')
+      .append(entity2.getWorldX()).append(',')
+      .append(entity2.getWorldY())
+      .toString();
   }
 
   /**
    * Gera chave única para cache de colisão entre entidade e objeto.
    */
   private String getObjectCollisionCacheKey(Entity entity, MapObject obj) {
-    return entity.hashCode() + "_obj_" + obj.hashCode() + "_" + entity.getDirection();
+    // Incluir posições atuais para evitar resultados "grudados" após movimento
+    return new StringBuilder()
+      .append(entity.hashCode()).append("_obj_")
+      .append(obj.hashCode()).append('_')
+      .append(entity.getDirection()).append('_')
+      .append(entity.getWorldX()).append(',')
+      .append(entity.getWorldY()).append('_')
+      .append(obj.getWorldX()).append(',')
+      .append(obj.getWorldY())
+      .toString();
   }
 
   /**

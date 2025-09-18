@@ -239,6 +239,23 @@ public class Npc extends Character {
             if (npcFutureBox.intersects(playerBox)) {
                 return false;
             }
+
+            // Evitar colisão com outros NPCs
+            List<Npc> npcs = gamePanel.getNpcs();
+            if (npcs != null && !npcs.isEmpty()) {
+                for (Npc other : npcs) {
+                    if (other == this || other.getHitbox() == null) continue;
+                    Rectangle otherBox = new Rectangle(
+                        other.getWorldX() + other.getHitbox().x,
+                        other.getWorldY() + other.getHitbox().y,
+                        other.getHitbox().width,
+                        other.getHitbox().height
+                    );
+                    if (npcFutureBox.intersects(otherBox)) {
+                        return false;
+                    }
+                }
+            }
         }
 
         return true;
