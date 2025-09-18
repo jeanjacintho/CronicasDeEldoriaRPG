@@ -4,13 +4,11 @@ import br.com.cronicasdeeldoria.audio.AudioManager;
 import br.com.cronicasdeeldoria.entity.character.Character;
 import br.com.cronicasdeeldoria.entity.character.player.Player;
 import br.com.cronicasdeeldoria.entity.character.npc.Npc;
-import br.com.cronicasdeeldoria.game.ui.GameUI;
 
 import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -212,6 +210,36 @@ public class Battle {
     System.out.println("-----------------------------");
 
     gp.getGameUI().showDamage(target, damage, null);
+
+    // Acionado a animação de sobreposição SOMENTE no alvo, usando o lado de configuração correto
+    try {
+      if (attacker instanceof Player) {
+        // Ataques do jogador -> usa a configuração da classe do jogador, desenha sobre o monstro
+        String playerClass = attacker.getCharacterClass().getCharacterClassName();
+        gp.getBattleEffectManager().triggerForMonsterFromPlayer(playerClass, "attack");
+      } else {
+        // Monster attacks -> use monster-type config, draw over player
+        String monsterKey = deriveMonsterKey((Npc) attacker);
+        gp.getBattleEffectManager().triggerForPlayerFromMonster(monsterKey, "attack");
+      }
+    } catch (Exception ignored) {}
+  }
+
+  private String deriveMonsterKey(Npc npc) {
+    if (npc == null) return "default";
+    String name = npc.getName();
+    if (name == null) name = "";
+    name = name.toLowerCase();
+    if (name.contains("orcboss")) return "orcboss";
+    if (name.contains("orc")) return "orc";
+    if (name.contains("frostbornboss")) return "frostbornboss";
+    if (name.contains("frostborn")) return "frostborn";
+    if (name.contains("wolfboss")) return "wolfboss";
+    if (name.contains("wolf")) return "wolf";
+    if (name.contains("skeletonboss")) return "skeletonboss";
+    if (name.contains("skeleton")) return "skeleton";
+    if (name.contains("suprememage") || name.contains("supreme") || name.contains("mage")) return "suprememage";
+    return "default";
   }
 
   private void defend(Character character) {
@@ -219,7 +247,22 @@ public class Battle {
 
     // 30% de buff por 2 turnos defendendo e 3 de cooldown
     Buff armorBuff = new Buff("ARMOR", bonus, 2 * 2, 2 * 2, character); //
+    
+    // Acionar animação somente se o buff foi realmente aplicado
+    boolean buffWasApplied = character.canApplyBuff("ARMOR");
     character.applyBuff(armorBuff);
+
+    try {
+      if (buffWasApplied) {
+        if (character instanceof Player) {
+          String cls = character.getCharacterClass().getCharacterClassName();
+          gp.getBattleEffectManager().triggerForPlayer(cls, "shield");
+        } else if (character instanceof Npc) {
+          String monsterKey = deriveMonsterKey((Npc) character);
+          gp.getBattleEffectManager().triggerForMonster(monsterKey, "shield");
+        }
+      }
+    } catch (Exception ignored) {}
   }
 
   private void fireOrb(Character monster) {
@@ -227,6 +270,11 @@ public class Battle {
     Buff damageOverTime = new Buff("DOT", effectiveDamage, 30, 0, player);
 
     monster.applyBuff(damageOverTime);
+
+    try {
+      String monsterKey = deriveMonsterKey((Npc) monster);
+      gp.getBattleEffectManager().triggerForMonster(monsterKey, "dot");
+    } catch (Exception ignored) {}
   }
 
   private void waterOrb(Character character) {
@@ -234,6 +282,16 @@ public class Battle {
     Buff healingOverTime = new Buff("HOT", effectiveHeal, 30, 0, character);
 
     character.applyBuff(healingOverTime);
+
+    try {
+      if (character instanceof Player) {
+        String cls = character.getCharacterClass().getCharacterClassName();
+        gp.getBattleEffectManager().triggerForPlayer(cls, "heal");
+      } else if (character instanceof Npc) {
+        String monsterKey = deriveMonsterKey((Npc) character);
+        gp.getBattleEffectManager().triggerForMonster(monsterKey, "heal");
+      }
+    } catch (Exception ignored) {}
   }
 
   private boolean flee(Character character) {
@@ -262,6 +320,15 @@ public class Battle {
 
   private void specialAttack(Character attacker, Character target, int countTurn) {
     attacker.getCharacterClass().getSpecialAbility(attacker, target, countTurn, gp);
+    try {
+      if (attacker instanceof Player) {
+        String cls = attacker.getCharacterClass().getCharacterClassName();
+        gp.getBattleEffectManager().triggerForPlayer(cls, "special");
+      } else if (attacker instanceof Npc) {
+        String monsterKey = deriveMonsterKey((Npc) attacker);
+        gp.getBattleEffectManager().triggerForMonster(monsterKey, "special");
+      }
+    } catch (Exception ignored) {}
   }
 
   // Health Potion
@@ -281,6 +348,17 @@ public class Battle {
       character.setAttributeHealth(character.getAttributeHealth() + diffCurrentHpAndMaxHp);
     }
     gp.getGameUI().showHeal(character, finalHeal, "POTION");
+
+    // Acionar animação de cura
+    try {
+      if (character instanceof Player) {
+        String cls = character.getCharacterClass().getCharacterClassName();
+        gp.getBattleEffectManager().triggerForPlayer(cls, "heal");
+      } else if (character instanceof Npc) {
+        String monsterKey = deriveMonsterKey((Npc) character);
+        gp.getBattleEffectManager().triggerForMonster(monsterKey, "heal");
+      }
+    } catch (Exception ignored) {}
   }
 
   // Mana Potion
@@ -299,6 +377,17 @@ public class Battle {
       character.setAttributeMana(character.getAttributeMana() + diffCurrentMpAndMaxMp);
     }
     gp.getGameUI().showMana(character, finalManaRecover);
+
+    // Acionar animação de cura
+    try {
+      if (character instanceof Player) {
+        String cls = character.getCharacterClass().getCharacterClassName();
+        gp.getBattleEffectManager().triggerForPlayer(cls, "heal");
+      } else if (character instanceof Npc) {
+        String monsterKey = deriveMonsterKey((Npc) character);
+        gp.getBattleEffectManager().triggerForMonster(monsterKey, "heal");
+      }
+    } catch (Exception ignored) {}
   }
 
   private void movePlayerAwayFromMonster() {

@@ -1,0 +1,129 @@
+{
+  "player": {
+    "mage": {
+      "attack": { "imagePath": "/sprites/effects/swordHit1time.gif", "durationMs": 700 },
+      "damage": { "imagePath": "/sprites/effects/swordHit1time.gif", "durationMs": 500 },
+      "shield": { "imagePath": "/sprites/effects/shield.gif", "durationMs": 800 },
+      "special": { "imagePath": "/sprites/effects/swordHit1time.gif", "durationMs": 900 },
+      "heal": { "imagePath": "/sprites/effects/heal.gif", "durationMs": 700 },
+      "dot": { "imagePath": "/sprites/effects/swordHit1time.gif", "durationMs": 700 }
+    },
+    "ranger": {
+      "attack": { "imagePath": "/sprites/effects/swordHit1time.gif", "durationMs": 700 },
+      "damage": { "imagePath": "/sprites/effects/swordHit1time.gif", "durationMs": 500 },
+      "shield": { "imagePath": "/sprites/effects/shield.gif", "durationMs": 800 },
+      "special": { "imagePath": "/sprites/effects/swordHit1time.gif", "durationMs": 900 },
+      "heal": { "imagePath": "/sprites/effects/heal.gif", "durationMs": 700 },
+      "dot": { "imagePath": "/sprites/effects/swordHit1time.gif", "durationMs": 700 }
+    },
+    "frostborn": {
+      "attack": { "imagePath": "/sprites/effects/swordHit1time.gif", "durationMs": 700 },
+      "damage": { "imagePath": "/sprites/effects/swordHit1time.gif", "durationMs": 500 },
+      "shield": { "imagePath": "/sprites/effects/shield.gif", "durationMs": 800 },
+      "special": { "imagePath": "/sprites/effects/swordHit1time.gif", "durationMs": 900 },
+      "heal": { "imagePath": "/sprites/effects/heal.gif", "durationMs": 700 },
+      "dot": { "imagePath": "/sprites/effects/swordHit1time.gif", "durationMs": 700 }
+    },
+    "default": {
+      "attack": { "imagePath": "/sprites/effects/swordHit1time.gif", "durationMs": 700 },
+      "damage": { "imagePath": "/sprites/effects/swordHit1time.gif", "durationMs": 500 },
+      "shield": { "imagePath": "/sprites/effects/shield.gif", "durationMs": 800 },
+      "special": { "imagePath": "/sprites/effects/swordHit1time.gif", "durationMs": 900 },
+      "heal": { "imagePath": "/sprites/effects/heal.gif", "heal": 700 },
+      "dot": { "imagePath": "/sprites/effects/swordHit1time.gif", "durationMs": 700 }
+    }
+  },
+  "monster": {
+    "default": {
+      "attack": { "imagePath": "/sprites/effects/swordHit1time.gif", "durationMs": 700 },
+      "damage": { "imagePath": "/sprites/effects/swordHit1time.gif", "durationMs": 500 },
+      "shield": { "imagePath": "/sprites/effects/shield.gif", "durationMs": 800 },
+      "special": { "imagePath": "/sprites/effects/swordHit1time.gif", "durationMs": 900 },
+      "heal": { "imagePath": "/sprites/effects/heal.gif", "durationMs": 700 },
+      "dot": { "imagePath": "/sprites/effects/swordHit1time.gif", "durationMs": 700 }
+    },
+    "orc": {
+      "attack": { "imagePath": "/sprites/effects/swordHit1time.gif", "durationMs": 700 },
+      "damage": { "imagePath": "/sprites/effects/swordHit1time.gif", "durationMs": 500 },
+      "shield": { "imagePath": "/sprites/effects/shield.gif", "durationMs": 800 },
+      "special": { "imagePath": "/sprites/effects/swordHit1time.gif", "durationMs": 900 },
+      "heal": { "imagePath": "/sprites/effects/heal.gif", "durationMs": 700 },
+      "dot": { "imagePath": "/sprites/effects/swordHit1time.gif", "durationMs": 700 }
+    },
+    "orcboss": {
+      "attack": { "imagePath": "/sprites/effects/swordHit1time.gif", "durationMs": 800 },
+      "damage": { "imagePath": "/sprites/effects/swordHit1time.gif", "durationMs": 600 },
+      "shield": { "imagePath": "/sprites/effects/shield.gif", "durationMs": 800 },
+      "special": { "imagePath": "/sprites/effects/swordHit1time.gif", "durationMs": 900 },
+      "heal": { "imagePath": "/sprites/effects/heal.gif", "durationMs": 700 },
+      "dot": { "imagePath": "/sprites/effects/swordHit1time.gif", "durationMs": 700 }
+    },
+    "frostborn": {
+      "attack": { "imagePath": "/sprites/effects/swordHit1time.gif", "durationMs": 700 },
+      "damage": { "imagePath": "/sprites/effects/swordHit1time.gif", "durationMs": 500 },
+      "shield": { "imagePath": "/sprites/effects/shield.gif", "durationMs": 800 },
+      "special": { "imagePath": "/sprites/effects/swordHit1time.gif", "durationMs": 900 },
+      "heal": { "imagePath": "/sprites/effects/heal.gif", "durationMs": 700 },
+      "dot": { "imagePath": "/sprites/effects/swordHit1time.gif", "durationMs": 700 }
+    },
+    "frostbornboss": {
+      "attack": { "imagePath": "/sprites/effects/swordHit1time.gif", "durationMs": 800 },
+      "damage": { "imagePath": "/sprites/effects/swordHit1time.gif", "durationMs": 600 },
+      "shield": { "imagePath": "/sprites/effects/shield.gif", "durationMs": 800 },
+      "special": { "imagePath": "/sprites/effects/swordHit1time.gif", "durationMs": 900 },
+      "heal": { "imagePath": "/sprites/effects/heal.gif", "durationMs": 700 },
+      "dot": { "imagePath": "/sprites/effects/swordHit1time.gif", "durationMs": 700 }
+    },
+    "wolf": {
+      "attack": { "imagePath": "/sprites/effects/swordHit1time.gif", "durationMs": 700 },
+      "damage": { "imagePath": "/sprites/effects/swordHit1time.gif", "durationMs": 500 },
+      "shield": { "imagePath": "/sprites/effects/shield.gif", "durationMs": 800 },
+      "special": { "imagePath": "/sprites/effects/swordHit1time.gif", "durationMs": 900 },
+      "heal": { "imagePath": "/sprites/effects/heal.gif", "durationMs": 700 },
+      "dot": { "imagePath": "/sprites/effects/swordHit1time.gif", "durationMs": 700 }
+    },
+    "wolfboss": {
+      "attack": { "imagePath": "/sprites/effects/swordHit1time.gif", "durationMs": 800 },
+      "damage": { "imagePath": "/sprites/effects/swordHit1time.gif", "durationMs": 600 },
+      "shield": { "imagePath": "/sprites/effects/shield.gif", "durationMs": 800 },
+      "special": { "imagePath": "/sprites/effects/swordHit1time.gif", "durationMs": 900 },
+      "heal": { "imagePath": "/sprites/effects/heal.gif", "durationMs": 700 },
+      "dot": { "imagePath": "/sprites/effects/swordHit1time.gif", "durationMs": 700 }
+    },
+    "skeleton": {
+      "attack": { "imagePath": "/sprites/effects/swordHit1time.gif", "durationMs": 700 },
+      "damage": { "imagePath": "/sprites/effects/swordHit1time.gif", "durationMs": 500 },
+      "shield": { "imagePath": "/sprites/effects/shield.gif", "durationMs": 800 },
+      "special": { "imagePath": "/sprites/effects/swordHit1time.gif", "durationMs": 900 },
+      "heal": { "imagePath": "/sprites/effects/heal.gif", "durationMs": 700 },
+      "dot": { "imagePath": "/sprites/effects/swordHit1time.gif", "durationMs": 700 }
+    },
+    "skeletonboss": {
+      "attack": { "imagePath": "/sprites/effects/swordHit1time.gif", "durationMs": 800 },
+      "damage": { "imagePath": "/sprites/effects/swordHit1time.gif", "durationMs": 600 },
+      "shield": { "imagePath": "/sprites/effects/shield.gif", "durationMs": 800 },
+      "special": { "imagePath": "/sprites/effects/swordHit1time.gif", "durationMs": 900 },
+      "heal": { "imagePath": "/sprites/effects/heal.gif", "durationMs": 700 },
+      "dot": { "imagePath": "/sprites/effects/swordHit1time.gif", "durationMs": 700 }
+    },
+    "suprememage": {
+      "attack": { "imagePath": "/sprites/effects/swordHit1time.gif", "durationMs": 900 },
+      "damage": { "imagePath": "/sprites/effects/swordHit1time.gif", "durationMs": 700 },
+      "shield": { "imagePath": "/sprites/effects/shield.gif", "durationMs": 800 },
+      "special": { "imagePath": "/sprites/effects/swordHit1time.gif", "durationMs": 900 },
+      "heal": { "imagePath": "/sprites/effects/heal.gif", "durationMs": 700 },
+      "dot": { "imagePath": "/sprites/effects/swordHit1time.gif", "durationMs": 700 }
+    }
+  },
+  "battleBackgrounds": {
+    "city": "/sprites/backgrounds/bg_city.png",
+    "dungeon1": "/sprites/backgrounds/bg-dungeon1.png",
+    "dungeon2": "/sprites/backgrounds/bg-dungeon2.png",
+    "dungeon3": "/sprites/backgrounds/bg_dungeon3.png",
+    "dungeon4": "/sprites/backgrounds/bg-dungeon4.png",
+    "totem": "/sprites/backgrounds/bg-totem.png",
+    "default": "/sprites/backgrounds/bg_default.png"
+  }
+}
+
+
