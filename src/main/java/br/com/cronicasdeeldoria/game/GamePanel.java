@@ -39,6 +39,7 @@ import br.com.cronicasdeeldoria.game.teleport.TeleportManager;
 import br.com.cronicasdeeldoria.game.quest.QuestManager;
 import br.com.cronicasdeeldoria.audio.AudioManager;
 import br.com.cronicasdeeldoria.audio.AudioContext;
+import br.com.cronicasdeeldoria.game.effects.BattleEffectManager;
 /**
  * Painel principal do jogo, responsável pelo loop de atualização, renderização e gerenciamento dos elementos do jogo.
  */
@@ -92,6 +93,7 @@ public class GamePanel extends JPanel implements Runnable{
 
   public Npc battleMonster = null;
   public Battle battle;
+  private BattleEffectManager battleEffectManager;
 
   // Cooldown para evitar re-engajamento imediato
   private long lastBattleEndTime = 0;
@@ -119,6 +121,12 @@ public class GamePanel extends JPanel implements Runnable{
     this.playerClassName = characterClass.getCharacterClassName();
 
     this.battle = new Battle(this);
+    this.battleEffectManager = new BattleEffectManager();
+    try {
+      this.battleEffectManager.loadConfig("/battle_effects.json");
+    } catch (Exception e) {
+      System.err.println("Erro ao carregar efeitos de batalha: " + e.getMessage());
+    }
     gameState = tutorialState;
 
     CharacterConfigLoader configLoader = CharacterConfigLoader.getInstance();
@@ -441,6 +449,7 @@ public class GamePanel extends JPanel implements Runnable{
 
     // Limpar estado de batalha
     battle.endBattle();
+    if (battleEffectManager != null) battleEffectManager.clearAll();
 
     if (playerWon) {
       // Entrar no estado de vitória
@@ -1477,6 +1486,14 @@ public class GamePanel extends JPanel implements Runnable{
 
   public GameUI getGameUI() {
     return gameUI;
+  }
+
+  public BattleEffectManager getBattleEffectManager() {
+    return battleEffectManager;
+  }
+
+  public String getCurrentMapName() {
+    return currentMapName;
   }
 
     public KeyboardMapper getKeyboardMapper() {
