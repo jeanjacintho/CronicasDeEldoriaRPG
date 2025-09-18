@@ -61,6 +61,14 @@
         "entrance": [4, 19]
       }
     },
+    "cemetery": {
+      "map": "cemetery",
+      "name": "Caverna dos Goblins",
+      "description": "Uma caverna perigosa",
+      "spawnPoints": {
+        "entrance": [10, 10]
+      }
+    },
     "bakery": {
       "map": "houses/bakery",
       "name": "Padaria",
@@ -161,11 +169,11 @@
   },
   "quickTeleports": {
     "home": "vila_eldoria,center",
-    "shop": "vila_eldoria,shop", 
+    "shop": "vila_eldoria,shop",
     "house": "casa_01,entrance",
     "dungeon": "dungeon_01,entrance",
     "forest": "forest,entrance",
-    "totem": "totem,entrance"
-
+    "totem": "totem,entrance",
+    "cemetery": "cemetery,entrance"
   }
 }

@@ -230,26 +230,54 @@ public class GamePanel extends JPanel implements Runnable{
     gameThread.start();
     this.requestFocusInWindow(); // Garantir que o GamePanel tenha foco
 
-    // Ao iniciar o jogo da 3 poções ao player
-    dialogManager.giveItemToPlayer("health_potion", 3);
-    dialogManager.giveItemToPlayer("mana_potion", 2);
+//    // Ao iniciar o jogo da 3 poções ao player
+//    dialogManager.giveItemToPlayer("health_potion", 3);
+//    dialogManager.giveItemToPlayer("mana_potion", 2);
+//
+//    dialogManager.giveItemToPlayer("mana_potion", 5);
+//    dialogManager.giveItemToPlayer("health_potion", 5);
+//
+//    //Itens para testar Dungeon3
+//    dialogManager.giveItemToPlayer("ring_rare", 1);
+//    dialogManager.giveItemToPlayer("shield_common", 1);
+//    dialogManager.giveItemToPlayer("armor_rare", 1);
+//    dialogManager.giveItemToPlayer("axe_rare", 1);
+//    dialogManager.giveItemToPlayer("bow_rare", 1);
+//
+//    //Itens para testar Dungeon4
+//    dialogManager.giveItemToPlayer("ring_legendary", 1);
+//    dialogManager.giveItemToPlayer("shield_legendary", 1);
+//    dialogManager.giveItemToPlayer("armor_legendary", 1);
+//    dialogManager.giveItemToPlayer("axe_legendary", 1);
+//    dialogManager.giveItemToPlayer("bow_legendary", 1);
 
-    dialogManager.giveItemToPlayer("mana_potion", 5);
-    dialogManager.giveItemToPlayer("health_potion", 5);
-
-    //Itens para testar Dungeon3
-    dialogManager.giveItemToPlayer("ring_rare", 1);
-    dialogManager.giveItemToPlayer("shield_common", 1);
+    //
+    dialogManager.giveItemToPlayer("armor_common", 1);
     dialogManager.giveItemToPlayer("armor_rare", 1);
-    dialogManager.giveItemToPlayer("axe_rare", 1);
-    dialogManager.giveItemToPlayer("bow_rare", 1);
-
-    //Itens para testar Dungeon4
-    dialogManager.giveItemToPlayer("ring_legendary", 1);
-    dialogManager.giveItemToPlayer("shield_legendary", 1);
     dialogManager.giveItemToPlayer("armor_legendary", 1);
-    dialogManager.giveItemToPlayer("axe_legendary", 1);
+    dialogManager.giveItemToPlayer("shield_common", 1);
+    dialogManager.giveItemToPlayer("shield_legendary", 1);
+
+    dialogManager.giveItemToPlayer("bow_common", 1);
+    dialogManager.giveItemToPlayer("bow_rare", 1);
     dialogManager.giveItemToPlayer("bow_legendary", 1);
+    dialogManager.giveItemToPlayer("mana_potion", 99);
+    dialogManager.giveItemToPlayer("health_potion", 99);
+
+    dialogManager.giveItemToPlayer("ring_common", 1);
+    dialogManager.giveItemToPlayer("ring_rare", 1);
+    dialogManager.giveItemToPlayer("ring_legendary", 1);
+    dialogManager.giveItemToPlayer("mana_potion", 99);
+    dialogManager.giveItemToPlayer("armor_rare", 1);
+
+    dialogManager.giveItemToPlayer("axe_common", 1);
+    dialogManager.giveItemToPlayer("axe_rare", 1);
+    dialogManager.giveItemToPlayer("axe_legendary", 1);
+
+    dialogManager.giveItemToPlayer("shield_legendary", 1);
+    dialogManager.giveItemToPlayer("hammer_legendary", 1);
+
+
   }
 
   @Override
@@ -435,6 +463,9 @@ public class GamePanel extends JPanel implements Runnable{
       // Remover monstro derrotado do mapa
       removeMonsterFromMap(battleMonster);
     } else {
+      //dialogManager.execu
+      //executeTeleportString("totem,10,10", "Teleporte rápido executado!");
+      executeTeleportString("cemetery,10,10", "Teleporte rápido");
       // Aplicar penalidade se necessário
       // player.applyDeathPenalty(); // se você tiver este metodo
     }

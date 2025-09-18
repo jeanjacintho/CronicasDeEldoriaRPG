@@ -34,7 +34,7 @@ public class DialogManager {
     private int selectedOptionIndex;
     private GamePanel gamePanel;
     private Player player;
-    
+
     // Sistema de paginação
     private List<String> textPages;
     private int currentPageIndex;
@@ -87,10 +87,10 @@ public class DialogManager {
                     String conditionType = conditionObj.get("type").getAsString();
                     String questId = conditionObj.get("questId").getAsString();
                     String statusStr = conditionObj.get("status").getAsString();
-                    
-                    br.com.cronicasdeeldoria.game.quest.QuestState requiredStatus = 
+
+                    br.com.cronicasdeeldoria.game.quest.QuestState requiredStatus =
                         br.com.cronicasdeeldoria.game.quest.QuestState.valueOf(statusStr.toUpperCase());
-                    
+
                     DialogCondition condition = new DialogCondition(conditionType, questId, requiredStatus);
                     dialog.setCondition(condition);
                 }
@@ -210,7 +210,7 @@ public class DialogManager {
         return false;
     }
     public boolean startDialog(int dialogId) {
-        
+
         Dialog dialog = dialogs.get(dialogId);
         if (dialog == null) {
             System.err.println("Diálogo com ID " + dialogId + " não encontrado!");
@@ -248,24 +248,24 @@ public class DialogManager {
      */
     private void processTextIntoPages(String text) {
         textPages.clear();
-        
+
         // Configurações de paginação - ajustadas para caixa menor
-        int maxWidth = 300; 
-        int maxHeight = 100; 
+        int maxWidth = 300;
+        int maxHeight = 100;
         int lineHeight = 18; // Altura aproximada de uma linha
         int maxLinesPerPage = maxHeight / lineHeight; // Aproximadamente 5-6 linhas por página
-        
+
         String[] words = text.split(" ");
         StringBuilder currentPage = new StringBuilder();
         int currentLines = 0;
-        
+
         for (String word : words) {
-            String testText = currentPage.length() > 0 ? 
+            String testText = currentPage.length() > 0 ?
                 currentPage + " " + word : word;
-            
+
             // Estimativa mais precisa do comprimento da linha (baseada na fonte de 16px)
             int estimatedLength = testText.length() * 9;
-            
+
             if (estimatedLength > maxWidth && currentPage.length() > 0) {
                 // Verificar se ainda cabe mais linhas nesta página
                 if (currentLines >= maxLinesPerPage) {
@@ -286,12 +286,12 @@ public class DialogManager {
                 currentPage.append(word);
             }
         }
-        
+
         // Adicionar última página se não estiver vazia
         if (currentPage.length() > 0) {
             textPages.add(currentPage.toString().trim());
         }
-        
+
         // Se não há páginas, criar uma página vazia
         if (textPages.isEmpty()) {
             textPages.add("");
@@ -443,7 +443,7 @@ public class DialogManager {
         }
 
         List<DialogOption> availableOptions = currentDialog.getAvailableOptions();
-        
+
         if (availableOptions.isEmpty()) {
             endDialog();
             return;
@@ -562,7 +562,7 @@ public class DialogManager {
      * @param teleportString String de teleporte.
      * @param message Mensagem a ser exibida.
      */
-    private void executeTeleportString(String teleportString, String message) {
+    public void executeTeleportString(String teleportString, String message) {
         try {
             String[] parts = teleportString.split(",");
 
@@ -659,7 +659,7 @@ public class DialogManager {
      * @param actionType Tipo da ação
      * @param actionData Dados da ação
      */
-    private void executeAction(String actionType, String actionData) {
+    public void executeAction(String actionType, String actionData) {
         switch (actionType) {
             case "give_item":
                 // Implementar sistema de itens futuramente
