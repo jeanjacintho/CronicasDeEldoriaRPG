@@ -4,10 +4,12 @@ import br.com.cronicasdeeldoria.audio.AudioManager;
 import br.com.cronicasdeeldoria.entity.character.Character;
 import br.com.cronicasdeeldoria.entity.character.player.Player;
 import br.com.cronicasdeeldoria.entity.character.npc.Npc;
+import br.com.cronicasdeeldoria.game.dialog.DialogManager;
 
 import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Objects;
 import java.util.Random;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -84,13 +86,12 @@ public class Battle {
 
     switch (action) {
       case "ATTACK": attack(player, monster); break;
-      case "DEFEND":defend(player); break;
+      case "DEFEND": defend(player); break;
       case "FLEE":
         if (flee(player)) {
           gp.endBattle(false);
           return;
-        }
-        break;
+        } break;
       case "SPECIAL": specialAttack(player, monster, countTurn); break;
       case "REGEN": waterOrb(player); break;
       case "DAMAGEOVERTIME": fireOrb(monster); break;
@@ -107,7 +108,7 @@ public class Battle {
     // Próximo turno
     nextTurn();
 
-    // Se for turno do monstro, processar automaticamente
+    // Se for turno do monstro, processar automaticamente com atraso
     if (getCurrentCharacter() instanceof Npc) {
       // Delay para processar o turno do monstro
       scheduler.schedule(() -> {
@@ -162,9 +163,9 @@ public class Battle {
 
     if (monster.getAttributeHealth() <= 0) {
       countTurn = 0;
-      for (Character c : turnOrder) {
-        c.updateBuffs(countTurn, gp);
-      }
+
+      // Quando o monstro é derrotado, os buffs do player são retirados
+      player.cleanActiveBuffs();
       gp.endBattle(true);
       return true;
     }
@@ -245,9 +246,9 @@ public class Battle {
   private void defend(Character character) {
     int bonus = (int)(character.getAttributeArmor() * 1.2);
 
-    // 30% de buff por 2 turnos defendendo e 3 de cooldown
+    // 20% de buff por 2 turnos defendendo e 3 de cooldown
     Buff armorBuff = new Buff("ARMOR", bonus, 2 * 2, 2 * 2, character); //
-    
+
     // Acionar animação somente se o buff foi realmente aplicado
     boolean buffWasApplied = character.canApplyBuff("ARMOR");
     character.applyBuff(armorBuff);
@@ -266,8 +267,15 @@ public class Battle {
   }
 
   private void fireOrb(Character monster) {
-    int effectiveDamage = (int) (monster.getAttributeMaxHealth() * 0.05);
-    Buff damageOverTime = new Buff("DOT", effectiveDamage, 30, 0, player);
+    int effectiveDamage = 0;
+
+    // Se o monstro enfrentado é o mago supremo o dot é menor.
+    if (Objects.equals(monster.getName(), "Mago Supremo")) {
+      effectiveDamage = (int) (monster.getAttributeMaxHealth() * 0.03);
+    } else {
+      effectiveDamage = (int) (monster.getAttributeMaxHealth() * 0.04);
+    }
+    Buff damageOverTime = new Buff("DOT", effectiveDamage, 99, 0, player);
 
     monster.applyBuff(damageOverTime);
 
@@ -279,7 +287,7 @@ public class Battle {
 
   private void waterOrb(Character character) {
     int effectiveHeal = (int) (character.getAttributeMaxHealth() * 0.035);
-    Buff healingOverTime = new Buff("HOT", effectiveHeal, 30, 0, character);
+    Buff healingOverTime = new Buff("HOT", effectiveHeal, 99, 0, character);
 
     character.applyBuff(healingOverTime);
 
@@ -301,18 +309,23 @@ public class Battle {
 
       int fleeChance = 50; // 50% chance base
 
-      if (Math.random() * 100 < fleeChance) {
+      // Player não pode fugir da batalha do Mago Supremo
+      if (Math.random() * 100 < fleeChance && !Objects.equals(monster.getName(), "Mago Supremo")) {
         System.out.println("You successfully fled from battle!");
         System.out.println("-----------------------------");
 
-        // Mover o jogador para fora da área de detecção (6 tiles de distância)
-        movePlayerAwayFromMonster();
+        // Mover o jogador para fora da área de detecção (2 tiles de distância)
+        //movePlayerAwayFromMonster();
 
         return true;
       } else {
-        System.out.println("Failed to flee!");
-        System.out.println("-----------------------------");
-        return false;
+        if (Objects.equals(monster.getName(), "Mago Supremo")) {
+          System.out.println("You can't flee from Supreme Mage!");
+        } else {
+          System.out.println("Failed to flee!");
+          System.out.println("-----------------------------");
+          return false;
+        }
       }
     }
     return false;
@@ -394,7 +407,7 @@ public class Battle {
     if (player == null || monster == null) return;
 
     int tileSize = gp.getTileSize();
-    int moveDistance = tileSize * 6; // 6 tiles de distância
+    int moveDistance = tileSize * 1; // 6 tiles de distância
 
     // Calcular diferença de posição
     int deltaX = player.getWorldX() - monster.getWorldX();

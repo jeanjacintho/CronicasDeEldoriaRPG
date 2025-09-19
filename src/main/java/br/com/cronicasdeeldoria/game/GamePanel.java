@@ -239,7 +239,7 @@ public class GamePanel extends JPanel implements Runnable{
     this.requestFocusInWindow(); // Garantir que o GamePanel tenha foco
 
     // Ao iniciar o jogo da 3 poções ao player
-    dialogManager.giveItemToPlayer("health_potion", 3);
+    dialogManager.giveItemToPlayer("health_potion", 10);
     dialogManager.giveItemToPlayer("mana_potion", 2);
 
     //dialogManager.giveItemToPlayer("mana_potion", 5);
@@ -258,6 +258,11 @@ public class GamePanel extends JPanel implements Runnable{
     dialogManager.giveItemToPlayer("armor_legendary", 1);
     dialogManager.giveItemToPlayer("axe_legendary", 1);
     dialogManager.giveItemToPlayer("bow_legendary", 1);
+
+    dialogManager.giveItemToPlayer("orb_water", 1);
+    dialogManager.giveItemToPlayer("orb_fire", 1);
+    dialogManager.giveItemToPlayer("orb_air", 1);
+    dialogManager.giveItemToPlayer("orb_earth", 1);
   }
 
   @Override
@@ -443,6 +448,7 @@ public class GamePanel extends JPanel implements Runnable{
       // Remover monstro derrotado do mapa
       removeMonsterFromMap(battleMonster);
     } else {
+
       // Aplicar penalidade se necessário
       // player.applyDeathPenalty(); // se você tiver este metodo
     }
