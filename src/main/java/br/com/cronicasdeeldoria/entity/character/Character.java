@@ -124,6 +124,10 @@ public class Character extends Entity {
     return attributeStrength + bonus;
   }
 
+  public void cleanActiveBuffs() {
+    activeBuffs.clear();
+  }
+
   public CharacterClass getCharacterClass() {
     return characterClass;
   }
@@ -210,4 +214,5 @@ public class Character extends Entity {
 
   public void setEquipment(Equipment equipment) { this.equipment = equipment; }
   public Equipment getEquipment() { return equipment; }
+
 }

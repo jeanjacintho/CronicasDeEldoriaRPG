@@ -25,14 +25,11 @@ public class SupremeMage extends Npc {
      */
     public SupremeMage(int x, int y) {
         super("Mago Supremo", false, "", x, y, "supreme_mage", 48, true, false, 0);
-
-        setAttributeHealth(200);
-        setAttributeMaxHealth(200);
-        setAttributeMana(100);
-        setAttributeMaxMana(100);
-        setAttributeStrength(50);
-        setAttributeDefence(35);
-        setAttributeAgility(25);
+        setAttributeHealth(500);
+        setAttributeMaxHealth(500);
+        setAttributeStrength(65);
+        setAttributeDefence(55);
+        setAttributeAgility(30);
         setSpeed(3);
 
         // Hitbox personalizada para o boss maior (64x64 pixels)
