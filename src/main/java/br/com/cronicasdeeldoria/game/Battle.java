@@ -269,7 +269,7 @@ public class Battle {
   private void fireOrb(Character monster) {
     int effectiveDamage = 0;
 
-    // Se o monstro enfrentado é o mago supremo o dot é menor
+    // Se o monstro enfrentado é o mago supremo o dot é menor.
     if (Objects.equals(monster.getName(), "Mago Supremo")) {
       effectiveDamage = (int) (monster.getAttributeMaxHealth() * 0.03);
     } else {
