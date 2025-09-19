@@ -18,7 +18,7 @@ public class WolfMonster extends Npc {
     super(name, isStatic, dialog, x, y, skin, playerSize, interactive, autoInteraction);
     setAttributeHealth(100);
     setAttributeMaxHealth(100);
-    setAttributeStrength(30);
+    setAttributeStrength(27);
     setAttributeDefence(20);
     setAttributeAgility(15);
   }

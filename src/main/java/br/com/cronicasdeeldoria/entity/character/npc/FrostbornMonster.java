@@ -19,7 +19,7 @@ public class FrostbornMonster extends Npc {
     super(name, isStatic, dialog, x, y, skin, playerSize, interactive, autoInteraction);
     setAttributeHealth(150);
     setAttributeMaxHealth(150);
-    setAttributeStrength(40);
+    setAttributeStrength(36);
     setAttributeDefence(30);
     setAttributeAgility(20);
   }

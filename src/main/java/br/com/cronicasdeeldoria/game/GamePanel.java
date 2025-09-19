@@ -242,8 +242,8 @@ public class GamePanel extends JPanel implements Runnable{
     dialogManager.giveItemToPlayer("health_potion", 3);
     dialogManager.giveItemToPlayer("mana_potion", 2);
 
-    dialogManager.giveItemToPlayer("mana_potion", 5);
-    dialogManager.giveItemToPlayer("health_potion", 5);
+    //dialogManager.giveItemToPlayer("mana_potion", 5);
+    //dialogManager.giveItemToPlayer("health_potion", 5);
 
     //Itens para testar Dungeon3
     dialogManager.giveItemToPlayer("ring_rare", 1);
