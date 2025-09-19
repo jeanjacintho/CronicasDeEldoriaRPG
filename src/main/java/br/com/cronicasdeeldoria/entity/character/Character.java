@@ -52,7 +52,6 @@ public class Character extends Entity {
     this.attributeStrength = attributeStrength;
     this.attributeAgility = attributeAgility;
     this.attributeArmor = attributeArmor;
-    //this.equipment = new Equipment( this);
   }
 
   public boolean hasActiveBuff(String type) {
@@ -88,7 +87,6 @@ public class Character extends Entity {
       switch (b.getType()) {
         case "HOT":
           if (countTurn % 2 == 0) {
-            System.out.println("Curei no turno: " + countTurn);
             int missingHp = Math.max(0, (attributeMaxHealth - attributeHealth));
             int healAmount = Math.max(0, Math.min(b.getBonus(), missingHp));
             if (healAmount > 0) {
@@ -100,7 +98,6 @@ public class Character extends Entity {
           break;
         case "DOT":
           if (countTurn % 2 == 0) {
-            System.out.println("Dano no turno: " + countTurn);
             attributeHealth -= b.getBonus();
 
             gp.getGameUI().showDamage(this, b.getBonus(), "DAMAGEOVERTIME");

@@ -253,11 +253,11 @@ public class GamePanel extends JPanel implements Runnable{
     dialogManager.giveItemToPlayer("bow_rare", 1);
 
     //Itens para testar Dungeon4
-//    dialogManager.giveItemToPlayer("ring_legendary", 1);
-//    dialogManager.giveItemToPlayer("shield_legendary", 1);
-//    dialogManager.giveItemToPlayer("armor_legendary", 1);
-//    dialogManager.giveItemToPlayer("axe_legendary", 1);
-//    dialogManager.giveItemToPlayer("bow_legendary", 1);
+    dialogManager.giveItemToPlayer("ring_legendary", 1);
+    dialogManager.giveItemToPlayer("shield_legendary", 1);
+    dialogManager.giveItemToPlayer("armor_legendary", 1);
+    dialogManager.giveItemToPlayer("axe_legendary", 1);
+    dialogManager.giveItemToPlayer("bow_legendary", 1);
   }
 
   @Override
