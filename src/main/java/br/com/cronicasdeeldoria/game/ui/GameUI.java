@@ -937,7 +937,7 @@ public class GameUI {
 
     // Se o player possui a orb no inventario libera pra utilizar o buff
     if (player.getGamePanel().getInventoryManager().hasItemById("orb_fire")) {
-      g2.drawString("(9) - Fire Orb Buff", 500, screenHeight - 40);
+      g2.drawString("(9) - Fire Orb Debuff", 500, screenHeight - 40);
     }
     if (player.getGamePanel().getInventoryManager().hasItemById("orb_water")) {
       g2.drawString("(0) - Water Orb Buff", 500, screenHeight - 10);
