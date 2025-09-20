@@ -1,9 +1,11 @@
 package br.com.cronicasdeeldoria.game.quest;
 
+import br.com.cronicasdeeldoria.entity.item.Item;
 import br.com.cronicasdeeldoria.entity.item.MagicOrb;
 import br.com.cronicasdeeldoria.entity.item.QuestItem;
 import br.com.cronicasdeeldoria.entity.object.TotemCentral;
 import br.com.cronicasdeeldoria.game.GamePanel;
+import br.com.cronicasdeeldoria.game.inventory.ItemFactory;
 import br.com.cronicasdeeldoria.entity.character.npc.Npc;
 import br.com.cronicasdeeldoria.entity.character.npc.SupremeMage;
 
@@ -76,7 +78,7 @@ public class QuestManager {
 
         // Definir recompensas
         QuestReward reward = new QuestReward(
-            0, 100, // 0 moedas, 100 XP
+            100, 0, // 110 moedas, 0 XP
             new String[]{},
             "Você encontrou o Sábio Ancião! Ele tem informações importantes sobre o equilíbrio do mundo."
         );
@@ -183,6 +185,19 @@ public class QuestManager {
      * @param npcName Nome do NPC que foi morto
      */
     public void onNpcKilled(String npcName) {
+        System.out.println("QuestManager.onNpcKilled() chamado para: " + npcName);
+        
+        // Verificar se é o Supremo Boss primeiro
+        if (npcName.equals("Mago Supremo") || npcName.contains("SupremeMage")) {
+            System.out.println("Supremo Boss detectado! Atualizando quest final_boss...");
+            
+            // Atualizar objetivo da quest final_boss
+            updateQuestObjective("final_boss", "kill_supreme_mage", true);
+            
+            // Chamar método de vitória final
+            onSupremeBossDefeated();
+            return;
+        }
         
         // Mapear nomes de NPCs para IDs de quest
         String npcId = null;
@@ -237,10 +252,10 @@ public class QuestManager {
         try {
             // Criar orbe usando ItemFactory
             String orbId = "orb_" + orbType;
-            br.com.cronicasdeeldoria.entity.item.Item item = br.com.cronicasdeeldoria.game.inventory.ItemFactory.createItem(orbId);
+            Item item = ItemFactory.createItem(orbId);
             
-            if (item instanceof br.com.cronicasdeeldoria.entity.item.MagicOrb) {
-                br.com.cronicasdeeldoria.entity.item.MagicOrb orb = (br.com.cronicasdeeldoria.entity.item.MagicOrb) item;
+            if (item instanceof MagicOrb) {
+                MagicOrb orb = (MagicOrb) item;
                 
                 // Adicionar ao inventário do jogador
                 if (gamePanel.getInventoryManager() != null) {
@@ -648,6 +663,9 @@ public class QuestManager {
                 SupremeMage boss = new SupremeMage(bossX, bossY);
                 gamePanel.addNpc(boss);
 
+                // Criar quest final do boss
+                createFinalBossQuest();
+
                 if (gamePanel.getGameUI() != null) {
                     gamePanel.getGameUI().addMessage(
                         "O Mago Supremo foi despertado! Prepare-se para a batalha final!",
@@ -658,22 +676,85 @@ public class QuestManager {
     }
 
     /**
-     * Chamado quando o boss final é derrotado.
+     * Cria a quest final para derrotar o Supremo Boss.
      */
-    public void onBossDefeated() {
-        if (gamePanel != null && gamePanel.getGameUI() != null) {
-            gamePanel.getGameUI().addMessage(
-                "Parabéns! Você derrotou o Mago Supremo e restaurou o equilíbrio do mundo!",
-                null, 10000L);
+    private void createFinalBossQuest() {
+        if (activeQuests.containsKey("final_boss")) {
+            return; // Quest já existe
         }
         
-        // Dar recompensas finais
-        if (gamePanel != null) {
-            Quest mainQuest = completedQuests.get("main_orb_quest");
-            if (mainQuest != null && mainQuest.getReward() != null) {
-                giveQuestRewards(mainQuest);
-            }
+        Quest finalBossQuest = new Quest(
+            "final_boss",
+            "Queda do Mago Supremo",
+            "O Mago Supremo foi despertado! Derrote-o para restaurar o equilíbrio do mundo e completar sua jornada."
+        );
+
+        // Adicionar objetivo de matar o Supremo Boss
+        finalBossQuest.addObjective(new QuestObjective(
+            "kill_supreme_mage", 
+            "Derrotar o Mago Supremo", 
+            QuestObjectiveType.KILL_NPC, 
+            "supreme_mage"
+        ));
+
+        // Definir recompensas finais épicas
+        QuestReward reward = new QuestReward(
+            5000, 1000, // 5000 moedas, 1000 XP
+            new String[]{"legendary_sword", "magic_armor", "crown_of_eldoria"},
+            "Parabéns! Você derrotou o Mago Supremo e restaurou o equilíbrio do mundo!"
+        );
+        finalBossQuest.setReward(reward);
+
+        activeQuests.put("final_boss", finalBossQuest);
+        
+        // Iniciar a quest diretamente
+        finalBossQuest.setState(QuestState.IN_PROGRESS);
+        
+        if (gamePanel != null && gamePanel.getGameUI() != null) {
+            gamePanel.getGameUI().addMessage(
+                "Nova quest iniciada: " + finalBossQuest.getTitle(), null, 4000L);
         }
+    }
+
+    /**
+     * Chamado quando o Supremo Boss é derrotado.
+     */
+    public void onSupremeBossDefeated() {
+        System.out.println("onSupremeBossDefeated() chamado!");
+        
+        if (gamePanel != null) {
+            System.out.println("Ativando estado de endgame...");
+            // Ativar estado de endgame
+            gamePanel.gameState = gamePanel.endgameState;
+            
+            // Reproduzir música de vitória final
+            if (gamePanel.getAudioManager() != null) {
+                System.out.println("Reproduzindo música de vitória...");
+                gamePanel.getAudioManager().changeContext(br.com.cronicasdeeldoria.audio.AudioContext.VICTORY);
+            }
+            
+            // Dar recompensas da quest final_boss
+            Quest finalBossQuest = completedQuests.get("final_boss");
+            if (finalBossQuest != null && finalBossQuest.getReward() != null) {
+                System.out.println("Dando recompensas da quest final_boss...");
+                giveQuestRewards(finalBossQuest);
+            } else {
+                System.out.println("Quest final_boss não encontrada ou sem recompensas!");
+            }
+            
+            System.out.println("Estado de endgame ativado com sucesso!");
+        } else {
+            System.out.println("ERRO: gamePanel é null!");
+        }
+    }
+
+    /**
+     * Chamado quando o boss final é derrotado.
+     * @deprecated Use onSupremeBossDefeated() instead
+     */
+    public void onBossDefeated() {
+        // Redirecionar para o novo método
+        onSupremeBossDefeated();
     }
 
     /**
@@ -729,8 +810,9 @@ public class QuestManager {
 
             // Dar itens
             for (String itemId : reward.getItemIds()) {
-                // Implementar criação de itens de recompensa
+                // TODO: Implementar criação de itens de recompensa
                 // gamePanel.getPlayer().getInventoryManager().addItem(ItemFactory.createItem(itemId));
+                System.out.println("Item de recompensa: " + itemId); // Evitar warning de variável não utilizada
             }
 
             if (gamePanel.getGameUI() != null) {

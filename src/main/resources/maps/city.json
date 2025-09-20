@@ -23843,7 +23843,8 @@
         {
           "id": "smith_house",
           "x": 21,
-          "y": 17
+          "y": 17,
+          "interactive": true
         },
         {
           "id": "library_base",
@@ -23864,22 +23865,26 @@
         {
           "id": "house_03",
           "x": 18,
-          "y": 39
+          "y": 39,
+          "interactive": true
         },
         {
           "id": "bakery",
           "x": 30,
-          "y": 39
+          "y": 39,
+          "interactive": true
         },
         {
           "id": "house_01",
           "x": 45,
-          "y": 39
+          "y": 39,
+          "interactive": true
         },
         {
           "id": "house_02",
           "x": 37,
-          "y": 45
+          "y": 45,
+          "interactive": true
         },
         {
           "id": "city_to_dungeon3:entrance",

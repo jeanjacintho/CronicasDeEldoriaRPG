@@ -10,11 +10,14 @@ import java.awt.BasicStroke;
 
 import javax.swing.JPanel;
 
+import br.com.cronicasdeeldoria.entity.item.Item;
+import br.com.cronicasdeeldoria.entity.item.MagicOrb;
+import br.com.cronicasdeeldoria.game.inventory.ItemFactory;
 import br.com.cronicasdeeldoria.entity.character.npc.*;
-
 import br.com.cronicasdeeldoria.entity.character.player.Player;
+import br.com.cronicasdeeldoria.entity.character.npc.NpcSpriteLoader;
+import br.com.cronicasdeeldoria.entity.character.npc.NpcFactory;
 import br.com.cronicasdeeldoria.entity.character.classes.*;
-import br.com.cronicasdeeldoria.entity.character.classes.Barbarian;
 import br.com.cronicasdeeldoria.entity.object.MapObject;
 import br.com.cronicasdeeldoria.entity.object.ObjectManager;
 import br.com.cronicasdeeldoria.entity.object.ObjectSpriteLoader;
@@ -90,6 +93,7 @@ public class GamePanel extends JPanel implements Runnable{
   public final int dialogState = 5;
   public final int pauseState = 6;
   public final int victoryState = 7;
+  public final int endgameState = 8;
 
   public Npc battleMonster = null;
   public Battle battle;
@@ -304,7 +308,9 @@ public class GamePanel extends JPanel implements Runnable{
 
         // Atualizar NPCs apenas se houver NPCs no mapa
         if (npcs != null && !npcs.isEmpty()) {
-          for (Npc npc : npcs) {
+          // Criar uma cópia da lista para evitar ConcurrentModificationException
+          List<Npc> npcsCopy = new ArrayList<>(npcs);
+          for (Npc npc : npcsCopy) {
             npc.update(this, player);
           }
         }
@@ -342,6 +348,12 @@ public class GamePanel extends JPanel implements Runnable{
           gameState = pauseState;
           keyHandler.escapeKeyPressed = false;
         }
+
+        // Debug: Tecla L para completar todas as orbes e spawnar Supremo Boss
+        if (keyHandler.lPressed) {
+          completeAllOrbsAndSpawnSupremeBoss();
+          keyHandler.lPressed = false;
+        }
       }
 
       if (gameState == battleState) {
@@ -366,6 +378,10 @@ public class GamePanel extends JPanel implements Runnable{
 
       if (gameState == victoryState) {
         updateVictory();
+      }
+
+      if (gameState == endgameState) {
+        updateEndgame();
       }
     }
 
@@ -559,7 +575,9 @@ public class GamePanel extends JPanel implements Runnable{
 
         // Verificar interação com NPCs apenas se houver NPCs no mapa
         if (npcs != null && !npcs.isEmpty()) {
-            for (Npc npc : npcs) {
+            // Criar uma cópia da lista para evitar ConcurrentModificationException
+            List<Npc> npcsCopy = new ArrayList<>(npcs);
+            for (Npc npc : npcsCopy) {
                 // Verificar se é um monstro (usar distância de 5 tiles)
                 if (npc instanceof WolfMonster || npc instanceof SkeletonMonster ||
                     npc instanceof FrostbornMonster || npc instanceof OrcMonster ||
@@ -717,7 +735,9 @@ public class GamePanel extends JPanel implements Runnable{
 
         // Verificar interação com monstros primeiro (maior prioridade) apenas se houver NPCs
         if (npcs != null && !npcs.isEmpty()) {
-          for (Npc npc : npcs) {
+          // Criar uma cópia da lista para evitar ConcurrentModificationException
+          List<Npc> npcsCopy = new ArrayList<>(npcs);
+          for (Npc npc : npcsCopy) {
             if (npc instanceof WolfMonster) {
                 if (isPlayerNearMonster(player, npc.getWorldX(), npc.getWorldY()) && npc.isInteractive()) {
                     npc.interact(this);
@@ -727,7 +747,9 @@ public class GamePanel extends JPanel implements Runnable{
           }
 
           // Verificar interação com NPCs normais
-          for (Npc npc : npcs) {
+          // Criar uma cópia da lista para evitar ConcurrentModificationException
+          List<Npc> npcsCopy2 = new ArrayList<>(npcs);
+          for (Npc npc : npcsCopy2) {
             if (!(npc instanceof WolfMonster)) {
                 if (isPlayerNearNpc(player, npc.getWorldX(), npc.getWorldY()) && npc.isInteractive()) {
                     npc.interact(this);
@@ -800,18 +822,31 @@ public class GamePanel extends JPanel implements Runnable{
 
         // Renderizar NPCs apenas se houver NPCs no mapa
         if (npcs != null && !npcs.isEmpty()) {
-          for (Npc npc : npcs) {
+          // Criar uma cópia da lista para evitar ConcurrentModificationException
+          List<Npc> npcsCopy = new ArrayList<>(npcs);
+          for (Npc npc : npcsCopy) {
             npc.draw(graphics2D, npcSpriteLoader, tileSize, player, player.getScreenX(), player.getScreenY());
-
-              // Renderizar tecla de interação para NPC se necessário
-              if (simpleInteractionManager != null) {
-                  simpleInteractionManager.renderInteractionKeyForEntity(graphics2D,
-                      npc.getWorldX(), npc.getWorldY(),
-                      npc.getWorldX() - player.getWorldX() + player.getScreenX(),
-                      npc.getWorldY() - player.getWorldY() + player.getScreenY(),
-                      "npc", tileSize);
-              }
           }
+        }
+
+        // Renderizar player
+        player.draw(graphics2D);
+
+        // Renderizar camadas overlay APÓS o player (para efeito de profundidade)
+        tileManager.drawOverlayLayers(graphics2D);
+
+        // Renderizar teclas de interação APÓS as camadas overlay (para ficarem por cima)
+        // Renderizar teclas de interação para NPCs
+        if (npcs != null && !npcs.isEmpty() && simpleInteractionManager != null) {
+            // Criar uma cópia da lista para evitar ConcurrentModificationException
+            List<Npc> npcsCopy = new ArrayList<>(npcs);
+            for (Npc npc : npcsCopy) {
+                simpleInteractionManager.renderInteractionKeyForEntity(graphics2D,
+                    npc.getWorldX(), npc.getWorldY(),
+                    npc.getWorldX() - player.getWorldX() + player.getScreenX(),
+                    npc.getWorldY() - player.getWorldY() + player.getScreenY(),
+                    "npc", tileSize);
+            }
         }
 
         // Renderizar teclas de interação para objetos
@@ -847,12 +882,6 @@ public class GamePanel extends JPanel implements Runnable{
             }
         }
 
-        // Renderizar player
-        player.draw(graphics2D);
-
-        // Renderizar camadas overlay APÓS o player (para efeito de profundidade)
-        tileManager.drawOverlayLayers(graphics2D);
-
         // Interface normal de jogo
         gameUI.draw(graphics2D);
 
@@ -873,7 +902,9 @@ public class GamePanel extends JPanel implements Runnable{
 
         // Renderizar NPCs apenas se houver NPCs no mapa
         if (npcs != null && !npcs.isEmpty()) {
-          for (Npc npc : npcs) {
+          // Criar uma cópia da lista para evitar ConcurrentModificationException
+          List<Npc> npcsCopy = new ArrayList<>(npcs);
+          for (Npc npc : npcsCopy) {
             npc.draw(graphics2D, npcSpriteLoader, tileSize, player, player.getScreenX(), player.getScreenY());
           }
         }
@@ -900,7 +931,9 @@ public class GamePanel extends JPanel implements Runnable{
 
         // Renderizar NPCs apenas se houver NPCs no mapa
         if (npcs != null && !npcs.isEmpty()) {
-          for (Npc npc : npcs) {
+          // Criar uma cópia da lista para evitar ConcurrentModificationException
+          List<Npc> npcsCopy = new ArrayList<>(npcs);
+          for (Npc npc : npcsCopy) {
             npc.draw(graphics2D, npcSpriteLoader, tileSize, player, player.getScreenX(), player.getScreenY());
           }
         }
@@ -927,7 +960,9 @@ public class GamePanel extends JPanel implements Runnable{
 
         // Renderizar NPCs apenas se houver NPCs no mapa
         if (npcs != null && !npcs.isEmpty()) {
-          for (Npc npc : npcs) {
+          // Criar uma cópia da lista para evitar ConcurrentModificationException
+          List<Npc> npcsCopy = new ArrayList<>(npcs);
+          for (Npc npc : npcsCopy) {
             npc.draw(graphics2D, npcSpriteLoader, tileSize, player, player.getScreenX(), player.getScreenY());
           }
         }
@@ -956,7 +991,9 @@ public class GamePanel extends JPanel implements Runnable{
 
         // Renderizar NPCs apenas se houver NPCs no mapa
         if (npcs != null && !npcs.isEmpty()) {
-          for (Npc npc : npcs) {
+          // Criar uma cópia da lista para evitar ConcurrentModificationException
+          List<Npc> npcsCopy = new ArrayList<>(npcs);
+          for (Npc npc : npcsCopy) {
             npc.draw(graphics2D, npcSpriteLoader, tileSize, player, player.getScreenX(), player.getScreenY());
           }
         }
@@ -980,7 +1017,9 @@ public class GamePanel extends JPanel implements Runnable{
 
         // Renderizar NPCs apenas se houver NPCs no mapa
         if (npcs != null && !npcs.isEmpty()) {
-          for (Npc npc : npcs) {
+          // Criar uma cópia da lista para evitar ConcurrentModificationException
+          List<Npc> npcsCopy = new ArrayList<>(npcs);
+          for (Npc npc : npcsCopy) {
             npc.draw(graphics2D, npcSpriteLoader, tileSize, player, player.getScreenX(), player.getScreenY());
           }
         }
@@ -993,6 +1032,32 @@ public class GamePanel extends JPanel implements Runnable{
 
         // Desenhar overlay de vitória
         drawVictoryOverlay(graphics2D);
+      } else if (gameState == endgameState) {
+        // Desenha o jogo de fundo durante o endgame
+        tileManager.draw(graphics2D);
+
+        // Renderizar objetos
+        if (objectManager != null) {
+          objectManager.drawObjects(graphics2D);
+        }
+
+        // Renderizar NPCs apenas se houver NPCs no mapa
+        if (npcs != null && !npcs.isEmpty()) {
+          // Criar uma cópia da lista para evitar ConcurrentModificationException
+          List<Npc> npcsCopy = new ArrayList<>(npcs);
+          for (Npc npc : npcsCopy) {
+            npc.draw(graphics2D, npcSpriteLoader, tileSize, player, player.getScreenX(), player.getScreenY());
+          }
+        }
+
+        // Renderizar player
+        player.draw(graphics2D);
+
+        // Interface normal de jogo
+        gameUI.draw(graphics2D);
+
+        // Desenhar overlay de endgame
+        drawEndgameOverlay(graphics2D);
       }
       graphics2D.dispose();
     }
@@ -1178,6 +1243,97 @@ public class GamePanel extends JPanel implements Runnable{
     g2.drawString(instructionText, instructionX, instructionY);
   }
 
+  /**
+   * Desenha o overlay de endgame.
+   */
+  private void drawEndgameOverlay(Graphics2D g2) {
+    System.out.println("drawEndgameOverlay() sendo executado!");
+    
+    // Overlay semi-transparente
+    g2.setColor(new Color(0, 0, 0, 150));
+    g2.fillRect(0, 0, getWidth(), getHeight());
+
+    // Caixa de endgame centralizada
+    int boxWidth = 500;
+    int boxHeight = 300;
+    int boxX = (getWidth() - boxWidth) / 2;
+    int boxY = (getHeight() - boxHeight) / 2;
+
+    // Sombra da caixa
+    g2.setColor(new Color(0, 0, 0, 100));
+    g2.fillRoundRect(boxX + 4, boxY + 4, boxWidth, boxHeight, 20, 20);
+
+    // Caixa principal (dourada para vitória final)
+    g2.setColor(new Color(255, 215, 0, 250));
+    g2.fillRoundRect(boxX, boxY, boxWidth, boxHeight, 20, 20);
+
+    // Borda da caixa
+    g2.setColor(new Color(255, 255, 0, 200));
+    g2.setStroke(new BasicStroke(3));
+    g2.drawRoundRect(boxX, boxY, boxWidth, boxHeight, 20, 20);
+
+    // Texto "VOCÊ VENCEU!"
+    g2.setColor(Color.WHITE);
+    g2.setFont(FontManager.getFont(42f));
+    String victoryText = "VOCÊ VENCEU!";
+    int textWidth = g2.getFontMetrics().stringWidth(victoryText);
+    int textX = boxX + (boxWidth - textWidth) / 2;
+    int textY = boxY + 80;
+
+    // Sombra do texto
+    g2.setColor(new Color(0, 0, 0, 150));
+    g2.drawString(victoryText, textX + 2, textY + 2);
+
+    // Texto principal
+    g2.setColor(Color.WHITE);
+    g2.drawString(victoryText, textX, textY);
+
+    // Texto da mensagem principal
+    g2.setFont(FontManager.getFont(20f));
+    String mainMessage = "A ordem foi devolvida para este mundo!";
+    int mainMessageWidth = g2.getFontMetrics().stringWidth(mainMessage);
+    int mainMessageX = boxX + (boxWidth - mainMessageWidth) / 2;
+    int mainMessageY = boxY + 130;
+
+    // Sombra da mensagem principal
+    g2.setColor(new Color(0, 0, 0, 150));
+    g2.drawString(mainMessage, mainMessageX + 1, mainMessageY + 1);
+
+    // Mensagem principal
+    g2.setColor(new Color(200, 200, 200));
+    g2.drawString(mainMessage, mainMessageX, mainMessageY);
+
+    // Texto da mensagem secundária
+    g2.setFont(FontManager.getFont(16f));
+    String secondaryMessage = "O equilíbrio foi restaurado e a paz retornou a Eldoria.";
+    int secondaryMessageWidth = g2.getFontMetrics().stringWidth(secondaryMessage);
+    int secondaryMessageX = boxX + (boxWidth - secondaryMessageWidth) / 2;
+    int secondaryMessageY = boxY + 160;
+
+    // Sombra da mensagem secundária
+    g2.setColor(new Color(0, 0, 0, 150));
+    g2.drawString(secondaryMessage, secondaryMessageX + 1, secondaryMessageY + 1);
+
+    // Mensagem secundária
+    g2.setColor(new Color(180, 180, 180));
+    g2.drawString(secondaryMessage, secondaryMessageX, secondaryMessageY);
+
+    // Instrução
+    g2.setFont(FontManager.getFont(18f));
+    String instructionText = "Pressione ENTER para continuar";
+    int instructionWidth = g2.getFontMetrics().stringWidth(instructionText);
+    int instructionX = boxX + (boxWidth - instructionWidth) / 2;
+    int instructionY = boxY + 240;
+
+    // Sombra da instrução
+    g2.setColor(new Color(0, 0, 0, 150));
+    g2.drawString(instructionText, instructionX + 1, instructionY + 1);
+
+    // Instrução principal
+    g2.setColor(new Color(200, 200, 200));
+    g2.drawString(instructionText, instructionX, instructionY);
+  }
+
   // Sistema de inventário
   private void updateInventory() {
     if (inventoryManager == null) return;
@@ -1285,10 +1441,7 @@ public class GamePanel extends JPanel implements Runnable{
       // Verificar se há paginação ativa no DialogManager (sistema principal)
       if (!dialogManager.isOnLastPage()) {
         dialogManager.nextPage();
-        // Sincronizar com DialogUI
-        if (dialogUI != null) {
-          dialogUI.nextPage();
-        }
+        // DialogUI agora usa diretamente o DialogManager, não precisa sincronizar
       } else {
         dialogManager.confirmSelection();
       }
@@ -1300,10 +1453,7 @@ public class GamePanel extends JPanel implements Runnable{
 
       if (!dialogManager.isOnLastPage()) {
         dialogManager.nextPage();
-        // Sincronizar com DialogUI
-        if (dialogUI != null) {
-          dialogUI.nextPage();
-        }
+        // DialogUI agora usa diretamente o DialogManager, não precisa sincronizar
       }
     }
 
@@ -1313,10 +1463,7 @@ public class GamePanel extends JPanel implements Runnable{
 
       if (!dialogManager.isOnFirstPage()) {
         dialogManager.previousPage();
-        // Sincronizar com DialogUI
-        if (dialogUI != null) {
-          dialogUI.previousPage();
-        }
+        // DialogUI agora usa diretamente o DialogManager, não precisa sincronizar
       }
     }
 
@@ -1345,6 +1492,20 @@ public class GamePanel extends JPanel implements Runnable{
       keyHandler.actionPressed = false;
 
       // Restaurar contexto de áudio do mapa após vitória
+      restoreMapAudioContext();
+    }
+  }
+
+  // Sistema de endgame
+  private void updateEndgame() {
+    System.out.println("updateEndgame() sendo executado!");
+    
+    // ENTER para sair da tela de endgame
+    if (keyHandler.actionPressed) {
+      gameState = playState;
+      keyHandler.actionPressed = false;
+
+      // Restaurar contexto de áudio do mapa após endgame
       restoreMapAudioContext();
     }
   }
@@ -1446,6 +1607,8 @@ public class GamePanel extends JPanel implements Runnable{
 
   // Metodo para remover monstro derrotado do mapa
   private void removeMonsterFromMap(Npc monster) {
+    System.out.println("removeMonsterFromMap() chamado para: " + (monster != null ? monster.getName() : "null"));
+    
     // Notificar QuestManager sobre a morte do NPC
     if (questManager != null && monster != null) {
       questManager.onNpcKilled(monster.getName());
@@ -1548,24 +1711,84 @@ public class GamePanel extends JPanel implements Runnable{
 
       // Verificar se boss foi derrotado
       if (questManager.isBossSpawned()) {
-        checkBossDefeat();
+        // Verificar se o boss final foi derrotado
+        // Esta lógica foi movida para removeMonsterFromMap() para evitar duplicação
       }
     }
   }
 
   /**
-   * Verifica se o boss final foi derrotado.
+   * Método de debug para completar todas as orbes e spawnar o Supremo Boss.
+   * Pressione L para usar.
    */
-  private void checkBossDefeat() {
-    if (npcs != null) {
-      for (Npc npc : npcs) {
-        if (npc instanceof SupremeMage &&
-            npc.getAttributeHealth() <= 0) {
-          questManager.onBossDefeated();
-          break;
+  private void completeAllOrbsAndSpawnSupremeBoss() {
+    System.out.println("=== DEBUG: Completando todas as orbes e spawnando Supremo Boss ===");
+    
+    if (questManager == null) {
+      System.out.println("ERRO: QuestManager é null!");
+      return;
+    }
+
+    // Simular coleta de todas as 4 orbes
+    String[] orbTypes = {"earth", "fire", "water", "air"};
+    for (String orbType : orbTypes) {
+      try {
+        String orbId = "orb_" + orbType;
+        Item item = ItemFactory.createItem(orbId);
+        
+        if (item instanceof MagicOrb) {
+          MagicOrb orb = (MagicOrb) item;
+          
+          // Adicionar ao inventário
+          if (inventoryManager != null) {
+            inventoryManager.addItem(orb);
+            System.out.println("Orbe " + orbType + " adicionada ao inventário");
+          }
+          
+          // Notificar QuestManager
+          questManager.onOrbCollected(orb);
         }
+      } catch (Exception e) {
+        System.err.println("Erro ao criar orbe " + orbType + ": " + e.getMessage());
       }
     }
+
+    // Simular depósito de todas as orbes no Totem
+    if (questManager.getTotemCentral() != null) {
+      System.out.println("Simulando depósito de todas as orbes no Totem Central...");
+      
+      // Simular depósito de cada orbe
+      for (String orbType : orbTypes) {
+        try {
+          String orbId = "orb_" + orbType;
+          Item item = ItemFactory.createItem(orbId);
+          
+          if (item instanceof MagicOrb) {
+            MagicOrb orb = (MagicOrb) item;
+            questManager.onOrbDeposited(orb);
+            System.out.println("Orbe " + orbType + " depositada no Totem");
+          }
+        } catch (Exception e) {
+          System.err.println("Erro ao depositar orbe " + orbType + ": " + e.getMessage());
+        }
+      }
+    } else {
+      System.out.println("ERRO: TotemCentral não encontrado!");
+    }
+
+    // Verificar se o Supremo Boss foi spawnado
+    if (questManager.isBossSpawned()) {
+      System.out.println("✅ Supremo Boss foi spawnado com sucesso!");
+      System.out.println("✅ Quest 'final_boss' deve estar ativa!");
+      
+      if (gameUI != null) {
+        gameUI.addMessage("DEBUG: Todas as orbes completadas! Supremo Boss spawnado!", null, 5000L);
+      }
+    } else {
+      System.out.println("❌ Supremo Boss NÃO foi spawnado!");
+    }
+    
+    System.out.println("=== FIM DEBUG ===");
   }
 
   /**
