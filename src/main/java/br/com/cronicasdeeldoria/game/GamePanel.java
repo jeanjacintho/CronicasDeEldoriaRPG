@@ -465,8 +465,11 @@ public class GamePanel extends JPanel implements Runnable{
       removeMonsterFromMap(battleMonster);
     } else {
 
-      // Aplicar penalidade se necessário
-      // player.applyDeathPenalty(); // se você tiver este metodo
+        // Aplicar penalidade se necessário
+        // player.applyDeathPenalty(); // se você tiver este metodo
+        
+        // Teletransportar jogador para o cemitério quando morre
+        teleportPlayerToCemetery();
     }
 
     // Limpar estado de batalha
@@ -1718,9 +1721,49 @@ public class GamePanel extends JPanel implements Runnable{
   }
 
   /**
-   * Método de debug para completar todas as orbes e spawnar o Supremo Boss.
-   * Pressione L para usar.
+   * Teletransporta o jogador para o centro do cemitério quando ele morre.
    */
+  private void teleportPlayerToCemetery() {
+    try {
+      System.out.println("Jogador morreu! Teletransportando para o cemitério...");
+      
+      // Carregar mapa do cemitério
+      loadMap("cemetery");
+      
+      // Posicionar jogador no centro do cemitério
+      // Mapa cemetery tem 25x19 tiles, centro seria aproximadamente (12, 9)
+      int centerX = 12 * tileSize; // Converter tile para pixel
+      int centerY = 9 * tileSize;  // Converter tile para pixel
+      
+      player.setWorldX(centerX);
+      player.setWorldY(centerY);
+      
+      // Restaurar um pouco de vida para não morrer imediatamente
+      if (player.getAttributeHealth() <= 0) {
+        player.setAttributeHealth(player.getAttributeMaxHealth() / 4); // 25% da vida máxima
+      }
+      
+      // Mostrar mensagem
+      if (gameUI != null) {
+        gameUI.addMessage("Você foi teletransportado para o cemitério após sua morte!", null, 5000L);
+        gameUI.addMessage("Sua vida foi parcialmente restaurada.", null, 3000L);
+      }
+      
+      System.out.println("Jogador teletransportado para cemitério na posição (" + centerX + ", " + centerY + ")");
+      
+    } catch (Exception e) {
+      System.err.println("Erro ao teletransportar jogador para o cemitério: " + e.getMessage());
+      e.printStackTrace();
+      
+      // Fallback: apenas restaurar vida no mapa atual
+      if (player.getAttributeHealth() <= 0) {
+        player.setAttributeHealth(player.getAttributeMaxHealth() / 4);
+        if (gameUI != null) {
+          gameUI.addMessage("Você foi revivido com pouca vida!", null, 3000L);
+        }
+      }
+    }
+  }
   private void completeAllOrbsAndSpawnSupremeBoss() {
     System.out.println("=== DEBUG: Completando todas as orbes e spawnando Supremo Boss ===");
     
