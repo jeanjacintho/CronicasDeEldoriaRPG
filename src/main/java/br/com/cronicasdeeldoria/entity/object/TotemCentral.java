@@ -23,7 +23,7 @@ public class TotemCentral extends MapObject {
      * @param worldY Posição Y no mundo
      */
     public TotemCentral(int worldX, int worldY) {
-        super("totem_central", "Totem Central", worldX, worldY, 3, 3,
+        super("totem_central", "Totem Central", worldX, worldY, 1, 1,
               true, true, false, null, 0);
 
         this.depositedOrbsCount = 0;

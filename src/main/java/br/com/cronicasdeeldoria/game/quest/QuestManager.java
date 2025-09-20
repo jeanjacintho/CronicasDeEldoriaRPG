@@ -389,7 +389,7 @@ public class QuestManager {
         }
         
         Quest orb1 = new Quest("orb_1", "Primeira Orbe", "Recupere a primeira orbe e deposite no Totem.");
-        orb1.addObjective(new QuestObjective("reach_dungeon2", "Chegar à Dungeon 2", QuestObjectiveType.REACH_LOCATION, "dungeon2"));
+        orb1.addObjective(new QuestObjective("reach_dungeon2", "Chegar à Dungeon da Floresta", QuestObjectiveType.REACH_LOCATION, "dungeon2"));
         orb1.addObjective(new QuestObjective("kill_orcboss", "Derrotar o Orc Boss", QuestObjectiveType.KILL_NPC, "orcboss"));
         orb1.addObjective(new QuestObjective("collect_orb_earth", "Coletar a Orbe de Terra", QuestObjectiveType.COLLECT_ITEM, "orb_earth"));
         orb1.addObjective(new QuestObjective("deposit_orb_earth_at_totem", "Depositar no Totem", QuestObjectiveType.DEPOSIT_ITEM, "totem"));
@@ -416,7 +416,7 @@ public class QuestManager {
         }
         
         Quest orb2 = new Quest("orb_2", "Segunda Orbe", "Recupere a segunda orbe e deposite no Totem.");
-        orb2.addObjective(new QuestObjective("reach_dungeon4", "Chegar à Dungeon 4", QuestObjectiveType.REACH_LOCATION, "dungeon4"));
+        orb2.addObjective(new QuestObjective("reach_dungeon4", "Chegar à Dungeon de Fogo", QuestObjectiveType.REACH_LOCATION, "dungeon4"));
         orb2.addObjective(new QuestObjective("kill_wolfboss", "Derrotar o Wolf Boss", QuestObjectiveType.KILL_NPC, "wolfboss"));
         orb2.addObjective(new QuestObjective("collect_orb_fire", "Coletar a Orbe de Fogo", QuestObjectiveType.COLLECT_ITEM, "orb_fire"));
         orb2.addObjective(new QuestObjective("deposit_orb_fire_at_totem", "Depositar no Totem", QuestObjectiveType.DEPOSIT_ITEM, "totem"));
@@ -443,7 +443,7 @@ public class QuestManager {
         }
         
         Quest orb3 = new Quest("orb_3", "Terceira Orbe", "Recupere a terceira orbe e deposite no Totem.");
-        orb3.addObjective(new QuestObjective("reach_dungeon3", "Chegar à Dungeon 3", QuestObjectiveType.REACH_LOCATION, "dungeon3"));
+        orb3.addObjective(new QuestObjective("reach_dungeon3", "Chegar à Dungeon de Gelo", QuestObjectiveType.REACH_LOCATION, "dungeon3"));
         orb3.addObjective(new QuestObjective("kill_frostbornboss", "Derrotar o Frostborn Boss", QuestObjectiveType.KILL_NPC, "frostbornboss"));
         orb3.addObjective(new QuestObjective("collect_orb_water", "Coletar a Orbe de Água", QuestObjectiveType.COLLECT_ITEM, "orb_water"));
         orb3.addObjective(new QuestObjective("deposit_orb_water_at_totem", "Depositar no Totem", QuestObjectiveType.DEPOSIT_ITEM, "totem"));
@@ -470,7 +470,7 @@ public class QuestManager {
         }
         
         Quest orb4 = new Quest("orb_4", "Quarta Orbe", "Recupere a quarta orbe e deposite no Totem.");
-        orb4.addObjective(new QuestObjective("reach_dungeon1", "Chegar à Dungeon 1", QuestObjectiveType.REACH_LOCATION, "dungeon1"));
+        orb4.addObjective(new QuestObjective("reach_dungeon1", "Chegar à Dungeon Sombria", QuestObjectiveType.REACH_LOCATION, "dungeon1"));
         orb4.addObjective(new QuestObjective("kill_skeletonboss", "Derrotar o Skeleton Boss", QuestObjectiveType.KILL_NPC, "skeletonboss"));
         orb4.addObjective(new QuestObjective("collect_orb_air", "Coletar a Orbe de Ar", QuestObjectiveType.COLLECT_ITEM, "orb_air"));
         orb4.addObjective(new QuestObjective("deposit_orb_air_at_totem", "Depositar no Totem", QuestObjectiveType.DEPOSIT_ITEM, "totem"));

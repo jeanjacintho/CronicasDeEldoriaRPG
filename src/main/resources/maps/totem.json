@@ -4110,11 +4110,6 @@
         {
           "id": "city:exit_totem",
           "x": 12,
-          "y": 21
-        },
-        {
-          "id": "city:exit_totem",
-          "x": 12,
           "y": 22
         }
       ],

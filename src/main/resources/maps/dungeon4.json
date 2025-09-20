@@ -2,6 +2,7 @@
   "tileSize": 16,
   "mapWidth": 32,
   "mapHeight": 28,
+  "message": "Dungeon do Fogo",
   "layers": [
     {
       "name": "Layer_0",
