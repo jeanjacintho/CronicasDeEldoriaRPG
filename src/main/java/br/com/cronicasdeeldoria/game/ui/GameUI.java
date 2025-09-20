@@ -15,7 +15,6 @@ import javax.imageio.ImageIO;
 import java.util.ArrayList;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
-import java.util.Objects;
 
 import br.com.cronicasdeeldoria.entity.character.Character;
 import br.com.cronicasdeeldoria.entity.character.npc.Npc;
@@ -922,9 +921,19 @@ public class GameUI {
 
     int potionIconSize = 35;
     try {
-      healthPotionImg = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/sprites/objects/items/health_potion_battle.png")));
-      manaPotionImg   = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/sprites/objects/items/mana_potion_battle.png")));
+
+      InputStream healthStream = getClass().getResourceAsStream("/sprites/objects/items/health_potion.png");
+      InputStream manaStream = getClass().getResourceAsStream("/sprites/objects/items/mana_potion.png");
+      
+      if (healthStream != null) {
+        healthPotionImg = ImageIO.read(healthStream);
+      }
+      if (manaStream != null) {
+        manaPotionImg = ImageIO.read(manaStream);
+      }
+
     } catch (IOException e) {
+      System.err.println("Erro ao carregar imagens de poção: " + e.getMessage());
       e.printStackTrace();
     }
 
@@ -993,11 +1002,25 @@ public class GameUI {
 
     int buffIconSize = 35;
     try {
-      swordImg = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/sprites/objects/items/sword_common.png")));
-      shieldImg   = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/sprites/objects/items/shield_common.png")));
-      waterOrbImg  = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/sprites/objects/quest/orb_water.png")));
-      fireOrbImg  = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/sprites/objects/quest/orb_fire.png")));
+      InputStream swordStream = getClass().getResourceAsStream("/sprites/objects/items/sword_common.png");
+      InputStream shieldStream = getClass().getResourceAsStream("/sprites/objects/items/shield_common.png");
+      InputStream waterOrbStream = getClass().getResourceAsStream("/sprites/objects/quest/orb_water.png");
+      InputStream fireOrbStream = getClass().getResourceAsStream("/sprites/objects/quest/orb_fire.png");
+      
+      if (swordStream != null) {
+        swordImg = ImageIO.read(swordStream);
+      }
+      if (shieldStream != null) {
+        shieldImg = ImageIO.read(shieldStream);
+      }
+      if (waterOrbStream != null) {
+        waterOrbImg = ImageIO.read(waterOrbStream);
+      }
+      if (fireOrbStream != null) {
+        fireOrbImg = ImageIO.read(fireOrbStream);
+      }
     } catch (IOException e) {
+      System.err.println("Erro ao carregar imagens de buff: " + e.getMessage());
       e.printStackTrace();
     }
 

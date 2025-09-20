@@ -8,6 +8,8 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Boss final da quest principal - Mago Supremo.
@@ -17,6 +19,15 @@ public class SupremeMage extends Npc {
     private boolean isFollowingPlayer;
     private int followDistance;
     private int battleTriggerDistance;
+    
+    private List<Point> currentPath;
+    private int pathIndex;
+    private long lastPathUpdate;
+    private static final long PATH_UPDATE_INTERVAL = 300; // Atualizar path a cada 300ms
+    private static final int MAX_PATH_LENGTH = 30;
+    private boolean isStuck;
+    private long stuckTime;
+    private static final long STUCK_THRESHOLD = 1500; // 1.5 segundos para considerar "preso"
 
     /**
      * Construtor para criar o Mago Supremo.
@@ -41,8 +52,14 @@ public class SupremeMage extends Npc {
         this.setHitbox(new java.awt.Rectangle(hitboxX, hitboxY, hitboxWidth, hitboxHeight));
 
         this.isFollowingPlayer = true;
-        this.followDistance = 150;
-        this.battleTriggerDistance = 50;
+        this.followDistance = 400; // Distância para começar a seguir
+        this.battleTriggerDistance = 80; // Distância para iniciar batalha
+        
+        this.currentPath = new ArrayList<>();
+        this.pathIndex = 0;
+        this.lastPathUpdate = 0;
+        this.isStuck = false;
+        this.stuckTime = 0;
     }
 
     /**
@@ -60,7 +77,7 @@ public class SupremeMage extends Npc {
     }
 
     /**
-     * Faz o Mago Supremo seguir o jogador usando Line of Sight.
+     * Sistema melhorado de seguimento com LOS e pathfinding integrado.
      * @param gamePanel Painel do jogo
      * @param player Jogador
      */
@@ -69,55 +86,124 @@ public class SupremeMage extends Npc {
         int deltaY = player.getWorldY() - getWorldY();
         int distance = (int) Math.sqrt(deltaX * deltaX + deltaY * deltaY);
 
+        // Verificar se está próximo o suficiente para iniciar batalha
         if (distance <= battleTriggerDistance) {
-            // Próximo o suficiente para iniciar batalha
             if (player.getHitbox() != null && getHitbox() != null) {
                 if (player.getHitbox().intersects(getHitbox())) {
                     initiateBattle(gamePanel, player);
+                    return;
                 }
             }
-        } else if (distance > followDistance) {
-            // Muito longe - usar Line of Sight para seguir
-            if (hasLineOfSight(player, gamePanel)) {
-                // Tem linha de visão - mover diretamente
-                moveDirectlyToPlayer(deltaX, deltaY, gamePanel, player);
-            } else {
-                // Sem linha de visão - usar pathfinding simples
-                moveTowardsPlayerWithPathfinding(deltaX, deltaY, gamePanel, player);
-            }
         }
-        // Se está na distância intermediária, apenas seguir sem iniciar batalha
+
+        // Se está muito longe, não seguir
+        if (distance > followDistance) {
+            currentPath.clear();
+            pathIndex = 0;
+            return;
+        }
+
+        // Sistema de detecção de "preso"
+        checkIfStuck();
+        
+        // Atualizar path se necessário
+        long currentTime = System.currentTimeMillis();
+        if (currentTime - lastPathUpdate > PATH_UPDATE_INTERVAL || currentPath.isEmpty() || isStuck) {
+            updatePath(player, gamePanel);
+            lastPathUpdate = currentTime;
+        }
+
+        // Mover seguindo o path ou LOS direto
+        boolean hasLOS = hasDirectLineOfSight(player, gamePanel);
+        
+        if (hasLOS && !isStuck) {
+            // LOS direto - movimento mais suave
+            moveDirectlyToPlayer(deltaX, deltaY, gamePanel);
+        } else if (!currentPath.isEmpty()) {
+            // Seguir path calculado
+            followPath(gamePanel);
+        } else {
+            // Fallback: movimento simples
+            moveTowardsPlayerSimple(deltaX, deltaY, gamePanel);
+        }
     }
 
 
     /**
-     * Verifica se há linha de visão clara entre o boss e o jogador.
+     * Verifica se há linha de visão direta melhorada entre o boss e o jogador.
      * @param player Jogador
      * @param gamePanel Painel do jogo
      * @return true se há linha de visão clara
      */
-    private boolean hasLineOfSight(Player player, GamePanel gamePanel) {
-        // Usar o centro das hitboxes para cálculo mais preciso
+    private boolean hasDirectLineOfSight(Player player, GamePanel gamePanel) {
+        // Usar centro das hitboxes para cálculo mais preciso
         int startX = getWorldX() + (getHitbox() != null ? getHitbox().width / 2 : gamePanel.getTileSize() / 2);
         int startY = getWorldY() + (getHitbox() != null ? getHitbox().height / 2 : gamePanel.getTileSize() / 2);
         int endX = player.getWorldX() + (player.getHitbox() != null ? player.getHitbox().width / 2 : gamePanel.getPlayerSize() / 2);
         int endY = player.getWorldY() + (player.getHitbox() != null ? player.getHitbox().height / 2 : gamePanel.getPlayerSize() / 2);
 
-        // Calcular pontos intermediários na linha
-        int steps = Math.max(Math.abs(endX - startX), Math.abs(endY - startY)) / gamePanel.getTileSize();
-        if (steps == 0) return true;
-
-        for (int i = 1; i < steps; i++) {
-            int checkX = startX + (endX - startX) * i / steps;
-            int checkY = startY + (endY - startY) * i / steps;
-
-            // Verificar se há colisão neste ponto
-            if (hasCollisionAtTile(checkX, checkY, gamePanel)) {
-                return false; // Linha de visão bloqueada
-            }
+        // Calcular distância para otimização
+        int distance = (int) Math.sqrt((endX - startX) * (endX - startX) + (endY - startY) * (endY - startY));
+        
+        // Se muito próximo, considerar LOS direto
+        if (distance < gamePanel.getTileSize() * 2) {
+            return true;
         }
 
-        return true; // Linha de visão clara
+        // Usar algoritmo de linha de Bresenham para verificação mais precisa
+        return bresenhamLineOfSight(startX, startY, endX, endY, gamePanel);
+    }
+
+    /**
+     * Implementa algoritmo de linha de Bresenham para verificação de LOS.
+     * @param x0 Coordenada X inicial
+     * @param y0 Coordenada Y inicial
+     * @param x1 Coordenada X final
+     * @param y1 Coordenada Y final
+     * @param gamePanel Painel do jogo
+     * @return true se a linha está livre de obstáculos
+     */
+    private boolean bresenhamLineOfSight(int x0, int y0, int x1, int y1, GamePanel gamePanel) {
+        int dx = Math.abs(x1 - x0);
+        int dy = Math.abs(y1 - y0);
+        int sx = x0 < x1 ? 1 : -1;
+        int sy = y0 < y1 ? 1 : -1;
+        int err = dx - dy;
+        
+        int x = x0;
+        int y = y0;
+        int tileSize = gamePanel.getTileSize();
+        int steps = 0;
+        int maxSteps = Math.max(dx, dy) / (tileSize / 4); // Verificar a cada 1/4 de tile para melhor precisão
+        
+        // Verificar pontos ao longo da linha
+        while (steps < maxSteps) {
+            // Verificar colisão no ponto atual (exceto pontos inicial e final)
+            if ((x != x0 || y != y0) && (x != x1 || y != y1)) {
+                if (hasCollisionAtTile(x, y, gamePanel)) {
+                    return false;
+                }
+            }
+            
+            // Parar se chegou ao destino
+            if (x == x1 && y == y1) {
+                break;
+            }
+            
+            int e2 = 2 * err;
+            if (e2 > -dy) {
+                err -= dy;
+                x += sx;
+            }
+            if (e2 < dx) {
+                err += dx;
+                y += sy;
+            }
+            
+            steps++;
+        }
+        
+        return true;
     }
 
     /**
@@ -137,40 +223,236 @@ public class SupremeMage extends Npc {
     }
 
     /**
-     * Move o Mago Supremo em direção ao jogador usando pathfinding simples quando não há linha de visão.
-     * @param deltaX Diferença X entre boss e jogador
-     * @param deltaY Diferença Y entre boss e jogador
-     * @param gamePanel Painel do jogo
-     * @param player Jogador
+     * Verifica se o boss está "preso" (não se moveu por um tempo).
      */
-    private void moveTowardsPlayerWithPathfinding(int deltaX, int deltaY, GamePanel gamePanel, Player player) {
-        // Determinar direção principal baseada na maior diferença
+    private void checkIfStuck() {
+        long currentTime = System.currentTimeMillis();
+        
+        // Se não está se movendo há muito tempo, considerar preso
+        if (currentTime - stuckTime > STUCK_THRESHOLD) {
+            isStuck = true;
+        } else {
+            isStuck = false;
+        }
+    }
+
+    /**
+     * Atualiza o path para o jogador usando pathfinding simples.
+     * @param player Jogador
+     * @param gamePanel Painel do jogo
+     */
+    private void updatePath(Player player, GamePanel gamePanel) {
+        currentPath.clear();
+        pathIndex = 0;
+        
+        // Calcular path simples usando algoritmo de "greedy" pathfinding
+        calculateSimplePath(player, gamePanel);
+    }
+
+    /**
+     * Calcula um path simples usando algoritmo greedy melhorado.
+     * @param player Jogador
+     * @param gamePanel Painel do jogo
+     */
+    private void calculateSimplePath(Player player, GamePanel gamePanel) {
+        int startX = getWorldX();
+        int startY = getWorldY();
+        int targetX = player.getWorldX();
+        int targetY = player.getWorldY();
+        
+        int tileSize = gamePanel.getTileSize();
+        
+        // Converter para coordenadas de tile
+        int startTileX = startX / tileSize;
+        int startTileY = startY / tileSize;
+        int targetTileX = targetX / tileSize;
+        int targetTileY = targetY / tileSize;
+        
+        int currentX = startTileX;
+        int currentY = startTileY;
+        
+        // Adicionar ponto inicial
+        currentPath.add(new Point(startX, startY));
+        
+        // Calcular path usando movimento em grade com melhor lógica
+        while (currentPath.size() < MAX_PATH_LENGTH && (currentX != targetTileX || currentY != targetTileY)) {
+            int deltaX = targetTileX - currentX;
+            int deltaY = targetTileY - currentY;
+            
+            // Determinar próxima direção com prioridade inteligente
+            int nextX = currentX;
+            int nextY = currentY;
+            boolean moved = false;
+            
+            // Tentar movimento diagonal primeiro (mais eficiente)
+            if (deltaX != 0 && deltaY != 0) {
+                int diagonalX = currentX + (deltaX > 0 ? 1 : -1);
+                int diagonalY = currentY + (deltaY > 0 ? 1 : -1);
+                
+                if (!hasCollisionAtTile(diagonalX * tileSize, diagonalY * tileSize, gamePanel)) {
+                    currentX = diagonalX;
+                    currentY = diagonalY;
+                    moved = true;
+                }
+            }
+            
+            // Se não conseguiu movimento diagonal, tentar movimento em linha reta
+            if (!moved) {
+                if (Math.abs(deltaX) > Math.abs(deltaY)) {
+                    // Mover horizontalmente
+                    nextX += deltaX > 0 ? 1 : -1;
+                    if (!hasCollisionAtTile(nextX * tileSize, currentY * tileSize, gamePanel)) {
+                        currentX = nextX;
+                        moved = true;
+                    }
+                } else {
+                    // Mover verticalmente
+                    nextY += deltaY > 0 ? 1 : -1;
+                    if (!hasCollisionAtTile(currentX * tileSize, nextY * tileSize, gamePanel)) {
+                        currentY = nextY;
+                        moved = true;
+                    }
+                }
+            }
+            
+            // Se não conseguiu mover na direção principal, tentar direção alternativa
+            if (!moved) {
+                if (deltaX != 0) {
+                    nextX = currentX + (deltaX > 0 ? 1 : -1);
+                    if (!hasCollisionAtTile(nextX * tileSize, currentY * tileSize, gamePanel)) {
+                        currentX = nextX;
+                        moved = true;
+                    }
+                }
+                if (!moved && deltaY != 0) {
+                    nextY = currentY + (deltaY > 0 ? 1 : -1);
+                    if (!hasCollisionAtTile(currentX * tileSize, nextY * tileSize, gamePanel)) {
+                        currentY = nextY;
+                        moved = true;
+                    }
+                }
+            }
+            
+            // Se conseguiu mover, adicionar ao path
+            if (moved) {
+                currentPath.add(new Point(currentX * tileSize, currentY * tileSize));
+            } else {
+                // Não conseguiu mover, parar o pathfinding
+                break;
+            }
+        }
+        
+        // Adicionar ponto final se não estiver muito próximo
+        int lastX = currentPath.get(currentPath.size() - 1).x;
+        int lastY = currentPath.get(currentPath.size() - 1).y;
+        int distanceToTarget = (int) Math.sqrt((targetX - lastX) * (targetX - lastX) + (targetY - lastY) * (targetY - lastY));
+        
+        if (distanceToTarget > tileSize) {
+            currentPath.add(new Point(targetX, targetY));
+        }
+    }
+
+    /**
+     * Segue o path calculado com melhor responsividade.
+     * @param gamePanel Painel do jogo
+     */
+    private void followPath(GamePanel gamePanel) {
+        if (currentPath.isEmpty() || pathIndex >= currentPath.size()) {
+            return;
+        }
+        
+        Point targetPoint = currentPath.get(pathIndex);
+        int deltaX = targetPoint.x - getWorldX();
+        int deltaY = targetPoint.y - getWorldY();
+        
+        // Se chegou próximo ao ponto atual do path, avançar para o próximo
+        int distanceToPoint = (int) Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+        int threshold = gamePanel.getTileSize() / 3; // Threshold menor para melhor responsividade
+        
+        if (distanceToPoint < threshold) {
+            pathIndex++;
+            if (pathIndex >= currentPath.size()) {
+                return;
+            }
+            targetPoint = currentPath.get(pathIndex);
+            deltaX = targetPoint.x - getWorldX();
+            deltaY = targetPoint.y - getWorldY();
+        }
+        
+        // Mover em direção ao próximo ponto do path
+        moveTowardsPoint(deltaX, deltaY, gamePanel);
+    }
+
+    /**
+     * Move em direção a um ponto específico.
+     * @param deltaX Diferença X
+     * @param deltaY Diferença Y
+     * @param gamePanel Painel do jogo
+     */
+    private void moveTowardsPoint(int deltaX, int deltaY, GamePanel gamePanel) {
+        // Normalizar direção
+        double distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+        if (distance == 0) return;
+        
+        double normalizedX = deltaX / distance;
+        double normalizedY = deltaY / distance;
+        
+        // Calcular nova posição
+        int newX = getWorldX() + (int)(normalizedX * getSpeed());
+        int newY = getWorldY() + (int)(normalizedY * getSpeed());
+        
+        // Verificar colisões
+        if (!hasCollisionAt(newX, newY, gamePanel)) {
+            setWorldX(newX);
+            setWorldY(newY);
+            
+            // Atualizar direção
+            if (Math.abs(normalizedX) > Math.abs(normalizedY)) {
+                setDirection(normalizedX > 0 ? "right" : "left");
+            } else {
+                setDirection(normalizedY > 0 ? "down" : "up");
+            }
+            
+            // Resetar timer de "preso"
+            stuckTime = System.currentTimeMillis();
+        } else {
+            // Tentar movimento alternativo
+            tryAlternativeMovement(deltaX, deltaY, gamePanel);
+        }
+    }
+
+    /**
+     * Movimento simples em direção ao jogador (fallback).
+     * @param deltaX Diferença X
+     * @param deltaY Diferença Y
+     * @param gamePanel Painel do jogo
+     */
+    private void moveTowardsPlayerSimple(int deltaX, int deltaY, GamePanel gamePanel) {
+        // Determinar direção principal
         String primaryDirection;
         String secondaryDirection;
-
+        
         if (Math.abs(deltaX) > Math.abs(deltaY)) {
-            // Movimento horizontal é prioritário
             primaryDirection = deltaX > 0 ? "right" : "left";
             secondaryDirection = deltaY > 0 ? "down" : "up";
         } else {
-            // Movimento vertical é prioritário
             primaryDirection = deltaY > 0 ? "down" : "up";
             secondaryDirection = deltaX > 0 ? "right" : "left";
         }
-
+        
         // Tentar mover na direção principal
         if (canMoveInDirection(primaryDirection, gamePanel)) {
             moveInDirection(primaryDirection);
             return;
         }
-
+        
         // Tentar mover na direção secundária
         if (canMoveInDirection(secondaryDirection, gamePanel)) {
             moveInDirection(secondaryDirection);
             return;
         }
-
-        // Se não conseguir mover nas direções principais, tentar outras direções
+        
+        // Tentar outras direções
         String[] allDirections = {"up", "down", "left", "right"};
         for (String direction : allDirections) {
             if (canMoveInDirection(direction, gamePanel)) {
@@ -222,7 +504,13 @@ public class SupremeMage extends Npc {
                 break;
         }
     }
-    private void moveDirectlyToPlayer(int deltaX, int deltaY, GamePanel gamePanel, Player player) {
+    /**
+     * Move diretamente em direção ao jogador (LOS direto).
+     * @param deltaX Diferença X
+     * @param deltaY Diferença Y
+     * @param gamePanel Painel do jogo
+     */
+    private void moveDirectlyToPlayer(int deltaX, int deltaY, GamePanel gamePanel) {
         // Calcular direção normalizada para movimento suave
         double distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
         if (distance == 0) return;
@@ -247,9 +535,12 @@ public class SupremeMage extends Npc {
             } else {
                 setDirection(normalizedY > 0 ? "down" : "up");
             }
+            
+            // Resetar timer de "preso"
+            stuckTime = System.currentTimeMillis();
         } else {
-            // Se há colisão, tentar movimento alternativo simples
-            trySimpleAlternativeMovement(deltaX, deltaY, gamePanel);
+            // Se há colisão, tentar movimento alternativo
+            tryAlternativeMovement(deltaX, deltaY, gamePanel);
         }
     }
 
@@ -282,18 +573,19 @@ public class SupremeMage extends Npc {
     }
 
     /**
-     * Tenta movimento alternativo simples quando há colisão.
+     * Tenta movimento alternativo quando há colisão.
      * @param deltaX Diferença X
      * @param deltaY Diferença Y
      * @param gamePanel Painel do jogo
      */
-    private void trySimpleAlternativeMovement(int deltaX, int deltaY, GamePanel gamePanel) {
+    private void tryAlternativeMovement(int deltaX, int deltaY, GamePanel gamePanel) {
         // Tentar mover apenas no eixo X
         if (Math.abs(deltaX) > 0) {
             int newX = getWorldX() + (deltaX > 0 ? getSpeed() : -getSpeed());
             if (!hasCollisionAt(newX, getWorldY(), gamePanel)) {
                 setWorldX(newX);
                 setDirection(deltaX > 0 ? "right" : "left");
+                stuckTime = System.currentTimeMillis();
                 return;
             }
         }
@@ -304,11 +596,25 @@ public class SupremeMage extends Npc {
             if (!hasCollisionAt(getWorldX(), newY, gamePanel)) {
                 setWorldY(newY);
                 setDirection(deltaY > 0 ? "down" : "up");
+                stuckTime = System.currentTimeMillis();
                 return;
             }
         }
 
-        // Se não conseguir mover em nenhuma direção, ficar parado
+        // Se não conseguir mover em nenhuma direção, tentar direções aleatórias
+        String[] directions = {"up", "down", "left", "right"};
+        for (String direction : directions) {
+            if (canMoveInDirection(direction, gamePanel)) {
+                moveInDirection(direction);
+                stuckTime = System.currentTimeMillis();
+                return;
+            }
+        }
+        
+        // Se não conseguir mover em nenhuma direção, marcar como preso
+        if (stuckTime == 0) {
+            stuckTime = System.currentTimeMillis();
+        }
     }
 
     /**
@@ -439,6 +745,24 @@ public class SupremeMage extends Npc {
             System.err.println("Nenhum sprite encontrado para skin: " + skin + ", direção: " + direction);
             g.setColor(Color.RED);
             g.fillRect(screenX, screenY, bossSize, bossSize);
+        }
+    }
+    
+    /**
+     * Classe auxiliar para representar pontos no pathfinding.
+     */
+    private static class Point {
+        public final int x;
+        public final int y;
+        
+        public Point(int x, int y) {
+            this.x = x;
+            this.y = y;
+        }
+        
+        @Override
+        public String toString() {
+            return "Point(" + x + ", " + y + ")";
         }
     }
 }
