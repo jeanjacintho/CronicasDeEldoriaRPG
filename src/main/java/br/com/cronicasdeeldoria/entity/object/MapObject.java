@@ -81,7 +81,26 @@ public class MapObject extends Entity {
         int screenX = getWorldX() - player.getWorldX() + playerScreenX;
         int screenY = getWorldY() - player.getWorldY() + playerScreenY;
 
-        // Renderizar o objeto tile por tile baseado no tamanho
+        // Se o objeto tem apenas 1 sprite mas tamanho maior que 1x1, renderizar como sprite único
+        if (objectDefinition.spritePaths.size() == 1 && 
+            objectDefinition.spritePaths.get(0).size() == 1 && 
+            (width > 1 || height > 1)) {
+            
+            String spritePath = objectDefinition.spritePaths.get(0).get(0);
+            try {
+                InputStream is = getClass().getResourceAsStream(spritePath);
+                if (is != null) {
+                    BufferedImage img = ImageIO.read(is);
+                    // Renderizar o sprite único cobrindo toda a área do objeto
+                    g.drawImage(img, screenX, screenY, width * tileSize, height * tileSize, null);
+                }
+            } catch (Exception e) {
+                System.err.println("Erro ao carregar sprite único: " + e.getMessage());
+            }
+            return;
+        }
+
+        // Renderizar o objeto tile por tile baseado no tamanho (para objetos com múltiplos sprites)
         for (int row = 0; row < height; row++) {
             for (int col = 0; col < width; col++) {
                 // Determinar qual sprite usar baseado na posição

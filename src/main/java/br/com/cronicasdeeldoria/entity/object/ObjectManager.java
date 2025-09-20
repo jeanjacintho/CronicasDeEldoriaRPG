@@ -5,6 +5,7 @@ import br.com.cronicasdeeldoria.game.GamePanel;
 import br.com.cronicasdeeldoria.game.quest.QuestManager;
 
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -92,6 +93,13 @@ public class ObjectManager {
             
             // Definir a ObjectDefinition para que tenha acesso às sprites
             totemCentral.setObjectDefinition(objDef);
+            
+            // Definir o tamanho correto baseado na configuração do objects.json
+            totemCentral.setWidth(objDef.size[0]);
+            totemCentral.setHeight(objDef.size[1]);
+            
+            // Atualizar a hitbox com o tamanho correto
+            totemCentral.setHitbox(new Rectangle(0, 0, objDef.size[0] * gamePanel.getTileSize(), objDef.size[1] * gamePanel.getTileSize()));
             
             // Registrar no QuestManager
             QuestManager questManager = QuestManager.getInstance();
