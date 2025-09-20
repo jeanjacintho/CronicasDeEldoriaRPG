@@ -133,10 +133,15 @@ public class Battle {
     Random random = new Random();
     int choice = random.nextInt(100);
 
-    if (choice < 79) { // 80% chance de ataque
+    // Monstro não tenta usar defend se tiver em cooldown ou ativo
+    if (currentMonster.canApplyBuff("ARMOR")) {
+      if (choice < 69) { // 70% chance de ataque
+        attack(currentMonster, player);
+      } else if (choice < 99) { // 20% chance de defesa
+        defend(currentMonster);
+      }
+    } else {
       attack(currentMonster, player);
-    } else if (choice < 99) { // 20% chance de defesa
-      defend(currentMonster);
     }
 
     // Verificar se a batalha terminou

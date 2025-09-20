@@ -850,7 +850,7 @@ public class GameUI {
     if (gamePanel.getBattleEffectManager() != null) {
       battleBackground = gamePanel.getBattleEffectManager().loadBattleBackground(gamePanel.getCurrentMapName());
     }
-    
+
     if (battleBackground != null) {
       g2.drawImage(battleBackground, 0, 0, screenWidth, screenHeight, null);
     } else {
@@ -890,7 +890,7 @@ public class GameUI {
     if (gamePanel.getBattleEffectManager() != null) {
       int monsterX = screenWidth / 2 + 2 * tileSize;
       int monsterY = screenHeight / 6;
-      
+
       gamePanel.getBattleEffectManager().drawOverlays(
         g2,
         gamePanel,
@@ -898,7 +898,7 @@ public class GameUI {
         monsterX, monsterY,
         tileSize * 3, tileSize * 3
       );
-      
+
       // Desenha efeitos persistentes com base em buffs ativos (escudo enquanto o buff de ARMADURA estiver ativo)
       gamePanel.getBattleEffectManager().drawPersistentEffects(
         g2,
@@ -922,8 +922,8 @@ public class GameUI {
 
     int potionIconSize = 35;
     try {
-      healthPotionImg = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/sprites/objects/healthPotion-0002.png")));
-      manaPotionImg   = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/sprites/objects/manaPotion-0001.png")));
+      healthPotionImg = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/sprites/objects/items/health_potion_battle.png")));
+      manaPotionImg   = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/sprites/objects/items/mana_potion_battle.png")));
     } catch (IOException e) {
       e.printStackTrace();
     }
