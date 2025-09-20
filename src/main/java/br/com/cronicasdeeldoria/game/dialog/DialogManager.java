@@ -228,10 +228,7 @@ public class DialogManager {
         this.selectedOptionIndex = 0;
         this.currentPageIndex = 0;
 
-        // Resetar paginação da UI para novo diálogo
-        if (gamePanel != null && gamePanel.getDialogUI() != null) {
-            gamePanel.getDialogUI().resetPagination();
-        }
+        
 
         // Processar texto em páginas (mantido para compatibilidade)
         processTextIntoPages(dialog.getText());
@@ -249,53 +246,71 @@ public class DialogManager {
     private void processTextIntoPages(String text) {
         textPages.clear();
         
-        // Configurações de paginação - ajustadas para caixa menor
-        int maxWidth = 300; 
-        int maxHeight = 100; 
-        int lineHeight = 18; // Altura aproximada de uma linha
-        int maxLinesPerPage = maxHeight / lineHeight; // Aproximadamente 5-6 linhas por página
+        // Configurações de paginação
+        int maxCharsPerPage = 300; // Limite por caracteres por página
+        int maxCharsPerLine = 40; // Limite por linha (para quebrar dentro da página)
         
-        String[] words = text.split(" ");
-        StringBuilder currentPage = new StringBuilder();
-        int currentLines = 0;
-        
-        for (String word : words) {
-            String testText = currentPage.length() > 0 ? 
-                currentPage + " " + word : word;
+        // Dividir texto em páginas baseado em caracteres
+        for (int i = 0; i < text.length(); i += maxCharsPerPage) {
+            int endIndex = Math.min(i + maxCharsPerPage, text.length());
+            String pageText = text.substring(i, endIndex);
             
-            // Estimativa mais precisa do comprimento da linha (baseada na fonte de 16px)
-            int estimatedLength = testText.length() * 9;
-            
-            if (estimatedLength > maxWidth && currentPage.length() > 0) {
-                // Verificar se ainda cabe mais linhas nesta página
-                if (currentLines >= maxLinesPerPage) {
-                    // Finalizar página atual e começar nova
-                    textPages.add(currentPage.toString().trim());
-                    currentPage = new StringBuilder(word);
-                    currentLines = 1;
-                } else {
-                    // Quebrar linha
-                    currentPage.append("\n").append(word);
-                    currentLines++;
+            // Tentar quebrar em palavra completa se possível
+            if (endIndex < text.length()) {
+                int lastSpace = pageText.lastIndexOf(' ');
+                if (lastSpace > maxCharsPerPage * 0.6) { // Se encontrou espaço em posição razoável
+                    pageText = pageText.substring(0, lastSpace);
+                    i = i + lastSpace - maxCharsPerPage; // Ajustar índice
                 }
-            } else {
-                // Adicionar palavra à linha atual
-                if (currentPage.length() > 0) {
-                    currentPage.append(" ");
-                }
-                currentPage.append(word);
             }
-        }
-        
-        // Adicionar última página se não estiver vazia
-        if (currentPage.length() > 0) {
-            textPages.add(currentPage.toString().trim());
+            
+            // Agora quebrar as linhas dentro da página
+            String formattedPageText = formatTextWithLineBreaks(pageText.trim(), maxCharsPerLine);
+            textPages.add(formattedPageText);
         }
         
         // Se não há páginas, criar uma página vazia
         if (textPages.isEmpty()) {
             textPages.add("");
         }
+    }
+    
+    /**
+     * Formata o texto com quebras de linha baseado no limite de caracteres por linha.
+     * @param text Texto para formatar
+     * @param maxCharsPerLine Máximo de caracteres por linha
+     * @return Texto formatado com quebras de linha
+     */
+    private String formatTextWithLineBreaks(String text, int maxCharsPerLine) {
+        if (text == null || text.isEmpty()) {
+            return "";
+        }
+        
+        String[] words = text.split(" ");
+        StringBuilder result = new StringBuilder();
+        StringBuilder currentLine = new StringBuilder();
+        
+        for (String word : words) {
+            // Se adicionar esta palavra exceder o limite da linha
+            if (currentLine.length() + word.length() + 1 > maxCharsPerLine && currentLine.length() > 0) {
+                // Finalizar linha atual e começar nova
+                result.append(currentLine.toString().trim()).append("\n");
+                currentLine = new StringBuilder(word);
+            } else {
+                // Adicionar palavra à linha atual
+                if (currentLine.length() > 0) {
+                    currentLine.append(" ");
+                }
+                currentLine.append(word);
+            }
+        }
+        
+        // Adicionar última linha se não estiver vazia
+        if (currentLine.length() > 0) {
+            result.append(currentLine.toString().trim());
+        }
+        
+        return result.toString();
     }
 
     /**

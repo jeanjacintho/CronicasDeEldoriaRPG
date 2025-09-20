@@ -10,7 +10,7 @@ public class KeyHandler implements KeyListener {
     public boolean actionPressed, upPressed, downPressed, leftPressed, rightPressed, xPressed, zPressed, qPressed;
     public boolean rPressed, fPressed, gPressed, hPressed, tPressed, specialPressed, attackPressed, defendPressed, escapePressed;
     public boolean healthPressed, manaPressed, waterOrbPressed, fireOrbPressed;
-    public boolean inventoryPressed, tabPressed, escapeKeyPressed, debugPressed, jPressed;
+    public boolean inventoryPressed, tabPressed, escapeKeyPressed, debugPressed, jPressed, lPressed;
     public boolean upArrowPressed, downArrowPressed; // Teclas de seta para scroll
 
     // Sistema anti-repeat para teclas importantes
@@ -67,6 +67,7 @@ public class KeyHandler implements KeyListener {
             case KeyEvent.VK_ESCAPE: escapeKeyPressed = true; break;
             case KeyEvent.VK_P: debugPressed = true; break;
             case KeyEvent.VK_J: jPressed = true; break;
+            case KeyEvent.VK_L: lPressed = true; break;
             case KeyEvent.VK_UP: upArrowPressed = true; break;
             case KeyEvent.VK_DOWN: downArrowPressed = true; break;
 
@@ -121,6 +122,7 @@ public class KeyHandler implements KeyListener {
             case KeyEvent.VK_ESCAPE: escapeKeyPressed = false; break;
             case KeyEvent.VK_P: debugPressed = false; break;
             case KeyEvent.VK_J: jPressed = false; break;
+            case KeyEvent.VK_L: lPressed = false; break;
             case KeyEvent.VK_UP: upArrowPressed = false; break;
             case KeyEvent.VK_DOWN: downArrowPressed = false; break;
 

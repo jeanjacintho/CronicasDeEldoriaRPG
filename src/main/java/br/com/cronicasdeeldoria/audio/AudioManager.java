@@ -98,22 +98,22 @@ public class AudioManager {
      */
     private void loadAudioResources() {
         // Carregar efeitos sonoros comuns
-        //loadAudioClip("button_click", "/audio/sfx/button_click.wav");
+        loadAudioClip("button_click", "/audio/sfx/button_click.wav");
         loadAudioClip("item_pickup", "/audio/sfx/item_pickup.wav");
         loadAudioClip("item_equip", "/audio/sfx/070_Equip_10.wav");
         loadAudioClip("item_buy", "/audio/sfx/079_Buy_sell_01.wav");
         loadAudioClip("potion_heal", "/audio/sfx/02_Heal_02.wav");
-        //loadAudioClip("door_open", "/audio/sfx/door_open.wav");
-        //loadAudioClip("teleport", "/audio/sfx/teleport.wav");
-        //loadAudioClip("battle_start", "/audio/sfx/battle_start.wav");
-        //loadAudioClip("battle_end", "/audio/sfx/battle_end.wav");
+        //loadAudioClip("door_open", "/audio/sfx/door_open.wav"); // Arquivo não existe
+        loadAudioClip("teleport", "/audio/sfx/teleport.wav");
+        loadAudioClip("battle_start", "/audio/sfx/battle_start.wav");
+        loadAudioClip("battle_end", "/audio/sfx/battle_end.wav");
         loadAudioClip("player_attack", "/audio/sfx/56_Attack_03.wav");
         loadAudioClip("player_flee", "/audio/sfx/51_Flee_02.wav");
         loadAudioClip("player_block", "/audio/sfx/39_Block_03.wav");
         loadAudioClip("level_up", "/audio/sfx/level-win-6416.wav");
-        //loadAudioClip("quest_complete", "/audio/sfx/quest_complete.wav");
-        //loadAudioClip("error", "/audio/sfx/error.wav");
-        //loadAudioClip("notification", "/audio/sfx/notification.wav");
+        //loadAudioClip("quest_complete", "/audio/sfx/quest_complete.wav"); // Arquivo não existe
+        //loadAudioClip("error", "/audio/sfx/error.wav"); // Arquivo não existe
+        //loadAudioClip("notification", "/audio/sfx/notification.wav"); // Arquivo não existe
     }
     
     /**
@@ -201,9 +201,21 @@ public class AudioManager {
                 currentMusicClip.open(audioInputStream);
                 
                 // Configurar volume usando o volume específico do contexto (sem master volume)
-                FloatControl volumeControl = (FloatControl) currentMusicClip.getControl(FloatControl.Type.MASTER_GAIN);
-                float volume = calculateVolumeDirect(specificVolume);
-                volumeControl.setValue(volume);
+                try {
+                    FloatControl volumeControl = (FloatControl) currentMusicClip.getControl(FloatControl.Type.MASTER_GAIN);
+                    float volume = calculateVolumeDirect(specificVolume);
+                    volumeControl.setValue(volume);
+                } catch (IllegalArgumentException e) {
+                    // Se MASTER_GAIN não estiver disponível, tentar VOLUME
+                    try {
+                        FloatControl volumeControl = (FloatControl) currentMusicClip.getControl(FloatControl.Type.VOLUME);
+                        float volume = calculateVolumeDirect(specificVolume);
+                        volumeControl.setValue(volume);
+                    } catch (IllegalArgumentException e2) {
+                        // Se nenhum controle de volume estiver disponível, apenas reproduzir sem ajuste
+                        System.out.println("Volume control not available for music: " + musicFile);
+                    }
+                }
                 
                 // Configurar loop
                 if (loop) {
@@ -421,8 +433,17 @@ public class AudioManager {
      */
     private void updateMusicVolume() {
         if (currentMusicClip != null && currentMusicClip.isRunning()) {
-            FloatControl volumeControl = (FloatControl) currentMusicClip.getControl(FloatControl.Type.MASTER_GAIN);
-            volumeControl.setValue(calculateVolume(musicVolume));
+            try {
+                FloatControl volumeControl = (FloatControl) currentMusicClip.getControl(FloatControl.Type.MASTER_GAIN);
+                volumeControl.setValue(calculateVolume(musicVolume));
+            } catch (IllegalArgumentException e) {
+                try {
+                    FloatControl volumeControl = (FloatControl) currentMusicClip.getControl(FloatControl.Type.VOLUME);
+                    volumeControl.setValue(calculateVolume(musicVolume));
+                } catch (IllegalArgumentException e2) {
+                    
+                }
+            }
         }
     }
     
@@ -432,8 +453,17 @@ public class AudioManager {
     private void updateSfxVolume() {
         for (Clip clip : activeClips.values()) {
             if (clip.isRunning()) {
-                FloatControl volumeControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
-                volumeControl.setValue(calculateVolume(sfxVolume));
+                try {
+                    FloatControl volumeControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
+                    volumeControl.setValue(calculateVolume(sfxVolume));
+                } catch (IllegalArgumentException e) {
+                    try {
+                        FloatControl volumeControl = (FloatControl) clip.getControl(FloatControl.Type.VOLUME);
+                        volumeControl.setValue(calculateVolume(sfxVolume));
+                    } catch (IllegalArgumentException e2) {
+                        
+                    }
+                }
             }
         }
     }

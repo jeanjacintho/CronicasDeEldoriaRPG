@@ -24,7 +24,10 @@
     "right": ["monster/skeleton/skeleton_right.png", "monster/skeleton/skeleton_right_walk1.png", "monster/skeleton/skeleton_right_walk2.png"]
   },
   "supreme_mage": {
-    "down": ["monster/supreme_mage/supreme_mage_front.png"]
+    "down": ["monster/supreme_mage/supreme_mage_front.png","monster/supreme_mage/supreme_mage_front.png","monster/supreme_mage/supreme_mage_front.png"],
+    "up": ["monster/supreme_mage/supreme_mage_front.png", "monster/supreme_mage/supreme_mage_front.png", "monster/supreme_mage/supreme_mage_front.png"],
+    "left": ["monster/supreme_mage/supreme_mage_front.png","monster/supreme_mage/supreme_mage_front.png","monster/supreme_mage/supreme_mage_front.png"],
+    "right": ["monster/supreme_mage/supreme_mage_front.png","monster/supreme_mage/supreme_mage_front.png","monster/supreme_mage/supreme_mage_front.png"]
   },
   "frostborn": {
     "down": ["monster/frostborn/frostborn_front.png", "monster/frostborn/frostborn_front_walk1.png", "monster/frostborn/frostborn_front_walk2.png"],

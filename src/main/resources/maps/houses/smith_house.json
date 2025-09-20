@@ -807,7 +807,7 @@
       "name": "Npcs",
       "tiles": [
         {
-          "id": "smith",
+          "id": "merchant",
           "x": 5,
           "y": 4
         }

@@ -98,16 +98,6 @@
           "file": "/audio/sfx/button_click.wav",
           "volume": 0.8,
           "max_concurrent": 3
-        },
-        "menu_open": {
-          "file": "/audio/sfx/menu_open.wav",
-          "volume": 0.7,
-          "max_concurrent": 1
-        },
-        "menu_close": {
-          "file": "/audio/sfx/menu_close.wav",
-          "volume": 0.7,
-          "max_concurrent": 1
         }
       },
       
@@ -132,21 +122,6 @@
           "volume": 0.8,
           "max_concurrent": 3
         },
-        "door_open": {
-          "file": "/audio/sfx/door_open.wav",
-          "volume": 0.7,
-          "max_concurrent": 2
-        },
-        "door_close": {
-          "file": "/audio/sfx/door_close.wav",
-          "volume": 0.7,
-          "max_concurrent": 2
-        },
-        "chest_open": {
-          "file": "/audio/sfx/chest_open.wav",
-          "volume": 0.8,
-          "max_concurrent": 2
-        },
         "teleport": {
           "file": "/audio/sfx/teleport.wav",
           "volume": 0.9,
@@ -158,11 +133,6 @@
         "battle_start": {
           "file": "/audio/sfx/battle_start.wav",
           "volume": 0.9,
-          "max_concurrent": 1
-        },
-        "battle_end": {
-          "file": "/audio/sfx/battle_end.wav",
-          "volume": 0.8,
           "max_concurrent": 1
         },
         "player_attack": {
@@ -180,28 +150,8 @@
           "volume": 1.0,
           "max_concurrent": 3
         },
-        "attack_hit": {
-          "file": "/audio/sfx/attack_hit.wav",
-          "volume": 0.8,
-          "max_concurrent": 3
-        },
-        "attack_miss": {
-          "file": "/audio/sfx/attack_miss.wav",
-          "volume": 0.6,
-          "max_concurrent": 2
-        },
-        "spell_cast": {
-          "file": "/audio/sfx/spell_cast.wav",
-          "volume": 0.8,
-          "max_concurrent": 2
-        },
-        "damage_taken": {
-          "file": "/audio/sfx/damage_taken.wav",
-          "volume": 0.7,
-          "max_concurrent": 2
-        },
         "healing": {
-          "file": "/audio/sfx/healing.wav",
+          "file": "/audio/sfx/02_Heal_02.wav",
           "volume": 0.7,
           "max_concurrent": 2
         }
@@ -211,16 +161,6 @@
         "level_up": {
           "file": "/audio/sfx/level-win-6416.wav",
           "volume": 1.0,
-          "max_concurrent": 1
-        },
-        "stat_increase": {
-          "file": "/audio/sfx/stat_increase.wav",
-          "volume": 0.7,
-          "max_concurrent": 2
-        },
-        "skill_learned": {
-          "file": "/audio/sfx/skill_learned.wav",
-          "volume": 0.8,
           "max_concurrent": 1
         }
       },
@@ -239,24 +179,6 @@
         "quest_complete": {
           "file": "/audio/sfx/quest_complete.wav",
           "volume": 0.9,
-          "max_concurrent": 1
-        }
-      },
-      
-      "notification": {
-        "notification": {
-          "file": "/audio/sfx/notification.wav",
-          "volume": 0.6,
-          "max_concurrent": 3
-        },
-        "error": {
-          "file": "/audio/sfx/error.wav",
-          "volume": 0.7,
-          "max_concurrent": 2
-        },
-        "warning": {
-          "file": "/audio/sfx/warning.wav",
-          "volume": 0.8,
           "max_concurrent": 1
         }
       }
