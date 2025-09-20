@@ -117,11 +117,11 @@
   },
   "battleBackgrounds": {
     "city": "/sprites/backgrounds/bg_city.png",
-    "dungeon1": "/sprites/backgrounds/bg-dungeon1.png",
-    "dungeon2": "/sprites/backgrounds/bg-dungeon2.png",
-    "dungeon3": "/sprites/backgrounds/bg-dungeon3.png",
-    "dungeon4": "/sprites/backgrounds/bg-dungeon4.png",
-    "totem": "/sprites/backgrounds/bg-totem.png",
+    "dungeon1": "/sprites/backgrounds/bg-dungeon1plat.png",
+    "dungeon2": "/sprites/backgrounds/bg-dungeon2plat.png",
+    "dungeon3": "/sprites/backgrounds/bg-dungeon3plat.png",
+    "dungeon4": "/sprites/backgrounds/bg-dungeon4plat.png",
+    "totem": "/sprites/backgrounds/bg-totemplat.png",
     "default": "/sprites/backgrounds/bg_default.png"
   }
 }
