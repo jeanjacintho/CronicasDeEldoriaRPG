@@ -350,10 +350,10 @@ public class GamePanel extends JPanel implements Runnable{
         }
 
         // Debug: Tecla L para completar todas as orbes e spawnar Supremo Boss
-        if (keyHandler.lPressed) {
-          completeAllOrbsAndSpawnSupremeBoss();
-          keyHandler.lPressed = false;
-        }
+//        if (keyHandler.lPressed) {
+//          completeAllOrbsAndSpawnSupremeBoss();
+//          keyHandler.lPressed = false;
+//        }
       }
 
       if (gameState == battleState) {
@@ -467,7 +467,7 @@ public class GamePanel extends JPanel implements Runnable{
 
         // Aplicar penalidade se necessário
         // player.applyDeathPenalty(); // se você tiver este metodo
-        
+
         // Teletransportar jogador para o cemitério quando morre
         teleportPlayerToCemetery();
     }
@@ -1251,7 +1251,7 @@ public class GamePanel extends JPanel implements Runnable{
    */
   private void drawEndgameOverlay(Graphics2D g2) {
     System.out.println("drawEndgameOverlay() sendo executado!");
-    
+
     // Overlay semi-transparente
     g2.setColor(new Color(0, 0, 0, 150));
     g2.fillRect(0, 0, getWidth(), getHeight());
@@ -1502,7 +1502,7 @@ public class GamePanel extends JPanel implements Runnable{
   // Sistema de endgame
   private void updateEndgame() {
     System.out.println("updateEndgame() sendo executado!");
-    
+
     // ENTER para sair da tela de endgame
     if (keyHandler.actionPressed) {
       gameState = playState;
@@ -1553,7 +1553,7 @@ public class GamePanel extends JPanel implements Runnable{
         }
         keyHandler.defendPressed = false;
       }
-      // Player deve ter a earth orb no inventário para usar o buff
+      // Player deve ter a water orb no inventário para usar o buff
       else if (keyHandler.waterOrbPressed && player.getGamePanel().getInventoryManager().hasItemById("orb_water")) {
         if (player.canApplyBuff("HOT")) {
           battle.processPlayerAction("REGEN");
@@ -1611,7 +1611,7 @@ public class GamePanel extends JPanel implements Runnable{
   // Metodo para remover monstro derrotado do mapa
   private void removeMonsterFromMap(Npc monster) {
     System.out.println("removeMonsterFromMap() chamado para: " + (monster != null ? monster.getName() : "null"));
-    
+
     // Notificar QuestManager sobre a morte do NPC
     if (questManager != null && monster != null) {
       questManager.onNpcKilled(monster.getName());
@@ -1725,36 +1725,36 @@ public class GamePanel extends JPanel implements Runnable{
    */
   private void teleportPlayerToCemetery() {
     try {
-      System.out.println("Jogador morreu! Teletransportando para o cemitério...");
-      
+      //System.out.println("Jogador morreu! Teletransportando para o cemitério...");
+
       // Carregar mapa do cemitério
       loadMap("cemetery");
-      
+
       // Posicionar jogador no centro do cemitério
-      // Mapa cemetery tem 25x19 tiles, centro seria aproximadamente (12, 9)
-      int centerX = 12 * tileSize; // Converter tile para pixel
-      int centerY = 9 * tileSize;  // Converter tile para pixel
-      
+      // Mapa cemetery tem 25x19 tiles, centro seria aproximadamente (10, 9)
+      int centerX = 9 * tileSize; // Converter tile para pixel
+      int centerY = 10 * tileSize;  // Converter tile para pixel
+
       player.setWorldX(centerX);
       player.setWorldY(centerY);
-      
+
       // Restaurar um pouco de vida para não morrer imediatamente
       if (player.getAttributeHealth() <= 0) {
         player.setAttributeHealth(player.getAttributeMaxHealth() / 4); // 25% da vida máxima
       }
-      
+
       // Mostrar mensagem
       if (gameUI != null) {
-        gameUI.addMessage("Você foi teletransportado para o cemitério após sua morte!", null, 5000L);
-        gameUI.addMessage("Sua vida foi parcialmente restaurada.", null, 3000L);
+        //gameUI.addMessage("Você foi teletransportado para o cemitério após sua morte!", null, 5000L);
+        //gameUI.addMessage("Sua vida foi parcialmente restaurada.", null, 3000L);
       }
-      
-      System.out.println("Jogador teletransportado para cemitério na posição (" + centerX + ", " + centerY + ")");
-      
+
+      //System.out.println("Jogador teletransportado para cemitério na posição (" + centerX + ", " + centerY + ")");
+
     } catch (Exception e) {
       System.err.println("Erro ao teletransportar jogador para o cemitério: " + e.getMessage());
       e.printStackTrace();
-      
+
       // Fallback: apenas restaurar vida no mapa atual
       if (player.getAttributeHealth() <= 0) {
         player.setAttributeHealth(player.getAttributeMaxHealth() / 4);
@@ -1766,7 +1766,7 @@ public class GamePanel extends JPanel implements Runnable{
   }
   private void completeAllOrbsAndSpawnSupremeBoss() {
     System.out.println("=== DEBUG: Completando todas as orbes e spawnando Supremo Boss ===");
-    
+
     if (questManager == null) {
       System.out.println("ERRO: QuestManager é null!");
       return;
@@ -1778,16 +1778,16 @@ public class GamePanel extends JPanel implements Runnable{
       try {
         String orbId = "orb_" + orbType;
         Item item = ItemFactory.createItem(orbId);
-        
+
         if (item instanceof MagicOrb) {
           MagicOrb orb = (MagicOrb) item;
-          
+
           // Adicionar ao inventário
           if (inventoryManager != null) {
             inventoryManager.addItem(orb);
             System.out.println("Orbe " + orbType + " adicionada ao inventário");
           }
-          
+
           // Notificar QuestManager
           questManager.onOrbCollected(orb);
         }
@@ -1799,13 +1799,13 @@ public class GamePanel extends JPanel implements Runnable{
     // Simular depósito de todas as orbes no Totem
     if (questManager.getTotemCentral() != null) {
       System.out.println("Simulando depósito de todas as orbes no Totem Central...");
-      
+
       // Simular depósito de cada orbe
       for (String orbType : orbTypes) {
         try {
           String orbId = "orb_" + orbType;
           Item item = ItemFactory.createItem(orbId);
-          
+
           if (item instanceof MagicOrb) {
             MagicOrb orb = (MagicOrb) item;
             questManager.onOrbDeposited(orb);
@@ -1823,14 +1823,14 @@ public class GamePanel extends JPanel implements Runnable{
     if (questManager.isBossSpawned()) {
       System.out.println("✅ Supremo Boss foi spawnado com sucesso!");
       System.out.println("✅ Quest 'final_boss' deve estar ativa!");
-      
+
       if (gameUI != null) {
         gameUI.addMessage("DEBUG: Todas as orbes completadas! Supremo Boss spawnado!", null, 5000L);
       }
     } else {
       System.out.println("❌ Supremo Boss NÃO foi spawnado!");
     }
-    
+
     System.out.println("=== FIM DEBUG ===");
   }
 
