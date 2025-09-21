@@ -414,8 +414,8 @@ public class GamePanel extends JPanel implements Runnable{
     }
   }
 
-  public void endBattle(boolean playerWon) {
-    if (playerWon) {
+  public void endBattle(boolean playerWon, String action) {
+    if (playerWon && action.equals("WIN")) {
 
       LootTable lootTable = null;
       int xpReward = 0;
@@ -463,7 +463,12 @@ public class GamePanel extends JPanel implements Runnable{
 
       // Remover monstro derrotado do mapa
       removeMonsterFromMap(battleMonster);
-    } else {
+    }
+    else if (!playerWon && action.equals("FLEE")) {
+      System.out.println("You successfully fled from battle!");
+      System.out.println("-----------------------------");
+    }
+    else {
 
         // Aplicar penalidade se necessário
         // player.applyDeathPenalty(); // se você tiver este metodo

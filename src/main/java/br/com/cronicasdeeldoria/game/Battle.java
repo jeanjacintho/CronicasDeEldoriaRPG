@@ -89,7 +89,7 @@ public class Battle {
       case "DEFEND": defend(player); break;
       case "FLEE":
         if (flee(player)) {
-          gp.endBattle(false);
+          gp.endBattle(false, "FLEE");
           return;
         } break;
       case "SPECIAL": specialAttack(player, monster, countTurn); break;
@@ -162,7 +162,7 @@ public class Battle {
   private boolean checkBattleEnd() {
     if (player.getAttributeHealth() <= 0) {
       countTurn = 0;
-      gp.endBattle(false);
+      gp.endBattle(false, "LOSE");
       return true;
     }
 
@@ -171,7 +171,7 @@ public class Battle {
 
       // Quando o monstro é derrotado, os buffs do player são retirados
       player.cleanActiveBuffs();
-      gp.endBattle(true);
+      gp.endBattle(true, "WIN");
       return true;
     }
     return false;
@@ -312,12 +312,12 @@ public class Battle {
       // Reproduzir som de tentativa de fuga sempre que o jogador tentar fugir
       audioManager.playSoundEffect("player_flee");
 
-      int fleeChance = 50; // 50% chance base
+      int fleeChance = 40; // 40% chance base
 
       // Player não pode fugir da batalha do Mago Supremo
       if (Math.random() * 100 < fleeChance && !Objects.equals(monster.getName(), "Mago Supremo")) {
-        System.out.println("You successfully fled from battle!");
-        System.out.println("-----------------------------");
+//        System.out.println("You successfully fled from battle!");
+//        System.out.println("-----------------------------");
 
         // Mover o jogador para fora da área de detecção (2 tiles de distância)
         //movePlayerAwayFromMonster();
