@@ -1,0 +1,41 @@
+{
+  "mapRules": {
+    "forest": [
+      { "effectId": "rain.gif", "seasons": [], "startTime": "00:00", "endTime": "24:00", "probability": 100, "drawMode": "STRETCH", "alpha": 0.4 , "also": [
+        { "effectId": "clouds.gif", "drawMode": "STRETCH", "alpha": 0.4 }
+      ]},
+      { "effectId": "snow.gif", "seasons": ["WINTER"], "startTime": "00:00", "endTime": "24:00", "probability": 30, "drawMode": "STRETCH", "alpha": 0.85 },
+      { "effectId": "clouds_sun.gif", "seasons": [], "startTime": "00:00", "endTime": "24:00", "probability": 0, "drawMode": "STRETCH", "alpha": 0.2 }
+    ],
+    "dungeon1": [
+      { "effectId": "fog.gif", "seasons": [], "startTime": "00:00", "endTime": "24:00", "probability": 100, "drawMode": "STRETCH", "alpha": 0.5 }
+    ],
+    "dungeon2": [
+      { "effectId": "clouds_sun.gif", "seasons": [], "startTime": "00:00", "endTime": "24:00", "probability": 100, "drawMode": "STRETCH", "alpha": 0.4 }
+    ],
+    "dungeon3": [
+      { "effectId": "snow.gif", "seasons": [], "startTime": "00:00", "endTime": "24:00", "probability": 100, "drawMode": "TILE", "alpha": 0.5 }
+    ],
+    "dungeon4": [
+      { "effectId": "clouds_sun.gif", "seasons": [], "startTime": "00:00", "endTime": "24:00", "probability": 100, "drawMode": "STRETCH", "alpha": 0.4 }
+    ],
+    "city": [
+      { "effectId": "clouds_sun.gif", "seasons": [], "startTime": "00:00", "endTime": "24:00", "probability": 0, "drawMode": "STRETCH", "alpha": 0.2 }
+    ],
+    "city_to_dungeon1": [
+      { "effectId": "clouds_sun.gif", "seasons": [], "startTime": "00:00", "endTime": "24:00", "probability": 100, "drawMode": "STRETCH", "alpha": 0.4 }
+    ],
+    "city_to_dungeon3": [
+      { "effectId": "clouds_sun.gif", "seasons": [], "startTime": "00:00", "endTime": "24:00", "probability": 100, "drawMode": "STRETCH", "alpha": 0.4 }
+    ],
+    "cemetery": [
+      { "effectId": "fog.gif", "seasons": [], "startTime": "00:00", "endTime": "24:00", "probability": 100, "drawMode": "STRETCH", "alpha": 0.5 }
+    ],
+    "totem": [
+      { "effectId": "clouds_sun.gif", "seasons": [], "startTime": "00:00", "endTime": "24:00", "probability": 0, "drawMode": "STRETCH", "alpha": 0.2 }
+    ]
+  }
+}
+
+
+
