@@ -43,6 +43,9 @@ import br.com.cronicasdeeldoria.game.quest.QuestManager;
 import br.com.cronicasdeeldoria.audio.AudioManager;
 import br.com.cronicasdeeldoria.audio.AudioContext;
 import br.com.cronicasdeeldoria.game.effects.BattleEffectManager;
+import br.com.cronicasdeeldoria.game.environment.EnvironmentEffectManager;
+import br.com.cronicasdeeldoria.game.environment.Season;
+import java.time.LocalTime;
 /**
  * Painel principal do jogo, responsável pelo loop de atualização, renderização e gerenciamento dos elementos do jogo.
  */
@@ -80,6 +83,8 @@ public class GamePanel extends JPanel implements Runnable{
   private AudioManager audioManager;
   private String playerClassName;
   private String currentMapName;
+  private EnvironmentEffectManager environmentEffectManager;
+  private Season currentSeason = Season.SPRING;
 
   public int ancianDialogId = 30;
 
@@ -205,6 +210,15 @@ public class GamePanel extends JPanel implements Runnable{
     // Inicializar sistema de áudio
     this.audioManager = AudioManager.getInstance();
     this.currentMapName = "houses/player_house"; // Mapa inicial padrão
+
+    // Inicializar efeitos de ambiente (clima/estações)
+    this.environmentEffectManager = new EnvironmentEffectManager();
+    try {
+      this.environmentEffectManager.loadConfig("/environment_config.json");
+      this.environmentEffectManager.selectEffectForMap(currentMapName, currentSeason, LocalTime.now());
+    } catch (Exception e) {
+      System.err.println("Erro ao carregar configuração de efeitos de ambiente: " + e.getMessage());
+    }
 
     // Configurar contexto inicial de áudio
     AudioContext initialContext = AudioContext.fromMapName(currentMapName);
@@ -843,6 +857,13 @@ public class GamePanel extends JPanel implements Runnable{
         // Renderizar camadas overlay APÓS o player (para efeito de profundidade)
         tileManager.drawOverlayLayers(graphics2D);
 
+        // Efeito de ambiente acima do overlay e relativo ao mundo (scroll com mapa)
+        if (environmentEffectManager != null) {
+          int worldOriginX = player.getWorldX() - player.getScreenX();
+          int worldOriginY = player.getWorldY() - player.getScreenY();
+          environmentEffectManager.drawWorldRelative(graphics2D, worldOriginX, worldOriginY, getScreenWidth(), getScreenHeight());
+        }
+
         // Renderizar teclas de interação APÓS as camadas overlay (para ficarem por cima)
         // Renderizar teclas de interação para NPCs
         if (npcs != null && !npcs.isEmpty() && simpleInteractionManager != null) {
@@ -923,6 +944,12 @@ public class GamePanel extends JPanel implements Runnable{
         // Renderizar camadas overlay APÓS o player (para efeito de profundidade)
         tileManager.drawOverlayLayers(graphics2D);
 
+        if (environmentEffectManager != null) {
+          int worldOriginX = player.getWorldX() - player.getScreenX();
+          int worldOriginY = player.getWorldY() - player.getScreenY();
+          environmentEffectManager.drawWorldRelative(graphics2D, worldOriginX, worldOriginY, getScreenWidth(), getScreenHeight());
+        }
+
         // Interface normal de jogo
         gameUI.draw(graphics2D);
 
@@ -952,6 +979,12 @@ public class GamePanel extends JPanel implements Runnable{
         // Renderizar camadas overlay APÓS o player (para efeito de profundidade)
         tileManager.drawOverlayLayers(graphics2D);
 
+        if (environmentEffectManager != null) {
+          int worldOriginX = player.getWorldX() - player.getScreenX();
+          int worldOriginY = player.getWorldY() - player.getScreenY();
+          environmentEffectManager.drawWorldRelative(graphics2D, worldOriginX, worldOriginY, getScreenWidth(), getScreenHeight());
+        }
+
         // Interface normal de jogo
         gameUI.draw(graphics2D);
 
@@ -980,6 +1013,12 @@ public class GamePanel extends JPanel implements Runnable{
 
         // Renderizar camadas overlay APÓS o player (para efeito de profundidade)
         tileManager.drawOverlayLayers(graphics2D);
+
+        if (environmentEffectManager != null) {
+          int worldOriginX = player.getWorldX() - player.getScreenX();
+          int worldOriginY = player.getWorldY() - player.getScreenY();
+          environmentEffectManager.drawWorldRelative(graphics2D, worldOriginX, worldOriginY, getScreenWidth(), getScreenHeight());
+        }
 
         // Interface normal de jogo
         gameUI.draw(graphics2D);
@@ -2240,6 +2279,16 @@ public class GamePanel extends JPanel implements Runnable{
 
       // Atualizar contexto de áudio baseado no novo mapa
       updateAudioContextForMap(mapName);
+
+      // Selecionar efeito de ambiente para o novo mapa
+      if (environmentEffectManager != null) {
+        environmentEffectManager.selectEffectForMap(mapName, currentSeason, LocalTime.now());
+        // Se não selecionou nada (p.ex. por nome de mapa diferente), tentar com nome normalizado
+        if (!environmentEffectManager.hasActiveEffect() && mapName.contains("/")) {
+          String normalized = mapName.substring(mapName.lastIndexOf('/') + 1);
+          environmentEffectManager.selectEffectForMap(normalized, currentSeason, LocalTime.now());
+        }
+      }
 
     } catch (Exception e) {
       System.err.println("Erro ao carregar mapa: " + e.getMessage());
