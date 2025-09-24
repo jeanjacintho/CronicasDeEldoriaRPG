@@ -5,10 +5,13 @@ import br.com.cronicasdeeldoria.game.GamePanel;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
 import java.io.InputStream;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -19,15 +22,17 @@ public class SupremeMage extends Npc {
     private boolean isFollowingPlayer;
     private int followDistance;
     private int battleTriggerDistance;
-    
+
     private List<Point> currentPath;
     private int pathIndex;
     private long lastPathUpdate;
-    private static final long PATH_UPDATE_INTERVAL = 300; // Atualizar path a cada 300ms
+    private static final long PATH_UPDATE_INTERVAL = 150;
     private static final int MAX_PATH_LENGTH = 30;
     private boolean isStuck;
     private long stuckTime;
-    private static final long STUCK_THRESHOLD = 1500; // 1.5 segundos para considerar "preso"
+    private int lastPosX;
+    private int lastPosY;
+    private static final long STUCK_THRESHOLD = 150;
 
     /**
      * Construtor para criar o Mago Supremo.
@@ -49,17 +54,19 @@ public class SupremeMage extends Npc {
         int hitboxHeight = 52;
         int hitboxX = (bossSize - hitboxWidth) / 2;
         int hitboxY = bossSize / 2;
-        this.setHitbox(new java.awt.Rectangle(hitboxX, hitboxY, hitboxWidth, hitboxHeight));
+        this.setHitbox(new Rectangle(hitboxX, hitboxY, hitboxWidth, hitboxHeight));
 
         this.isFollowingPlayer = true;
         this.followDistance = 400; // Distância para começar a seguir
-        this.battleTriggerDistance = 80; // Distância para iniciar batalha
-        
+        this.battleTriggerDistance = 32; // Distância para iniciar batalha
+
         this.currentPath = new ArrayList<>();
         this.pathIndex = 0;
         this.lastPathUpdate = 0;
         this.isStuck = false;
-        this.stuckTime = 0;
+        this.stuckTime = System.currentTimeMillis();
+        this.lastPosX = x;
+        this.lastPosY = y;
     }
 
     /**
@@ -105,17 +112,17 @@ public class SupremeMage extends Npc {
 
         // Sistema de detecção de "preso"
         checkIfStuck();
-        
+
+        // Calcular LOS antes de decidir por atualização de path
+        boolean hasLOS = hasDirectLineOfSight(player, gamePanel);
+
         // Atualizar path se necessário
         long currentTime = System.currentTimeMillis();
-        if (currentTime - lastPathUpdate > PATH_UPDATE_INTERVAL || currentPath.isEmpty() || isStuck) {
+        if (currentTime - lastPathUpdate > PATH_UPDATE_INTERVAL || currentPath.isEmpty() || isStuck || !hasLOS) {
             updatePath(player, gamePanel);
             lastPathUpdate = currentTime;
         }
 
-        // Mover seguindo o path ou LOS direto
-        boolean hasLOS = hasDirectLineOfSight(player, gamePanel);
-        
         if (hasLOS && !isStuck) {
             // LOS direto - movimento mais suave
             moveDirectlyToPlayer(deltaX, deltaY, gamePanel);
@@ -123,6 +130,7 @@ public class SupremeMage extends Npc {
             // Seguir path calculado
             followPath(gamePanel);
         } else {
+            lastPathUpdate = 0;
             // Fallback: movimento simples
             moveTowardsPlayerSimple(deltaX, deltaY, gamePanel);
         }
@@ -136,73 +144,80 @@ public class SupremeMage extends Npc {
      * @return true se há linha de visão clara
      */
     private boolean hasDirectLineOfSight(Player player, GamePanel gamePanel) {
-        // Usar centro das hitboxes para cálculo mais preciso
-        int startX = getWorldX() + (getHitbox() != null ? getHitbox().width / 2 : gamePanel.getTileSize() / 2);
-        int startY = getWorldY() + (getHitbox() != null ? getHitbox().height / 2 : gamePanel.getTileSize() / 2);
-        int endX = player.getWorldX() + (player.getHitbox() != null ? player.getHitbox().width / 2 : gamePanel.getPlayerSize() / 2);
-        int endY = player.getWorldY() + (player.getHitbox() != null ? player.getHitbox().height / 2 : gamePanel.getPlayerSize() / 2);
+        // Usar centro real das hitboxes considerando offsets
+        int startX;
+        int startY;
+        if (getHitbox() != null) {
+            startX = getWorldX() + getHitbox().x + (getHitbox().width / 2);
+            startY = getWorldY() + getHitbox().y + (getHitbox().height / 2);
+        } else {
+            startX = getWorldX() + (gamePanel.getTileSize() / 2);
+            startY = getWorldY() + (gamePanel.getTileSize() / 2);
+        }
+        int endX;
+        int endY;
+        if (player.getHitbox() != null) {
+            endX = player.getWorldX() + player.getHitbox().x + (player.getHitbox().width / 2);
+            endY = player.getWorldY() + player.getHitbox().y + (player.getHitbox().height / 2);
+        } else {
+            endX = player.getWorldX() + (gamePanel.getPlayerSize() / 2);
+            endY = player.getWorldY() + (gamePanel.getPlayerSize() / 2);
+        }
 
         // Calcular distância para otimização
         int distance = (int) Math.sqrt((endX - startX) * (endX - startX) + (endY - startY) * (endY - startY));
-        
+
         // Se muito próximo, considerar LOS direto
         if (distance < gamePanel.getTileSize() * 2) {
             return true;
         }
 
-        // Usar algoritmo de linha de Bresenham para verificação mais precisa
         return bresenhamLineOfSight(startX, startY, endX, endY, gamePanel);
     }
 
     /**
      * Implementa algoritmo de linha de Bresenham para verificação de LOS.
-     * @param x0 Coordenada X inicial
-     * @param y0 Coordenada Y inicial
-     * @param x1 Coordenada X final
-     * @param y1 Coordenada Y final
+     * @param startX Coordenada X inicial
+     * @param startY Coordenada Y inicial
+     * @param endX Coordenada X final
+     * @param endY Coordenada Y final
      * @param gamePanel Painel do jogo
      * @return true se a linha está livre de obstáculos
      */
-    private boolean bresenhamLineOfSight(int x0, int y0, int x1, int y1, GamePanel gamePanel) {
-        int dx = Math.abs(x1 - x0);
-        int dy = Math.abs(y1 - y0);
-        int sx = x0 < x1 ? 1 : -1;
-        int sy = y0 < y1 ? 1 : -1;
-        int err = dx - dy;
-        
-        int x = x0;
-        int y = y0;
+    private boolean bresenhamLineOfSight(int startX, int startY, int endX, int endY, GamePanel gamePanel) {
+        int deltaX = Math.abs(endX - startX);
+        int deltaY = Math.abs(endY - startY);
+        int stepX = startX < endX ? 1 : -1;
+        int stepY = startY < endY ? 1 : -1;
+        int error = deltaX - deltaY;
+
+        int currentX = startX;
+        int currentY = startY;
         int tileSize = gamePanel.getTileSize();
-        int steps = 0;
-        int maxSteps = Math.max(dx, dy) / (tileSize / 4); // Verificar a cada 1/4 de tile para melhor precisão
-        
+        int stepCount = 0;
+        int maxSteps = Math.max(deltaX, deltaY) / (tileSize / 4);
+
         // Verificar pontos ao longo da linha
-        while (steps < maxSteps) {
-            // Verificar colisão no ponto atual (exceto pontos inicial e final)
-            if ((x != x0 || y != y0) && (x != x1 || y != y1)) {
-                if (hasCollisionAtTile(x, y, gamePanel)) {
+        while (stepCount < maxSteps) {
+            if ((currentX != startX || currentY != startY) && (currentX != endX || currentY != endY)) {
+                if (hasCollisionAtTile(currentX, currentY, gamePanel)) {
                     return false;
                 }
             }
-            
-            // Parar se chegou ao destino
-            if (x == x1 && y == y1) {
-                break;
+
+            if (currentX == endX && currentY == endY) break;
+
+            int error2 = 2 * error;
+            if (error2 > -deltaY) {
+                error -= deltaY;
+                currentX += stepX;
             }
-            
-            int e2 = 2 * err;
-            if (e2 > -dy) {
-                err -= dy;
-                x += sx;
+            if (error2 < deltaX) {
+                error += deltaX;
+                currentY += stepY;
             }
-            if (e2 < dx) {
-                err += dx;
-                y += sy;
-            }
-            
-            steps++;
+            stepCount++;
         }
-        
         return true;
     }
 
@@ -227,26 +242,36 @@ public class SupremeMage extends Npc {
      */
     private void checkIfStuck() {
         long currentTime = System.currentTimeMillis();
-        
-        // Se não está se movendo há muito tempo, considerar preso
-        if (currentTime - stuckTime > STUCK_THRESHOLD) {
-            isStuck = true;
-        } else {
+        int dx = Math.abs(getWorldX() - lastPosX);
+        int dy = Math.abs(getWorldY() - lastPosY);
+
+        if (dx + dy >= getSpeed()) {
+            stuckTime = currentTime;
             isStuck = false;
+            lastPosX = getWorldX();
+            lastPosY = getWorldY();
+            return;
         }
+
+        // Considerar preso se parado por tempo acima do limiar
+        isStuck = (currentTime - stuckTime) > STUCK_THRESHOLD;
     }
 
     /**
-     * Atualiza o path para o jogador usando pathfinding simples.
+     * Atualiza o path para o jogador usando pathfinding robusto.
      * @param player Jogador
      * @param gamePanel Painel do jogo
      */
     private void updatePath(Player player, GamePanel gamePanel) {
         currentPath.clear();
         pathIndex = 0;
-        
-        // Calcular path simples usando algoritmo de "greedy" pathfinding
-        calculateSimplePath(player, gamePanel);
+
+        calculateBfsPath(player, gamePanel);
+
+        // Se BFS falhou, tentar greedy como fallback
+        if (currentPath.size() <= 1) {
+            calculateSimplePath(player, gamePanel);
+        }
     }
 
     /**
@@ -259,43 +284,50 @@ public class SupremeMage extends Npc {
         int startY = getWorldY();
         int targetX = player.getWorldX();
         int targetY = player.getWorldY();
-        
+
         int tileSize = gamePanel.getTileSize();
-        
+
         // Converter para coordenadas de tile
         int startTileX = startX / tileSize;
         int startTileY = startY / tileSize;
         int targetTileX = targetX / tileSize;
         int targetTileY = targetY / tileSize;
-        
+
         int currentX = startTileX;
         int currentY = startTileY;
-        
-        // Adicionar ponto inicial
-        currentPath.add(new Point(startX, startY));
-        
+
+        // Adicionar ponto inicial (centro do tile atual)
+        currentPath.add(new Point(startTileX * tileSize + tileSize / 2, startTileY * tileSize + tileSize / 2));
+
         // Calcular path usando movimento em grade com melhor lógica
         while (currentPath.size() < MAX_PATH_LENGTH && (currentX != targetTileX || currentY != targetTileY)) {
             int deltaX = targetTileX - currentX;
             int deltaY = targetTileY - currentY;
-            
-            // Determinar próxima direção com prioridade inteligente
+
+            // Determinar próxima direção
             int nextX = currentX;
             int nextY = currentY;
             boolean moved = false;
-            
-            // Tentar movimento diagonal primeiro (mais eficiente)
+
+            // Tentar movimento diagonal
             if (deltaX != 0 && deltaY != 0) {
-                int diagonalX = currentX + (deltaX > 0 ? 1 : -1);
-                int diagonalY = currentY + (deltaY > 0 ? 1 : -1);
-                
-                if (!hasCollisionAtTile(diagonalX * tileSize, diagonalY * tileSize, gamePanel)) {
+                int stepX = (deltaX > 0 ? 1 : -1);
+                int stepY = (deltaY > 0 ? 1 : -1);
+                int diagonalX = currentX + stepX;
+                int diagonalY = currentY + stepY;
+
+                boolean freeDiagonal = !hasCollisionAtTile(diagonalX * tileSize, diagonalY * tileSize, gamePanel);
+                boolean freeHoriz = !hasCollisionAtTile((currentX + stepX) * tileSize, currentY * tileSize, gamePanel);
+                boolean freeVert  = !hasCollisionAtTile(currentX * tileSize, (currentY + stepY) * tileSize, gamePanel);
+
+                // Prevenir corner-cutting: só permite diagonal se diagonal e ambos adjacentes estiverem livres
+                if (freeDiagonal && freeHoriz && freeVert) {
                     currentX = diagonalX;
                     currentY = diagonalY;
                     moved = true;
                 }
             }
-            
+
             // Se não conseguiu movimento diagonal, tentar movimento em linha reta
             if (!moved) {
                 if (Math.abs(deltaX) > Math.abs(deltaY)) {
@@ -314,7 +346,7 @@ public class SupremeMage extends Npc {
                     }
                 }
             }
-            
+
             // Se não conseguiu mover na direção principal, tentar direção alternativa
             if (!moved) {
                 if (deltaX != 0) {
@@ -332,23 +364,82 @@ public class SupremeMage extends Npc {
                     }
                 }
             }
-            
-            // Se conseguiu mover, adicionar ao path
+
             if (moved) {
-                currentPath.add(new Point(currentX * tileSize, currentY * tileSize));
+                currentPath.add(new Point(currentX * tileSize + tileSize / 2, currentY * tileSize + tileSize / 2));
             } else {
-                // Não conseguiu mover, parar o pathfinding
                 break;
             }
         }
-        
-        // Adicionar ponto final se não estiver muito próximo
+
         int lastX = currentPath.get(currentPath.size() - 1).x;
         int lastY = currentPath.get(currentPath.size() - 1).y;
         int distanceToTarget = (int) Math.sqrt((targetX - lastX) * (targetX - lastX) + (targetY - lastY) * (targetY - lastY));
-        
+
         if (distanceToTarget > tileSize) {
             currentPath.add(new Point(targetX, targetY));
+        }
+    }
+
+    /**
+     * Calcula um path básico usando BFS em grid de tiles, evitando colisões de tiles.
+     * Limita a expansão para evitar custo alto.
+     */
+    private void calculateBfsPath(Player player, GamePanel gamePanel) {
+        int tileSize = gamePanel.getTileSize();
+        int startTileX = getWorldX() / tileSize;
+        int startTileY = getWorldY() / tileSize;
+        int targetTileX = player.getWorldX() / tileSize;
+        int targetTileY = player.getWorldY() / tileSize;
+
+        int maxWidth = gamePanel.getTileManager().getMapWidth();
+        int maxHeight = gamePanel.getTileManager().getMapHeight();
+
+        boolean[][] visited = new boolean[maxWidth][maxHeight];
+        Point[][] parent = new Point[maxWidth][maxHeight];
+        ArrayDeque<Point> queue = new ArrayDeque<>();
+
+        Point start = new Point(startTileX, startTileY);
+        Point goal = new Point(targetTileX, targetTileY);
+        queue.add(start);
+        visited[startTileX][startTileY] = true;
+
+        int[][] dirs = {{1,0},{-1,0},{0,1},{0,-1}}; // apenas 4-direções para evitar corner cutting
+        int expansions = 0;
+        int maxExpansions = 500;
+
+        while (!queue.isEmpty() && expansions < maxExpansions) {
+            Point cur = queue.poll();
+            expansions++;
+            if (cur.x == goal.x && cur.y == goal.y) break;
+
+            for (int[] d : dirs) {
+                int nx = cur.x + d[0];
+                int ny = cur.y + d[1];
+                if (nx < 0 || ny < 0 || nx >= maxWidth || ny >= maxHeight) continue;
+                if (visited[nx][ny]) continue;
+                if (gamePanel.getTileManager().isCollisionAt(nx, ny)) continue;
+                visited[nx][ny] = true;
+                parent[nx][ny] = cur;
+                queue.add(new Point(nx, ny));
+            }
+        }
+
+        if (!visited[targetTileX][targetTileY]) {
+            return;
+        }
+
+        LinkedList<Point> tilesPath = new LinkedList<>();
+        Point cur = new Point(targetTileX, targetTileY);
+        while (cur != null && !(cur.x == startTileX && cur.y == startTileY)) {
+            tilesPath.addFirst(cur);
+            cur = parent[cur.x][cur.y];
+        }
+
+        currentPath.clear();
+        currentPath.add(new Point(startTileX * tileSize + tileSize / 2, startTileY * tileSize + tileSize / 2));
+        for (Point t : tilesPath) {
+            currentPath.add(new Point(t.x * tileSize + tileSize / 2, t.y * tileSize + tileSize / 2));
         }
     }
 
@@ -358,29 +449,49 @@ public class SupremeMage extends Npc {
      */
     private void followPath(GamePanel gamePanel) {
         if (currentPath.isEmpty() || pathIndex >= currentPath.size()) {
+            lastPathUpdate = 0;
             return;
         }
-        
+
         Point targetPoint = currentPath.get(pathIndex);
-        int deltaX = targetPoint.x - getWorldX();
-        int deltaY = targetPoint.y - getWorldY();
-        
+        int currentCenterX = (getHitbox() != null)
+                ? getWorldX() + getHitbox().x + (getHitbox().width / 2)
+                : getWorldX() + (gamePanel.getTileSize() / 2);
+        int currentCenterY = (getHitbox() != null)
+                ? getWorldY() + getHitbox().y + (getHitbox().height / 2)
+                : getWorldY() + (gamePanel.getTileSize() / 2);
+        int deltaX = targetPoint.x - currentCenterX;
+        int deltaY = targetPoint.y - currentCenterY;
+
         // Se chegou próximo ao ponto atual do path, avançar para o próximo
         int distanceToPoint = (int) Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-        int threshold = gamePanel.getTileSize() / 3; // Threshold menor para melhor responsividade
-        
+        int threshold = Math.max(getSpeed() * 2, gamePanel.getTileSize() / 2);
+
         if (distanceToPoint < threshold) {
             pathIndex++;
             if (pathIndex >= currentPath.size()) {
+                lastPathUpdate = 0;
                 return;
             }
             targetPoint = currentPath.get(pathIndex);
-            deltaX = targetPoint.x - getWorldX();
-            deltaY = targetPoint.y - getWorldY();
+            currentCenterX = (getHitbox() != null)
+                    ? getWorldX() + getHitbox().x + (getHitbox().width / 2)
+                    : getWorldX() + (gamePanel.getTileSize() / 2);
+            currentCenterY = (getHitbox() != null)
+                    ? getWorldY() + getHitbox().y + (getHitbox().height / 2)
+                    : getWorldY() + (gamePanel.getTileSize() / 2);
+            deltaX = targetPoint.x - currentCenterX;
+            deltaY = targetPoint.y - currentCenterY;
         }
-        
-        // Mover em direção ao próximo ponto do path
+
+        int beforeX = getWorldX();
+        int beforeY = getWorldY();
         moveTowardsPoint(deltaX, deltaY, gamePanel);
+
+        boolean actuallyMoved = (getWorldX() != beforeX) || (getWorldY() != beforeY);
+        if (!actuallyMoved) {
+            lastPathUpdate = 0;
+        }
     }
 
     /**
@@ -390,34 +501,56 @@ public class SupremeMage extends Npc {
      * @param gamePanel Painel do jogo
      */
     private void moveTowardsPoint(int deltaX, int deltaY, GamePanel gamePanel) {
-        // Normalizar direção
-        double distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-        if (distance == 0) return;
-        
-        double normalizedX = deltaX / distance;
-        double normalizedY = deltaY / distance;
-        
-        // Calcular nova posição
-        int newX = getWorldX() + (int)(normalizedX * getSpeed());
-        int newY = getWorldY() + (int)(normalizedY * getSpeed());
-        
-        // Verificar colisões
-        if (!hasCollisionAt(newX, newY, gamePanel)) {
-            setWorldX(newX);
-            setWorldY(newY);
-            
-            // Atualizar direção
-            if (Math.abs(normalizedX) > Math.abs(normalizedY)) {
-                setDirection(normalizedX > 0 ? "right" : "left");
-            } else {
-                setDirection(normalizedY > 0 ? "down" : "up");
+        if (Math.abs(deltaX) <= getSpeed() && Math.abs(deltaY) <= getSpeed()) {
+            return;
+        }
+
+        boolean movedAny = false;
+
+        if (Math.abs(deltaX) > Math.abs(deltaY)) {
+            // Mover horizontalmente primeiro
+            int stepX = deltaX > 0 ? getSpeed() : -getSpeed();
+            int newX = getWorldX() + stepX;
+            if (!hasCollisionAt(newX, getWorldY(), gamePanel)) {
+                setWorldX(newX);
+                setDirection(deltaX > 0 ? "right" : "left");
+                movedAny = true;
             }
-            
-            // Resetar timer de "preso"
-            stuckTime = System.currentTimeMillis();
         } else {
-            // Tentar movimento alternativo
-            tryAlternativeMovement(deltaX, deltaY, gamePanel);
+            // Mover verticalmente primeiro
+            int stepY = deltaY > 0 ? getSpeed() : -getSpeed();
+            int newY = getWorldY() + stepY;
+            if (!hasCollisionAt(getWorldX(), newY, gamePanel)) {
+                setWorldY(newY);
+                setDirection(deltaY > 0 ? "down" : "up");
+                movedAny = true;
+            }
+        }
+
+        if (!movedAny) {
+            if (Math.abs(deltaX) <= Math.abs(deltaY)) {
+                // Tentar horizontal agora
+                int stepX = deltaX > 0 ? getSpeed() : -getSpeed();
+                int newX = getWorldX() + stepX;
+                if (!hasCollisionAt(newX, getWorldY(), gamePanel)) {
+                    setWorldX(newX);
+                    setDirection(deltaX > 0 ? "right" : "left");
+                    movedAny = true;
+                }
+            } else {
+                // Tentar vertical agora
+                int stepY = deltaY > 0 ? getSpeed() : -getSpeed();
+                int newY = getWorldY() + stepY;
+                if (!hasCollisionAt(getWorldX(), newY, gamePanel)) {
+                    setWorldY(newY);
+                    setDirection(deltaY > 0 ? "down" : "up");
+                    movedAny = true;
+                }
+            }
+        }
+
+        if (movedAny) {
+            stuckTime = System.currentTimeMillis();
         }
     }
 
@@ -431,7 +564,7 @@ public class SupremeMage extends Npc {
         // Determinar direção principal
         String primaryDirection;
         String secondaryDirection;
-        
+
         if (Math.abs(deltaX) > Math.abs(deltaY)) {
             primaryDirection = deltaX > 0 ? "right" : "left";
             secondaryDirection = deltaY > 0 ? "down" : "up";
@@ -439,19 +572,19 @@ public class SupremeMage extends Npc {
             primaryDirection = deltaY > 0 ? "down" : "up";
             secondaryDirection = deltaX > 0 ? "right" : "left";
         }
-        
+
         // Tentar mover na direção principal
         if (canMoveInDirection(primaryDirection, gamePanel)) {
             moveInDirection(primaryDirection);
             return;
         }
-        
+
         // Tentar mover na direção secundária
         if (canMoveInDirection(secondaryDirection, gamePanel)) {
             moveInDirection(secondaryDirection);
             return;
         }
-        
+
         // Tentar outras direções
         String[] allDirections = {"up", "down", "left", "right"};
         for (String direction : allDirections) {
@@ -519,57 +652,76 @@ public class SupremeMage extends Npc {
         double normalizedX = deltaX / distance;
         double normalizedY = deltaY / distance;
 
-        // Calcular nova posição
-        int newX = getWorldX() + (int)(normalizedX * getSpeed());
-        int newY = getWorldY() + (int)(normalizedY * getSpeed());
+        // Movimento separado por eixo (X depois Y)
+        boolean movedAny = false;
+        int proposedX = getWorldX() + (int)(normalizedX * getSpeed());
+        if (!hasCollisionAt(proposedX, getWorldY(), gamePanel)) {
+            setWorldX(proposedX);
+            movedAny = true;
+        }
+        int proposedY = getWorldY() + (int)(normalizedY * getSpeed());
+        if (!hasCollisionAt(getWorldX(), proposedY, gamePanel)) {
+            setWorldY(proposedY);
+            movedAny = true;
+        }
 
-        // Verificar colisões básicas
-        if (!hasCollisionAt(newX, newY, gamePanel)) {
-            // Mover para nova posição
-            setWorldX(newX);
-            setWorldY(newY);
-
-            // Definir direção baseada no movimento
+        if (movedAny) {
             if (Math.abs(normalizedX) > Math.abs(normalizedY)) {
                 setDirection(normalizedX > 0 ? "right" : "left");
             } else {
                 setDirection(normalizedY > 0 ? "down" : "up");
             }
-            
-            // Resetar timer de "preso"
             stuckTime = System.currentTimeMillis();
         } else {
-            // Se há colisão, tentar movimento alternativo
             tryAlternativeMovement(deltaX, deltaY, gamePanel);
         }
     }
 
     /**
-     * Verifica se há colisão na posição especificada.
+     * Verifica se há colisão na posição especificada SEM alterar a posição do boss.
      * @param x Posição X
      * @param y Posição Y
      * @param gamePanel Painel do jogo
      * @return true se há colisão
      */
     private boolean hasCollisionAt(int x, int y, GamePanel gamePanel) {
-        // Salvar posição atual
-        int originalX = getWorldX();
-        int originalY = getWorldY();
+        // Verificar colisão diretamente com tiles sem mover o boss
+        if (getHitbox() != null) {
+            // Calcular área da hitbox na nova posição
+            int hitboxLeft = x + getHitbox().x;
+            int hitboxRight = x + getHitbox().x + getHitbox().width - 1;
+            int hitboxTop = y + getHitbox().y;
+            int hitboxBottom = y + getHitbox().y + getHitbox().height - 1;
 
-        // Definir nova posição temporariamente
-        setWorldX(x);
-        setWorldY(y);
+            int tileSize = gamePanel.getTileSize();
 
-        // Verificar colisão com tiles
-        setCollisionOn(false);
-        gamePanel.getColisionChecker().checkTile(this);
-        boolean hasCollision = isCollisionOn();
+            // Verificar tiles que a hitbox tocaria
+            int leftTile = hitboxLeft / tileSize;
+            int rightTile = hitboxRight / tileSize;
+            int topTile = hitboxTop / tileSize;
+            int bottomTile = hitboxBottom / tileSize;
 
-        // Restaurar posição original
-        setWorldX(originalX);
-        setWorldY(originalY);
+            // Verificar cada tile na área da hitbox
+            int mapWidth = gamePanel.getTileManager().getMapWidth();
+            int mapHeight = gamePanel.getTileManager().getMapHeight();
 
-        return hasCollision;
+            for (int tileY = topTile; tileY <= bottomTile; tileY++) {
+                for (int tileX = leftTile; tileX <= rightTile; tileX++) {
+                    // Verificar bounds do mapa
+                    if (tileX < 0 || tileY < 0 || tileX >= mapWidth || tileY >= mapHeight) {
+                        return true; // Fora do mapa = colisão
+                    }
+                    if (gamePanel.getTileManager().isCollisionAt(tileX, tileY)) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        } else {
+            int tileX = x / gamePanel.getTileSize();
+            int tileY = y / gamePanel.getTileSize();
+            return gamePanel.getTileManager().isCollisionAt(tileX, tileY);
+        }
     }
 
     /**
@@ -586,6 +738,7 @@ public class SupremeMage extends Npc {
                 setWorldX(newX);
                 setDirection(deltaX > 0 ? "right" : "left");
                 stuckTime = System.currentTimeMillis();
+                lastPathUpdate = 0;
                 return;
             }
         }
@@ -597,6 +750,7 @@ public class SupremeMage extends Npc {
                 setWorldY(newY);
                 setDirection(deltaY > 0 ? "down" : "up");
                 stuckTime = System.currentTimeMillis();
+                lastPathUpdate = 0;
                 return;
             }
         }
@@ -607,10 +761,11 @@ public class SupremeMage extends Npc {
             if (canMoveInDirection(direction, gamePanel)) {
                 moveInDirection(direction);
                 stuckTime = System.currentTimeMillis();
+                lastPathUpdate = 0;
                 return;
             }
         }
-        
+
         // Se não conseguir mover em nenhuma direção, marcar como preso
         if (stuckTime == 0) {
             stuckTime = System.currentTimeMillis();
@@ -747,19 +902,19 @@ public class SupremeMage extends Npc {
             g.fillRect(screenX, screenY, bossSize, bossSize);
         }
     }
-    
+
     /**
      * Classe auxiliar para representar pontos no pathfinding.
      */
     private static class Point {
         public final int x;
         public final int y;
-        
+
         public Point(int x, int y) {
             this.x = x;
             this.y = y;
         }
-        
+
         @Override
         public String toString() {
             return "Point(" + x + ", " + y + ")";
