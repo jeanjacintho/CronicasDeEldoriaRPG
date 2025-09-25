@@ -9,10 +9,6 @@ import java.awt.Rectangle;
 import java.awt.BasicStroke;
 
 import javax.swing.JPanel;
-
-import br.com.cronicasdeeldoria.entity.item.Item;
-import br.com.cronicasdeeldoria.entity.item.MagicOrb;
-import br.com.cronicasdeeldoria.game.inventory.ItemFactory;
 import br.com.cronicasdeeldoria.entity.character.npc.*;
 import br.com.cronicasdeeldoria.entity.character.player.Player;
 import br.com.cronicasdeeldoria.entity.character.npc.NpcSpriteLoader;
@@ -223,30 +219,7 @@ public class GamePanel extends JPanel implements Runnable{
     // Configurar contexto inicial de áudio
     AudioContext initialContext = AudioContext.fromMapName(currentMapName);
     audioManager.changeContext(initialContext);
-
-    // Iniciar diálogo inicial ao começar um novo jogo
-    // COMENTADO: Diálogo inicial será iniciado após o tutorial
-    // if (this.dialogManager != null) {
-    //   boolean started = this.dialogManager.startDialog(37);
-    //   if (started) {
-    //     gameState = dialogState;
-    //   }
-    // }
-
   }
-
-  /**
-   * Método de teste para forçar a abertura de um diálogo
-   */
-  public void testDialog() {
-    if (dialogManager != null) {
-      boolean success = dialogManager.startDialog(1);
-      if (success) {
-        gameState = dialogState;
-      }
-    }
-  }
-
 
   /**
    * Inicia a thread principal do jogo.
@@ -255,32 +228,6 @@ public class GamePanel extends JPanel implements Runnable{
     gameThread = new Thread(this);
     gameThread.start();
     this.requestFocusInWindow(); // Garantir que o GamePanel tenha foco
-
-    // Ao iniciar o jogo da 3 poções ao player
-    dialogManager.giveItemToPlayer("health_potion", 10);
-    dialogManager.giveItemToPlayer("mana_potion", 2);
-
-    //dialogManager.giveItemToPlayer("mana_potion", 5);
-    //dialogManager.giveItemToPlayer("health_potion", 5);
-
-    //Itens para testar Dungeon3
-    dialogManager.giveItemToPlayer("ring_rare", 1);
-    dialogManager.giveItemToPlayer("shield_common", 1);
-    dialogManager.giveItemToPlayer("armor_rare", 1);
-    dialogManager.giveItemToPlayer("axe_rare", 1);
-    dialogManager.giveItemToPlayer("bow_rare", 1);
-
-    //Itens para testar Dungeon4
-    dialogManager.giveItemToPlayer("ring_legendary", 1);
-    dialogManager.giveItemToPlayer("shield_legendary", 1);
-    dialogManager.giveItemToPlayer("armor_legendary", 1);
-    dialogManager.giveItemToPlayer("axe_legendary", 1);
-    dialogManager.giveItemToPlayer("bow_legendary", 1);
-
-    dialogManager.giveItemToPlayer("orb_water", 1);
-    dialogManager.giveItemToPlayer("orb_fire", 1);
-    dialogManager.giveItemToPlayer("orb_air", 1);
-    dialogManager.giveItemToPlayer("orb_earth", 1);
   }
 
   @Override
@@ -1807,75 +1754,6 @@ public class GamePanel extends JPanel implements Runnable{
         }
       }
     }
-  }
-  private void completeAllOrbsAndSpawnSupremeBoss() {
-    System.out.println("=== DEBUG: Completando todas as orbes e spawnando Supremo Boss ===");
-
-    if (questManager == null) {
-      System.out.println("ERRO: QuestManager é null!");
-      return;
-    }
-
-    // Simular coleta de todas as 4 orbes
-    String[] orbTypes = {"earth", "fire", "water", "air"};
-    for (String orbType : orbTypes) {
-      try {
-        String orbId = "orb_" + orbType;
-        Item item = ItemFactory.createItem(orbId);
-
-        if (item instanceof MagicOrb) {
-          MagicOrb orb = (MagicOrb) item;
-
-          // Adicionar ao inventário
-          if (inventoryManager != null) {
-            inventoryManager.addItem(orb);
-            System.out.println("Orbe " + orbType + " adicionada ao inventário");
-          }
-
-          // Notificar QuestManager
-          questManager.onOrbCollected(orb);
-        }
-      } catch (Exception e) {
-        System.err.println("Erro ao criar orbe " + orbType + ": " + e.getMessage());
-      }
-    }
-
-    // Simular depósito de todas as orbes no Totem
-    if (questManager.getTotemCentral() != null) {
-      System.out.println("Simulando depósito de todas as orbes no Totem Central...");
-
-      // Simular depósito de cada orbe
-      for (String orbType : orbTypes) {
-        try {
-          String orbId = "orb_" + orbType;
-          Item item = ItemFactory.createItem(orbId);
-
-          if (item instanceof MagicOrb) {
-            MagicOrb orb = (MagicOrb) item;
-            questManager.onOrbDeposited(orb);
-            System.out.println("Orbe " + orbType + " depositada no Totem");
-          }
-        } catch (Exception e) {
-          System.err.println("Erro ao depositar orbe " + orbType + ": " + e.getMessage());
-        }
-      }
-    } else {
-      System.out.println("ERRO: TotemCentral não encontrado!");
-    }
-
-    // Verificar se o Supremo Boss foi spawnado
-    if (questManager.isBossSpawned()) {
-      System.out.println("✅ Supremo Boss foi spawnado com sucesso!");
-      System.out.println("✅ Quest 'final_boss' deve estar ativa!");
-
-      if (gameUI != null) {
-        gameUI.addMessage("DEBUG: Todas as orbes completadas! Supremo Boss spawnado!", null, 5000L);
-      }
-    } else {
-      System.out.println("❌ Supremo Boss NÃO foi spawnado!");
-    }
-
-    System.out.println("=== FIM DEBUG ===");
   }
 
   /**

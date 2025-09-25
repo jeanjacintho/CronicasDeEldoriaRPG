@@ -7,10 +7,10 @@ import java.awt.event.KeyListener;
  * Gerencia os eventos de teclado do jogador.
  */
 public class KeyHandler implements KeyListener {
-    public boolean actionPressed, upPressed, downPressed, leftPressed, rightPressed, xPressed, zPressed, qPressed;
-    public boolean rPressed, fPressed, gPressed, hPressed, tPressed, specialPressed, attackPressed, defendPressed, escapePressed;
+    public boolean actionPressed, upPressed, downPressed, leftPressed, rightPressed, qPressed;
+    public boolean specialPressed, attackPressed, defendPressed, escapePressed;
     public boolean healthPressed, manaPressed, waterOrbPressed, fireOrbPressed;
-    public boolean inventoryPressed, tabPressed, escapeKeyPressed, debugPressed, jPressed, lPressed;
+    public boolean inventoryPressed, tabPressed, escapeKeyPressed, jPressed;
     public boolean upArrowPressed, downArrowPressed; // Teclas de seta para scroll
 
     // Sistema anti-repeat para teclas importantes
@@ -54,20 +54,12 @@ public class KeyHandler implements KeyListener {
                     actionKeyDown = true;
                 }
                 break;
-            case KeyEvent.VK_X: xPressed = true; break;
-            case KeyEvent.VK_Z: zPressed = true; break;
             case KeyEvent.VK_Q: qPressed = true; break;
-            case KeyEvent.VK_R: rPressed = true; break;
-            case KeyEvent.VK_F: fPressed = true; break;
-            case KeyEvent.VK_G: gPressed = true; break;
-            case KeyEvent.VK_H: hPressed = true; break;
             //case KeyEvent.VK_T: tPressed = true; break;
             case KeyEvent.VK_I: inventoryPressed = true; break;
             case KeyEvent.VK_TAB: tabPressed = true; break;
             case KeyEvent.VK_ESCAPE: escapeKeyPressed = true; break;
-            case KeyEvent.VK_P: debugPressed = true; break;
             case KeyEvent.VK_J: jPressed = true; break;
-            case KeyEvent.VK_L: lPressed = true; break;
             case KeyEvent.VK_UP: upArrowPressed = true; break;
             case KeyEvent.VK_DOWN: downArrowPressed = true; break;
 
@@ -109,20 +101,12 @@ public class KeyHandler implements KeyListener {
                 actionPressed = false;
                 actionKeyDown = false;
                 break;
-            case KeyEvent.VK_X: xPressed = false; break;
-            case KeyEvent.VK_Z: zPressed = false; break;
+            
             case KeyEvent.VK_Q: qPressed = false; break;
-            case KeyEvent.VK_R: rPressed = false; break;
-            case KeyEvent.VK_F: fPressed = false; break;
-            case KeyEvent.VK_G: gPressed = false; break;
-            case KeyEvent.VK_H: hPressed = false; break;
-            //case KeyEvent.VK_T: tPressed = false; break;
             case KeyEvent.VK_I: inventoryPressed = false; break;
             case KeyEvent.VK_TAB: tabPressed = false; break;
             case KeyEvent.VK_ESCAPE: escapeKeyPressed = false; break;
-            case KeyEvent.VK_P: debugPressed = false; break;
             case KeyEvent.VK_J: jPressed = false; break;
-            case KeyEvent.VK_L: lPressed = false; break;
             case KeyEvent.VK_UP: upArrowPressed = false; break;
             case KeyEvent.VK_DOWN: downArrowPressed = false; break;
 

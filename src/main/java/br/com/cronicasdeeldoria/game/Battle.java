@@ -4,7 +4,6 @@ import br.com.cronicasdeeldoria.audio.AudioManager;
 import br.com.cronicasdeeldoria.entity.character.Character;
 import br.com.cronicasdeeldoria.entity.character.player.Player;
 import br.com.cronicasdeeldoria.entity.character.npc.Npc;
-import br.com.cronicasdeeldoria.game.dialog.DialogManager;
 
 import javax.swing.*;
 import java.util.ArrayList;
@@ -24,7 +23,6 @@ public class Battle {
   private Npc monster;
   private boolean waitingForPlayerInput;
   private int countTurn = 0;
-  private int timeOutCounter = 0;
   private final AudioManager audioManager;
   private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
 

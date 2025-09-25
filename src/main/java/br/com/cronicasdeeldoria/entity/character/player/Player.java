@@ -153,18 +153,6 @@ public class Player extends Character {
       keyHandler.actionPressed = false;
     }
 
-    // Teste do sistema de XP (tecla X)
-    if (keyHandler.xPressed) {
-      gainXp(50);
-      keyHandler.xPressed = false;
-    }
-
-    // Teste do sistema de XP (tecla Z)
-    if (keyHandler.zPressed) {
-      gainXp(100);
-      keyHandler.zPressed = false;
-    }
-
     if (keyHandler.qPressed) {
       gamePanel.getGameUI().toggleStatsWindow();
       keyHandler.qPressed = false;
@@ -184,40 +172,6 @@ public class Player extends Character {
     if (keyHandler.downArrowPressed && gamePanel.getGameUI().isQuestWindowVisible()) {
       gamePanel.getGameUI().scrollQuestWindowDown();
       keyHandler.downArrowPressed = false;
-    }
-
-    // Debug - mostrar posição em tiles (tecla P)
-    if (keyHandler.debugPressed) {
-      int tileX = getWorldX() / gamePanel.getTileSize();
-      int tileY = getWorldY() / gamePanel.getTileSize();
-      String debugMessage = String.format("Posição: Tile(%d, %d) | Pixel(%d, %d)", 
-                                        tileX, tileY, getWorldX(), getWorldY());
-      gamePanel.getGameUI().addMessage(debugMessage, null, 5000); // 5 segundos
-      keyHandler.debugPressed = false;
-    }
-
-    // Teste de dano (tecla R)
-    if (keyHandler.rPressed) {
-      takeDamage(20);
-      keyHandler.rPressed = false;
-    }
-
-    // Teste de gasto de mana (tecla F)
-    if (keyHandler.fPressed) {
-      spendMana(15);
-      keyHandler.fPressed = false;
-    }
-
-    // Teste de cura (tecla G)
-    if (keyHandler.gPressed) {
-      heal(30);
-      keyHandler.gPressed = false;
-    }
-
-    // Teste de restauração de mana (tecla H)
-    if (keyHandler.hPressed) {
-      restoreMana(25);
-      keyHandler.hPressed = false;
     }
   }
 
