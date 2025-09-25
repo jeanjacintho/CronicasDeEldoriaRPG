@@ -2,7 +2,7 @@
   {
     "id": "ranger",
     "name": "Ranger",
-    "speed": 8,
+    "speed": 4,
     "direction": "down",
     "health": 110,
     "mana": 80,
@@ -15,7 +15,7 @@
   {
     "id": "barbarian",
     "name": "Barbarian",
-    "speed": 8,
+    "speed": 4,
     "direction": "down",
     "health": 130,
     "mana": 60,
@@ -28,7 +28,7 @@
   {
     "id": "paladin",
     "name": "Paladin",
-    "speed": 8,
+    "speed": 4,
     "direction": "down",
     "health": 110,
     "mana": 80,
@@ -41,7 +41,7 @@
   {
     "id": "mage",
     "name": "Mage",
-    "speed": 8,
+    "speed": 4,
     "direction": "down",
     "health": 70,
     "mana": 120,
